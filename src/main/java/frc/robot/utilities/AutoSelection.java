@@ -42,12 +42,7 @@ public class AutoSelection {
 		autoChooser.setDefaultOption("None", NONE);
 		
 		
-		// autoChooser.addOption("Straight", STRAIGHT);
-		// autoChooser.addOption("Leave Community", LEAVE_COMMUNITY);
-		// autoChooser.addOption("Right One Cone Balance", RIGHT_ONE_CONE_BALANCE);
-		// autoChooser.addOption("Left One Cone Balance", LEFT_ONE_CONE_BALANCE);
-		// autoChooser.addOption("Middle One Cone Balance", MIDDLE_ONE_CONE_BALANCE);
-		// autoChooser.addOption("Middle Balance", MIDDLE_BALANCE);
+
 	
 		// show auto selection widget on Shuffleboard
 		SmartDashboard.putData("Autonomous routine", autoChooser);
