@@ -4,52 +4,155 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import java.util.List;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.Constants.CoordType;
+import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.StopType;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.TrajectoryConstants;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
+// import frc.robot.triggers.*;
+import frc.robot.utilities.*;
+import frc.robot.utilities.TrajectoryCache.TrajectoryFacing;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
+ * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  // Define robot key utilities (DO THIS FIRST)
+  private final FileLog log = new FileLog("H5");
+  private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  // Define robot subsystems  
+  private final DriveTrain driveTrain = new DriveTrain(field, elevator, log);
 
+  // Define other utilities
+  private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
+  private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
+
+  // Define controllers
+  // private final Joystick xboxController = new Joystick(OIConstants.usbXboxController); //assuming usbxboxcontroller is int
+  private final Joystick leftJoystick = new Joystick(OIConstants.usbLeftJoystick);
+  private final Joystick rightJoystick = new Joystick(OIConstants.usbRightJoystick);
+  private final Joystick coPanel = new Joystick(OIConstants.usbCoPanel);
+
+  private final CommandXboxController xboxController = new CommandXboxController(OIConstants.usbXboxController);
+  private boolean lastEnabledModeAuto = false;    // True if the last mode was auto
+
+  // Set to this pattern when the robot is disabled
+  
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
+    configureButtonBindings(); // configure button bindings
+    // configureShuffleboard();  configure shuffleboard
+
+    driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
+    // driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
+
   }
 
   /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
+   * Use this method to define your button->command mappings. Buttons can be created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+  private void configureButtonBindings() {
+    configureXboxButtons(); // configure xbox controller
+    configureJoystickButtons(); // configure joysticks
+    configureCopanel(); // configure copanel
   }
+
+  /**
+   * Configures XBox buttons and controls
+   */
+  private void configureXboxButtons(){
+    //check povtrigger and axis trigger number bindings
+    
+    // Triggers for all xbox buttons
+  
+    Trigger xbLT = xboxController.leftTrigger();
+    Trigger xbRT = xboxController.rightTrigger();
+    Trigger xbA = xboxController.a();
+    Trigger xbB = xboxController.b();
+    Trigger xbY = xboxController.y();
+    Trigger xbX = xboxController.x();
+    Trigger xbLB = xboxController.leftBumper();
+    Trigger xbRB = xboxController.rightBumper();
+    Trigger xbBack = xboxController.back();
+    Trigger xbStart = xboxController.start();
+    Trigger xbPOVUp = xboxController.povUp();
+    Trigger xbPOVRight = xboxController.povRight();
+    Trigger xbPOVLeft = xboxController.povLeft();
+    Trigger xbPOVDown = xboxController.povDown();
+   
+    
+  }
+
+  /**
+   * Define drivers joystick button mappings.
+   */
+  public void configureJoystickButtons() {
+    JoystickButton[] left = new JoystickButton[3];
+    JoystickButton[] right = new JoystickButton[3];
+
+    for (int i = 1; i < left.length; i++) {
+      left[i] = new JoystickButton(leftJoystick, i);
+      right[i] = new JoystickButton(rightJoystick, i);
+    }
+
+    
+   
+     
+  }
+
+  /** 
+   * Define Copanel button mappings.
+   *  
+   *  1  3  5  8
+   *  2  4  6  8
+   *      
+   *  9  11 13 7
+   *  10 12 14 7
+   * 
+   *  15
+   *  16
+   */
+  public void configureCopanel() {
+    JoystickButton[] coP = new JoystickButton[20];
+
+    for (int i = 1; i < coP.length; i++) {
+      coP[i] = new JoystickButton(coPanel, i);
+    }
+
+    // top row UP then DOWN, from LEFT to RIGHT
+  }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -57,7 +160,103 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return autoSelection.getAutoCommand(driveTrain, log);
+  }
+
+
+  /**
+   * Method called when robot is initialized.
+   */
+  public void robotInit() {
+    SmartDashboard.putBoolean("RobotPrefs Initialized", RobotPreferences.prefsExist());
+    if(!RobotPreferences.prefsExist()) {
+      RobotPreferences.recordStickyFaults("RobotPreferences", log);
+    }
+    lastEnabledModeAuto = false;
+
+    // compressor.disable();
+
+    // Set initial robot position on field
+    // This takes place a while after the drivetrain is created, so after any CanBus delays.
+    driveTrain.resetPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)));  
+  }
+
+  /**
+   * robotPeriodic is run every 20msec
+   */
+  public void robotPeriodic(){
+    log.advanceLogRotation();
+    allianceSelection.periodic();
+  }
+
+  /**
+   * Method called when robot is disabled.
+   */
+  public void disabledInit() {
+    log.writeLogEcho(true, "Disabled", "Robot disabled");   // Don't log the word "Init" here -- it affects the Excel macro
+
+    if (!lastEnabledModeAuto) {
+      driveTrain.setDriveModeCoast(true);     // When pushing a disabled robot by hand, it is a lot easier to push in Coast mode!!!!
+    }
+
+    driveTrain.stopMotors();                // SAFETY:  Turn off any closed loop control that may be running, so the robot does not move when re-enabled.
+    driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
+
+  }
+
+  /**
+   * Method called once every scheduler cycle when robot is disabled.
+   */
+  public void disabledPeriodic() {
+    // Check for CAN bus error.  This is to prevent the issue that caused us to be eliminated in 2020!
+    if (driveTrain.canBusError()) {
+      RobotPreferences.recordStickyFaults("CAN Bus", log);
+    }  //    TODO May want to flash this to the driver with some obvious signal!
+    // boolean error = true;  
+    // if (error == false) {
+    //   if(!patternTeamMoving.isScheduled()) patternTeamMoving.schedule();
+    // }
+    // else {
+    //   patternTeamMoving.cancel();
+    //   led.setStrip("Red", 0.5, 0);
+    // }
+  }
+  
+  /**
+   * Method called when auto mode is initialized/enabled.
+   */
+  public void autonomousInit() {
+    log.writeLogEcho(true, "Auto", "Mode Init");
+    lastEnabledModeAuto = true;
+
+    driveTrain.setDriveModeCoast(false);
+
+    // NOTE:  Do NOT reset the gyro or encoder here!!!!!
+    // The first command in auto mode initializes before this code is run, and
+    // it will read the gyro/encoder before the reset goes into effect.
+  }
+
+  /**
+   * Method called once every scheduler cycle when auto mode is initialized/enabled
+   */
+  public void autonomousPeriodic() {
+  }
+
+  /**
+   * Method called when teleop mode is initialized/enabled.
+   */
+  public void teleopInit() {
+    log.writeLogEcho(true, "Teleop", "Mode Init");
+    lastEnabledModeAuto = false;
+
+    driveTrain.setDriveModeCoast(false);
+    driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
+  }
+
+  /**
+   * Method called once every scheduler cycle when teleop mode is initialized/enabled.
+   */
+  public void teleopPeriodic() {
+
   }
 }
