@@ -215,6 +215,8 @@ public class SwerveModule {
  		// Apply configuration to the turning motor.
 		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
 		turningMotorConfigurator.apply(turningMotorConfig);
+
+    // Apply configuration to the cancoder
     turningCanCoderConfigurator.apply(turningCanCoderConfig);
     // **** configure turning CanCoder
     // turningCanCoder.configFactoryDefault(100);
