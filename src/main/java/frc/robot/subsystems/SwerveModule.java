@@ -76,7 +76,6 @@ public class SwerveModule {
   private final CANcoder turningCanCoderCooler;
   private final CANcoderConfiguration turningCanCoderConfig;
   private final CANcoderConfigurator turningCanCoderConfigurator;
-  private final MagnetSensorConfigs magnetSensorConfigs;
 
   private double driveEncoderZero = 0;      // Reference raw encoder reading for drive FalconFX encoder.  Calibration sets this to zero.
   private double cancoderZero = 0;          // Reference raw encoder reading for CanCoder.  Calibration sets this to the absolute position from RobotPreferences.
@@ -186,16 +185,14 @@ public class SwerveModule {
 		// turningMotorConfig.Slot0.kS = 0.0;
 		// turningMotorConfig.Slot0.kV = 0.0;
 		// turningMotorConfig.Slot0.kA = 0.0;
-
+    turningCanCoderConfigurator = turningCanCoderCooler.getConfigurator();
+    turningCanCoderConfig = new CANcoderConfiguration(); 
+    turningCanCoderConfig.MagnetSensor.SensorDirection = cancoderReversed ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;  //TODO Determine which direction is reversed
+    turningCanCoderPosition = turningCanCoderCooler.getPosition();
+    turningCanCoderVelocity = turningCanCoderCooler.getVelocity();
     // Configure the swerve module motors and encoders
     configSwerveModule();
     // Error when put in configSwerveModule
-    turningCanCoderConfigurator = turningCanCoderCooler.getConfigurator();
-    turningCanCoderConfig = new CANcoderConfiguration();
-    magnetSensorConfigs = new MagnetSensorConfigs();
-    magnetSensorConfigs.SensorDirection = cancoderReversed ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;  //TODO Determine which direction is reversed  
-    turningCanCoderPosition = turningCanCoderCooler.getPosition();
-    turningCanCoderVelocity = turningCanCoderCooler.getVelocity();
     // other configs for drive and turning motors
     setMotorModeCoast(true);        // true on boot up, so robot is easy to push.  Change to false in autoinit or teleopinit
   }
@@ -218,7 +215,7 @@ public class SwerveModule {
  		// Apply configuration to the turning motor.
 		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
 		turningMotorConfigurator.apply(turningMotorConfig);
-
+    turningCanCoderConfigurator.apply(turningCanCoderConfig);
     // **** configure turning CanCoder
     // turningCanCoder.configFactoryDefault(100);
     // turningCanCoder.configAllSettings(CTREConfigs.swerveCanCoderConfig, 100);
