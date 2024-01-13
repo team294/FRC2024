@@ -24,12 +24,11 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.utilities.FileLog;
 import static frc.robot.Constants.Ports.*;
 
 import static frc.robot.Constants.DriveConstants.*;
+import static frc.robot.Constants.FieldConstants;
 
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.utilities.*;
 
@@ -75,38 +74,28 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   // private boolean elevatorUpPriorIteration = false;       // Tracking for elevator position from prior iteration
 
 
-//   private final SlewRateLimiter filterY = new SlewRateLimiter(maxAccelerationRate);
-//   private final SlewRateLimiter filterYTier2 = new SlewRateLimiter(maxAccelerationRateY);
-
-//   //  tier 4 = slowest acceleration, tier 1 = fastest acceleration
-//   private final SlewRateLimiter filterXTier1 = new SlewRateLimiter(maxAccelerationRate);   // limiter in X direction when elevator is out
-//   private final SlewRateLimiter filterXTier2 = new SlewRateLimiter(maxAccelerationRateAtScoreMid);   // limiter in X direction when elevator is out
-//   private final SlewRateLimiter filterXTier3 = new SlewRateLimiter(maxAccelerationRateBetweenScoreMidAndHigh);   // limiter in X direction when elevator is out
-//   private final SlewRateLimiter filterXTier4 = new SlewRateLimiter(maxAccelerationRateWithElevatorUp);   // limiter in X direction when elevator is out
- 
-
   /**
    * Constructs the DriveTrain subsystem
    * @param log FileLog object for logging
    */
-  public DriveTrain(Field fieldUtil, FileLog log) {
+  public DriveTrain(AllianceSelection allianceSelection, FileLog log) {
     this.log = log; // save reference to the fileLog
     logRotationKey = log.allocateLogRotation();     // Get log rotation for this subsystem
-    this.camera = new PhotonCameraWrapper(fieldUtil, log, logRotationKey);
+    this.camera = new PhotonCameraWrapper(allianceSelection, log, logRotationKey);
 
     // create swerve modules
     swerveFrontLeft = new SwerveModule( "FL",
       CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, 
-      false, false, false, offsetAngleFrontLeftMotor, log);
+      false, offsetAngleFrontLeftMotor, log);
     swerveFrontRight = new SwerveModule( "FR",
       CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, 
-      false, false, false, offsetAngleFrontRightMotor, log);
+      false, offsetAngleFrontRightMotor, log);
     swerveBackLeft = new SwerveModule( "BL",
       CANDriveBackLeftMotor, CANDriveTurnBackLeftMotor, CANTurnEncoderBackLeft, 
-      false, false, false, offsetAngleBackLeftMotor, log);
+      false, offsetAngleBackLeftMotor, log);
     swerveBackRight = new SwerveModule( "BR",
       CANDriveBackRightMotor, CANDriveTurnBackRightMotor, CANTurnEncoderBackRight, 
-      false, false, false, offsetAngleBackRightMotor, log);
+      false, offsetAngleBackRightMotor, log);
 
     // configure navX gyro
     AHRS gyro = null;
@@ -231,6 +220,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    * <p>However, if the robot browns-out or otherwise partially resets, then this can be used to 
    * force the motors and encoders to have the right calibration and settings, especially the
    * calibration angle for each swerve module.
+   * <p> <b>Note</b> that this procedure includes multiple blocking calls and will delay robot code.
    */
   public void configureSwerveModules(){
     swerveFrontLeft.configSwerveModule();
@@ -298,7 +288,11 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
     // Convert states to chassisspeeds
     ChassisSpeeds chassisSpeeds = kDriveKinematics.toChassisSpeeds(desiredStates);
-    
+    double xSlewed, omegaLimited, ySlewed;
+    omegaLimited = chassisSpeeds.omegaRadiansPerSecond;
+    xSlewed = chassisSpeeds.vxMetersPerSecond;
+    ySlewed = chassisSpeeds.vyMetersPerSecond;
+
     // convert back to swervem module states
     desiredStates = kDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSlewed, ySlewed, omegaLimited), new Translation2d());
     

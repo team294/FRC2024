@@ -48,7 +48,7 @@ public class RobotContainer {
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
-  private final DriveTrain driveTrain = new DriveTrain(field, elevator, log);
+  private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
 
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);

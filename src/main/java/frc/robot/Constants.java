@@ -106,6 +106,7 @@ public final class Constants {
       public static final double kADrive = 0.0;
       public static final double kADriveToPose = 0.060;
       public static final double kSDrive = 0.016; // NOT CALIBRATED
+      public static final double voltageCompSaturation = 12.0;
 
     }
 
@@ -181,9 +182,19 @@ public final class Constants {
             SwerveConstants.kNominalSpeedMetersPerSecond, SwerveConstants.kNominalAccelerationMetersPerSecondSquare);
     }
 
+    public static class FieldConstants {
+      public static final double length = Units.feetToMeters(54);
+      public static final double width = Units.feetToMeters(27);
+    }
+
     public static class VisionConstants {
-
-
+      //TODO NEED TO CALIBRATE
+      public static final Transform3d robotToCam =
+                new Transform3d(
+                    // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
+                    new Translation3d(Units.inchesToMeters(0), 0, Units.inchesToMeters(0)),
+                    new Rotation3d(0, Units.degreesToRadians(0), 0)); // Cam mounted facing forward in center of robot
+        public static final String cameraName = "CenterCamera";
     }
 
   
