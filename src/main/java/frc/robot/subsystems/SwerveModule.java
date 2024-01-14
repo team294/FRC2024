@@ -73,7 +73,7 @@ public class SwerveModule {
 
   // CANCoder objects
   //private final WPI_CANCoder turningCanCoder;
-  private final CANcoder turningCanCoderCooler;
+  private final CANcoder turningCanCoder;
   private final CANcoderConfiguration turningCanCoderConfig;
   private final CANcoderConfigurator turningCanCoderConfigurator;
 
@@ -124,7 +124,7 @@ public class SwerveModule {
 	  turningEncoderVelocity = turningMotor.getVelocity();
 
     //turningCanCoder = new WPI_CANCoder(cancoderAddress);
-    turningCanCoderCooler = new CANcoder(cancoderAddress);
+    turningCanCoder = new CANcoder(cancoderAddress);
     // turningCanCoderConfigurator = turningCanCoderCooler.getConfigurator();
     // turningCanCoderConfig = new CANcoderConfiguration();
     
@@ -185,11 +185,11 @@ public class SwerveModule {
 		// turningMotorConfig.Slot0.kS = 0.0;
 		// turningMotorConfig.Slot0.kV = 0.0;
 		// turningMotorConfig.Slot0.kA = 0.0;
-    turningCanCoderConfigurator = turningCanCoderCooler.getConfigurator();
+    turningCanCoderConfigurator = turningCanCoder.getConfigurator();
     turningCanCoderConfig = new CANcoderConfiguration(); 
     turningCanCoderConfig.MagnetSensor.SensorDirection = cancoderReversed ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;  //TODO Determine which direction is reversed
-    turningCanCoderPosition = turningCanCoderCooler.getPosition();
-    turningCanCoderVelocity = turningCanCoderCooler.getVelocity();
+    turningCanCoderPosition = turningCanCoder.getPosition();
+    turningCanCoderVelocity = turningCanCoder.getVelocity();
     // Configure the swerve module motors and encoders
     configSwerveModule();
     // Error when put in configSwerveModule
@@ -437,7 +437,7 @@ public class SwerveModule {
     // System.out.println(swName + " " + turningOffsetDegrees);
     // turningCanCoder.configMagnetOffset(offsetDegrees, 100);
     cancoderZero = -offsetDegrees;
-    log.writeLogEcho(true, buildString("SwerveModule ", swName), "calibrateCanCoder", "cancoderZero", cancoderZero, "raw encoder", turningCanCoderCooler.getAbsolutePosition(), "encoder degrees", getCanCoderDegrees());
+    log.writeLogEcho(true, buildString("SwerveModule ", swName), "calibrateCanCoder", "cancoderZero", cancoderZero, "raw encoder", turningCanCoder.getAbsolutePosition(), "encoder degrees", getCanCoderDegrees());
   }
 
   /**
