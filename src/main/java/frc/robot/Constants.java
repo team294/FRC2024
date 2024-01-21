@@ -60,6 +60,9 @@ public final class Constants {
       public static final int CANTurnEncoderFrontRight = 10;
       public static final int CANTurnEncoderBackLeft = 11;
       public static final int CANTurnEncoderBackRight = 12;
+
+      public static final int CANShooter1 = 13;
+      public static final int CANShooter2 = 14;
     }
 
     public static final class OIConstants {
@@ -85,12 +88,15 @@ public final class Constants {
     public static final class SwerveConstants {
         // Encoder calibration to meters travelled or wheel facing degrees
       public static final double kEncoderCPR = 2048.0;                // NOT CALIBRATED
-      public static final double kDriveGearRatio = (6.75 / 1.0);      // NOT CALIBRATED
+      public static final double kDriveGearRatio = (8.14 / 1.0);      // NOT CALIBRATED
       public static final double kTurningGearRatio = (150.0/7.0 / 1.0); // NOT CALIBRATED
       public static final double kWheelDiameterMeters = 0.09712;        // NOT CALIBRATED
-      public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
-      public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
-        
+      // public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
+      // public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
+      public static final double kDriveEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kDriveGearRatio;
+      public static final double kTurningEncoderDegreesPerRotation = 360.0/ kTurningGearRatio;
+
+
       public static final double kMaxSpeedMetersPerSecond = 4.5;          // NOT CALIBRATED
       public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;
       public static final double kNominalSpeedMetersPerSecond = 0.5*kMaxSpeedMetersPerSecond;
@@ -142,6 +148,28 @@ public final class Constants {
 
 
       public static final double kPJoystickThetaController = 3; // Theta kp value for joystick in rad/sec
+
+      // Drivetrain DrivingMotorPID
+      public static final class DrivingMotorPID {
+        public static final double kP = 6e-5; 
+        public static final double kI = 0;
+        public static final double kD = 0; 
+        public static final double kIz = 0; 
+        public static final double kFF = 0.000015; 
+        public static final double kMaxOutput = 1; 
+        public static final double kMinOutput = -1;
+        public static final double maxRPM = 10000;
+    }
+    // Drivetrain TurningMotorPID
+    public static final class TurningMotorPID {
+        public static final double kP = .3;
+        public static final double kI = 1e-4;
+        public static final double kD = 1;
+        public static final double kIz = 0;
+        public static final double kFF = 0;
+        public static final double kMaxOutput = 1;
+        public static final double kMinOutput = -1;
+    }
     }
 
     public static final class TrajectoryConstants {
