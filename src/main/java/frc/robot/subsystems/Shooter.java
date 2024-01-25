@@ -9,17 +9,25 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import frc.robot.Constants.Ports;
-import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.*;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.Loggable;
+import frc.robot.utilities.StringUtil;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Shooter extends SubsystemBase {
-  /** Creates a new Shooter. */
+public class Shooter extends SubsystemBase implements Loggable {
+  private final FileLog log;
+
   private final String subsystemName;
   private final TalonFX motor1;
 	private final TalonFXConfigurator motor1Configurator;
@@ -31,26 +39,49 @@ public class Shooter extends SubsystemBase {
 	private final StatusSignal<Double> motor1Temp;				// Motor temperature, in degC
 	private final StatusSignal<Double> motor1DutyCycle;				// Motor duty cycle percent power, -1 to 1
 	private final StatusSignal<Double> motor1StatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
-	private final StatusSignal<Double> motor1EncoderPostion;			// Encoder position, in pinion rotations
+	private final StatusSignal<Double> motor1EncoderPosition;			// Encoder position, in pinion rotations
 	private final StatusSignal<Double> motor1EncoderVelocity;	
   private final StatusSignal<Double> motor2SupplyVoltage;				// Incoming bus voltage to motor controller, in volts
 	private final StatusSignal<Double> motor2Temp;				// Motor temperature, in degC
 	private final StatusSignal<Double> motor2DutyCycle;				// Motor duty cycle percent power, -1 to 1
 	private final StatusSignal<Double> motor2StatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
 	private final StatusSignal<Double> motor2EncoderPostion;			// Encoder position, in pinion rotations
-	private final StatusSignal<Double> motor2EncoderVelocity;	
-  public Shooter(String subsytemName, FileLog log) {
+	private final StatusSignal<Double> motor2EncoderVelocity;
+  private final StatusSignal<Double> motor1Voltage;
+  private final StatusSignal<Double> motor2Voltage;
+  private final StatusSignal<Double> motor1Current;
+  private final StatusSignal<Double> motor2Current;
+
+  private SimpleMotorFeedforward motor1Feedforward; // todo
+
+  private VoltageOut motorVoltageControl = new VoltageOut(0.0);
+  private VelocityVoltage motorVelocityControl = new VelocityVoltage(0.0);
+
+  private boolean velocityControlOn;
+  private double setpointRPM;
+  private double encoderZero = 0.0;
+  private double measuredRPM = 0.0;
+  private boolean fastLogging = false;
+  private int logRotationKey;
+
+  /** Creates a new Shooter. */
+  public Shooter(FileLog log) {
+    this.log = log;
+    logRotationKey = log.allocateLogRotation();
+
     motor1 = new TalonFX(Ports.CANShooter1);
     motor2 = new TalonFX(Ports.CANShooter2);
-    this.subsystemName = subsytemName;
+    subsystemName = "Shooter";
     // Configure motor2
     motor1Configurator = motor1.getConfigurator();
     motor1SupplyVoltage = motor1.getSupplyVoltage();
 	  motor1Temp = motor1.getDeviceTemp();
 	  motor1DutyCycle = motor1.getDutyCycle();
 	  motor1StatorCurrent = motor1.getStatorCurrent();
-	  motor1EncoderPostion = motor1.getPosition();
+	  motor1EncoderPosition = motor1.getPosition();
 	  motor1EncoderVelocity = motor1.getVelocity();
+    motor1Voltage = motor1.getMotorVoltage();
+    motor1Current = motor1.getSupplyCurrent();
 
     motor1Config = new TalonFXConfiguration();			// Factory default configuration
     motor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
@@ -66,6 +97,8 @@ public class Shooter extends SubsystemBase {
 	  motor2StatorCurrent =motor1.getStatorCurrent();
 	  motor2EncoderPostion = motor1.getPosition();
 	  motor2EncoderVelocity = motor1.getVelocity();
+    motor2Voltage = motor2.getMotorVoltage();
+    motor2Current = motor2.getSupplyCurrent();
 
     motor2Config = new TalonFXConfiguration();			// Factory default configuration
     motor2Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
@@ -73,7 +106,19 @@ public class Shooter extends SubsystemBase {
     motor2Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.0;
 		motor2Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     
+    // Make motor2 follow motor1
+    motor2.setControl(new Follower(motor1.getDeviceID(), true)); // TODO: check OpposeMasterDirection works
 
+    // Set the PID and stop the motor
+    setPIDSVA(
+      ShooterConstants.kP,
+      ShooterConstants.kI,
+      ShooterConstants.kD,
+      ShooterConstants.kS,
+      ShooterConstants.kV,
+      ShooterConstants.kA
+    );
+    stopMotor();
   }
 
   /**
@@ -106,9 +151,9 @@ public class Shooter extends SubsystemBase {
    * sets the percent of the motor, using voltage compensation if turned on
    * @param percent percent
    */
-  public void setMotorPercentOutput(double percent){
-    //motor.set(ControlMode.PercentOutput, percent);
-    motor.setControl(motorVoltageControl.withOutput(percent*FalconConstants.compensationVoltage));
+  public void setMotorPercentOutput(double percent) {
+    // Percent output control does not exist; multiply compensationVoltage by percent
+    motor1.setControl(motorVoltageControl.withOutput(percent * ShooterConstants.compensationVoltage));
     velocityControlOn = false;
     setpointRPM = 0.0;
   }
@@ -116,29 +161,27 @@ public class Shooter extends SubsystemBase {
   /**
   * Stops the motor
   */
-  public void stopMotor(){
+  public void stopMotor() {
     setMotorPercentOutput(0);
     velocityControlOn = false;
     setpointRPM = 0.0;
   }
 
-
   /**
-   * Returns the motor position
+   * Returns the motor 1 position
    * @return position of motor in raw units, without software zeroing
    */
-  public double getMotorPositionRaw(){
-    //return motor.getSelectedSensorPosition(0);
-    motorEncoderPosition.refresh();
-    return motorEncoderPosition.getValueAsDouble();
+  public double getMotorPositionRaw() {
+    motor1EncoderPosition.refresh();
+    return motor1EncoderPosition.getValueAsDouble();
   }
 
   /**
-   * Returns the motor position
+   * Returns the motor 1 position
    * @return position of motor in revolutions
    */
-  public double getMotorPosition(){
-    return (getMotorPositionRaw() - encoderZero)/FalconConstants.ticksPerRevolution;
+  public double getMotorPosition() {
+    return (getMotorPositionRaw() - encoderZero)/ShooterConstants.ticksPerRevolution;
   }
 
   /**
@@ -149,16 +192,93 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * @return velocity of motor in rpm
+   * @return velocity of motor 1 in rpm
    */
-  public double getMotorVelocity(){
-    motorEncoderVelocity.refresh();
-    return motorEncoderVelocity.getValueAsDouble();
-    // return motor.getSelectedSensorVelocity(0)*FalconConstants.rawVelocityToRPM;
+  public double getMotorVelocity() {
+    motor1EncoderVelocity.refresh();
+    return motor1EncoderVelocity.getValueAsDouble();
+  }
+
+  /**
+   * @param velocity of motor 1 in rpm
+   */
+  public void setMotorVelocity(double rpm) {
+    velocityControlOn = true;
+    setpointRPM = rpm;
+    motor1.setControl(motorVelocityControl.withVelocity(rpm));
+  }
+
+  /**
+   * @param P
+   * @param I
+   * @param D
+   * @param S
+   * @param V
+   * @param A
+   */
+  public void setPIDSVA(double P, double I, double D, double S, double V, double A) {
+    // Set PID coefficients
+    motorVelocityControl.Slot = 0;
+    motorVelocityControl.OverrideBrakeDurNeutral = true;
+    motor1Config.Slot0.kP = P;
+    motor1Config.Slot0.kI = I;
+    motor1Config.Slot0.kD = D;
+    motor1Feedforward = new SimpleMotorFeedforward(S, V, A);
+    if (velocityControlOn) {
+      // Reset velocity to force kS and kV updates to take effect
+      setMotorVelocity(setpointRPM);
+    }
+  }
+
+  /**
+   * @return difference between measured RPM and set point RPM
+   */
+  public double getVelocityPIDError() {
+    return measuredRPM - setpointRPM;
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // Update the measured RPM
+    measuredRPM = getMotorVelocity();
+
+    // Log
+    if (fastLogging || log.isMyLogRotation(logRotationKey)) {
+      updateLog(false);
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Voltage"), motor1Voltage.refresh().getValueAsDouble());
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Position Rev"), getMotorPosition());
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Velocity RPM"), measuredRPM);
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Temperature C"), motor1Temp.refresh().getValueAsDouble());
+    }
+  }
+
+  /**
+   * Update information about shooter to fileLog
+   * @param logWhenDisabled true = log when disabled, false = discard the string
+   */
+  public void updateLog(boolean logWhenDisabled) {
+    // todo: bus volt
+    log.writeLog(
+      logWhenDisabled,
+      subsystemName,
+      "Update Variables",
+      "Bus Volt", motor1SupplyVoltage.refresh().getValueAsDouble(),
+      "Out Percent 1", motor1DutyCycle.refresh().getValueAsDouble(),
+      "Out Percent 2", motor2DutyCycle.refresh().getValueAsDouble(),
+      "Volt 1", motor1Voltage.refresh().getValueAsDouble(),
+      "Volt 2", motor2Voltage.refresh().getValueAsDouble(),
+      "Amps 1", motor1Current.refresh().getValueAsDouble(),
+      "Amps 2", motor2Current.refresh().getValueAsDouble(),
+      "Temperature 1", motor1Temp.refresh().getValueAsDouble(),
+      "Temperature 2", motor2Temp.refresh().getValueAsDouble(),
+      "Position", getMotorPosition(),
+      "Measured RPM", measuredRPM,
+      "Setpoint RPM", setpointRPM
+    );
+  }
+
+  @Override
+  public void enableFastLogging(boolean enabled) {
+    fastLogging = enabled;
   }
 }

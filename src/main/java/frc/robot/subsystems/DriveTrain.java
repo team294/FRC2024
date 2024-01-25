@@ -84,17 +84,17 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     this.camera = new PhotonCameraWrapper(allianceSelection, log, logRotationKey);
 
     // create swerve modules
-    swerveFrontLeft = new SwerveModule( "FL",
-      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, 
+    swerveFrontLeft = new SwerveModule("FL",
+      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, false, true,
       false, offsetAngleFrontLeftMotor, log);
-    swerveFrontRight = new SwerveModule( "FR",
-      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, 
+    swerveFrontRight = new SwerveModule("FR",
+      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, false, true,
       false, offsetAngleFrontRightMotor, log);
-    swerveBackLeft = new SwerveModule( "BL",
-      CANDriveBackLeftMotor, CANDriveTurnBackLeftMotor, CANTurnEncoderBackLeft, 
+    swerveBackLeft = new SwerveModule("BL",
+      CANDriveBackLeftMotor, CANDriveTurnBackLeftMotor, CANTurnEncoderBackLeft, false, true,
       false, offsetAngleBackLeftMotor, log);
-    swerveBackRight = new SwerveModule( "BR",
-      CANDriveBackRightMotor, CANDriveTurnBackRightMotor, CANTurnEncoderBackRight, 
+    swerveBackRight = new SwerveModule("BR",
+      CANDriveBackRightMotor, CANDriveTurnBackRightMotor, CANTurnEncoderBackRight, false, true,
       false, offsetAngleBackRightMotor, log);
 
     // configure navX gyro
