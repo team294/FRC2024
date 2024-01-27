@@ -284,9 +284,9 @@ public class SwerveModule {
   // ******* Drive encoder methods
 
   /**
-   * @return drive encoder position, in ticks
+   * @return drive encoder position, in pinion rotations
    */
-  public double getDriveEncoderRaw() {
+  public double getDriveEncoderRotations() {
     return driveEncoder.getPosition();
   }
 
@@ -294,22 +294,22 @@ public class SwerveModule {
 	 * Set the drive encoder position to zero in software.
 	 */
   public void zeroDriveEncoder() {
-    driveEncoderZero = getDriveEncoderRaw();
-    log.writeLogEcho(true, buildString("SwerveModule ", swName), "ZeroDriveEncoder", "driveEncoderZero", driveEncoderZero, "raw encoder", getDriveEncoderRaw(), "encoder meters", getDriveEncoderMeters());
+    driveEncoderZero = getDriveEncoderRotations();
+    log.writeLogEcho(true, buildString("SwerveModule ", swName), "ZeroDriveEncoder", "driveEncoderZero", driveEncoderZero, "raw encoder", getDriveEncoderRotations(), "encoder meters", getDriveEncoderMeters());
   }
 
   /**
    * @return drive wheel distance travelled, in meters (+ = forward)
    */
   public double getDriveEncoderMeters() {
-    return (getDriveEncoderRaw() - driveEncoderZero) * SwerveConstants.kDriveEncoderMetersPerRotation;
+    return (getDriveEncoderRotations() - driveEncoderZero) * SwerveConstants.kDriveEncoderMetersPerRotation;
   }
 
   /**
    * @return drive wheel velocity, in meters per second (+ = forward)
    */
   public double getDriveEncoderVelocity() {
-    return driveEncoder.getPosition() * SwerveConstants.kDriveEncoderMetersPerRotation * 10.0;
+    return driveEncoder.getVelocity() * SwerveConstants.kDriveEncoderMetersPerRotation / 60.0;
   }
 
   /**
@@ -319,51 +319,50 @@ public class SwerveModule {
    */
   public double calculateDriveEncoderVelocityRaw(double velocityMPS) {
     return velocityMPS / SwerveConstants.kDriveEncoderMetersPerRotation * 60.0;
-    // return velocityMPS / SwerveConstants.kDriveEncoderMetersPerRotation / 10.0;
   }
   
-  // ******* Turning TalonFX encoder methods
+  // ******* Turning motor encoder methods
 
   /**
-   * @return turning TalonFx encoder position, in rotations
+   * @return turning motor encoder position, in rotations
    */
-  public double getTurningEncoderRaw() {
+  public double getTurningEncoderRotations() {
     return turningEncoder.getPosition();
   }
   
   /**
-   * Calibrates the turning FalconFX encoder.  Sets the current wheel facing to currentAngleDegrees.
+   * Calibrates the turning motor encoder.  Sets the current wheel facing to currentAngleDegrees.
    * @param currentAngleDegrees current angle, in degrees.
    */
   public void calibrateTurningEncoderDegrees(double currentAngleDegrees) {
-    turningEncoderZero = getTurningEncoderRaw() - (currentAngleDegrees / SwerveConstants.kTurningEncoderDegreesPerRotation);
-    log.writeLogEcho(true, buildString("SwerveModule ", swName), "calibrateTurningEncoder", "turningEncoderZero", turningEncoderZero, "raw encoder", getTurningEncoderRaw(), "set degrees", currentAngleDegrees, "encoder degrees", getTurningEncoderDegrees());
+    turningEncoderZero = getTurningEncoderRotations() - (currentAngleDegrees / SwerveConstants.kTurningEncoderDegreesPerRotation);
+    log.writeLogEcho(true, buildString("SwerveModule ", swName), "calibrateTurningEncoder", "turningEncoderZero", turningEncoderZero, "raw encoder", getTurningEncoderRotations(), "set degrees", currentAngleDegrees, "encoder degrees", getTurningEncoderDegrees());
   }
 
   /**
-   * @return turning FalconFX encoder facing, in degrees.  Values do not wrap, so angle could be greater than 360 degrees.
+   * @return turning motor encoder facing, in degrees.  Values do not wrap, so angle could be greater than 360 degrees.
    * When calibrated, 0 should be with the wheel pointing toward the front of robot.
    * + = counterclockwise, - = clockwise
    */
   public double getTurningEncoderDegrees() {
-    return (getTurningEncoderRaw() - turningEncoderZero) * SwerveConstants.kTurningEncoderDegreesPerRotation;
+    return (getTurningEncoderRotations() - turningEncoderZero) * SwerveConstants.kTurningEncoderDegreesPerRotation;
   }
 
   /**
-   * Converts a target wheel facing (in degrees) to a target raw turning FalconFX encoder value.
+   * Converts a target wheel facing (in degrees) to a target raw turning motor encoder value.
    * @param targetDegrees Desired wheel facing, in degrees.  0 = towards front of robot, + = counterclockwise, - = clockwise
-   * @return turning FalconFX encoder raw value equivalent to input facing.
+   * @return turning motor encoder raw value equivalent to input facing.
    */
   public double calculateTurningEncoderTargetRaw(double targetDegrees) {
     return targetDegrees / SwerveConstants.kTurningEncoderDegreesPerRotation + turningEncoderZero;
   }
 
   /**
-   * @return turning TalonFX encoder rotational velocity for wheel facing, in degrees per second.
+   * @return turning motor encoder rotational velocity for wheel facing, in degrees per second.
    * + = counterclockwise, - = clockwise
    */
   public double getTurningEncoderVelocityDPS() {
-    return turningEncoder.getVelocity() * SwerveConstants.kTurningEncoderDegreesPerRotation * 10.0;
+    return turningEncoder.getVelocity() * SwerveConstants.kTurningEncoderDegreesPerRotation / 60.0;
   }
 
   // ******* Cancoder methods
@@ -376,7 +375,10 @@ public class SwerveModule {
     // System.out.println(swName + " " + turningOffsetDegrees);
     // turningCanCoder.configMagnetOffset(offsetDegrees, 100);
     cancoderZero = -offsetDegrees;
-    log.writeLogEcho(true, buildString("SwerveModule ", swName), "calibrateCanCoder", "cancoderZero", cancoderZero, "raw encoder", turningCanCoder.getAbsolutePosition(), "encoder degrees", getCanCoderDegrees());
+    log.writeLogEcho(true, buildString("SwerveModule ", swName), "calibrateCanCoder", 
+      "cancoderZero", cancoderZero, 
+      "raw encoder", turningCanCoderPosition.refresh().getValueAsDouble()*360.0, 
+      "encoder degrees", getCanCoderDegrees());
   }
 
   /**
@@ -385,7 +387,7 @@ public class SwerveModule {
    * + = counterclockwise, - = clockwise
    */
   public double getCanCoderDegrees() {
-    return MathBCR.normalizeAngle(turningCanCoderPosition.refresh().getValueAsDouble() - cancoderZero);
+    return MathBCR.normalizeAngle(turningCanCoderPosition.refresh().getValueAsDouble()*360.0 - cancoderZero);
   }
 
   /**
@@ -393,7 +395,7 @@ public class SwerveModule {
    * + = counterclockwise, - = clockwise
    */
   public double getCanCoderVelocityDPS() {
-    return turningCanCoderVelocity.refresh().getValueAsDouble();
+    return turningCanCoderVelocity.refresh().getValueAsDouble()*360.0;
   }
 
 
@@ -403,13 +405,9 @@ public class SwerveModule {
     return driveMotor.getBusVoltage();
   }
 
-  // public double getDriveOutputVoltage() {
-  //   return driveMotor.getMotorOutputVoltage();
-  // }
-
-  // public double getDriveOutputPercent() {
-  //   return driveMotor.getMotorOutputPercent();
-  // }
+  public double getDriveOutputPercent() {
+    return driveMotor.getAppliedOutput();
+  }
 
   public double getDriveStatorCurrent() {
     return driveMotor.getOutputCurrent();
@@ -419,13 +417,9 @@ public class SwerveModule {
     return driveMotor.getMotorTemperature();
   }
 
-  // public double getTurningOutputVoltage() {
-  //   return turningMotor.getMotorOutputVoltage();
-  // }
-
-  // public double getTurningOutputPercent() {
-  //   return turningMotor.getMotorOutputPercent();
-  // }
+  public double getTurningOutputPercent() {
+    return turningMotor.getAppliedOutput();
+  }
 
   public double getTurningStatorCurrent() {
     return turningMotor.getOutputCurrent();
@@ -458,8 +452,10 @@ public class SwerveModule {
       swName, " CCangle DPS,", getCanCoderVelocityDPS(), ",",
       swName, " FXangle deg,", MathBCR.normalizeAngle(getTurningEncoderDegrees()), ",",
       swName, " FXangle DPS,", getTurningEncoderVelocityDPS(), ",",
+      swName, " turn output,", getTurningOutputPercent(), ",",
       swName, " drive meters,", getDriveEncoderMeters(), ",",
       swName, " drive mps,", getDriveEncoderVelocity(), ",",
+      swName, " drive output,", getDriveOutputPercent(), ",",
       swName, " drive temp,", getDriveTemp(), ",",
       swName, " turn temp,", getTurningTemp()
     );
