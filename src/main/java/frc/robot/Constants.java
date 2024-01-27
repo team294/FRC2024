@@ -65,6 +65,8 @@ public final class Constants {
       public static final int CANShooter2 = 14;
 
       public static final int CANFeeder = 15;
+
+      public static final int CANIntake = 16;
     }
 
     public static final class OIConstants {

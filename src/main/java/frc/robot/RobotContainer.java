@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.beans.FeatureDescriptor;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -49,6 +50,8 @@ public class RobotContainer {
 
   // Define robot subsystems  
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
+  private final Intake intake = new Intake("Intake", log);
+  private final Shooter shooter = new Shooter(log);
 
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
@@ -85,6 +88,15 @@ public class RobotContainer {
     configureXboxButtons(); // configure xbox controller
     configureJoystickButtons(); // configure joysticks
     configureCopanel(); // configure copanel
+
+    configureSmartDashboard();
+  }
+
+  private void configureSmartDashboard() {
+    // Add commands
+    SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
+    SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));
+    SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(shooter, log));
   }
 
   /**
