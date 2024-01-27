@@ -153,25 +153,25 @@ public final class Constants {
 
       // Drivetrain DrivingMotorPID
       public static final class DrivingMotorPID {
-        public static final double kP = 6e-5; 
+        public static final double kP = 0;     // Was 6e-5?
         public static final double kI = 0;
         public static final double kD = 0; 
         public static final double kIz = 0; 
-        public static final double kFF = 0.000015; 
+        public static final double kFF = 0;  // was 0.000015?
         public static final double kMaxOutput = 1; 
         public static final double kMinOutput = -1;
-        public static final double maxRPM = 10000;
-    }
-    // Drivetrain TurningMotorPID
-    public static final class TurningMotorPID {
-        public static final double kP = .3;
-        public static final double kI = 1e-4;
-        public static final double kD = 1;
-        public static final double kIz = 0;
-        public static final double kFF = 0;
-        public static final double kMaxOutput = 1;
-        public static final double kMinOutput = -1;
-    }
+      }
+
+      // Drivetrain TurningMotorPID
+      public static final class TurningMotorPID {
+          public static final double kP = 0;       // Was 0.3?
+          public static final double kI = 0;     // Was 1e-4?
+          public static final double kD = 0;        // Was 1?
+          public static final double kIz = 0;
+          public static final double kFF = 0;
+          public static final double kMaxOutput = 1;
+          public static final double kMinOutput = -1;
+      } 
     }
 
     public static final class ShooterConstants {

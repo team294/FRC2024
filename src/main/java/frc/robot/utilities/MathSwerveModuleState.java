@@ -3,7 +3,7 @@ package frc.robot.utilities;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-public class CTRESwerveModuleState {
+public class MathSwerveModuleState {
 
   /**
    * Minimize the change in heading the desired swerve module state would require by potentially

@@ -85,10 +85,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
     // create swerve modules
     swerveFrontLeft = new SwerveModule("FL",
-      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, false, true,
+      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, true, false,
       false, offsetAngleFrontLeftMotor, log);
     swerveFrontRight = new SwerveModule("FR",
-      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, false, true,
+      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, true, false,
       false, offsetAngleFrontRightMotor, log);
     swerveBackLeft = new SwerveModule("BL",
       CANDriveBackLeftMotor, CANDriveTurnBackLeftMotor, CANTurnEncoderBackLeft, false, true,

@@ -4,39 +4,31 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANcoderConfigurator;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CANcoderConfigurator;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import frc.robot.CTREConfigs;
 
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.DriveConstants.DrivingMotorPID;
 import frc.robot.Constants.DriveConstants.TurningMotorPID;
-import frc.robot.utilities.CTRESwerveModuleState;
+import frc.robot.utilities.MathSwerveModuleState;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.MathBCR;
-import frc.robot.utilities.StringUtil;
 import frc.robot.utilities.Wait;
 
 import static frc.robot.utilities.StringUtil.*;
@@ -45,18 +37,19 @@ public class SwerveModule {
       
   private final String swName;    // Name for this swerve module
   private final FileLog log;
-  private final boolean cancoderReversed;
-  private final boolean driveEncoderReversed;
-  private final boolean turningEncoderReversed;
+  private final boolean driveMotorInverted;
+  private final boolean turningMotorInverted;
   private final double turningOffsetDegrees;
 
+  // Drive motor objects
   private final CANSparkMax driveMotor;
-  private SparkPIDController drivePID;
-  private RelativeEncoder driveEncoder;
+  private final SparkPIDController drivePID;
+  private final RelativeEncoder driveEncoder;
 
+  // Turning motor objects
   private final CANSparkMax turningMotor;
-  private SparkPIDController turningPID;
-  private RelativeEncoder turningEncoder;
+  private final SparkPIDController turningPID;
+  private final RelativeEncoder turningEncoder;
   
   // CANCoder objects
   private final CANcoder turningCanCoder;
@@ -67,9 +60,10 @@ public class SwerveModule {
 	private final StatusSignal<Double> turningCanCoderPosition;			// CanCoder position, in CANCoder rotations
 	private final StatusSignal<Double> turningCanCoderVelocity;			// Encoder Velocity, in CANCoder rotations/second
 
-  private double driveEncoderZero = 0;      // Reference raw encoder reading for drive FalconFX encoder.  Calibration sets this to zero.
+  // Variables for encoder zeroing
+  private double driveEncoderZero = 0;      // Reference raw encoder reading for drive motor encoder.  Calibration sets this to zero.
   private double cancoderZero = 0;          // Reference raw encoder reading for CanCoder.  Calibration sets this to the absolute position from RobotPreferences.
-  private double turningEncoderZero = 0;    // Reference raw encoder reading for turning FalconFX encoder.  Calibration sets this to match the CanCoder.
+  private double turningEncoderZero = 0;    // Reference raw encoder reading for turning motor encoder.  Calibration sets this to match the CanCoder.
 
 
   private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(SwerveConstants.kSDrive, SwerveConstants.kVDrive, SwerveConstants.kADrive);
@@ -83,51 +77,43 @@ public class SwerveModule {
    * @param driveMotorAddress The CANbus address of the drive motor.
    * @param turningMotorAddress The CANbus address of the turning motor.
    * @param cancoderAddress The CANbus address of the turning encoder.
-   * @param driveEncoderReversed Whether the drive encoder is reversed.
-   * @param turningEncoderReversed Whether the turning encoder is reversed.
+   * @param driveMotorInverted True = invert drive motor direction
+   * @param turningMotorInverted True = invert turning motor direction
+   * @param cancoderReverse True = reverse direction reading of CANcoder
    * @param turningOffsetDegrees Offset degrees in the turning motor to point to the 
    * front of the robot.  Value is the desired encoder zero point, in absolute magnet position reading.
+   * @param log FileLog reference
    */
   public SwerveModule(String swName, int driveMotorAddress, int turningMotorAddress, int cancoderAddress,
-      boolean driveEncoderReversed, boolean turningEncoderReversed, boolean cancoderReversed,
+      boolean driveMotorInverted, boolean turningMotorInverted, boolean cancoderReversed,
       double turningOffsetDegrees, FileLog log) {
 
     // Save the module name and logfile
     this.swName = swName;
     this.log = log;
-    this.cancoderReversed = cancoderReversed;
-    this.driveEncoderReversed = driveEncoderReversed;
-    this.turningEncoderReversed = turningEncoderReversed;
+    this.driveMotorInverted = driveMotorInverted;
+    this.turningMotorInverted = turningMotorInverted;
     this.turningOffsetDegrees = turningOffsetDegrees;
 
     // Create motor and encoder objects
     driveMotor = new CANSparkMax(driveMotorAddress, CANSparkLowLevel.MotorType.kBrushless);
-    // drivePID = driveMotor.getPIDController();
-    // driveEncoder = driveMotor.getEncoder();
-
-    // drivePID.setP(DrivingMotorPID.kP);
-    // drivePID.setI(DrivingMotorPID.kI);
-    // drivePID.setD(DrivingMotorPID.kD);
-    // drivePID.setIZone(DrivingMotorPID.kIz);
-    // drivePID.setFF(DrivingMotorPID.kFF);
-    // drivePID.setOutputRange(DrivingMotorPID.kMinOutput, DrivingMotorPID.kMaxOutput);
+    drivePID = driveMotor.getPIDController();
+    driveEncoder = driveMotor.getEncoder();
 
     turningMotor = new CANSparkMax(turningMotorAddress, CANSparkLowLevel.MotorType.kBrushless);
-    // turningPID = turningMotor.getPIDController();
-    // turningEncoder = turningMotor.getEncoder();
+    turningPID = turningMotor.getPIDController();
+    turningEncoder = turningMotor.getEncoder();
 
-    // turningPID.setP(TurningMotorPID.kP);
-    // turningPID.setI(TurningMotorPID.kI);
-    // turningPID.setD(TurningMotorPID.kD);
-    // turningPID.setIZone(TurningMotorPID.kIz);
-    // turningPID.setFF(TurningMotorPID.kFF);
-    // turningPID.setOutputRange(TurningMotorPID.kMinOutput, TurningMotorPID.kMaxOutput);
-    
-    // temp = new WPI_TalonFX(driveMotorAddress);
     turningCanCoder = new CANcoder(cancoderAddress);
     turningCanCoderConfigurator = turningCanCoder.getConfigurator();
     turningCanCoderPosition = turningCanCoder.getPosition();
     turningCanCoderVelocity = turningCanCoder.getVelocity();
+
+    // Setup CANCoder configuration
+    turningCanCoderConfig = new CANcoderConfiguration();			// Factory default configuration
+    turningCanCoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+    turningCanCoderConfig.MagnetSensor.SensorDirection = cancoderReversed ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;  //TODO Determine which direction is reversed
+
     // Configure the swerve module motors and encoders
     configSwerveModule();
 
@@ -148,44 +134,14 @@ public class SwerveModule {
   public void configSwerveModule() {
     // configure drive motors
     driveMotor.restoreFactoryDefaults();
-    driveMotor.setInverted(false);
-    // driveMotor.setIdleMode(IdleMode.kBrake);
-    driveMotor.setOpenLoopRampRate(0.05); //seconds from neutral to full
-    driveMotor.setClosedLoopRampRate(0.05); //seconds from neutral to full
+    driveMotor.setInverted(driveMotorInverted);
+    driveMotor.setIdleMode(IdleMode.kCoast);
+    driveMotor.setOpenLoopRampRate(0.00); //seconds from neutral to full
+    driveMotor.setClosedLoopRampRate(0.00); //seconds from neutral to full
+    driveMotor.setSmartCurrentLimit(80, 35);
+    driveMotor.enableVoltageCompensation(SwerveConstants.voltageCompSaturation);
 
-    // configure turning motors
-    turningMotor.restoreFactoryDefaults();
-    turningMotor.setInverted(true); // opposite to the drive motor
-    // turningMotor.setIdleMode(IdleMode.kBrake);
-    turningMotor.setOpenLoopRampRate(0.05); //seconds from neutral to full
-    turningMotor.setClosedLoopRampRate(0.05); //seconds from neutral to full
-
-    //configure drive motors
-    // driveMotor.configFactoryDefault(100);
-    // driveMotor.configAllSettings(CTREConfigs.swerveDriveFXConfig, 100);
-    // driveMotor.selectProfileSlot(0, 0);
-    // driveMotor.setInverted(false);
-    // driveMotor.enableVoltageCompensation(true);
-
-    // // configure turning motor
-    // turningMotor.configFactoryDefault(100);
-    // turningMotor.configAllSettings(CTREConfigs.swerveAngleFXConfig, 100);
-    // turningMotor.selectProfileSlot(0, 0);
-    // turningMotor.setInverted(true);
-    // turningMotor.enableVoltageCompensation(true);
-
-    // configure turning CanCoder
-    // Start with factory default CANCoder configuration
-    turningCanCoderConfig = new CANcoderConfiguration();			// Factory default configuration
-    turningCanCoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
-    turningCanCoderConfig.MagnetSensor.SensorDirection = cancoderReversed ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;  //TODO Determine which direction is reversed
-    // turningCanCoder.configFactoryDefault(100);
-    // turningCanCoder.configAllSettings(CTREConfigs.swerveCanCoderConfig, 100);
-    // turningCanCoder.configSensorDirection(cancoderReversed, 100);
-
-    drivePID = driveMotor.getPIDController();
-    driveEncoder = driveMotor.getEncoder();
-
+    // configure drive PID
     drivePID.setP(DrivingMotorPID.kP);
     drivePID.setI(DrivingMotorPID.kI);
     drivePID.setD(DrivingMotorPID.kD);
@@ -193,26 +149,26 @@ public class SwerveModule {
     drivePID.setFF(DrivingMotorPID.kFF);
     drivePID.setOutputRange(DrivingMotorPID.kMinOutput, DrivingMotorPID.kMaxOutput);
 
-    turningPID = turningMotor.getPIDController();
-    turningEncoder = turningMotor.getEncoder();
+    // configure turning motors
+    turningMotor.restoreFactoryDefaults();
+    turningMotor.setInverted(turningMotorInverted);
+    turningMotor.setIdleMode(IdleMode.kCoast);
+    turningMotor.setOpenLoopRampRate(0.1); //seconds from neutral to full
+    turningMotor.setClosedLoopRampRate(0.1); //seconds from neutral to full
+    driveMotor.setSmartCurrentLimit(40, 25);
+    driveMotor.enableVoltageCompensation(SwerveConstants.voltageCompSaturation);
 
+    // configure turning PID
     turningPID.setP(TurningMotorPID.kP);
     turningPID.setI(TurningMotorPID.kI);
     turningPID.setD(TurningMotorPID.kD);
     turningPID.setIZone(TurningMotorPID.kIz);
     turningPID.setFF(TurningMotorPID.kFF);
     turningPID.setOutputRange(TurningMotorPID.kMinOutput, TurningMotorPID.kMaxOutput);
-    
-    // configure drive encoder
-    // driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
-    // driveMotor.setSensorPhase(driveEncoderReversed);
-    //driveMotor.getEncoder().setInverted(driveEncoderReversed);
 
-    // configure turning TalonFX encoder
-    // turningMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
-    // turningMotor.setSensorPhase(turningEncoderReversed);
-    //turningMotor.getEncoder().setInverted(turningEncoderReversed);
-
+    // Apply configuration to the cancoder
+		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.
+    turningCanCoderConfigurator.apply(turningCanCoderConfig);
 
     // NOTE!!! When the Cancoder or TalonFX encoder settings are changed above, then the next call to 
     // getCanCoderDegrees() getTurningEncoderDegrees() may contain an old value, not the value based on 
@@ -233,6 +189,7 @@ public class SwerveModule {
   }
 
   /**
+   * Sets the swerve module in coast or brake mode.
    * @param setCoast true = coast mode, false = brake mode
    */
   public void setMotorModeCoast(boolean setCoast) {
@@ -301,7 +258,7 @@ public class SwerveModule {
     // Optimize the reference state to avoid spinning further than 90 degrees
     // Custom optimize command, since default WPILib optimize assumes continuous controller which CTRE is not
     desiredState =
-        CTRESwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getTurningEncoderDegrees()));
+        MathSwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getTurningEncoderDegrees()));
 
     // Set drive motor velocity or percent output
     if(isOpenLoop){
@@ -330,7 +287,7 @@ public class SwerveModule {
    * @return drive encoder position, in ticks
    */
   public double getDriveEncoderRaw() {
-    return driveMotor.getEncoder().getPosition();
+    return driveEncoder.getPosition();
   }
 
   /**
@@ -352,7 +309,7 @@ public class SwerveModule {
    * @return drive wheel velocity, in meters per second (+ = forward)
    */
   public double getDriveEncoderVelocity() {
-    return driveMotor.getEncoder().getPosition() * SwerveConstants.kDriveEncoderMetersPerRotation * 10.0;
+    return driveEncoder.getPosition() * SwerveConstants.kDriveEncoderMetersPerRotation * 10.0;
   }
 
   /**
@@ -371,7 +328,7 @@ public class SwerveModule {
    * @return turning TalonFx encoder position, in rotations
    */
   public double getTurningEncoderRaw() {
-    return turningMotor.getEncoder().getPosition();
+    return turningEncoder.getPosition();
   }
   
   /**
@@ -406,7 +363,7 @@ public class SwerveModule {
    * + = counterclockwise, - = clockwise
    */
   public double getTurningEncoderVelocityDPS() {
-    return turningMotor.getEncoder().getVelocity() * SwerveConstants.kTurningEncoderDegreesPerRotation * 10.0;
+    return turningEncoder.getVelocity() * SwerveConstants.kTurningEncoderDegreesPerRotation * 10.0;
   }
 
   // ******* Cancoder methods
@@ -482,11 +439,6 @@ public class SwerveModule {
    * Updates relevant variables on Shuffleboard
    */
   public void updateShuffleboard() {
-    if(swName.equals("FL")) {
-      SmartDashboard.putNumber("FL Pos", turningMotor.getEncoder().getPosition());
-      SmartDashboard.putNumber("FL Percent", driveMotor.get());
-    }
-
     SmartDashboard.putNumber(buildString("Swerve FXangle ", swName), MathBCR.normalizeAngle(getTurningEncoderDegrees()));
     SmartDashboard.putNumber(buildString("Swerve CCangle ", swName), getCanCoderDegrees());
     SmartDashboard.putNumber(buildString("Swerve FXangle dps", swName), getTurningEncoderVelocityDPS());
