@@ -190,6 +190,26 @@ public class Shooter extends SubsystemBase implements Loggable {
     setpointRPM = 0.0;
     feeder.setControl(motorVoltageControl.withOutput(feederPercent * ShooterConstants.compensationVoltage));
   }
+  
+  /**
+   * sets the percent of the motor, using voltage compensation if turned on
+   * @param percent percent for the shooter
+   */
+  public void setShooterMotorPercentOutput(double percent) {
+    // Percent output control does not exist; multiply compensationVoltage by percent
+    motor1.setControl(motorVoltageControl.withOutput(percent * ShooterConstants.compensationVoltage));
+    velocityControlOn = false;
+    setpointRPM = 0.0;
+  }
+
+  /**
+   * sets the percent of the motor, using voltage compensation if turned on
+   * @param percent percent for the feeder
+   */
+  public void setFeederMotorPercentOutput(double percent) {
+    // Percent output control does not exist; multiply compensationVoltage by percent
+    feeder.setControl(motorVoltageControl.withOutput(percent * ShooterConstants.compensationVoltage));
+  }
 
   /**
   * Stops the motor

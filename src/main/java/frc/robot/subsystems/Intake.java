@@ -22,6 +22,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.Loggable;
@@ -58,11 +59,11 @@ public class Intake extends SubsystemBase implements Loggable {
 	private final StatusSignal<Double> motorEncoderVelocity;	
 	private final StatusSignal<Double> motorVoltage;	
   
-  public Intake(int CANPort, String subsystemName, FileLog log) {
+  public Intake(String subsystemName, FileLog log) {
     this.log = log; // save reference to the fileLog
     this.subsystemName = subsystemName;
     //motor = new WPI_TalonFX(CANPort);
-    motor = new TalonFX(CANPort);
+    motor = new TalonFX(Constants.Ports.CANIntake);
 
     logRotationKey = log.allocateLogRotation();
 
