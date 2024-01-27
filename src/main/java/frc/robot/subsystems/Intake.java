@@ -77,7 +77,7 @@ public class Intake extends SubsystemBase implements Loggable {
     motorVoltage = motor.getMotorVoltage();
 
     motorConfig = new TalonFXConfiguration();			// Factory default configuration
-    motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
+    motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Don't invert motor
 		motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
     motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.0;
 		motorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
