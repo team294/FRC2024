@@ -33,6 +33,7 @@ import frc.robot.Constants.StopType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.utilities.TrajectoryCache.TrajectoryFacing;
@@ -97,6 +98,11 @@ public class RobotContainer {
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));
     SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(shooter, log));
+    SmartDashboard.putData("ShooterFeeder Stop", new ShooterFeederStop(shooter, log));
+    SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
+    SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, intake, log));
+
   }
 
   /**

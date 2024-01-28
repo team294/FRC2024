@@ -67,6 +67,9 @@ public final class Constants {
       public static final int CANFeeder = 15;
 
       public static final int CANIntake = 16;
+
+      public static final int DIOIntakePieceSensor = 0;
+
     }
 
     public static final class OIConstants {
@@ -137,10 +140,10 @@ public final class Constants {
       // Update the offset angles in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, set the wheels to zero degrees with the bevel gear facing to the right
-      public static double offsetAngleFrontLeftMotor = 0; // 92.3
-      public static double offsetAngleFrontRightMotor = 0; // -12.8
-      public static double offsetAngleBackLeftMotor = 0; // -107.6
-      public static double offsetAngleBackRightMotor = 0; // -170.2
+      public static double offsetAngleFrontLeftMotor = 0; // -72
+      public static double offsetAngleFrontRightMotor = 0; // -157
+      public static double offsetAngleBackLeftMotor = 0; // 44.5
+      public static double offsetAngleBackRightMotor = 0; // -82
 
         // Driving constants to cap acceleration
       public static final double maxAccelerationRate = 10.0;         // m/s^2
@@ -187,6 +190,11 @@ public final class Constants {
       public static final double kS = 0.004;
       public static final double kV = 0.000155;
       public static final double kA = 0.0;
+
+      public static final double shooterPercent = 0.25;
+
+      //Feeder Constants
+      public static final double feederPercent = 0.3;
     }
 
     public static final class TrajectoryConstants {
@@ -246,6 +254,8 @@ public final class Constants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
       public static final double ticksPerRevolution = 2048.0;                     // Divide by this to convert raw ticks to revolutions
       public static final double rawVelocityToRPM = 600.0 / ticksPerRevolution;   // Multiply by this to convert raw velocity (ticksPer100ms) to RPM
+
+      public static final double intakePercent = 0.3;
   }
 
 }

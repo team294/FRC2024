@@ -129,7 +129,7 @@ public class SwerveModule {
     turningCanCoderPosition = turningCanCoder.getPosition();
     turningCanCoderVelocity = turningCanCoder.getVelocity();
     // Configure the swerve module motors and encoders
-    configSwerveModule();
+    configSwerveModule(driveEncoderReversed, turningEncoderReversed);
 
     // other configs for drive and turning motors
     setMotorModeCoast(true);        // true on boot up, so robot is easy to push.  Change to false in autoinit or teleopinit
@@ -145,17 +145,17 @@ public class SwerveModule {
    * force the encoders to have the right calibration and settings, especially the
    * calibration angle for each swerve module.
    */
-  public void configSwerveModule() {
+  public void configSwerveModule(boolean driveEncoderReversed, boolean turningEncoderReversed) {
     // configure drive motors
     driveMotor.restoreFactoryDefaults();
-    driveMotor.setInverted(false);
+    driveMotor.setInverted(driveEncoderReversed);
     // driveMotor.setIdleMode(IdleMode.kBrake);
     driveMotor.setOpenLoopRampRate(0.05); //seconds from neutral to full
     driveMotor.setClosedLoopRampRate(0.05); //seconds from neutral to full
 
     // configure turning motors
     turningMotor.restoreFactoryDefaults();
-    turningMotor.setInverted(true); // opposite to the drive motor
+    turningMotor.setInverted(turningEncoderReversed); // opposite to the drive motor
     // turningMotor.setIdleMode(IdleMode.kBrake);
     turningMotor.setOpenLoopRampRate(0.05); //seconds from neutral to full
     turningMotor.setClosedLoopRampRate(0.05); //seconds from neutral to full
@@ -428,7 +428,7 @@ public class SwerveModule {
    * + = counterclockwise, - = clockwise
    */
   public double getCanCoderDegrees() {
-    return MathBCR.normalizeAngle(turningCanCoderPosition.refresh().getValueAsDouble() - cancoderZero);
+    return MathBCR.normalizeAngle(turningCanCoderPosition.refresh().getValueAsDouble()*360 - cancoderZero);
   }
 
   /**
@@ -436,7 +436,7 @@ public class SwerveModule {
    * + = counterclockwise, - = clockwise
    */
   public double getCanCoderVelocityDPS() {
-    return turningCanCoderVelocity.refresh().getValueAsDouble();
+    return turningCanCoderVelocity.refresh().getValueAsDouble()*360;
   }
 
 

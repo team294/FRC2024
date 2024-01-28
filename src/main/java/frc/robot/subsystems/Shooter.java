@@ -138,7 +138,7 @@ public class Shooter extends SubsystemBase implements Loggable {
 		feederConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     
     // Make motor2 follow motor1
-    motor2.setControl(new Follower(motor1.getDeviceID(), true)); // TODO: check OpposeMasterDirection works
+    motor2.setControl(new Follower(motor1.getDeviceID(), false)); // TODO: check OpposeMasterDirection works
 
     // Set the PID and stop the motor
     setPIDSVA(
@@ -336,6 +336,7 @@ public class Shooter extends SubsystemBase implements Loggable {
    * @param logWhenDisabled true = log when disabled, false = discard the string
    */
   public void updateLog(boolean logWhenDisabled) {
+    // Log shooter
     log.writeLog(
       logWhenDisabled,
       subsystemName,
@@ -353,6 +354,7 @@ public class Shooter extends SubsystemBase implements Loggable {
       "Measured RPM", measuredRPM,
       "Setpoint RPM", setpointRPM
     );
+    // Log feeder
     log.writeLog(
       logWhenDisabled,
       "Feeder",

@@ -85,17 +85,17 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
     // create swerve modules
     swerveFrontLeft = new SwerveModule("FL",
-      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, false, true,
+      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, true, false,
       false, offsetAngleFrontLeftMotor, log);
     swerveFrontRight = new SwerveModule("FR",
-      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, false, true,
+      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, true, false,
       false, offsetAngleFrontRightMotor, log);
     swerveBackLeft = new SwerveModule("BL",
       CANDriveBackLeftMotor, CANDriveTurnBackLeftMotor, CANTurnEncoderBackLeft, false, true,
-      false, offsetAngleBackLeftMotor, log);
+      true, offsetAngleBackLeftMotor, log);
     swerveBackRight = new SwerveModule("BR",
       CANDriveBackRightMotor, CANDriveTurnBackRightMotor, CANTurnEncoderBackRight, false, true,
-      false, offsetAngleBackRightMotor, log);
+      true, offsetAngleBackRightMotor, log);
 
     // configure navX gyro
     AHRS gyro = null;
@@ -223,10 +223,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    * <p> <b>Note</b> that this procedure includes multiple blocking calls and will delay robot code.
    */
   public void configureSwerveModules(){
-    swerveFrontLeft.configSwerveModule();
-    swerveFrontRight.configSwerveModule();
-    swerveBackLeft.configSwerveModule();
-    swerveBackRight.configSwerveModule();
+    swerveFrontLeft.configSwerveModule(true, false);
+    swerveFrontRight.configSwerveModule(true, false);
+    swerveBackLeft.configSwerveModule(false, true);
+    swerveBackRight.configSwerveModule(false, true);
   }
 
   /**
