@@ -20,10 +20,12 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.Ports;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.Loggable;
 import static frc.robot.utilities.StringUtil.*;
@@ -58,6 +60,9 @@ public class Intake extends SubsystemBase implements Loggable {
 	private final StatusSignal<Double> motorEncoderPosition;			// Encoder position, in pinion rotations
 	private final StatusSignal<Double> motorEncoderVelocity;	
 	private final StatusSignal<Double> motorVoltage;	
+
+  private final DigitalInput pieceSensor = new DigitalInput(Ports.DIOIntakePieceSensor);
+
   
   public Intake(String subsystemName, FileLog log) {
     this.log = log; // save reference to the fileLog
@@ -83,7 +88,7 @@ public class Intake extends SubsystemBase implements Loggable {
 		motorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     // set motor configuration
     // motor.configFactoryDefault();
-    motor.setInverted(false);
+    motor.setInverted(true);
     motor.setNeutralMode(NeutralModeValue.Brake);
     // motor.configPeakOutputForward(1.0);
     // motor.configPeakOutputReverse(-1.0);
@@ -197,6 +202,14 @@ public class Intake extends SubsystemBase implements Loggable {
       //DemandType.ArbitraryFeedForward, kS*Math.signum(setpointRPM) + kV*setpointRPM);
   }
 
+  /**
+   * 
+   * @return true if piece is in intake
+   */
+  public boolean isPiecePresent(){
+    return !pieceSensor.get();
+  }
+
 
 
   @Override
@@ -211,6 +224,7 @@ public class Intake extends SubsystemBase implements Loggable {
         SmartDashboard.putNumber(buildString(subsystemName, " Position Rev"), getMotorPosition());
         SmartDashboard.putNumber(buildString(subsystemName, " Velocity RPM"), measuredRPM);
         SmartDashboard.putNumber(buildString(subsystemName, " Temperature C"), motorTemp.refresh().getValueAsDouble());
+        SmartDashboard.putBoolean(buildString(subsystemName, " Is Piece Present"), isPiecePresent());
     }
   }
 

@@ -28,11 +28,16 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.Sequences.IntakePiece;
+import frc.robot.commands.Sequences.ShootPiece;
+import frc.robot.commands.Sequences.StopIntakeFeederShooter;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.utilities.TrajectoryCache.TrajectoryFacing;
@@ -97,6 +102,13 @@ public class RobotContainer {
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));
     SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(shooter, log));
+    SmartDashboard.putData("ShooterFeeder Stop", new ShooterFeederStop(shooter, log));
+    SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
+    SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, intake, log));
+    SmartDashboard.putData("Stop All Subsystems", new StopIntakeFeederShooter(intake, shooter, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, shooter, log));
+
   }
 
   /**
@@ -137,7 +149,11 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    
+    left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, intake, log));
+    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, log));
+
+    right[1].onTrue(new ShootPiece(shooter, intake, log));
+    right[2].onTrue(new IntakePiece(intake, shooter, log));
    
      
   }
