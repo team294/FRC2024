@@ -223,10 +223,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    * <p> <b>Note</b> that this procedure includes multiple blocking calls and will delay robot code.
    */
   public void configureSwerveModules(){
-    swerveFrontLeft.configSwerveModule(true, false);
-    swerveFrontRight.configSwerveModule(true, false);
-    swerveBackLeft.configSwerveModule(false, true);
-    swerveBackRight.configSwerveModule(false, true);
+    swerveFrontLeft.configSwerveModule();
+    swerveFrontRight.configSwerveModule();
+    swerveBackLeft.configSwerveModule();
+    swerveBackRight.configSwerveModule();
   }
 
   /**
