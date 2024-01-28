@@ -35,6 +35,7 @@ import frc.robot.Constants.StopType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.Sequences.IntakePiece;
 import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.commands.Sequences.StopIntakeFeederShooter;
 import frc.robot.subsystems.*;
@@ -105,6 +106,8 @@ public class RobotContainer {
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
     SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, intake, log));
+    SmartDashboard.putData("Stop All Subsystems", new StopIntakeFeederShooter(intake, shooter, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, shooter, log));
 
   }
 
@@ -149,13 +152,8 @@ public class RobotContainer {
     left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, intake, log));
     left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, log));
 
-    right[1].onTrue(new ShooterSetPercent(ShooterConstants.shooterPercent, shooter, log));
-    right[2].onTrue(
-      new SequentialCommandGroup(
-        new IntakeSetPercent(IntakeConstants.intakePercent, intake, log),
-        new FeederSetPercent(ShooterConstants.feederPercent, shooter, log)
-      )
-    );
+    right[1].onTrue(new ShootPiece(shooter, intake, log));
+    right[2].onTrue(new IntakePiece(intake, shooter, log));
    
      
   }
