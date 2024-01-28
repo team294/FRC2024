@@ -28,12 +28,15 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.Sequences.ShootPiece;
+import frc.robot.commands.Sequences.StopIntakeFeederShooter;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.utilities.TrajectoryCache.TrajectoryFacing;
@@ -143,7 +146,11 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    
+    left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, intake, log));
+    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, log));
+
+    right[1].onTrue(new ShooterSetPercent(ShooterConstants.shooterPercent, shooter, log));
+    right[2].onTrue(new FeederSetPercent(ShooterConstants.feederPercent, shooter, log));
    
      
   }
