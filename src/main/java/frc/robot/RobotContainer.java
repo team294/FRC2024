@@ -150,7 +150,12 @@ public class RobotContainer {
     left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, log));
 
     right[1].onTrue(new ShooterSetPercent(ShooterConstants.shooterPercent, shooter, log));
-    right[2].onTrue(new FeederSetPercent(ShooterConstants.feederPercent, shooter, log));
+    right[2].onTrue(
+      new SequentialCommandGroup(
+        new IntakeSetPercent(IntakeConstants.intakePercent, intake, log),
+        new FeederSetPercent(ShooterConstants.feederPercent, shooter, log)
+      )
+    );
    
      
   }
