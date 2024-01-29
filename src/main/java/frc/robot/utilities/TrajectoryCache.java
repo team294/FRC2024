@@ -1,0 +1,121 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.utilities;
+
+import java.util.List;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.SwerveConstants;
+
+/**
+ * Class that defines and caches all trajectories that the robot could run.
+ * Create one object instance of this class when the robot initializes to build the trajectories. 
+ */
+public class TrajectoryCache {
+    private FileLog log;
+   
+    private static int trajectoryCount = 0;
+    public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
+
+    public enum TrajectoryType {
+
+    }
+
+    /**
+     * A trajectory with initial and final facing for the robot
+     */
+    public static class TrajectoryFacing {
+        public final Rotation2d initialRotation, finalRotation;
+        public final Trajectory trajectory;
+
+        /**
+         * Creates a trajectory with initial and final robot facing (rotation).
+         * <p> Note that the trajectory by itself does *not* contain robot facings.  The Pose2d angles in the
+         * trajectory are the direction of the velocity vector.
+         * <p> This object adds initial and final facings for the trajectory.
+         * @param initialRotation Expected facing (rotation) of robot at beginning of trajectory
+         * @param finalRotation Desired facing (rotation) of robot at end of trajectory
+         * @param trajectory The trajectory
+         */
+        public TrajectoryFacing(Rotation2d initialRotation, Rotation2d finalRotation, Trajectory trajectory) {
+            this.initialRotation = initialRotation;
+            this.finalRotation = finalRotation;
+            this.trajectory = trajectory;
+        }
+
+        /**
+         * Returns the intial robot pose (position and facing) for the robot prior to running the trajectory
+         * @return initial Pose2d
+         */
+        public Pose2d getInitialPose() {
+            return new Pose2d( trajectory.getInitialPose().getTranslation(), initialRotation);
+        }
+    }
+
+    /**
+     * Build all trajectories in this.cache[] for trajectory-following commands.
+     * @param log
+     */
+    public TrajectoryCache(FileLog log){
+        this.log = log;
+
+       
+    }
+
+
+    /**
+     * Builds a single trajectory based on the parameters passed in:
+     * @param trajName name of the trajectory
+     * @param maxVelRatio maximum velocity multiplier between 0 and 1
+     * @param maxAccelRatio maximum acceleration multiplier between 0 and 1
+     * @param setReversed true = robot drives backwards, false = robot drives forwards
+     * @param startPose Pose2d starting position (coordinates and angle)
+     * @param interriorWaypoints List of Translation 2d waypoints (just coordinates)
+     * @param endPose Pose2d ending position (coordinates and angle)
+     * @return trajectory that is generated
+     */
+    private Trajectory calcTrajectory(String trajName, double maxVelRatio, double maxAccelRatio, 
+        boolean setReversed, Pose2d startPose, List<Translation2d> interriorWaypoints, Pose2d endPose) {
+		Trajectory trajectory = null;
+	
+    	try {
+
+			log.writeLogEcho(true, "TrajectoryGeneration", trajName, 
+				"maxSpeed", SwerveConstants.kFullSpeedMetersPerSecond * maxVelRatio,
+				"maxAcceleration", SwerveConstants.kFullAccelerationMetersPerSecondSquare * maxAccelRatio);
+
+			// Create config for trajectory
+            TrajectoryConfig config = new TrajectoryConfig(SwerveConstants.kFullSpeedMetersPerSecond * maxVelRatio,
+				SwerveConstants.kFullAccelerationMetersPerSecondSquare * maxAccelRatio)
+				.setKinematics(DriveConstants.kDriveKinematics)
+				.setReversed(setReversed);			// Set to true if robot is running backwards
+
+            // Generate the trajectory
+			trajectory = TrajectoryGenerator.generateTrajectory(
+				startPose, interriorWaypoints, endPose, config);
+
+			// debug logging
+			TrajectoryUtil.dumpTrajectory(trajectory, log);
+
+		} catch (Exception e) {
+			log.writeLogEcho(true, "TrajectoryGeneration", trajName, 
+				"ERROR in calcTrajectory", e.toString(),"exception",e);
+		}
+
+		if (trajectory != null) {
+			log.writeLogEcho(true, "TrajectoryGeneration", trajName, "SUCCESS", true);
+		};
+	
+		return trajectory;
+	}
+
+}
