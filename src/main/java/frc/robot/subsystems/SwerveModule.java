@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -265,7 +266,8 @@ public class SwerveModule {
       driveMotor.set(driveFeedforward.calculate(desiredState.speedMetersPerSecond));
     }
     else {
-      drivePID.setReference(calculateDriveEncoderVelocityRaw(desiredState.speedMetersPerSecond), CANSparkMax.ControlType.kVelocity); // TODO check to see if it works
+      drivePID.setReference(calculateDriveEncoderVelocityRaw(desiredState.speedMetersPerSecond), CANSparkMax.ControlType.kVelocity,
+            0, driveFeedforward.calculate(desiredState.speedMetersPerSecond)*SwerveConstants.voltageCompSaturation, ArbFFUnits.kVoltage); // TODO check to see if it works
       // driveMotor.set(ControlMode.Velocity, calculateDriveEncoderVelocityRaw(desiredState.speedMetersPerSecond), 
       //   DemandType.ArbitraryFeedForward, driveFeedforward.calculate(desiredState.speedMetersPerSecond));
     }

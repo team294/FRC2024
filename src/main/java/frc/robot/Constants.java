@@ -97,7 +97,7 @@ public final class Constants {
       public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.  Encoder counts per revolution of motor pinion gear
       public static final double kDriveGearRatio = (8.14 / 1.0);      // TODO NOT CALIBRATED.   Mk4i = 8.14:1 (L1-std gears).  Mk4i = 6.75:1 (L2-fast gears)
       public static final double kTurningGearRatio = (150.0/7.0 / 1.0); // CALIBRATED = 150.0/7.0.  Mk4i = 150/7 : 1
-      public static final double kWheelDiameterMeters = 0.09712;        // TODO NOT CALIBRATED
+      public static final double kWheelDiameterMeters = 0.1013;        // TODO Approximately CALIBRATED.  Was 0.09712
       // public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       // public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
       public static final double kDriveEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kDriveGearRatio;
@@ -156,7 +156,6 @@ public final class Constants {
       public static final double maxAccelerationRateBetweenScoreMidAndHigh = 6.0;        // m/s^2
       public static final double maxAccelerationRateWithElevatorUp = 1.5;           // m/s^2
       public static final double maxRotationRateWithElevatorUp = 0.8;     // rad/sec
-
 
       public static final double kPJoystickThetaController = 3; // Theta kp value for joystick in rad/sec
 

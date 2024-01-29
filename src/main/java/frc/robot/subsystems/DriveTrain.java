@@ -92,10 +92,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       false, offsetAngleFrontRightMotor, log);
     swerveBackLeft = new SwerveModule("BL",
       CANDriveBackLeftMotor, CANDriveTurnBackLeftMotor, CANTurnEncoderBackLeft, false, true,
-      true, offsetAngleBackLeftMotor, log);
+      false, offsetAngleBackLeftMotor, log);
     swerveBackRight = new SwerveModule("BR",
       CANDriveBackRightMotor, CANDriveTurnBackRightMotor, CANTurnEncoderBackRight, false, true,
-      true, offsetAngleBackRightMotor, log);
+      false, offsetAngleBackRightMotor, log);
 
     // configure navX gyro
     AHRS gyro = null;

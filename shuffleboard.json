@@ -948,6 +948,45 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "7,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ShooterFeeder Stop",
+              "_title": "ShooterFeeder Stop",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Stop All Subsystems",
+              "_title": "Stop All Subsystems",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Intake Piece",
+              "_title": "Intake Piece",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -1251,19 +1290,6 @@
               "_showGlyph": false
             }
           },
-          "11,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/Feeder Stop",
-              "_title": "/SmartDashboard/Feeder Stop",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "11,4": {
             "size": [
               1,
@@ -1273,6 +1299,19 @@
               "_type": "Command",
               "_source0": "network_table:///SmartDashboard/Intake Stop",
               "_title": "/SmartDashboard/Intake Stop",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ShooterFeeder Stop",
+              "_title": "SmartDashboard/ShooterFeeder Stop",
               "_glyph": 148,
               "_showGlyph": false
             }
