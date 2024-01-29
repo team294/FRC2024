@@ -178,14 +178,14 @@ public final class Constants {
 
     public static final class ShooterConstants {
       // TODO: add all necessary constants
-      public static final double compensationVoltage = 12.0; // TODO: check value
-      public static final double ticksPerRevolution = 2048.0; // TODO: check value
+      public static final double compensationVoltage = 12.0;
+      public static final double ticksPerRevolution = 2048.0;
       // PIDSVA
       public static final double kP = 0.02;
       public static final double kI = 0.005;
       public static final double kD = 0.0;
-      public static final double kS = 0.004;
-      public static final double kV = 0.000155;
+      public static final double kS = 0.125; // Was 0.004
+      public static final double kV = 0.129166; //Was 0.000155
       public static final double kA = 0.0;
     }
 

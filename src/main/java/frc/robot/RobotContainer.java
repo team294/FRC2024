@@ -97,6 +97,7 @@ public class RobotContainer {
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));
     SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(shooter, log));
+    SmartDashboard.putData("FeedForward Test", new FeedForwardTest(shooter, log));
   }
 
   /**
