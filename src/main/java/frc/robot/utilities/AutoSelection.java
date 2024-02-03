@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.struct.Rotation2dStruct;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +16,7 @@ import frc.robot.Constants.CoordType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.Sequences.IntakePiece;
 import frc.robot.subsystems.*;
 
 
@@ -24,6 +26,7 @@ import frc.robot.subsystems.*;
 public class AutoSelection {
 
 	public static final int NONE = 0;
+	public static final int PickUpFarNote=1;
 
 
 	private final AllianceSelection allianceSelection;
@@ -40,6 +43,7 @@ public class AutoSelection {
 
 		// auto selections
 		autoChooser.setDefaultOption("None", NONE);
+		autoChooser.addOption("PickUpFarNote", PickUpFarNote);
 		
 		
 
@@ -61,7 +65,7 @@ public class AutoSelection {
 	 * @return the command to run
 	 */
 
-	public Command getAutoCommand(DriveTrain driveTrain, FileLog log) {
+	public Command getAutoCommand(DriveTrain driveTrain, FileLog log, Intake intake,Shooter shooter, Pose2d goalPose) {
 		Command autonomousCommand = null;
 
 		// Get parameters from Shuffleboard
@@ -76,6 +80,20 @@ public class AutoSelection {
 			// Starting position = facing drivers
 			log.writeLogEcho(true, "AutoSelect", "run None");
 			autonomousCommand = new DriveResetPose(180, false, driveTrain, log);
+		}
+
+		if(autoPlan == PickUpFarNote){
+			log.writeLogEcho(true, "AutoSelect", "run PickUpFarNote");
+		
+			
+			new SequentialCommandGroup(
+				new WaitCommand(waitTime),
+				new DriveResetPose(driveTrain, log),
+				new DriveToPose(new Pose2d( 8.28 , 0.0, new Rotation2d(0.0)), driveTrain, log),
+				new IntakePiece(intake, shooter, log),
+				new DriveToPose(new Pose2d(0.0,0.0,new Rotation2d(0.0)),driveTrain, log)	
+			);
+
 		}
 
         if (autonomousCommand == null) {
