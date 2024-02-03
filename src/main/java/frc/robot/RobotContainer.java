@@ -187,7 +187,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelection.getAutoCommand(driveTrain, log);
+    return autoSelection.getAutoCommand(driveTrain, log, intake, shooter, new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)));
   }
 
 

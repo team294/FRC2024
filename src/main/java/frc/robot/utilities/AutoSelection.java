@@ -89,8 +89,10 @@ public class AutoSelection {
 			new SequentialCommandGroup(
 				new WaitCommand(waitTime),
 				new DriveResetPose(driveTrain, log),
-				new DriveToPose(new Pose2d( 8.28 , 0.0, new Rotation2d(0.0)), driveTrain, log),
-				new IntakePiece(intake, shooter, log),
+				new ParallelCommandGroup(
+					new DriveToPose(new Pose2d( 8.28 , 0.0, new Rotation2d(0.0)), driveTrain, log),
+					new IntakePiece(intake, shooter, log)
+				),
 				new DriveToPose(new Pose2d(0.0,0.0,new Rotation2d(0.0)),driveTrain, log)	
 			);
 
