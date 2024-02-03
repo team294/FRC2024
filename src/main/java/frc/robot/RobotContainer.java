@@ -108,7 +108,10 @@ public class RobotContainer {
     SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, intake, log));
     SmartDashboard.putData("Stop All Subsystems", new StopIntakeFeederShooter(intake, shooter, log));
     SmartDashboard.putData("Intake Piece", new IntakePiece(intake, shooter, log));
-
+    SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
+  
+    SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
+    SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
   }
 
   /**
