@@ -117,8 +117,16 @@ public class DriveWithJoysticksAdvance extends Command {
       // goalAngle = rightJoystick.getRawButtonPressed(1) ? 0 : goalAngle;
 
       // Calculates using the profiledPIDController what the next speed should be
+      SmartDashboard.putNumber("Goal Position", goalAngle);
+      SmartDashboard.putNumber("Get Position", driveTrain.getPose().getRotation().getRadians());
+      SmartDashboard.putNumber("Angle Error", goalAngle - driveTrain.getPose().getRotation().getRadians());
+      SmartDashboard.putBoolean("In Angle Deadband", Math.abs(goalAngle - driveTrain.getPose().getRotation().getRadians()) < Math.PI/180);
+      if(Math.abs(goalAngle - driveTrain.getPose().getRotation().getRadians()) > Math.PI/180){
         nextTurnRate = turnRateController.calculate(driveTrain.getPose().getRotation().getRadians(), goalAngle);
-
+      }
+      else{
+        nextTurnRate = 0;
+      }
         if(log.isMyLogRotation(logRotationKey)) {
           log.writeLog(false, "DriveWithJoystickAdvance", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", nextTurnRate, "Goal Angle", goalAngle);
         }
