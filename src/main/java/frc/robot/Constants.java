@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
 import frc.robot.utilities.TrapezoidProfileBCR;
 
 /**
@@ -69,6 +70,10 @@ public final class Constants {
       public static final int CANIntake = 16;
 
       public static final int DIOIntakePieceSensor = 0;
+
+    public static final int CANWristMotor = 0;
+
+    public static final DutyCycle DIOWristRevThroughBoreEncoder = null;
 
     }
 
@@ -253,6 +258,58 @@ public final class Constants {
         public static final String cameraName = "CenterCamera";
     }
 
+    public static final class WristConstants {
+      public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.  Encoder counts per revolution of FalconFX motor pinion gear
+        public static final double kWristGearRatio = (50.0 / 1.0);       // From CAD, should be 50:1.  Gear reduction ratio between Falcon and gear driving the wrist (planetary and chain gears)
+        public static final double kWristDegreesPerTick =  360.0 / kEncoderCPR / kWristGearRatio * 0.9726;      // CALIBRATED (fudge factor 0.9726)
+
+        public static final double voltageCompSaturation = 12.0;
+        public static final double maxUncalibratedPercentOutput = 0.05;     // CALIBRATED
+        public static final double maxPercentOutput = 0.1;          // CALIBRATED
+
+        // Update the REV through bore encoder offset angle in RobotPreferences (in Shuffleboard), not in this code!
+        // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
+        // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
+        // and -90 deg is with the CG of the wrist resting downward.
+        public static double revEncoderOffsetAngleWrist = 0;    // -49.0 deg (was 69.0 deg before changing wrist chain)
+
+        public static final double kP = 0.72;   // Calc 0.72 from 2023 CALIBRATED kP value (0.03).  kP = (desired-output-volts) / (error-in-encoder-rotations)
+        public static final double kG = 0.03;   // CALIBRATED 0.03.  Feed foward percent-out to add to hold arm horizontal (0 deg)
+
+        // Wrist regions
+        public enum WristRegion {
+            // backFar,        // In the wrist backFar region, the elevator must be in the bottom region (not allowed to go to elevator main or low regions).
+            // backMid,        // In the wrist backMid region, the elevator may be in any elevator region.
+            // down,           // Wrist pointed down, the elevator must be in the main region.
+            back,           // In the wrist back region, the elevator must be in the bottom region (not allowed to go to elevator main).
+            main,           // In the wrist main region, the elevator may be in any elevator region.
+            uncalibrated    // Unknown region, wrist is not calibrated
+        } 
+        // Wrist region boundaries
+        // public static final double boundBackFarMid = -119.0;      // Boundary between backFar and backMid regions.  CALIBRATED
+        // public static final double boundBackMidDown = -116.0;      // Boundary between backMid and down regions.  CALIBRATED
+        // public static final double boundDownMain = -91.0;      // Boundary between down and main regions.  CALIBRATED
+        // public static final double boundDownMidpoint = (boundBackMidDown+boundDownMain)/2.0;      // Midpoint in down region
+        public static final double boundBackMain = -120.0;      // Boundary between back and main regions.  CALIBRATED
+
+        // Wrist pre-defined angles (in degrees)
+        // 0 degrees = horizontal (in front of robot) relative to wrist center of gravity
+        // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
+        public enum WristAngle {
+            lowerLimit(-138.0),      // CALIBRATED
+            loadIntake(-135.0),    // CALIBRATED
+            startConfig(-115.0),     // CALIBRATED
+            loadHumanStation(10.0),      // CALIBRATED
+            scoreLow(0.0),
+            scoreMidHigh(20.0),         // Was 10.0
+            elevatorMoving(32.0),    // CALIBRATED
+            upperLimit(32.0);       // CALIBRATED
+            // score low 5 inches
+            @SuppressWarnings({"MemberName", "PMD.SingularField"})
+            public final double value;
+            WristAngle(double value) { this.value = value; }
+        }
+    }
     public static final class IntakeConstants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
       public static final double ticksPerRevolution = 2048.0;                     // Divide by this to convert raw ticks to revolutions
