@@ -86,12 +86,12 @@ public class AutoSelection {
 			log.writeLogEcho(true, "AutoSelect", "run PickUpFarNote");
 			autonomousCommand= new SequentialCommandGroup(
 				new WaitCommand(waitTime),
-				new DriveResetPose(driveTrain, log),
+				new DriveResetPose(new Pose2d(1.0, 1.21, Rotation2d.fromDegrees(0)), false ,driveTrain, log),
 				new ParallelCommandGroup(
-					new DriveToPose(new Pose2d( 4.35 , 0.0, new Rotation2d(0.0)), driveTrain, log),
+					new DriveToPose(new Pose2d( 8.28 , 1.21, new Rotation2d(0.0)), driveTrain, log),
 					new IntakePiece(intake, shooter, log)
 				),
-				new DriveToPose(new Pose2d(-.5,1.5,new Rotation2d(0.0)),driveTrain, log)	
+				new DriveToPose(new Pose2d(1.0,2.71,new Rotation2d(0.0)),driveTrain, log)	
 			);
 
 		}
