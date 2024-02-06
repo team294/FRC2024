@@ -95,9 +95,9 @@ public final class Constants {
     public static final class SwerveConstants {
         // Encoder calibration to meters travelled or wheel facing degrees
       public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.  Encoder counts per revolution of motor pinion gear
-      public static final double kDriveGearRatio = (8.14 / 1.0);      // TODO NOT CALIBRATED.   Mk4i = 8.14:1 (L1-std gears).  Mk4i = 6.75:1 (L2-fast gears)
+      public static final double kDriveGearRatio = (8.14 / 1.0);      // CALIBRATED.   Mk4i = 8.14:1 (L1-std gears).  Mk4i = 6.75:1 (L2-fast gears)
       public static final double kTurningGearRatio = (150.0/7.0 / 1.0); // CALIBRATED = 150.0/7.0.  Mk4i = 150/7 : 1
-      public static final double kWheelDiameterMeters = 0.1013;        // TODO Approximately CALIBRATED.  Was 0.09712
+      public static final double kWheelDiameterMeters = 0.1013; // CALIBRATED.
       // public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       // public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
       public static final double kDriveEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kDriveGearRatio;
@@ -121,10 +121,10 @@ public final class Constants {
       public static final double kNominalTurningRadiansPerSecond = Math.PI;
       public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 35.0;            // TODO NOT CALIBRATED
       public static final double kNominalAngularAccelerationRadiansPerSecondSquared = Math.PI;
-      public static final double kVDrive = 0.2034; // TODO NOT CALIBRATED.  In % output per meters per second.
+      public static final double kVDrive = 0.2634; // formerly 0.2034, then 0.27745, Calibrated In % output per meters per second.
       public static final double kADrive = 0.0;
-      public static final double kADriveToPose = 0.060;  // TODO NOT CALIBRATED.  In % output per meters per second squared.
-      public static final double kSDrive = 0.016; // TODO NOT CALIBRATED.  In % output.
+      public static final double kADriveToPose = 0.060;  // formerly 0.060 TODO NOT CALIBRATED.  In % output per meters per second squared.
+      public static final double kSDrive = 0.0255; // formerly 0.016, Calibrated In % output.
     }
 
     public static final class DriveConstants {
