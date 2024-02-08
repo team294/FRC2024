@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.StopType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.commands.*;
@@ -24,6 +25,7 @@ import frc.robot.subsystems.*;
 public class AutoSelection {
 
 	public static final int NONE = 0;
+	public static final int test = 1;
 
 
 	private final AllianceSelection allianceSelection;
@@ -76,6 +78,11 @@ public class AutoSelection {
 			// Starting position = facing drivers
 			log.writeLogEcho(true, "AutoSelect", "run None");
 			autonomousCommand = new DriveResetPose(180, false, driveTrain, log);
+		}
+
+		if(autoPlan == test){
+			log.writeLogEcho(true, "AutoSelect", "run Test");
+			autonomousCommand = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
 		}
 
         if (autonomousCommand == null) {

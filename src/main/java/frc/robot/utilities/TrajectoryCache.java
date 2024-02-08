@@ -23,11 +23,15 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 0;
+    private static int trajectoryCount = 1;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
+        test(0);
 
+        @SuppressWarnings({"MemberName", "PMD.SingularField"})
+        public final int value;
+        TrajectoryType(int value) { this.value = value; }
     }
 
     /**
@@ -67,8 +71,17 @@ public class TrajectoryCache {
      */
     public TrajectoryCache(FileLog log){
         this.log = log;
-
-       
+        cache[TrajectoryType.test.value] = new TrajectoryFacing(
+            new Rotation2d(0),
+            new Rotation2d(Math.PI/2),
+            calcTrajectory("Test", .4, .4, false,
+            new Pose2d(),
+            List.of(
+                new Translation2d(2, -1),
+                new Translation2d(3, -2)
+            ),
+            new Pose2d(1, -2.0, new Rotation2d(Math.toRadians(180)))
+            ));
     }
 
 
