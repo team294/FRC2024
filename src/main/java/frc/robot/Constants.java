@@ -187,12 +187,19 @@ public final class Constants {
       public static final double compensationVoltage = 12.0;
       public static final double ticksPerRevolution = 2048.0;
       // PIDSVA
-      public static final double kP = 0.02;
-      public static final double kI = 0.005;
+      public static final double kP = 0.5;
+      public static final double kI = 0.00;
       public static final double kD = 0.0;
-      public static final double kS = 0.004; // V; old: 0.004, new: 0.125
-      public static final double kV = 0.0; // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double kS = 0.061256; // V; old: 0.004, new: 0.125
+      public static final double kV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
       public static final double kA = 0.0;
+
+      /*
+        Volt  RPS 
+        0.77	5.9453125
+        1.41	11.41796875
+        2.06	16.814453125
+      */
 
 
       public static final double shooterPercent = 0.25;

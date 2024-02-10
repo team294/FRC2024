@@ -74,7 +74,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   private double shooterEncoderZero = 0.0;
   private double feederEncoderZero = 0.0;
   private double measuredRPM = 0.0;
-  private boolean fastLogging = false;
+  private boolean fastLogging = true;
   private int logRotationKey;
 
   /** Creates a new Shooter. */
