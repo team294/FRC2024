@@ -73,7 +73,7 @@ public class TrajectoryCache {
         this.log = log;
         cache[TrajectoryType.test.value] = new TrajectoryFacing(
             new Rotation2d(0),
-            new Rotation2d(0),
+            new Rotation2d(Math.PI/2),
             calcTrajectory("Test", .4, .4, false,
             new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))),
             List.of(
