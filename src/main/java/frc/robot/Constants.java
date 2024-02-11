@@ -246,6 +246,7 @@ public final class Constants {
     public static class VisionConstants {
       // PhotonVision
       public static class PhotonVisionConstants {
+        public static final int width = 1200;
         //TODO NEED TO CALIBRATE
         public static final Transform3d robotToCam =
                 new Transform3d(
@@ -258,8 +259,8 @@ public final class Constants {
         // JeVois
         public static class JeVoisConstants { 
           public static final int BAUD_RATE = 115200;
-          public static final int width = 320;
-          public static final int height = 240;
+          public static final int width = 352;
+          public static final int height = 288;
           public static final int fps = 30;
         }
     }
