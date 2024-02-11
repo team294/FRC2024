@@ -244,13 +244,24 @@ public final class Constants {
     }
 
     public static class VisionConstants {
-      //TODO NEED TO CALIBRATE
-      public static final Transform3d robotToCam =
+      // PhotonVision
+      public static class PhotonVisionConstants {
+        //TODO NEED TO CALIBRATE
+        public static final Transform3d robotToCam =
                 new Transform3d(
                     // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
                     new Translation3d(Units.inchesToMeters(0), 0, Units.inchesToMeters(0)),
                     new Rotation3d(0, Units.degreesToRadians(0), 0)); // Cam mounted facing forward in center of robot
         public static final String cameraName = "CenterCamera";
+      }
+
+        // JeVois
+        public static class JeVoisConstants { 
+          public static final int BAUD_RATE = 115200;
+          public static final int width = 320;
+          public static final int height = 240;
+          public static final int fps = 30;
+        }
     }
 
     public static final class IntakeConstants {

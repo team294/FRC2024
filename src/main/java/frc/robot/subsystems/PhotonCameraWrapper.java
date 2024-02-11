@@ -6,7 +6,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.VisionConstants;
+import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.FileLog;
 
@@ -19,6 +19,8 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonCameraWrapper extends SubsystemBase {
   public PhotonCamera photonCamera;
@@ -51,14 +53,14 @@ public class PhotonCameraWrapper extends SubsystemBase {
     currAlliance = allianceSelection.getAlliance();
 
     if (photonCamera == null) {
-      photonCamera = new PhotonCamera(VisionConstants.cameraName);
+      photonCamera = new PhotonCamera(PhotonVisionConstants.cameraName);
     }
 
 
     //  aprilTagFieldLayout = field.getAprilTagFieldLayout();
 
     try {
-      aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+      aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
       currAlliance = allianceSelection.getAlliance();
       switch (currAlliance) {
         case Blue:
@@ -82,7 +84,7 @@ public class PhotonCameraWrapper extends SubsystemBase {
       aprilTagFieldLayout,
       PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
       photonCamera,
-      VisionConstants.robotToCam);
+      PhotonVisionConstants.robotToCam);
       
     hasInit = true;
 
@@ -102,6 +104,20 @@ public class PhotonCameraWrapper extends SubsystemBase {
       init();
       log.writeLogEcho(true, "PhotonCameraWrapper", "UpdateAlliance", "Alliance changed", currAlliance);
     }
+
+    // if (fastLogging || log.isMyLogRotation(logRotationKey)) {
+    //   log.writeLog(false, "PhotonCameraWrapper", "Periodic", "");
+    // }
+  }
+
+  /**
+     * Returns the best target in this pipeline result. If there are no targets, this method will
+     * return null. The best target is determined by the target sort mode in the PhotonVision UI.
+     *
+     * @return The best target of the pipeline result.
+     */
+  PhotonTrackedTarget getLatestResult() {
+    return photonCamera.getLatestResult().getBestTarget();
   }
 
   /**
