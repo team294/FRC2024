@@ -29,6 +29,7 @@ import static frc.robot.Constants.Ports.*;
 import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Constants.FieldConstants;
 
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.utilities.*;
 
@@ -86,16 +87,16 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     // create swerve modules
     swerveFrontLeft = new SwerveModule("FL",
       CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, true, false,
-      false, offsetAngleFrontLeftMotor, log);
+      false, offsetAngleFrontLeftMotor, SwerveConstants.kVmFL, log);
     swerveFrontRight = new SwerveModule("FR",
       CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, true, false,
-      false, offsetAngleFrontRightMotor, log);
+      false, offsetAngleFrontRightMotor, SwerveConstants.kVmFR, log);
     swerveBackLeft = new SwerveModule("BL",
       CANDriveBackLeftMotor, CANDriveTurnBackLeftMotor, CANTurnEncoderBackLeft, false, true,
-      false, offsetAngleBackLeftMotor, log);
+      false, offsetAngleBackLeftMotor, SwerveConstants.kVmBL, log);
     swerveBackRight = new SwerveModule("BR",
       CANDriveBackRightMotor, CANDriveTurnBackRightMotor, CANTurnEncoderBackRight, false, true,
-      false, offsetAngleBackRightMotor, log);
+      false, offsetAngleBackRightMotor, SwerveConstants.kVmBR, log);
 
     // configure navX gyro
     AHRS gyro = null;
