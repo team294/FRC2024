@@ -102,6 +102,7 @@ public class RobotContainer {
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));
     SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(shooter, log));
+    SmartDashboard.putData("FeedForward Test", new ShooterCalibrationRamp(shooter, log));
     SmartDashboard.putData("ShooterFeeder Stop", new ShooterFeederStop(shooter, log));
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
@@ -112,6 +113,8 @@ public class RobotContainer {
   
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
+    SmartDashboard.putData("Shooter Set Velocity", new ShooterSetVelocity(shooter, log));
+    SmartDashboard.putData("Shooter Set Voltage", new ShooterSetVoltage(shooter, log));
   }
 
   /**
