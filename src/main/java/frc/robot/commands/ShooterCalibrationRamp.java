@@ -8,13 +8,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
 
-public class FeedForwardTest extends Command {
+public class ShooterCalibrationRamp extends Command {
   private final Shooter shooter;
   private final FileLog log;
 
   private double volts;
   /** Creates a new FeedForwardTest. */
-  public FeedForwardTest(Shooter shooter, FileLog log) {
+  public ShooterCalibrationRamp(Shooter shooter, FileLog log) {
     this.shooter = shooter;
     this.log = log;
 
