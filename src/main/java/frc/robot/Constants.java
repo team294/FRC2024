@@ -91,9 +91,9 @@ public final class Constants {
 
     public static final class RobotDimensions {
       //left to right distance between the drivetrain wheels; should be measured from center to center
-      public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.58721;      // TODO NOT CALIBRATED
+      public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.626;      // TODO check.  0.626m CALIBRATED.  80% bot CAD = 0.60325m
       //front-back distance between the drivetrain wheels; should be measured from center to center
-      public static final double DRIVETRAIN_WHEELBASE_METERS = 0.58721;       // TODO NOT CALIBRATED
+      public static final double DRIVETRAIN_WHEELBASE_METERS = 0.626;       // TODO check.  0.626m CALIBRATED.  80% bot CAD = 0.60325m
 
     }
 
