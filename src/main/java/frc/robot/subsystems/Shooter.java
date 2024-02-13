@@ -291,7 +291,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * @param velocity of shooter motor 1 in rpm
+   * @param velocity of shooter motor 1 in rps
    */
   public void setShooterVelocity(double rpm) { 
     velocityControlOn = true;
