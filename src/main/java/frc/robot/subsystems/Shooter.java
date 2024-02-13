@@ -76,7 +76,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   private double measuredRPM = 0.0;
   private boolean fastLogging = true;
   private int logRotationKey;
-
+  
   /** Creates a new Shooter. */
   public Shooter(FileLog log) {
     this.log = log;
@@ -104,13 +104,13 @@ public class Shooter extends SubsystemBase implements Loggable {
 		motor1Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     
     // Configure motor2
-    motor2Configurator = motor1.getConfigurator();
-    motor2SupplyVoltage = motor1.getSupplyVoltage();
-	  motor2Temp = motor1.getDeviceTemp();
-	  motor2DutyCycle = motor1.getDutyCycle();
-	  motor2StatorCurrent =motor1.getStatorCurrent();
-	  motor2EncoderPosition = motor1.getPosition();
-	  motor2EncoderVelocity = motor1.getVelocity();
+    motor2Configurator = motor2.getConfigurator();
+    motor2SupplyVoltage = motor2.getSupplyVoltage();
+	  motor2Temp = motor2.getDeviceTemp();
+	  motor2DutyCycle = motor2.getDutyCycle();
+	  motor2StatorCurrent =motor2.getStatorCurrent();
+	  motor2EncoderPosition = motor2.getPosition();
+	  motor2EncoderVelocity = motor2.getVelocity();
     motor2Voltage = motor2.getMotorVoltage();
     motor2Current = motor2.getSupplyCurrent();
 
@@ -121,15 +121,15 @@ public class Shooter extends SubsystemBase implements Loggable {
 		motor2Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
 
     // Configure feeder
-    feederConfigurator = motor1.getConfigurator();
-    feederSupplyVoltage = motor1.getSupplyVoltage();
-	  feederTemp = motor1.getDeviceTemp();
-	  feederDutyCycle = motor1.getDutyCycle();
-	  feederStatorCurrent =motor1.getStatorCurrent();
-	  feederEncoderPosition = motor1.getPosition();
-	  feederEncoderVelocity = motor1.getVelocity();
-    feederVoltage = motor2.getMotorVoltage();
-    feederCurrent = motor2.getSupplyCurrent();
+    feederConfigurator = feeder.getConfigurator();
+    feederSupplyVoltage = feeder.getSupplyVoltage();
+	  feederTemp = feeder.getDeviceTemp();
+	  feederDutyCycle = feeder.getDutyCycle();
+	  feederStatorCurrent =feeder.getStatorCurrent();
+	  feederEncoderPosition = feeder.getPosition();
+	  feederEncoderVelocity = feeder.getVelocity();
+    feederVoltage = feeder.getMotorVoltage();
+    feederCurrent = feeder.getSupplyCurrent();
 
     feederConfig = new TalonFXConfiguration();			// Factory default configuration
     feederConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
@@ -138,16 +138,28 @@ public class Shooter extends SubsystemBase implements Loggable {
 		feederConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     
     // Make motor2 follow motor1
-    motor2.setControl(new Follower(motor1.getDeviceID(), false)); // TODO: check OpposeMasterDirection works
+    // motor2.setControl(new Follower(motor1.getDeviceID(), false)); // TODO: check OpposeMasterDirection works
 
-    // Set the PID and stop the motor
+    // Set the PID and stop the motor 1
     setPIDSVA(
-      ShooterConstants.kP,
-      ShooterConstants.kI,
-      ShooterConstants.kD,
-      ShooterConstants.kS,
-      ShooterConstants.kV,
-      ShooterConstants.kA
+      ShooterConstants.Motor1kP,
+      ShooterConstants.Motor1kI,
+      ShooterConstants.Motor1kD,
+      ShooterConstants.Motor1kS,
+      ShooterConstants.Motor1kV,
+      ShooterConstants.Motor1kA,
+      ShooterConstants.Motor2kP,
+      ShooterConstants.Motor2kP,
+      ShooterConstants.Motor2kI,
+      ShooterConstants.Motor2kD,
+      ShooterConstants.Motor2kS,
+      ShooterConstants.Motor2kV,
+      ShooterConstants.Motor2kA,
+      ShooterConstants.FeederkP,
+      ShooterConstants.FeederkI,
+      ShooterConstants.FeederkD,
+      ShooterConstants.FeederkS,
+      ShooterConstants.FeederkV
     );
     stopMotor();
   }
@@ -238,29 +250,29 @@ public class Shooter extends SubsystemBase implements Loggable {
     return feederEncoderPosition.getValueAsDouble();
   }
 
-  /**
-   * Returns the shooter motor 1 position
-   * @return position of shooter motor in revolutions
-   */
-  public double getShooterPosition() {
-    return (getShooterPositionRaw() - shooterEncoderZero) / ShooterConstants.ticksPerRevolution;
-  }
+  // /**
+  //  * Returns the shooter motor 1 position
+  //  * @return position of shooter motor in revolutions
+  //  */
+  // public double getShooterPosition() {
+  //   return (getShooterPositionRaw() - shooterEncoderZero) / ShooterConstants.ticksPerRevolution;
+  // }
 
-  /**
-   * Returns the feeder motor position
-   * @return position of shooter motor in revolutions
-   */
-  public double getFeederPosition() {
-    return (getFeederPositionRaw() - feederEncoderZero) / ShooterConstants.ticksPerRevolution;
-  }
+  // /**
+  //  * Returns the feeder motor position
+  //  * @return position of shooter motor in revolutions
+  //  */
+  // public double getFeederPosition() {
+  //   return (getFeederPositionRaw() - feederEncoderZero) / ShooterConstants.ticksPerRevolution;
+  // }
 
-  /**
-	 * Zero the encoder position in software.
-	 */
-  public void zeroEncoder() {
-    shooterEncoderZero = getShooterPositionRaw();
-    feederEncoderZero = getFeederPositionRaw();
-  }
+  // /**
+	//  * Zero the encoder position in software.
+	//  */
+  // public void zeroEncoder() {
+  //   shooterEncoderZero = getShooterPositionRaw();
+  //   feederEncoderZero = getFeederPositionRaw();
+  // }
 
   /**
    * @return velocity of shooter motor 1 in rpm
@@ -281,10 +293,10 @@ public class Shooter extends SubsystemBase implements Loggable {
   /**
    * @param velocity of shooter motor 1 in rpm
    */
-  public void setShooterVelocity(double rpm) { // TODO: change from rpm to rps for .withVelocity
+  public void setShooterVelocity(double rpm) { 
     velocityControlOn = true;
     setpointRPM = rpm;
-    motor1.setControl(motorVelocityControl.withVelocity(rpm));
+    motor1.setControl(motorVelocityControl.withVelocity(rpm/60));
   }
 
   /**
@@ -295,22 +307,43 @@ public class Shooter extends SubsystemBase implements Loggable {
    * @param V
    * @param A
    */
-  public void setPIDSVA(double P, double I, double D, double S, double V, double A) {
+  public void setPIDSVA(double Motor1P, double Motor1I, double Motor1D, double Motor1S, double Motor1V, double Motor1A, double Motor2P, double Motor2I, double Motor2D, double Motor2S, double Motor2V, double Motor2A, double FeederP, double FeederI, double FeederD, double FeederS, double FeederV, double FeederA) {
     // Set PID coefficients
     motorVelocityControl.Slot = 0;
     motorVelocityControl.OverrideBrakeDurNeutral = true;
-    motor1Config.Slot0.kP = P;
-    motor1Config.Slot0.kI = I;
-    motor1Config.Slot0.kD = D;
-    motor1Config.Slot0.kV = V;
-    motor1Config.Slot0.kS = S;
+    motor1Config.Slot0.kP = Motor1P;
+    motor1Config.Slot0.kI = Motor1I;
+    motor1Config.Slot0.kD = Motor1D;
+    motor1Config.Slot0.kV = Motor1V;
+    motor1Config.Slot0.kS = Motor1S;
 
+    motor2Config.Slot0.kP = Motor2P;
+    motor2Config.Slot0.kI = Motor2I;
+    motor2Config.Slot0.kD = Motor2D;
+    motor2Config.Slot0.kV = Motor2V;
+    motor2Config.Slot0.kS = Motor2S;
+
+
+
+    feederConfig.Slot0.kP = FeederP;
+    feederConfig.Slot0.kP = FeederP;
+    feederConfig.Slot0.kP = FeederP;
+    feederConfig.Slot0.kP = FeederP;
+    feederConfig.Slot0.kP = FeederP;
+
+    // Apply configuration to the motor1.  
+		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
     motor1Configurator.apply(motor1Config);
+
+    motor2Configurator.apply(motor2Config);
+
+    feederConfigurator.apply(feederConfig);
     // motor1Feedforward = new SimpleMotorFeedforward(S, V, A);
     if (velocityControlOn) {
       // Reset velocity to force kS and kV updates to take effect
       setShooterVelocity(setpointRPM);
     }
+  
   }
 
   /**
@@ -329,7 +362,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     if (fastLogging || log.isMyLogRotation(logRotationKey)) {
       updateLog(false);
       SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Voltage"), motor1Voltage.refresh().getValueAsDouble());
-      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Position Rev"), getShooterPosition());
+     // SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Position Rev"), getShooterPosition());
       SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Velocity RPM"), measuredRPM);
       SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Temperature C"), motor1Temp.refresh().getValueAsDouble());
     }
@@ -354,7 +387,7 @@ public class Shooter extends SubsystemBase implements Loggable {
       "Amps 2", motor2Current.refresh().getValueAsDouble(),
       "Temperature 1", motor1Temp.refresh().getValueAsDouble(),
       "Temperature 2", motor2Temp.refresh().getValueAsDouble(),
-      "Position", getShooterPosition(),
+    //  "Position", getShooterPosition(),
       "Measured RPM", measuredRPM,
       "Setpoint RPM", setpointRPM
     );
@@ -367,8 +400,8 @@ public class Shooter extends SubsystemBase implements Loggable {
       "Out Percent 1", feederDutyCycle.refresh().getValueAsDouble(),
       "Volt 1", feederVoltage.refresh().getValueAsDouble(),
       "Amps 1", feederCurrent.refresh().getValueAsDouble(),
-      "Temperature 1", feederTemp.refresh().getValueAsDouble(),
-      "Position", getFeederPosition()
+      "Temperature 1", feederTemp.refresh().getValueAsDouble()
+     // "Position", getFeederPosition()
     );
   }
 

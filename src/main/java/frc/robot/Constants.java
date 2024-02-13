@@ -191,13 +191,30 @@ public final class Constants {
       // TODO: add all necessary constants
       public static final double compensationVoltage = 12.0;
       public static final double ticksPerRevolution = 2048.0;
-      // PIDSVA
-      public static final double kP = 0.5;
-      public static final double kI = 0.00;
-      public static final double kD = 0.0;
-      public static final double kS = 0.061256; // V; old: 0.004, new: 0.125
-      public static final double kV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
-      public static final double kA = 0.0;
+      // PIDSVA for Motor1
+      public static final double Motor1kP = 0.5;
+      public static final double Motor1kI = 0.00;
+      public static final double Motor1kD = 0.0;
+      public static final double Motor1kS = 0.061256; // V; old: 0.004, new: 0.125
+      public static final double Motor1kV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double Motor1kA = 0.0;
+      
+      //PIDSVA for Motor2
+      public static final double Motor2kP = 0.5;
+      public static final double Motor2kI = 0.00;
+      public static final double Motor2kD = 0.0;
+      public static final double Motor2kS = 0.061256; // V; old: 0.004, new: 0.125
+      public static final double Motor2kV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double Motor2kA = 0.0;
+      
+      //PIDSVA for Feeder
+      public static final double FeederkP = 0.5;
+      public static final double FeederkI = 0.00;
+      public static final double FeederkD = 0.0;
+      public static final double FeederkS = 0.061256; // V; old: 0.004, new: 0.125
+      public static final double FeederkV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double FeederkA = 0.0;
+
 
       /*
         Volt  RPS 
