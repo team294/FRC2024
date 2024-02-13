@@ -196,6 +196,8 @@ import edu.wpi.first.wpilibj.Timer;
             
             Transform3d bestPose =  target.getBestCameraToTarget();
             Transform3d altPose = target.getAlternateCameraToTarget();
+            
+            // These calculations were selected from error correction regressions
             Transform3d bestErrorCorrection = new Transform3d(
                 bestPose.getX()-(0.202688-0.0870173*bestPose.getX()+0.0444811*bestPose.getY()*bestPose.getY()-0.0509769*bestPose.getY()), 
                 bestPose.getY()+0.4, 
