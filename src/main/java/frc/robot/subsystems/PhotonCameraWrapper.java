@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.PhotonCameraBCR;
+import frc.robot.utilities.PhotonPoseEstimatorBCR;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -23,8 +25,8 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonCameraWrapper extends SubsystemBase {
-  public PhotonCamera photonCamera;
-  public PhotonPoseEstimator photonPoseEstimator;
+  public PhotonCameraBCR photonCamera;
+  public PhotonPoseEstimatorBCR photonPoseEstimator;
   private AprilTagFieldLayout aprilTagFieldLayout;
   private FileLog log;
   private boolean hasInit = false;
@@ -53,7 +55,7 @@ public class PhotonCameraWrapper extends SubsystemBase {
     currAlliance = allianceSelection.getAlliance();
 
     if (photonCamera == null) {
-      photonCamera = new PhotonCamera(PhotonVisionConstants.cameraName);
+      photonCamera = new PhotonCameraBCR(PhotonVisionConstants.cameraName);
     }
 
 
@@ -80,7 +82,7 @@ public class PhotonCameraWrapper extends SubsystemBase {
     }
     
     // Create pose estimator
-    photonPoseEstimator = new PhotonPoseEstimator(
+    photonPoseEstimator = new PhotonPoseEstimatorBCR(
       aprilTagFieldLayout,
       PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
       photonCamera,
