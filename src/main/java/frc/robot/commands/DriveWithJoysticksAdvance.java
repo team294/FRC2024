@@ -15,6 +15,7 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.FileLog;
+import java.lang.Math;
 
 
 public class DriveWithJoysticksAdvance extends Command {
@@ -29,6 +30,7 @@ public class DriveWithJoysticksAdvance extends Command {
   private double goalAngle;       // in radians
   private double startTime;
   private boolean firstCorrecting;
+  private boolean aimLock = true;
 
 
     /**
@@ -87,7 +89,7 @@ public class DriveWithJoysticksAdvance extends Command {
     // SmartDashboard.putNumber("Current Angle", driveTrain.getPose().getRotation().getRadians());
 
     // Uses profiled PID controller if the joystick is in the deadband
-    if(turnRate == 0){
+    if(turnRate == 0 || aimLock){
       if(firstInDeadband){
         // goalAngle = driveTrain.getPose().getRotation().getRadians();
         // goalAngle = MathUtil.angleModulus(goalAngle);
@@ -100,11 +102,14 @@ public class DriveWithJoysticksAdvance extends Command {
         if(firstCorrecting){
           firstCorrecting = false;
           driveTrain.enableFastLogging(false);
-          goalAngle = driveTrain.getPose().getRotation().getRadians();
+          goalAngle = aimLock ? Math.atan((driveTrain.getPose().getY() - 2.663)/driveTrain.getPose().getX()): driveTrain.getPose().getRotation().getRadians();
           goalAngle = MathUtil.angleModulus(goalAngle);
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
-
+        if(aimLock){
+          goalAngle = Math.atan((driveTrain.getPose().getY() - 2.663)/driveTrain.getPose().getX());
+          SmartDashboard.putNumber("Goal Angle", goalAngle);
+        }
       // When the right button on the right joystick is pressed then the robot turns pi radians(180 degrees)
       // This button works but it is currently used for other commands
       // if(rightJoystick.getRawButtonPressed(2)){

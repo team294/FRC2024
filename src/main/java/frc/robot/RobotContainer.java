@@ -80,7 +80,7 @@ public class RobotContainer {
 
     // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
     driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
-
+    driveTrain.cameraInit();
   }
 
   /**
@@ -239,6 +239,7 @@ public class RobotContainer {
    */
   public void disabledPeriodic() {
     // Check for CAN bus error.  This is to prevent the issue that caused us to be eliminated in 2020!
+    driveTrain.updateOdometry();
     if (driveTrain.canBusError()) {
       RobotPreferences.recordStickyFaults("CAN Bus", log);
     }  //    TODO May want to flash this to the driver with some obvious signal!
