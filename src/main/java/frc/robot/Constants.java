@@ -223,8 +223,9 @@ public final class Constants {
         2.06	16.814453125
       */
 
-
+      public static final double velocityErrorTolerance = 100;
       public static final double shooterPercent = 0.25;
+      public static final double shooterVelocity = 1500;
 
       //Feeder Constants
       public static final double feederPercent = 0.3;

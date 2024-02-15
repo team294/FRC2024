@@ -138,7 +138,7 @@ public class Shooter extends SubsystemBase implements Loggable {
 		feederConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     
     // Make motor2 follow motor1
-    // motor2.setControl(new Follower(motor1.getDeviceID(), false)); // TODO: check OpposeMasterDirection works
+    motor2.setControl(new Follower(motor1.getDeviceID(), false)); 
 
     // Set the PID and stop the motor 1
     setPIDSVA(
@@ -291,7 +291,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * @param velocity of shooter motor 1 in rps
+   * @param velocity of shooter motor 1 in rpm
    */
   public void setShooterVelocity(double rpm) { 
     velocityControlOn = true;

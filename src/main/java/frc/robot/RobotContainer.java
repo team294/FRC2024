@@ -38,6 +38,7 @@ import frc.robot.commands.*;
 import frc.robot.commands.Sequences.IntakePiece;
 import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.commands.Sequences.StopIntakeFeederShooter;
+import frc.robot.commands.ShooterSetVelocity.VelocityType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.utilities.TrajectoryCache.TrajectoryFacing;
@@ -113,8 +114,7 @@ public class RobotContainer {
   
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
-    SmartDashboard.putData("Shooter Set Velocity", new ShooterSetVelocity(shooter, log));
-    SmartDashboard.putData("Shooter Set Voltage", new ShooterSetVoltage(shooter, log));
+    SmartDashboard.putData("Shooter Set Velocity", new ShooterSetVelocity(VelocityType.immediatelyEnd, shooter, log));
   }
 
   /**
