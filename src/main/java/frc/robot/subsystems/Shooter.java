@@ -279,7 +279,7 @@ public class Shooter extends SubsystemBase implements Loggable {
    */
   public double getShooterVelocity() {
     motor1EncoderVelocity.refresh();
-    return motor1EncoderVelocity.getValueAsDouble();
+    return motor1EncoderVelocity.getValueAsDouble()*60;
   }
 
   /**
@@ -287,7 +287,7 @@ public class Shooter extends SubsystemBase implements Loggable {
    */
   public double getFeederVelocity() {
     feederEncoderVelocity.refresh();
-    return feederEncoderVelocity.getValueAsDouble();
+    return feederEncoderVelocity.getValueAsDouble()*60;
   }
 
   /**

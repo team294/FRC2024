@@ -155,7 +155,7 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, intake, log));
+    left[1].onTrue(new DriveResetPose(driveTrain, log));
     left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, log));
 
     right[1].onTrue(new ShootPiece(shooter, intake, log));
