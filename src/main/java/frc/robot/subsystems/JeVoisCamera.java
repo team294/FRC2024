@@ -12,7 +12,8 @@ import frc.robot.Constants.VisionConstants.JeVoisConstants;
 import frc.robot.utilities.FileLog;
 
 public class JeVoisCamera extends SubsystemBase {
-  private final SerialPort serialPort = new SerialPort(JeVoisConstants.BAUD_RATE, SerialPort.Port.kOnboard);
+  private SerialPort serialPort, serialPort1, serialPort2;
+  // private final SerialPort serialPort = new SerialPort(JeVoisConstants.BAUD_RATE, SerialPort.Port.kOnboard);
   private MjpegServer mjpegServer;
   private UsbCamera driveCamera;
   private FileLog log;
@@ -36,6 +37,26 @@ public class JeVoisCamera extends SubsystemBase {
     } catch (Throwable t) {
       t.printStackTrace();
       SmartDashboard.putString("CameraServer Throwable", t.toString());
+    }
+
+    serialPort = null;
+    // TODO Test if we need this or not. In 2020 WPIlib had issues with knowing which usb port was which
+    SmartDashboard.putString("Camera Port1", "OK");
+    try {
+      serialPort1 = new SerialPort(115200, SerialPort.Port.kUSB1);
+      serialPort = serialPort1;
+    } catch (Throwable t) {
+      t.printStackTrace();
+      SmartDashboard.putString("Camera Port1", t.toString());
+    }
+
+    SmartDashboard.putString("Camera Port2", "OK");
+    try {
+      serialPort2 = new SerialPort(115200, SerialPort.Port.kUSB2);
+      if (serialPort == null) serialPort = serialPort2;
+    } catch (Throwable t) {
+      t.printStackTrace();
+      SmartDashboard.putString("Camera Port2", t.toString());
     }
 
   }
