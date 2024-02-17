@@ -210,15 +210,6 @@ public class DriveToPose extends Command {
       feedbackChooser.addOption("None", FEEDBACK_NONE);
       SmartDashboard.putData("DriveToPose Feedback", feedbackChooser);
     // }
-    if(SmartDashboard.getNumber("DrivetoPose Trap Vel", -9999) == -9999) {
-      SmartDashboard.putNumber("DrivetoPose Trap Vel", 0);
-    }
-    if(SmartDashboard.getNumber("DrivetoPose Trap VelkA", -9999) == -9999) {
-      SmartDashboard.putNumber("DrivetoPose Trap VelkA", 0);
-    }
-    if(SmartDashboard.getNumber("DrivetoPose Robot Vel", -9999) == -9999) {
-      SmartDashboard.putNumber("DrivetoPose Robot Vel", 0);
-    }
   }
 
   /**
@@ -362,12 +353,6 @@ public class DriveToPose extends Command {
         "Robot rot", robotPose.getRotation().getDegrees(),
         "Pitch", driveTrain.getGyroPitch()
     );
-
-    if (goalMode==GoalMode.shuffleboard) {
-      SmartDashboard.putNumber("DrivetoPose Trap Vel", desiredState.velocity);
-      SmartDashboard.putNumber("DrivetoPose Trap VelkA", desiredVelocityMetersPerSecond);
-      SmartDashboard.putNumber("DrivetoPose Robot Vel", Math.hypot(robotSpeeds.vyMetersPerSecond, robotSpeeds.vxMetersPerSecond));
-    }
   }
 
   // Called once the command ends or is interrupted.
