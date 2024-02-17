@@ -19,6 +19,8 @@ public class JeVoisCamera extends SubsystemBase {
   private int logRotationKey;
   private boolean fastLogging = false;
 
+  private int centX, centY;
+
   public JeVoisCamera(FileLog log, int logRotationKey) {
     this.log = log;
     this.logRotationKey = logRotationKey;
@@ -38,6 +40,13 @@ public class JeVoisCamera extends SubsystemBase {
 
   }
 
+  public int getClosestTargetX() {
+    return centX;
+  }
+  public int getClosestTargetY() {
+    return centY;
+  }
+
   /**
    * Turns file logging on every scheduler cycle (~20ms) or every 10 cycles (~0.2 sec)
    * @param enabled true = every cycle, false = every 10 cycles
@@ -51,8 +60,8 @@ public class JeVoisCamera extends SubsystemBase {
 
     if(curr.length() >=15 && curr.indexOf("x") == 0){
         curr = curr.substring(0, 15);
-        // int centX = Integer.parseInt(curr.substring(4, 7));
-        // int centY = Integer.parseInt(curr.substring(12, 15));
+        centX = Integer.parseInt(curr.substring(4, 7));
+        centY = Integer.parseInt(curr.substring(12, 15));
     }
     if(fastLogging || log.isMyLogRotation(logRotationKey)) {
       // TODO write log
