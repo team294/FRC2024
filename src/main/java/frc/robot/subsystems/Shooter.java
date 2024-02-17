@@ -70,10 +70,12 @@ public class Shooter extends SubsystemBase implements Loggable {
   private VelocityVoltage motorVelocityControl = new VelocityVoltage(0.0).withSlot(0);
 
   private boolean velocityControlOn;
-  private double setpointRPM;
+  private double setpointRPM1;
+  private double setpointRPM2;
   private double shooterEncoderZero = 0.0;
   private double feederEncoderZero = 0.0;
-  private double measuredRPM = 0.0;
+  private double measuredRPM1 = 0.0;
+  private double measuredRPM2 = 0.0;
   private boolean fastLogging = true;
   private int logRotationKey;
   
@@ -138,7 +140,7 @@ public class Shooter extends SubsystemBase implements Loggable {
 		feederConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     
     // Make motor2 follow motor1
-    motor2.setControl(new Follower(motor1.getDeviceID(), false)); 
+    //motor2.setControl(new Follower(motor1.getDeviceID(), false)); 
 
     // Set the PID and stop the motor 1
     setPIDSVA(
@@ -182,12 +184,36 @@ public class Shooter extends SubsystemBase implements Loggable {
 	 * <p>NOTE: This function *must* be called regularly in order for voltage compensation to work
 	 * properly - unlike the ordinary set function, it is not "set it and forget it."
 	 *
-   * @param voltage voltage
+   * @param voltage voltage for both motors
    */
   public void setVoltage(double voltage) {
     motor1.setVoltage(voltage);
+    motor2.setVoltage(voltage);
     velocityControlOn = false;
-    setpointRPM = 0.0;
+    setpointRPM1 = 0.0;
+    setpointRPM2 = 0.0;
+  }
+
+  /**
+   * Sets the voltage of the motor
+   * 
+   * <p> Compensates for the current bus
+	 * voltage to ensure that the desired voltage is output even if the battery voltage is below
+	 * 12V - highly useful when the voltage outputs are "meaningful" (e.g. they come from a
+	 * feedforward calculation).
+	 *
+	 * <p>NOTE: This function *must* be called regularly in order for voltage compensation to work
+	 * properly - unlike the ordinary set function, it is not "set it and forget it."
+	 *
+   * @param voltage1 voltage for motor1
+   * @param voltage2 voltage for motor2
+   */
+  public void setVoltage(double voltage1, double voltage2) {
+    motor1.setVoltage(voltage1);
+    motor2.setVoltage(voltage2);
+    velocityControlOn = false;
+    setpointRPM1 = 0.0;
+    setpointRPM2 = 0.0;
   }
 
   /**
@@ -198,8 +224,26 @@ public class Shooter extends SubsystemBase implements Loggable {
   public void setMotorPercentOutput(double shooterPercent, double feederPercent) {
     // Percent output control does not exist; multiply compensationVoltage by percent
     motor1.setControl(motorVoltageControl.withOutput(shooterPercent * ShooterConstants.compensationVoltage));
+    motor2.setControl(motorVoltageControl.withOutput(shooterPercent * ShooterConstants.compensationVoltage));
     velocityControlOn = false;
-    setpointRPM = 0.0;
+    setpointRPM1 = 0.0;
+    setpointRPM2 = 0.0;
+    feeder.setControl(motorVoltageControl.withOutput(feederPercent * ShooterConstants.compensationVoltage));
+  }
+
+  /**
+   * sets the percent of the motor, using voltage compensation if turned on
+   * @param shooter1Percent percent for the shooter motor 1
+   * @param shooter2Percent percent for the shooter motor 2
+   * @param feederPercent percent for the feeder
+   */
+  public void setMotorPercentOutput(double shooter1Percent, double shooter2Percent, double feederPercent) {
+    // Percent output control does not exist; multiply compensationVoltage by percent
+    motor1.setControl(motorVoltageControl.withOutput(shooter1Percent * ShooterConstants.compensationVoltage));
+    motor2.setControl(motorVoltageControl.withOutput(shooter2Percent * ShooterConstants.compensationVoltage));
+    velocityControlOn = false;
+    setpointRPM1 = 0.0;
+    setpointRPM2 = 0.0;
     feeder.setControl(motorVoltageControl.withOutput(feederPercent * ShooterConstants.compensationVoltage));
   }
   
@@ -210,8 +254,24 @@ public class Shooter extends SubsystemBase implements Loggable {
   public void setShooterMotorPercentOutput(double percent) {
     // Percent output control does not exist; multiply compensationVoltage by percent
     motor1.setControl(motorVoltageControl.withOutput(percent * ShooterConstants.compensationVoltage));
+    motor2.setControl(motorVoltageControl.withOutput(percent * ShooterConstants.compensationVoltage));
     velocityControlOn = false;
-    setpointRPM = 0.0;
+    setpointRPM1 = 0.0;
+    setpointRPM2 = 0.0;
+  }
+
+  /**
+   * sets the percent of the motor, using voltage compensation if turned on
+   * @param percent1 percent for the shooter motor 1
+   * @param percent2 percent for the shooter motor 2
+   */
+  public void setShooterMotorPercentOutput(double percent1, double percent2) {
+    // Percent output control does not exist; multiply compensationVoltage by percent
+    motor1.setControl(motorVoltageControl.withOutput(percent1 * ShooterConstants.compensationVoltage));
+    motor2.setControl(motorVoltageControl.withOutput(percent2 * ShooterConstants.compensationVoltage));
+    velocityControlOn = false;
+    setpointRPM1 = 0.0;
+    setpointRPM2 = 0.0;
   }
 
   /**
@@ -229,16 +289,26 @@ public class Shooter extends SubsystemBase implements Loggable {
   public void stopMotor() {
     setMotorPercentOutput(0.0, 0.0);
     velocityControlOn = false;
-    setpointRPM = 0.0;
+    setpointRPM1 = 0.0;
+    setpointRPM2 = 0.0;
   }
 
   /**
    * Returns the shooter motor 1 position
    * @return position of shooter motor in raw units, without software zeroing
    */
-  public double getShooterPositionRaw() {
+  public double getShooter1PositionRaw() {
     motor1EncoderPosition.refresh();
     return motor1EncoderPosition.getValueAsDouble();
+  }
+
+  /**
+   * Returns the shooter motor 2 position
+   * @return position of shooter motor in raw units, without software zeroing
+   */
+  public double getShooter2PositionRaw() {
+    motor2EncoderPosition.refresh();
+    return motor2EncoderPosition.getValueAsDouble();
   }
 
   /**
@@ -277,9 +347,17 @@ public class Shooter extends SubsystemBase implements Loggable {
   /**
    * @return velocity of shooter motor 1 in rpm
    */
-  public double getShooterVelocity() {
+  public double getShooter1Velocity() {
     motor1EncoderVelocity.refresh();
     return motor1EncoderVelocity.getValueAsDouble()*60;
+  }
+
+  /**
+   * @return velocity of shooter motor 2 in rpm
+   */
+  public double getShooter2Velocity() {
+    motor2EncoderVelocity.refresh();
+    return motor2EncoderVelocity.getValueAsDouble()*60;
   }
 
   /**
@@ -291,21 +369,47 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * @param velocity of shooter motor 1 in rpm
+   * @param rpm velocity of shooter motors in rpm
    */
   public void setShooterVelocity(double rpm) { 
     velocityControlOn = true;
-    setpointRPM = rpm;
+    setpointRPM1 = rpm;
+    setpointRPM2 = rpm;
     motor1.setControl(motorVelocityControl.withVelocity(rpm/60));
+    motor2.setControl(motorVelocityControl.withVelocity(rpm/60));
   }
 
   /**
-   * @param P
-   * @param I
-   * @param D
-   * @param S
-   * @param V
-   * @param A
+   * @param rpm1 velocity of shooter motor 1 in rpm
+   * @param rpm2 velocity of shooter motor 2 in rpm
+   */
+  public void setShooterVelocity(double rpm1, double rpm2) { 
+    velocityControlOn = true;
+    setpointRPM1 = rpm1;
+    setpointRPM2 = rpm2;
+    motor1.setControl(motorVelocityControl.withVelocity(rpm1/60));
+    motor2.setControl(motorVelocityControl.withVelocity(rpm2/60));
+  }
+
+  /**
+   * @param Motor1P the P value for Motor 1
+   * @param Motor1I the I value for Motor 1
+   * @param Motor1D the D value for Motor 1
+   * @param Motor1S the S value for Motor 1
+   * @param Motor1V the V value for Motor 1
+   * @param Motor1A the A value for Motor 1
+   * @param Motor2P the P value for Motor 2
+   * @param Motor2I the I value for Motor 2
+   * @param Motor2D the D value for Motor 2
+   * @param Motor2S the S value for Motor 2
+   * @param Motor2V the V value for Motor 2
+   * @param Motor2A the A value for Motor 2
+   * @param FeederP the P value for the Feeder
+   * @param FeederI the I value for the Feeder
+   * @param FeederD the D value for the Feeder
+   * @param FeederS the S value for the Feeder
+   * @param FeederV the V value for the Feeder
+   * @param FeederA the A value for the Feeder
    */
   public void setPIDSVA(double Motor1P, double Motor1I, double Motor1D, double Motor1S, double Motor1V, double Motor1A, double Motor2P, double Motor2I, double Motor2D, double Motor2S, double Motor2V, double Motor2A, double FeederP, double FeederI, double FeederD, double FeederS, double FeederV, double FeederA) {
     // Set PID coefficients
@@ -323,47 +427,52 @@ public class Shooter extends SubsystemBase implements Loggable {
     motor2Config.Slot0.kV = Motor2V;
     motor2Config.Slot0.kS = Motor2S;
 
-
-
     feederConfig.Slot0.kP = FeederP;
     feederConfig.Slot0.kP = FeederP;
     feederConfig.Slot0.kP = FeederP;
     feederConfig.Slot0.kP = FeederP;
     feederConfig.Slot0.kP = FeederP;
 
-    // Apply configuration to the motor1.  
+    // Apply configuration to the motors.  
 		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
     motor1Configurator.apply(motor1Config);
-
     motor2Configurator.apply(motor2Config);
-
     feederConfigurator.apply(feederConfig);
     // motor1Feedforward = new SimpleMotorFeedforward(S, V, A);
     if (velocityControlOn) {
       // Reset velocity to force kS and kV updates to take effect
-      setShooterVelocity(setpointRPM);
+      setShooterVelocity(setpointRPM1, setpointRPM2);
     }
   
   }
 
   /**
-   * @return difference between measured RPM and set point RPM
+   * @return difference between measured RPM and set point RPM for shooter motor 1
    */
-  public double getVelocityPIDError() {
-    return measuredRPM - setpointRPM;
+  public double getVelocity1PIDError() {
+    return measuredRPM1 - setpointRPM1;
+  }
+
+  /**
+   * @return difference between measured RPM and set point RPM for shooter motor 2
+   */
+  public double getVelocity2PIDError() {
+    return measuredRPM2 - setpointRPM2;
   }
 
   @Override
   public void periodic() {
     // Update the measured RPM
-    measuredRPM = getShooterVelocity();
+    measuredRPM1 = getShooter1Velocity();
+    measuredRPM2 = getShooter2Velocity();
 
     // Log
     if (fastLogging || log.isMyLogRotation(logRotationKey)) {
       updateLog(false);
       SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Voltage"), motor1Voltage.refresh().getValueAsDouble());
      // SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Position Rev"), getShooterPosition());
-      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Velocity RPM"), measuredRPM);
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Velocity 1 RPM"), measuredRPM1);
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Velocity 2 RPM"), measuredRPM2);
       SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Temperature C"), motor1Temp.refresh().getValueAsDouble());
     }
   }
@@ -388,8 +497,10 @@ public class Shooter extends SubsystemBase implements Loggable {
       "Temperature 1", motor1Temp.refresh().getValueAsDouble(),
       "Temperature 2", motor2Temp.refresh().getValueAsDouble(),
     //  "Position", getShooterPosition(),
-      "Measured RPM", measuredRPM,
-      "Setpoint RPM", setpointRPM
+      "Measured RPM 1", measuredRPM1,
+      "Measured RPM 2", measuredRPM2,
+      "Setpoint RPM 1", setpointRPM1,
+      "Setpoint RPM 2", setpointRPM2
     );
     // Log feeder
     log.writeLog(

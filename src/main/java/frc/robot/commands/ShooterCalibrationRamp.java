@@ -32,7 +32,7 @@ public class ShooterCalibrationRamp extends Command {
   public void execute() {
     log.writeLog(false, shooter.getName(), "Increasing motor voltage",
       "Volts", volts,
-      "Velocity", shooter.getShooterVelocity()
+      "Velocity", shooter.getShooter1Velocity()
     );
     shooter.setVoltage(volts);
     // Every 20ms, increase volts by 0.01
