@@ -30,7 +30,7 @@ public class DriveWithJoysticksAdvance extends Command {
   private double goalAngle;       // in radians
   private double startTime;
   private boolean firstCorrecting;
-  private boolean aimLock = true;
+  private boolean aimLock = false;
 
 
     /**
@@ -70,6 +70,8 @@ public class DriveWithJoysticksAdvance extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    aimLock = driveTrain.isAimLockEnabled();
 
     fwdVelocity = -leftJoystick.getY();
     leftVelocity = -leftJoystick.getX();

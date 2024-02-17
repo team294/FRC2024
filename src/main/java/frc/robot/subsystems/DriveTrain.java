@@ -66,6 +66,9 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   // variable to store vision camera
   private PhotonCameraWrapper camera;
 
+  // variable for vison-based aiming in DriveWithJoysticksAdvance
+  private boolean aimLock = false;
+
   // Odometry class for tracking robot pose
   private final SwerveDrivePoseEstimator poseEstimator; 
   private final Field2d field = new Field2d();    // Field to dispaly on Shuffleboard
@@ -556,6 +559,18 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   public void cameraInit() {
     camera.init();
+  }
+
+  public void setAimLock(boolean state) {
+    aimLock = state;
+  }
+
+  public void toggleAimLock() {
+    aimLock = !aimLock;
+  }
+
+  public boolean isAimLockEnabled(){
+    return aimLock;
   }
 
 }
