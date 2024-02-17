@@ -370,7 +370,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     SwerveModuleState[] swerveModuleStates =
         kDriveKinematics.toSwerveModuleStates(
             fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getGyroRotation())) // TODO change rotation pose estimator rotation?
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose().getRotation())
                 : new ChassisSpeeds(xSpeed, ySpeed, rot),
             centerOfRotationMeters);
 
