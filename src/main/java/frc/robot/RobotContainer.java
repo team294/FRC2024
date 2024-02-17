@@ -156,6 +156,7 @@ public class RobotContainer {
     left[1].onTrue(new SetAimLock(driveTrain, true, log));
     left[1].onFalse(new SetAimLock(driveTrain, false, log));
     left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, log));
+    
     right[1].onTrue(new ShootPiece(shooter, intake, log));
     right[2].onTrue(new IntakePiece(intake, shooter, log));
    
