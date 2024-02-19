@@ -121,10 +121,15 @@ public final class Constants {
       public static final double kNominalTurningRadiansPerSecond = Math.PI;
       public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 35.0;            // TODO NOT CALIBRATED
       public static final double kNominalAngularAccelerationRadiansPerSecondSquared = Math.PI;
-      public static final double kVDrive = 0.2634; // formerly 0.2034, then 0.27745, Calibrated In % output per meters per second.
+      public static final double kVDriveAvg = 0.2712; // formerly 0.27745, then calibrated to 0.2634, Calibrated In % output per meters per second.
+      public static final double kVmFL = 0.9884;      // kV modifier for FL drive motor
+      public static final double kVmFR = 1.0101;      // kV modifier for FR drive motor
+      public static final double kVmBL = 0.9799;      // kV modifier for BL drive motor
+      public static final double kVmBR = 1.0216;      // kV modifier for BR drive motor
+
       public static final double kADrive = 0.0;
       public static final double kADriveToPose = 0.060;  // formerly 0.060 TODO NOT CALIBRATED.  In % output per meters per second squared.
-      public static final double kSDrive = 0.0255; // formerly 0.016, Calibrated In % output.
+      public static final double kSDrive = 0.0266; // formerly 0.0255, Calibrated In % output.
     }
 
     public static final class DriveConstants {
@@ -184,15 +189,23 @@ public final class Constants {
 
     public static final class ShooterConstants {
       // TODO: add all necessary constants
-      public static final double compensationVoltage = 12.0; // TODO: check value
-      public static final double ticksPerRevolution = 2048.0; // TODO: check value
+      public static final double compensationVoltage = 12.0;
+      public static final double ticksPerRevolution = 2048.0;
       // PIDSVA
-      public static final double kP = 0.02;
-      public static final double kI = 0.005;
+      public static final double kP = 0.5;
+      public static final double kI = 0.00;
       public static final double kD = 0.0;
-      public static final double kS = 0.004;
-      public static final double kV = 0.000155;
+      public static final double kS = 0.061256; // V; old: 0.004, new: 0.125
+      public static final double kV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
       public static final double kA = 0.0;
+
+      /*
+        Volt  RPS 
+        0.77	5.9453125
+        1.41	11.41796875
+        2.06	16.814453125
+      */
+
 
       public static final double shooterPercent = 0.25;
 

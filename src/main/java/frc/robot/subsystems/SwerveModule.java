@@ -66,10 +66,7 @@ public class SwerveModule {
   private double cancoderZero = 0;          // Reference raw encoder reading for CanCoder.  Calibration sets this to the absolute position from RobotPreferences.
   private double turningEncoderZero = 0;    // Reference raw encoder reading for turning motor encoder.  Calibration sets this to match the CanCoder.
 
-
-  private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(SwerveConstants.kSDrive, SwerveConstants.kVDrive, SwerveConstants.kADrive);
-  // private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(SwerveConstants.kSTurn, SwerveConstants.kVTurn);
-  
+  private final SimpleMotorFeedforward driveFeedforward;
 
   /**
    * Constructs a SwerveModule.
@@ -80,14 +77,16 @@ public class SwerveModule {
    * @param cancoderAddress The CANbus address of the turning encoder.
    * @param driveMotorInverted True = invert drive motor direction
    * @param turningMotorInverted True = invert turning motor direction
-   * @param cancoderReverse True = reverse direction reading of CANcoder
+   * @param cancoderReversed True = reverse direction reading of CANcoder
    * @param turningOffsetDegrees Offset degrees in the turning motor to point to the 
    * front of the robot.  Value is the desired encoder zero point, in absolute magnet position reading.
+   * @param kVm Drive motor kV multiplier to account for small differences between the 4 swerve modules
+   * on the robot.  The drive motor kV = kVDriveAvg * kVm
    * @param log FileLog reference
    */
   public SwerveModule(String swName, int driveMotorAddress, int turningMotorAddress, int cancoderAddress,
       boolean driveMotorInverted, boolean turningMotorInverted, boolean cancoderReversed,
-      double turningOffsetDegrees, FileLog log) {
+      double turningOffsetDegrees, double kVm, FileLog log) {
 
     // Save the module name and logfile
     this.swName = swName;
@@ -95,6 +94,9 @@ public class SwerveModule {
     this.driveMotorInverted = driveMotorInverted;
     this.turningMotorInverted = turningMotorInverted;
     this.turningOffsetDegrees = turningOffsetDegrees;
+
+    // Create feed forward model for drive motor
+    driveFeedforward = new SimpleMotorFeedforward(SwerveConstants.kSDrive, SwerveConstants.kVDriveAvg * kVm, SwerveConstants.kADrive);
 
     // Create motor and encoder objects
     driveMotor = new CANSparkMax(driveMotorAddress, CANSparkLowLevel.MotorType.kBrushless);
