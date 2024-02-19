@@ -79,14 +79,16 @@ public class JeVoisCamera extends SubsystemBase {
   public void periodic() {
     String curr = serialPort.readString();
 
-    if(curr.length() >=15 && curr.indexOf("x") == 0){
+    if(curr.length() >=10 && curr.indexOf("D3") == 0){
         curr = curr.substring(0, 15);
-        centX = Integer.parseInt(curr.substring(4, 7));
-        centY = Integer.parseInt(curr.substring(12, 15));
+        centX = Integer.parseInt(curr.substring(3, 6));
+        centY = Integer.parseInt(curr.substring(7, 10));
     }
     if(fastLogging || log.isMyLogRotation(logRotationKey)) {
+      SmartDashboard.putNumber("JeVois cX", centX);
+      SmartDashboard.putNumber("JeVois cY", centY);
       // TODO write log
-      log.writeLog(false, "JeVoisCamera", "Periodic", "");
+      log.writeLog(false, "JeVoisCamera", "Periodic", "cX", centX, "cY", centY);
     }
   }
 }

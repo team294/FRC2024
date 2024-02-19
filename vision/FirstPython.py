@@ -99,6 +99,10 @@ class FirstPython:
         self.ethresh = 900                 # Shape error threshold (lower is stricter for exact shape)
         self.margin = 5                    # Margin from from frame borders (pixels)
     
+        self.cX = -99
+        self.cY = -99
+
+
         # Instantiate a JeVois Timer to measure our processing framerate:
         self.timer = jevois.Timer("FirstPython", 100, jevois.LOG_INFO)
 
@@ -123,12 +127,11 @@ class FirstPython:
     # ###################################################################################################
     ## Detect objects within our HSV range
     def detect(self, imgbgr, outimg = None):
-        maxn = 2 # max number of objects we will consider
+        maxn = 1 # max number of objects we will consider
         h, w, chans = imgbgr.shape
-        _cX = 0
-        _cY = 0
 
-        image = imgbgr.copy()
+        self.cX = -99
+        self.cY = -99
 
         # Convert input image to HSV:
         imghsv = cv2.cvtColor(imgbgr, cv2.COLOR_BGR2HSV)
@@ -160,12 +163,6 @@ class FirstPython:
         str2 = ""
         beststr2 = ""
         
-        # Display any results requested by the users:
-        if outimg is not None and outimg.valid():
-            if (outimg.width == w * 2): jevois.pasteGreyToYUYV(imgth, outimg, w, 0)
-            jevois.writeText(outimg, str + beststr2, 3, h+1, jevois.YUYV.White, jevois.Font.Font6x10)
-            # jevois.drawCircle(outimg, _cX, _cY, 6, 1, jevois.YUYV.MedGreen)
-
         # Identify the "good" objects:
         for c in contours:
             # Keep track of our best detection so far:
@@ -195,7 +192,7 @@ class FirstPython:
             # Check object shape:
             peri = cv2.arcLength(c, closed = True)
             approx = cv2.approxPolyDP(c, epsilon = self.epsilon * peri, closed = True)
-            if len(approx) < 7: continue  # 8 vertices for a U shape
+            if len(approx) < 6: continue  # 8 vertices for a circle
             str2 += "S" # Shape is ok
 
             # Compute contour serr:
@@ -203,7 +200,7 @@ class FirstPython:
             # if serr > self.ethresh: continue
             # str2 += "E" # Shape error is ok
           
-            # TODO remove margin?
+            # TODO use margin?
             # Reject the shape if any of its vertices gets within the margin of the image bounds. This is to avoid
             # getting grossly incorrect 6D pose estimates as the shape starts getting truncated as it partially exits
             # the camera field of view:
@@ -239,15 +236,6 @@ class FirstPython:
             #               momH['m01'] / momH['m00'] - momC['m01'] / momC['m00'])
             # lenCH = abs(vCH)
 
-            _M = cv2.moments(c)
-            
-            try:
-                _cX = int((_M["m10"] / _M["m00"]))
-                _cY = int((_M["m01"] / _M["m00"]))
-            except:
-                _cX = 0
-                _cY = 0
-
             # if len10p23 < 0.1 or len03p12 < 0.1 or lenCH < 0.1: continue
             # str2 += "V" # Shape vectors ok
 
@@ -260,12 +248,16 @@ class FirstPython:
         
             # Fixup the ordering of the vertices if needed:
             # if bad > good: hull = np.roll(hull, shift = 1, axis = 0)
-                
 
-            # Display any results requested by the users:
-            if outimg is not None and outimg.valid():
-                jevois.drawCircle(outimg, _cX, _cY, 6, 1, jevois.YUYV.MedGreen)
-            
+            # if len(str2) > len(beststr2):
+            _M = cv2.moments(c)
+            try:
+                self.cX = int((_M["m10"] / _M["m00"]))
+                self.cY = int((_M["m01"] / _M["m00"]))
+            except:
+                self.cX = -99
+                self.cY = -99
+
             # cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
             # cv2.circle(image,(_cX, _cY), 6, (255, 0, 0), -1)
 
@@ -276,10 +268,11 @@ class FirstPython:
         if len(str2) > len(beststr2):  beststr2 = str2
         
         # Display any results requested by the users:
-        # if outimg is not None and outimg.valid():
-        #     if (outimg.width == w * 2): jevois.pasteGreyToYUYV(imgth, outimg, w, 0)
-        #     jevois.writeText(outimg, str + beststr2, 3, h+1, jevois.YUYV.White, jevois.Font.Font6x10)
-        #     # jevois.drawCircle(outimg, _cX, _cY, 6, 1, jevois.YUYV.MedGreen)
+        if outimg is not None and outimg.valid():
+            if (outimg.width == w * 2): jevois.pasteGreyToYUYV(imgth, outimg, w, 0)
+            jevois.writeText(outimg, str + beststr2 + "{}, {}".format(self.cX, self.cY), 3, h+1, jevois.YUYV.White, jevois.Font.Font6x10)
+            if self.cX != -99 and self.cY != -99:
+                jevois.drawCircle(outimg, self.cX, self.cY, 6, 1, jevois.YUYV.MedGreen)
 
         return hlist
 
@@ -309,27 +302,30 @@ class FirstPython:
         
     # ###################################################################################################
     ## Send serial messages, one per object
-    def sendAllSerial(self, w, h, hlist, rvecs, tvecs):
-        idx = 0
-        for c in hlist:
-            # Compute quaternion: FIXME need to check!
-            tv = tvecs[idx]
-            axis = rvecs[idx]
-            angle = (axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]) ** 0.5
+    def sendAllSerial(self):
+    # def sendAllSerial(self, w, h, hlist, rvecs, tvecs):
+        jevois.sendSerial("D3 {:03d} {:03d} FIRST".format(self.cX, self.cY))
 
-            # This code lifted from pyquaternion from_axis_angle:
-            mag_sq = axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]
-            if (abs(1.0 - mag_sq) > 1e-12): axis = axis / (mag_sq ** 0.5)
-            theta = angle / 2.0
-            r = math.cos(theta)
-            i = axis * math.sin(theta)
-            q = (r, i[0], i[1], i[2])
+        # idx = 0
+        # for c in hlist:
+        #     # Compute quaternion: FIXME need to check!
+        #     tv = tvecs[idx]
+        #     axis = rvecs[idx]
+        #     angle = (axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]) ** 0.5
 
-            jevois.sendSerial("D3 {} {} {} {} {} {} {} {} {} {} FIRST".
-                              format(np.asscalar(tv[0]), np.asscalar(tv[1]), np.asscalar(tv[2]),  # position
-                                     self.owm, self.ohm, 1.0,                                     # size
-                                     r, np.asscalar(i[0]), np.asscalar(i[1]), np.asscalar(i[2]))) # pose
-            idx += 1
+        #     # This code lifted from pyquaternion from_axis_angle:
+        #     mag_sq = axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]
+        #     if (abs(1.0 - mag_sq) > 1e-12): axis = axis / (mag_sq ** 0.5)
+        #     theta = angle / 2.0
+        #     r = math.cos(theta)
+        #     i = axis * math.sin(theta)
+        #     q = (r, i[0], i[1], i[2])
+
+        #     jevois.sendSerial("D3 {} {} {} {} {} {} {} {} {} {} FIRST".
+        #                       format(np.asscalar(tv[0]), np.asscalar(tv[1]), np.asscalar(tv[2]),  # position
+        #                              self.owm, self.ohm, 1.0,                                     # size
+        #                              r, np.asscalar(i[0]), np.asscalar(i[1]), np.asscalar(i[2]))) # pose
+        #     idx += 1
                               
     # ###################################################################################################
     ## Draw all detected objects in 3D
@@ -412,13 +408,13 @@ class FirstPython:
         hlist = self.detect(imgbgr)
 
         # Load camera calibration if needed:
-        if not hasattr(self, 'camMatrix'): self.loadCameraCalibration(w, h)
+        # if not hasattr(self, 'camMatrix'): self.loadCameraCalibration(w, h)
 
         # Map to 6D (inverse perspective):
-        (rvecs, tvecs) = self.estimatePose(hlist)
+        # (rvecs, tvecs) = self.estimatePose(hlist)
 
         # Send all serial messages:
-        self.sendAllSerial(w, h, hlist, rvecs, tvecs)
+        self.sendAllSerial()
 
         # Log frames/s info (will go to serlog serial port, default is None):
         self.timer.stop()
@@ -457,7 +453,7 @@ class FirstPython:
         # (rvecs, tvecs) = self.estimatePose(hlist)
 
         # Send all serial messages:
-        # self.sendAllSerial(w, h, hlist, rvecs, tvecs)
+        self.sendAllSerial()
 
         # # Draw all detections in 3D:
         # self.drawDetections(outimg, hlist, rvecs, tvecs)
