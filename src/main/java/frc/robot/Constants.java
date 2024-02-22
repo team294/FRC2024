@@ -272,6 +272,7 @@ public final class Constants {
       public static final double rawVelocityToRPM = 600.0 / ticksPerRevolution;   // Multiply by this to convert raw velocity (ticksPer100ms) to RPM
 
       public static final double intakePercent = 0.3;
+      public static final double centeringPercent = 0.15;
   }
 
 }
