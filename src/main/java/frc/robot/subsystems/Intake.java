@@ -63,7 +63,7 @@ public class Intake extends SubsystemBase implements Loggable {
 	private final StatusSignal<Double> motorStatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
 	private final StatusSignal<Double> motorEncoderPosition;			// Encoder position, in pinion rotations
 	private final StatusSignal<Double> motorEncoderVelocity;	
-	private final StatusSignal<Double> motorVoltage;	
+	private final StatusSignal<Double> motorVoltage;
 
   private final DigitalInput pieceSensor = new DigitalInput(Ports.DIOIntakePieceSensor);
 
@@ -138,13 +138,15 @@ public class Intake extends SubsystemBase implements Loggable {
     setpointRPM = 0.0;
   }
 
-
+  /**
+   * Sets the voltage of the centering motor
+   * @param voltage voltage
+   */
   public void setCenteringMotorVoltage(double voltage) {
     centeringMotor.setVoltage(voltage);
     velocityControlOn = false;
     setpointRPM = 0.0;
   }
-
 
   /**
    * sets the percent of the motor, using voltage compensation if turned on
@@ -158,9 +160,14 @@ public class Intake extends SubsystemBase implements Loggable {
     setpointRPM = 0.0;
   }
 
+  /**
+   * Sets the percent output of the centering motor
+   * @param percent percent
+   */
   public void setCenteringMotorPercentOutput(double percent){
     centeringMotor.set(percent);
   }
+
   /**
   * Stops the motor
   */
@@ -170,6 +177,9 @@ public class Intake extends SubsystemBase implements Loggable {
     setpointRPM = 0.0;
   }
 
+  /**
+   * Stops the centering motor
+   */
   public void stopCenteringMotor(){
     setCenteringMotorPercentOutput(0);
   }
@@ -184,11 +194,16 @@ public class Intake extends SubsystemBase implements Loggable {
     return motorEncoderPosition.getValueAsDouble();
   }
 
+  /**
+   * Returns the centering motor position
+   * @return position of centering motor in revolutions
+   */
   public double getCenteringMotorPositionRaw(){
     //return motor.getSelectedSensorPosition(0);
     // Perhaps refresh
     return centeringMotor.getEncoder().getPosition();
   }
+
   /**
    * Returns the motor position
    * @return position of motor in revolutions
@@ -211,7 +226,9 @@ public class Intake extends SubsystemBase implements Loggable {
     encoderZero = getCenteringMotorPositionRaw();
 
   }
+
   /**
+   * Get the velocity of the motor
    * @return velocity of motor in rpm
    */
   public double getMotorVelocity(){
@@ -219,6 +236,11 @@ public class Intake extends SubsystemBase implements Loggable {
     return motorEncoderVelocity.getValueAsDouble();
     // return motor.getSelectedSensorVelocity(0)*IntakeConstants.rawVelocityToRPM;
   }
+
+  /**
+   * Get the velocity of the centering motor
+   * @return velocity of centering motor in RPM
+   */
   public double getCenteringMotorVelocity(){
     return centeringMotor.getEncoder().getVelocity();
     // return motor.getSelectedSensorVelocity(0)*IntakeConstants.rawVelocityToRPM;
@@ -238,6 +260,10 @@ public class Intake extends SubsystemBase implements Loggable {
       //DemandType.ArbitraryFeedForward, kS*Math.signum(setpointRPM) + kV*setpointRPM);
   }
 
+  /**
+   * Set the velocity of the centering motor
+   * @param centeringMotorRPM the RPM to set
+   */
   public void setCenteringMotorVelocity(double centeringMotorRPM) {
     velocityControlOn = true;
     setpointRPM = centeringMotorRPM;
@@ -255,8 +281,6 @@ public class Intake extends SubsystemBase implements Loggable {
   public boolean isPiecePresent(){
     return !pieceSensor.get();
   }
-
-
 
   @Override
   public void periodic(){
@@ -280,19 +304,25 @@ public class Intake extends SubsystemBase implements Loggable {
   }
 
   /**
-   * Write information about shooter to fileLog.
+   * Write information about intake to fileLog.
    * @param logWhenDisabled true = log when disabled, false = discard the string
    */
 	public void updateLog(boolean logWhenDisabled) {
         log.writeLog(logWhenDisabled, subsystemName, "Update Variables",  
-      "Bus Volt", motorSupplyVoltage.refresh().getValueAsDouble(),
-      "Out Percent", motorDutyCycle.refresh().getValueAsDouble(),
-      "Volt", motorVoltage.refresh().getValueAsDouble(), 
-      "Amps", motor.getSupplyCurrent(),
-      "Temperature", motorTemp.refresh().getValueAsDouble(),
-      "Position", getMotorPosition(),
-      "Measured RPM", measuredRPM,
-      "Setpoint RPM", setpointRPM
+      "Motor Bus Volt", motorSupplyVoltage.refresh().getValueAsDouble(),
+      "Centering Bus Volt", centeringMotor.getBusVoltage(),
+      "Motor Out Percent", motorDutyCycle.refresh().getValueAsDouble(),
+      "Centering Out Percent", centeringMotor.getAppliedOutput(),
+      "Motor Volt", motorVoltage.refresh().getValueAsDouble(), // TODO: Centering Motor Voltage
+      "Centering Volt", centeringMotor.getBusVoltage()*centeringMotor.getAppliedOutput(),
+      "Motor Amps", motorStatorCurrent.refresh(),
+      "Centering Amps", centeringMotor.getOutputCurrent(), // TODO: Uncertain that this returns right value
+      "Motor Temperature", motorTemp.refresh().getValueAsDouble(),
+      "Centering Temperature", centeringMotor.getMotorTemperature(),
+      "Motor Position", getMotorPosition(),
+      "Centering Position", getCenteringMotorPosition(),
+      "Motor Measured RPM", measuredRPM,
+      "Motor Setpoint RPM", setpointRPM
     );
   }
 
