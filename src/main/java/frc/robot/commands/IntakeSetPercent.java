@@ -12,11 +12,16 @@ import frc.robot.utilities.FileLog;
 public class IntakeSetPercent extends Command {
   private final FileLog log;
   private final Intake intake;
-  private double percent = 0.0;
+  private double intakePercent = 0.0;
   private double centeringPercent;
   private boolean fromShuffleboard;
 
-  /** Creates a new IntakeSetPercent. */
+  /**
+   * Sets the percent output to the Intake and Centering motors from Shuffleboard
+   * and ends immediately.
+   * @param intake intake subsystem
+   * @param log
+   */
   public IntakeSetPercent(Intake intake, FileLog log) {
     this.log = log;
     this.intake = intake;
@@ -31,13 +36,20 @@ public class IntakeSetPercent extends Command {
     }
   }
 
-  /** Creates a new IntakeSetPercent. */
-  public IntakeSetPercent(double percent, double centeringPercent, Intake intake, FileLog log) {
+  /**
+   * Sets the percent output to the Intake and Centering motors
+   * and ends immediately.
+   * @param intakePercent -1.0 to 1.0 (+ = intake, - = outtake)
+   * @param centeringPercent -1.0 to 1.0 (+ = intake, - = outtake)
+   * @param intake intake subsystem
+   * @param log
+   */  
+  public IntakeSetPercent(double intakePercent, double centeringPercent, Intake intake, FileLog log) {
     this.log = log;
     this.intake = intake;
     addRequirements(intake);
     this.fromShuffleboard = false;
-    this.percent = percent;
+    this.intakePercent = intakePercent;
     this.centeringPercent = centeringPercent;
   }
 
@@ -45,11 +57,14 @@ public class IntakeSetPercent extends Command {
   @Override
   public void initialize() {
     if (fromShuffleboard) {
-      percent = SmartDashboard.getNumber("Intake Percent", 0.0);
+      intakePercent = SmartDashboard.getNumber("Intake Percent", 0.0);
       centeringPercent = SmartDashboard.getNumber("Centering Percent", 0.0);
     }
-    intake.setMotorPercentOutput(percent);
+    intake.setIntakePercentOutput(intakePercent);
     intake.setCenteringMotorPercentOutput(centeringPercent);
+
+    log.writeLog(false, "IntakeSetPercent", "Initialize", "Intake Percent", intakePercent,
+      "Centering Percent", centeringPercent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

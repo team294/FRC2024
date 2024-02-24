@@ -7,21 +7,18 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkLowLevel;
-import com.revrobotics.CANSparkMax;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel;
+import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,85 +28,77 @@ import frc.robot.Constants.Ports;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.Loggable;
 import static frc.robot.utilities.StringUtil.*;
-import static frc.robot.Constants.*;
 
 
 public class Intake extends SubsystemBase implements Loggable {
   private final FileLog log;
   private final int logRotationKey;
-  private final TalonFX motor;
-  private final CANSparkMax centeringMotor;
-  private final TalonFXConfigurator motorConfigurator;
-	private TalonFXConfiguration motorConfig;
-	private VoltageOut motorVoltageControl = new VoltageOut(0.0);
-  private VelocityVoltage motorVelocityControl = new VelocityVoltage(0.0);
-  private VelocityVoltage centeringMotorVelocityControl = new VelocityVoltage(0.0);
-  private SimpleMotorFeedforward motorFeedforward;
   private boolean fastLogging = false; // true is enabled to run every cycle; false follows normal logging cycles
   private String subsystemName;    // subsystem name for use in file logging and Shuffleboard
 
-  private double encoderZero = 0.0;     // Zero position for encoder
-  private int timeoutMs = 0; // was 30, changed to 0 for testing
+  // Create Neo for centering motor
+  private final CANSparkMax centeringMotor = new CANSparkMax(Constants.Ports.CANCenteringMotor, CANSparkLowLevel.MotorType.kBrushless);
 
-  // Velocity control variables
-  private double kS, kV, kA;      // Feed forward parameters
-  private boolean velocityControlOn = false;    // Is this subsystem using velocity control currently?
-  private double measuredRPM = 0.0;             // Current measured speed
-  private double setpointRPM = 0.0;             // Current velocity setpoint
+  // Create Kraken variables for intake motor
+  private final TalonFX intakeMotor = new TalonFX(Constants.Ports.CANIntake);
+  private final TalonFXConfigurator intakeConfigurator = intakeMotor.getConfigurator();
+	private TalonFXConfiguration intakeConfig;
+	private VoltageOut intakeVoltageControl = new VoltageOut(0.0);
 
-  private final StatusSignal<Double> motorSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
-	private final StatusSignal<Double> motorTemp;				// Motor temperature, in degC
-	private final StatusSignal<Double> motorDutyCycle;				// Motor duty cycle percent power, -1 to 1
-	private final StatusSignal<Double> motorStatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
-	private final StatusSignal<Double> motorEncoderPosition;			// Encoder position, in pinion rotations
-	private final StatusSignal<Double> motorEncoderVelocity;	
-	private final StatusSignal<Double> motorVoltage;
+  // Create Kraken variables for intake motor
+  private final StatusSignal<Double> intakeSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
+	private final StatusSignal<Double> intakeTemp;				// Motor temperature, in degC
+	private final StatusSignal<Double> intakeDutyCycle;				// Motor duty cycle percent power, -1 to 1
+	private final StatusSignal<Double> intakeStatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
+	private final StatusSignal<Double> intakeEncoderPosition;			// Encoder position, in pinion rotations
+	private final StatusSignal<Double> intakeEncoderVelocity;	
+	private final StatusSignal<Double> intakeVoltage;
 
+  // Piece sensor inside the intake
   private final DigitalInput pieceSensor = new DigitalInput(Ports.DIOIntakePieceSensor);
-
   
+  /**
+   * Creates the intake subsystem
+   * @param subsystemName
+   * @param log
+   */
   public Intake(String subsystemName, FileLog log) {
     this.log = log; // save reference to the fileLog
     this.subsystemName = subsystemName;
-    //motor = new WPI_TalonFX(CANPort);
-    motor = new TalonFX(Constants.Ports.CANIntake);
-    centeringMotor = new CANSparkMax(Constants.Ports.CANCenteringMotor, CANSparkLowLevel.MotorType.kBrushless);
     logRotationKey = log.allocateLogRotation();
 
-    motorConfigurator = motor.getConfigurator();
-    motorSupplyVoltage = motor.getSupplyVoltage();
-	  motorTemp = motor.getDeviceTemp();
-	  motorDutyCycle = motor.getDutyCycle();
-	  motorStatorCurrent = motor.getStatorCurrent();
-	  motorEncoderPosition = motor.getPosition();
-	  motorEncoderVelocity = motor.getVelocity();
-    motorVoltage = motor.getMotorVoltage();
+    // Get signal and sensor objects
+    intakeSupplyVoltage = intakeMotor.getSupplyVoltage();
+	  intakeTemp = intakeMotor.getDeviceTemp();
+	  intakeDutyCycle = intakeMotor.getDutyCycle();
+	  intakeStatorCurrent = intakeMotor.getStatorCurrent();
+	  intakeEncoderPosition = intakeMotor.getPosition();
+	  intakeEncoderVelocity = intakeMotor.getVelocity();
+    intakeVoltage = intakeMotor.getMotorVoltage();
     
-    
-    motorConfig = new TalonFXConfiguration();			// Factory default configuration
-    motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Don't invert motor
-		motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
-    motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.0;
-		motorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
-    // set motor configuration
-    // motor.configFactoryDefault();
-    motor.setInverted(true);
-    motor.setNeutralMode(NeutralModeValue.Brake);
-    // motor.configPeakOutputForward(1.0);
-    // motor.configPeakOutputReverse(-1.0);
-    // motor.configNeutralDeadband(0.01);
-    // motor.configVoltageCompSaturation(IntakeConstants.compensationVoltage);
-    // motor.enableVoltageCompensation(true);
-    // motor.configOpenloopRamp(0.05);   //seconds from neutral to full
-    // motor.configClosedloopRamp(0.05); //seconds from neutral to full
+    // Configure the intake motor
+    intakeConfig = new TalonFXConfiguration();			// Factory default configuration
+    intakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
+		intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // Hold piece if we stop the motor
+    intakeConfig.Voltage.PeakForwardVoltage = IntakeConstants.compensationVoltage;
+    intakeConfig.Voltage.PeakReverseVoltage = -IntakeConstants.compensationVoltage;
+    intakeConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;         // # seconds from 0 to full power
 
-    // // set sensor configuration
-    // motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
-    // motor.setSensorPhase(false);
+    // Set intake motor sensor
+    intakeConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;  // use built-in encoder
 
-    zeroEncoder();
+    // set intake motor configuration
+    intakeConfigurator.apply(intakeConfig);
 
-    stopMotor();
+    // configure the centering motor
+    centeringMotor.restoreFactoryDefaults();
+    centeringMotor.setInverted(false);
+    centeringMotor.setIdleMode(IdleMode.kCoast);
+    centeringMotor.setOpenLoopRampRate(0.30); //seconds from neutral to full
+    centeringMotor.enableVoltageCompensation(IntakeConstants.compensationVoltage);
+
+    stopIntakeMotor();
+    stopCenteringMotor();
   }
 
   /**
@@ -120,61 +109,26 @@ public class Intake extends SubsystemBase implements Loggable {
   }
 
   /**
-   * Sets the voltage of the motor
-   * 
-   * <p> Compensates for the current bus
-	 * voltage to ensure that the desired voltage is output even if the battery voltage is below
-	 * 12V - highly useful when the voltage outputs are "meaningful" (e.g. they come from a
-	 * feedforward calculation).
-	 *
-	 * <p>NOTE: This function *must* be called regularly in order for voltage compensation to work
-	 * properly - unlike the ordinary set function, it is not "set it and forget it."
-	 *
-   * @param voltage voltage
+   * sets the percent of the intake motor, using voltage compensation
+   * @param percent percent -1.0 to 1.0 (+ = intake, - = outtake)
    */
-  public void setVoltage(double voltage) {
-    motor.setVoltage(voltage);
-    velocityControlOn = false;
-    setpointRPM = 0.0;
-  }
-
-  /**
-   * Sets the voltage of the centering motor
-   * @param voltage voltage
-   */
-  public void setCenteringMotorVoltage(double voltage) {
-    centeringMotor.setVoltage(voltage);
-    velocityControlOn = false;
-    setpointRPM = 0.0;
-  }
-
-  /**
-   * sets the percent of the motor, using voltage compensation if turned on
-   * @param percent percent
-   */
-  public void setMotorPercentOutput(double percent){
-    //motor.set(ControlMode.PercentOutput, percent);
-    motor.setControl(motorVoltageControl.withOutput(percent*IntakeConstants.compensationVoltage));
-  
-    velocityControlOn = false;
-    setpointRPM = 0.0;
+  public void setIntakePercentOutput(double percent){
+    intakeMotor.setControl(intakeVoltageControl.withOutput(percent*IntakeConstants.compensationVoltage));
   }
 
   /**
    * Sets the percent output of the centering motor
-   * @param percent percent
+   * @param percent percent -1.0 to 1.0 (+ = intake, - = outtake)
    */
   public void setCenteringMotorPercentOutput(double percent){
     centeringMotor.set(percent);
   }
 
   /**
-  * Stops the motor
+  * Stops the intake motor
   */
-  public void stopMotor(){
-    setMotorPercentOutput(0);
-    velocityControlOn = false;
-    setpointRPM = 0.0;
+  public void stopIntakeMotor(){
+    setIntakePercentOutput(0);
   }
 
   /**
@@ -185,56 +139,29 @@ public class Intake extends SubsystemBase implements Loggable {
   }
 
   /**
-   * Returns the motor position
-   * @return position of motor in raw units, without software zeroing
+   * Returns the intake motor position
+   * @return position of motor in revolutions
    */
-  public double getMotorPositionRaw(){
-    //return motor.getSelectedSensorPosition(0);
-    motorEncoderPosition.refresh();
-    return motorEncoderPosition.getValueAsDouble();
+  public double getIntakePosition(){
+    intakeEncoderPosition.refresh();
+    return intakeEncoderPosition.getValueAsDouble();
   }
 
   /**
    * Returns the centering motor position
-   * @return position of centering motor in revolutions
+   * @return position of the motor in revolutions
    */
-  public double getCenteringMotorPositionRaw(){
-    //return motor.getSelectedSensorPosition(0);
-    // Perhaps refresh
-    return centeringMotor.getEncoder().getPosition();
-  }
-
-  /**
-   * Returns the motor position
-   * @return position of motor in revolutions
-   */
-  public double getMotorPosition(){
-    return (getMotorPositionRaw() - encoderZero)/IntakeConstants.ticksPerRevolution;
-  }
   public double getCenteringMotorPosition(){
-    return (getCenteringMotorPositionRaw() - encoderZero)/IntakeConstants.ticksPerRevolution;
+    return centeringMotor.getEncoder().getPosition();
   }
     
   /**
-	 * Zero the encoder position in software.
-	 */
-  public void zeroEncoder() {
-    encoderZero = getMotorPositionRaw();
-  }
-
-  public void zeroCenteringEncoder(){
-    encoderZero = getCenteringMotorPositionRaw();
-
-  }
-
-  /**
-   * Get the velocity of the motor
-   * @return velocity of motor in rpm
+   * Get the velocity of the intake motor
+   * @return velocity of motor in RPM
    */
-  public double getMotorVelocity(){
-    motorEncoderVelocity.refresh();
-    return motorEncoderVelocity.getValueAsDouble();
-    // return motor.getSelectedSensorVelocity(0)*IntakeConstants.rawVelocityToRPM;
+  public double getIntakeVelocity(){
+    intakeEncoderVelocity.refresh();
+    return intakeEncoderVelocity.getValueAsDouble() * 60.0;
   }
 
   /**
@@ -243,35 +170,6 @@ public class Intake extends SubsystemBase implements Loggable {
    */
   public double getCenteringMotorVelocity(){
     return centeringMotor.getEncoder().getVelocity();
-    // return motor.getSelectedSensorVelocity(0)*IntakeConstants.rawVelocityToRPM;
-  }
-
-  /**
-   * Run motor in a velocity closed loop mode.
-   * @param motorRPM setPoint RPM
-   */
-  public void setMotorVelocity(double motorRPM) {
-    velocityControlOn = true;
-    setpointRPM = motorRPM;
-    motor.setControl(motorVelocityControl
-        .withVelocity(motorRPM)
-        .withFeedForward(motorFeedforward.calculate(motorRPM)));
-    //motor.set(ControlMode.Velocity, setpointRPM/IntakeConstants.rawVelocityToRPM,
-      //DemandType.ArbitraryFeedForward, kS*Math.signum(setpointRPM) + kV*setpointRPM);
-  }
-
-  /**
-   * Set the velocity of the centering motor
-   * @param centeringMotorRPM the RPM to set
-   */
-  public void setCenteringMotorVelocity(double centeringMotorRPM) {
-    velocityControlOn = true;
-    setpointRPM = centeringMotorRPM;
-    motor.setControl(centeringMotorVelocityControl
-        .withVelocity(centeringMotorRPM)
-        .withFeedForward(motorFeedforward.calculate(centeringMotorRPM)));
-    //motor.set(ControlMode.Velocity, setpointRPM/IntakeConstants.rawVelocityToRPM,
-      //DemandType.ArbitraryFeedForward, kS*Math.signum(setpointRPM) + kV*setpointRPM);
   }
 
   /**
@@ -284,16 +182,19 @@ public class Intake extends SubsystemBase implements Loggable {
 
   @Override
   public void periodic(){
-    measuredRPM = getMotorVelocity();
     if(fastLogging || log.isMyLogRotation(logRotationKey)) {
       updateLog(false);
     }
 
     if(log.isMyLogRotation(logRotationKey)) {
-        SmartDashboard.putNumber(buildString(subsystemName, " Voltage"), motorVoltage.refresh().getValueAsDouble());
-        SmartDashboard.putNumber(buildString(subsystemName, " Position Rev"), getMotorPosition());
-        SmartDashboard.putNumber(buildString(subsystemName, " Velocity RPM"), measuredRPM);
-        SmartDashboard.putNumber(buildString(subsystemName, " Temperature C"), motorTemp.refresh().getValueAsDouble());
+        SmartDashboard.putNumber(buildString(subsystemName, " Voltage"), intakeVoltage.refresh().getValueAsDouble());
+        SmartDashboard.putNumber(buildString(subsystemName, " Position Rev"), getIntakePosition());
+        SmartDashboard.putNumber(buildString(subsystemName, " Velocity RPM"), getIntakeVelocity());
+        SmartDashboard.putNumber(buildString(subsystemName, " Temperature C"), intakeTemp.refresh().getValueAsDouble());
+        SmartDashboard.putNumber("Centering Percent", centeringMotor.getAppliedOutput());
+        SmartDashboard.putNumber("Centering Position Rev", getCenteringMotorPosition());
+        SmartDashboard.putNumber("Centering Velocity RPM", getCenteringMotorVelocity());
+        SmartDashboard.putNumber("Centering Temperature C", centeringMotor.getMotorTemperature());
         SmartDashboard.putBoolean(buildString(subsystemName, " Is Piece Present"), isPiecePresent());
     }
   }
@@ -309,20 +210,17 @@ public class Intake extends SubsystemBase implements Loggable {
    */
 	public void updateLog(boolean logWhenDisabled) {
         log.writeLog(logWhenDisabled, subsystemName, "Update Variables",  
-      "Motor Bus Volt", motorSupplyVoltage.refresh().getValueAsDouble(),
-      "Centering Bus Volt", centeringMotor.getBusVoltage(),
-      "Motor Out Percent", motorDutyCycle.refresh().getValueAsDouble(),
-      "Centering Out Percent", centeringMotor.getAppliedOutput(),
-      "Motor Volt", motorVoltage.refresh().getValueAsDouble(), // TODO: Centering Motor Voltage
-      "Centering Volt", centeringMotor.getBusVoltage()*centeringMotor.getAppliedOutput(),
-      "Motor Amps", motorStatorCurrent.refresh(),
-      "Centering Amps", centeringMotor.getOutputCurrent(), // TODO: Uncertain that this returns right value
-      "Motor Temperature", motorTemp.refresh().getValueAsDouble(),
+      "Bus Volt", intakeSupplyVoltage.refresh().getValueAsDouble(),
+      "Intake Percent", intakeDutyCycle.refresh().getValueAsDouble(),
+      "Centering Percent", centeringMotor.getAppliedOutput(),
+      "Intake Amps", intakeStatorCurrent.refresh().getValueAsDouble(),
+      "Centering Amps", centeringMotor.getOutputCurrent(), 
+      "Intake Temperature", intakeTemp.refresh().getValueAsDouble(),
       "Centering Temperature", centeringMotor.getMotorTemperature(),
-      "Motor Position", getMotorPosition(),
+      "Intake Position", getIntakePosition(),
       "Centering Position", getCenteringMotorPosition(),
-      "Motor Measured RPM", measuredRPM,
-      "Motor Setpoint RPM", setpointRPM
+      "Intake RPM", getIntakeVelocity(),
+      "Centering RPM", getCenteringMotorVelocity()
     );
   }
 
