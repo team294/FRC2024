@@ -67,6 +67,7 @@ public final class Constants {
       public static final int CANFeeder = 15;
 
       public static final int CANIntake = 16;
+      public static final int CANCenteringMotor = 17;
 
       public static final int DIOIntakePieceSensor = 0;
 

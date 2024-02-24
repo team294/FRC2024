@@ -73,7 +73,7 @@ public class Intake extends SubsystemBase implements Loggable {
     this.subsystemName = subsystemName;
     //motor = new WPI_TalonFX(CANPort);
     motor = new TalonFX(Constants.Ports.CANIntake);
-    centeringMotor = new CANSparkMax(328, CANSparkLowLevel.MotorType.kBrushless);
+    centeringMotor = new CANSparkMax(Constants.Ports.CANCenteringMotor, CANSparkLowLevel.MotorType.kBrushless);
     logRotationKey = log.allocateLogRotation();
 
     motorConfigurator = motor.getConfigurator();
