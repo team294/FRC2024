@@ -6,7 +6,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
-import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix6.configs.Pigeon2Configurator;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -32,6 +33,7 @@ import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Constants.FieldConstants;
 
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.utilities.*;
 
@@ -54,8 +56,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   private final SwerveModule swerveBackRight;
   
   // variables for gyro and gyro calibration
-  // private final AHRS ahrs;
-  private final WPI_PigeonIMU pigeon;
+  private final Pigeon2 pigeon = new Pigeon2(CANPigeonGyro, Ports.CANivoreBus);
+  private final Pigeon2Configurator pigeonConfigurator = pigeon.getConfigurator();
   private double yawZero = 0.0;
   private double pitchZero = 0.0;
 
@@ -101,24 +103,9 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       CANDriveBackRightMotor, CANDriveTurnBackRightMotor, CANTurnEncoderBackRight, false, true,
       false, offsetAngleBackRightMotor, SwerveConstants.kVmBR, log);
 
-    // configure navX gyro
-    // AHRS gyro = null;
-		// try {
-    //   gyro = new AHRS(SerialPort.Port.kUSB);
-    //   // gyro.zeroYaw();   // *** Do not zero the gyro hardware!  The hardware zeros asynchronously from this thread, so an immediate read-back of the gyro may not yet be zeroed.
-    //   log.writeLogEcho(true, "Drive", "Gyro Initialize", "Firmware version", gyro.getFirmwareVersion() );
-		// } catch (RuntimeException ex) {
-		// 	DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
-    // }
-    // ahrs = gyro;
+    // configure gyro
+    pigeon = new Pigeon2(CANPigeonGyro, Ports.CANivoreBus);
 
-    WPI_PigeonIMU gyroPigeon = null;
-    try {
-      gyroPigeon = new WPI_PigeonIMU(CANPigeonGyro);
-    } catch (RuntimeException ex){
-      DriverStation.reportError("Error instantiating pigeon: ", true);
-    }
-    pigeon = gyroPigeon;
 
     // zero gyro and initialize angular velocity variables
     zeroGyro();

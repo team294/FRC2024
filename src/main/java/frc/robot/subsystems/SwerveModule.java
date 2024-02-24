@@ -21,7 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.utilities.CTRESwerveModuleState;
 import frc.robot.utilities.FileLog;
@@ -104,7 +104,7 @@ public class SwerveModule {
     this.turningOffsetDegrees = turningOffsetDegrees;
 
     // Create motor, encoder, signal, and sensor objects
-    driveMotor = new TalonFX(driveMotorAddress,"CANivore");
+    driveMotor = new TalonFX(driveMotorAddress, Ports.CANivoreBus);
     driveMotorConfigurator = driveMotor.getConfigurator();
     driveMotorSupplyVoltage = driveMotor.getSupplyVoltage();
 	  driveMotorTemp = driveMotor.getDeviceTemp();
@@ -113,7 +113,7 @@ public class SwerveModule {
 	  driveEncoderPostion = driveMotor.getPosition();
 	  driveEncoderVelocity = driveMotor.getVelocity();
 
-    turningMotor = new TalonFX(turningMotorAddress,"CANivore");
+    turningMotor = new TalonFX(turningMotorAddress, Ports.CANivoreBus);
     turningMotorConfigurator = turningMotor.getConfigurator();
 	  turningMotorTemp = turningMotor.getDeviceTemp();
 	  turningDutyCycle = turningMotor.getDutyCycle();
@@ -121,7 +121,7 @@ public class SwerveModule {
 	  turningEncoderPosition = turningMotor.getPosition();
 	  turningEncoderVelocity = turningMotor.getVelocity();
 
-    turningCanCoder = new CANcoder(cancoderAddress,"CANivore");
+    turningCanCoder = new CANcoder(cancoderAddress, Ports.CANivoreBus);
     turningCanCoderConfigurator = turningCanCoder.getConfigurator();
     turningCanCoderPosition = turningCanCoder.getPosition();
     turningCanCoderVelocity = turningCanCoder.getVelocity();

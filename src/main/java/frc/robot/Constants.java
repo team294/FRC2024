@@ -41,7 +41,9 @@ public final class Constants {
     }
 
     public static final class Ports{
-      public static final int CANPneumaticHub = 1;
+      // public static final int CANPneumaticHub = 1;
+
+      public static final String CANivoreBus = "CANivore";
 
       public static final int CANDriveFrontLeftMotor = 1;
       public static final int CANDriveFrontRightMotor = 2;
@@ -102,8 +104,6 @@ public final class Constants {
       public static final double kWheelDiameterMeters = 0.1013; // CALIBRATED.
       public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
-      public static final double kDriveEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kDriveGearRatio;
-      public static final double kTurningEncoderDegreesPerRotation = 360.0/ kTurningGearRatio;
 
       // Robot calibration for feed-forward and max speeds
       public static final double voltageCompSaturation = 12.0;
