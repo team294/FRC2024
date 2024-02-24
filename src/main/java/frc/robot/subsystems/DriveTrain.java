@@ -160,7 +160,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 	 * @return double, gyro pitch from 180 to -180, in degrees (postitive is nose up, negative is nose down)
 	 */
 	public double getGyroPitchRaw() {
-		return pigeonPitch.refresh().getValueAsDouble();
+		return -pigeonPitch.refresh().getValueAsDouble();     //TODO check sign with real robot configuration
   }
 
   public void resetGyroPitch(){

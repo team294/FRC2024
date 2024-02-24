@@ -21,11 +21,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.utilities.CTRESwerveModuleState;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.MathBCR;
+import frc.robot.utilities.MathSwerveModuleState;
 import frc.robot.utilities.Wait;
 
 import static frc.robot.utilities.StringUtil.*;
@@ -75,13 +76,13 @@ public class SwerveModule {
 	private final StatusSignal<Double> turningCanCoderVelocity;			// Encoder Velocity, in CANCoder rotations/second
 
   // Variables for encoder zeroing
-  private double driveEncoderZero = 0;      // Reference raw encoder reading for drive FalconFX encoder.  Calibration sets this to zero.
+  private double driveEncoderZero = 0;      // Reference raw encoder reading for drive motor encoder.  Calibration sets this to zero.
   private double cancoderZero = 0;          // Reference raw encoder reading for CanCoder.  Calibration sets this to the absolute position from RobotPreferences.
-  private double turningEncoderZero = 0;    // Reference raw encoder reading for turning FalconFX encoder.  Calibration sets this to match the CanCoder.
+  private double turningEncoderZero = 0;    // Reference raw encoder reading for turning motor encoder.  Calibration sets this to match the CanCoder.
 
+  // Controller for drive motor speed
   private final SimpleMotorFeedforward driveFeedforward;
-  // private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(SwerveConstants.kSTurn, SwerveConstants.kVTurn);
-  
+
 
   /**
    * Constructs a SwerveModule.
@@ -90,9 +91,13 @@ public class SwerveModule {
    * @param driveMotorAddress The CANbus address of the drive motor.
    * @param turningMotorAddress The CANbus address of the turning motor.
    * @param cancoderAddress The CANbus address of the turning encoder.
+   * @param driveMotorInverted True = invert drive motor direction
+   * @param turningMotorInverted True = invert turning motor direction
    * @param cancoderReversed Whether the CANcoder is reversed.
    * @param turningOffsetDegrees Offset degrees in the turning motor to point to the 
    * front of the robot.  Value is the desired encoder zero point, in absolute magnet position reading.
+   * @param kVm Drive motor kV multiplier to account for small differences between the 4 swerve modules
+   * on the robot.  The drive motor kV = kVDriveAvg * kVm
    * @param log FileLog for logging
    */
   public SwerveModule(String swName, int driveMotorAddress, int turningMotorAddress, int cancoderAddress, 
@@ -103,6 +108,9 @@ public class SwerveModule {
     this.log = log;
     this.turningOffsetDegrees = turningOffsetDegrees;
 
+    // Create feed forward model for drive motor
+    driveFeedforward = new SimpleMotorFeedforward(SwerveConstants.kSDrive, SwerveConstants.kVDriveAvg*kVm, SwerveConstants.kADrive);
+    
     // Create motor, encoder, signal, and sensor objects
     driveMotor = new TalonFX(driveMotorAddress, Ports.CANivoreBus);
     driveMotorConfigurator = driveMotor.getConfigurator();
@@ -126,13 +134,11 @@ public class SwerveModule {
     turningCanCoderPosition = turningCanCoder.getPosition();
     turningCanCoderVelocity = turningCanCoder.getVelocity();
 
-    driveFeedforward = new SimpleMotorFeedforward(SwerveConstants.kSDrive, SwerveConstants.kVDriveAvg*kVm, SwerveConstants.kADrive);
-    
     // **** Setup drive motor configuration
 
  		// Start with factory default TalonFX configuration
 		driveMotorConfig = new TalonFXConfiguration();			// Factory default configuration
-    driveMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
+    driveMotorConfig.MotorOutput.Inverted = driveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;		// Invert motor if needed
 		driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
     driveMotorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.0;
 		driveMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
@@ -161,7 +167,7 @@ public class SwerveModule {
 
  		// Start with factory default TalonFX configuration
 		turningMotorConfig = new TalonFXConfiguration();			// Factory default configuration
-    turningMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor
+    turningMotorConfig.MotorOutput.Inverted = turningMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;		// Invert motor if needed
 		turningMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
     turningMotorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
 		turningMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
@@ -226,7 +232,7 @@ public class SwerveModule {
     // NOTE!!! When the Cancoder or TalonFX encoder settings are changed above, then the next call to 
     // getCanCoderDegrees() getTurningEncoderDegrees() may contain an old value, not the value based on 
     // the updated configuration settings above!!!!  The CANBus runs asynchronously from this code, so 
-    // sending the updated configuration to the CanCoder/Falcon and then receiving an updated position measurement back
+    // sending the updated configuration to the CanCoder/TalonFX and then receiving an updated position measurement back
     // may take longer than this code.
     // The timeouts in the configuration code above should take care of this, but it does not always wait long enough.
     // So, add a wait time here:
@@ -312,7 +318,7 @@ public class SwerveModule {
     // Optimize the reference state to avoid spinning further than 90 degrees
     // Custom optimize command, since default WPILib optimize assumes continuous controller which CTRE is not
     desiredState =
-        CTRESwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getTurningEncoderDegrees()));
+        MathSwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getTurningEncoderDegrees()));
 
     // Set drive motor velocity or percent output
     if(isOpenLoop){
@@ -387,7 +393,7 @@ public class SwerveModule {
   }
   
   /**
-   * Calibrates the turning FalconFX encoder.  Sets the current wheel facing to currentAngleDegrees.
+   * Calibrates the turning motor encoder.  Sets the current wheel facing to currentAngleDegrees.
    * @param currentAngleDegrees current angle, in degrees.
    */
   public void calibrateTurningEncoderDegrees(double currentAngleDegrees) {
@@ -396,7 +402,7 @@ public class SwerveModule {
   }
 
   /**
-   * @return turning FalconFX encoder facing, in degrees.  Values do not wrap, so angle could be greater than 360 degrees.
+   * @return turning motor encoder facing, in degrees.  Values do not wrap, so angle could be greater than 360 degrees.
    * When calibrated, 0 should be with the wheel pointing toward the front of robot.
    * + = counterclockwise, - = clockwise
    */
@@ -405,9 +411,9 @@ public class SwerveModule {
   }
 
   /**
-   * Converts a target wheel facing (in degrees) to a target raw turning FalconFX encoder value.
+   * Converts a target wheel facing (in degrees) to a target raw turning motor encoder value.
    * @param targetDegrees Desired wheel facing, in degrees.  0 = towards front of robot, + = counterclockwise, - = clockwise
-   * @return turning FalconFX encoder raw value equivalent to input facing.
+   * @return turning motor encoder raw value equivalent to input facing.
    */
   public double calculateTurningEncoderTargetRaw(double targetDegrees) {
     return targetDegrees / SwerveConstants.kTurningEncoderDegreesPerTick + turningEncoderZero;
