@@ -68,6 +68,8 @@ public final class Constants {
 
       public static final int CANIntake = 16;
 
+      public static final int CANPigeonGyro = 17;
+
       public static final int DIOIntakePieceSensor = 0;
 
     }
@@ -98,8 +100,8 @@ public final class Constants {
       public static final double kDriveGearRatio = (8.14 / 1.0);      // CALIBRATED.   Mk4i = 8.14:1 (L1-std gears).  Mk4i = 6.75:1 (L2-fast gears)
       public static final double kTurningGearRatio = (150.0/7.0 / 1.0); // CALIBRATED = 150.0/7.0.  Mk4i = 150/7 : 1
       public static final double kWheelDiameterMeters = 0.1013; // CALIBRATED.
-      // public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
-      // public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
+      public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
+      public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
       public static final double kDriveEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kDriveGearRatio;
       public static final double kTurningEncoderDegreesPerRotation = 360.0/ kTurningGearRatio;
 
@@ -114,7 +116,7 @@ public final class Constants {
       public static final double kNominalSpeedMetersPerSecond = 0.5*kMaxSpeedMetersPerSecond;
       // Max acceleration measured x/x/2024 (with full robot weight):  Average ~11 m/sec^2.  Keep value at 10.0 for now.
       public static final double kMaxAccelerationMetersPerSecondSquare = 10; // TODO NOT CALIBRATED
-      public static final double kFullAccelerationMetersPerSecondSquare = 0.9*kMaxAccelerationMetersPerSecondSquare;
+      public static final double kFullAccelerationMetersPerSecondSquare = 0.9 * kMaxAccelerationMetersPerSecondSquare;
       public static final double kNominalAccelerationMetersPerSecondSquare = 3.5; // TODO value from last year
       public static final double kMaxRetractingAccelerationMetersPerSecondSquare = 2; // TODO value from last year
       public static final double kMaxTurningRadiansPerSecond = 11.0;  // TODO NOT CALIBRATED

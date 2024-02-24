@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
@@ -52,7 +54,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   private final SwerveModule swerveBackRight;
   
   // variables for gyro and gyro calibration
-  private final AHRS ahrs;
+  // private final AHRS ahrs;
+  private final WPI_PigeonIMU pigeon;
   private double yawZero = 0.0;
   private double pitchZero = 0.0;
 
@@ -86,10 +89,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
     // create swerve modules
     swerveFrontLeft = new SwerveModule("FL",
-      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, true, false,
+      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, false, true,
       false, offsetAngleFrontLeftMotor, SwerveConstants.kVmFL, log);
     swerveFrontRight = new SwerveModule("FR",
-      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, true, false,
+      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, false, true,
       false, offsetAngleFrontRightMotor, SwerveConstants.kVmFR, log);
     swerveBackLeft = new SwerveModule("BL",
       CANDriveBackLeftMotor, CANDriveTurnBackLeftMotor, CANTurnEncoderBackLeft, false, true,
@@ -99,15 +102,23 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       false, offsetAngleBackRightMotor, SwerveConstants.kVmBR, log);
 
     // configure navX gyro
-    AHRS gyro = null;
-		try {
-      gyro = new AHRS(SerialPort.Port.kUSB);
-      // gyro.zeroYaw();   // *** Do not zero the gyro hardware!  The hardware zeros asynchronously from this thread, so an immediate read-back of the gyro may not yet be zeroed.
-      log.writeLogEcho(true, "Drive", "Gyro Initialize", "Firmware version", gyro.getFirmwareVersion() );
-		} catch (RuntimeException ex) {
-			DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+    // AHRS gyro = null;
+		// try {
+    //   gyro = new AHRS(SerialPort.Port.kUSB);
+    //   // gyro.zeroYaw();   // *** Do not zero the gyro hardware!  The hardware zeros asynchronously from this thread, so an immediate read-back of the gyro may not yet be zeroed.
+    //   log.writeLogEcho(true, "Drive", "Gyro Initialize", "Firmware version", gyro.getFirmwareVersion() );
+		// } catch (RuntimeException ex) {
+		// 	DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+    // }
+    // ahrs = gyro;
+
+    WPI_PigeonIMU gyroPigeon = null;
+    try {
+      gyroPigeon = new WPI_PigeonIMU(CANPigeonGyro);
+    } catch (RuntimeException ex){
+      DriverStation.reportError("Error instantiating pigeon: ", true);
     }
-    ahrs = gyro;
+    pigeon = gyroPigeon;
 
     // zero gyro and initialize angular velocity variables
     zeroGyro();
@@ -134,7 +145,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    * @return true = gryo is connected to Rio
    */
   public boolean isGyroReading() {
-    return ahrs.isConnected();
+    return pigeon.getState() != PigeonState.NoComm && pigeon.getState() != PigeonState.Unknown;
   }
 
   /**
@@ -143,14 +154,14 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    * @return raw gyro angle, in degrees.
    */
   public double getGyroRaw() {
-    return -ahrs.getAngle();
+    return pigeon.getYaw();
   }
 
   /**
 	 * @return double, gyro pitch from 180 to -180, in degrees (postitive is nose up, negative is nose down)
 	 */
 	public double getGyroPitchRaw() {
-		return -ahrs.getPitch();
+		return pigeon.getPitch();
   }
 
   public void resetGyroPitch(){
