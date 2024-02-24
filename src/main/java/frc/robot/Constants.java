@@ -67,6 +67,7 @@ public final class Constants {
       public static final int CANFeeder = 15;
 
       public static final int CANIntake = 16;
+      public static final int CANCenteringMotor = 17;
 
       public static final int DIOIntakePieceSensor = 0;
 
@@ -268,10 +269,9 @@ public final class Constants {
 
     public static final class IntakeConstants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
-      public static final double ticksPerRevolution = 2048.0;                     // Divide by this to convert raw ticks to revolutions
-      public static final double rawVelocityToRPM = 600.0 / ticksPerRevolution;   // Multiply by this to convert raw velocity (ticksPer100ms) to RPM
 
       public static final double intakePercent = 0.3;
+      public static final double centeringPercent = 0.15;
   }
 
 }
