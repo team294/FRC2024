@@ -91,19 +91,21 @@ public final class Constants {
     }
 
     public static final class RobotDimensions {
-      //left to right distance between the drivetrain wheels; should be measured from center to center
-      public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.626;      // TODO update.  0.626m CALIBRATED.  80% bot CAD = 0.60325m
-      //front-back distance between the drivetrain wheels; should be measured from center to center
-      public static final double DRIVETRAIN_WHEELBASE_METERS = 0.626;       // TODO update.  0.626m CALIBRATED.  80% bot CAD = 0.60325m
+      // Drivebase adjustment for path-of-wheel diameter when turning in place
+      private static final double DrivetrainAdjustmentFactor = 1.000;       // TODO CALIBRATE
+      // left to right distance between the drivetrain wheels; should be measured from center to center
+      public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.61595 * DrivetrainAdjustmentFactor;      // 0.61595m CALIBRATED.  Competition bot CAD = 24.25" = 0.61595m. 80% bot CAD = 0.60325m, calibrated = 0.626m.
+      // front-back distance between the drivetrain wheels; should be measured from center to center
+      public static final double DRIVETRAIN_WHEELBASE_METERS = 0.52705 * DrivetrainAdjustmentFactor;       // 0.52705m CALIBRATED.  Competition bot CAD = 20.75" = 0.52705m.  80% bot CAD = 0.60325m, calibrated = 0.626m.
 
     }
 
     public static final class SwerveConstants {
         // Encoder calibration to meters travelled or wheel facing degrees
-      public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.  Encoder counts per revolution of motor pinion gear
-      public static final double kDriveGearRatio = (8.14 / 1.0);      // TODO check.  CALIBRATED.   Mk4i = 8.14:1 (L1-std gears).  Mk4i = 6.75:1 (L2-fast gears)
-      public static final double kTurningGearRatio = (150.0/7.0 / 1.0); // TODO check.  CALIBRATED = 150.0/7.0.  Mk4i = 150/7 : 1
-      public static final double kWheelDiameterMeters = 0.1013; // TODO check.  CALIBRATED.
+      public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.0.  Encoder counts per revolution of motor pinion gear
+      public static final double kDriveGearRatio = (5.903 / 1.0);      // 2024=Modified L2.  CALIBRATED.   Mk4i = 8.14:1 (L1-std gears), 6.75:1 (L2-fast gears), 5.903 (modified L2 16-tooth gear).  
+      public static final double kTurningGearRatio = (150.0/7.0 / 1.0); // CALIBRATED = 150.0/7.0.  Mk4i = 150/7 : 1
+      public static final double kWheelDiameterMeters = 0.1003; // TODO CALIBRATE.  Colson wheel = nominal 4" diameter, actual 3.95" = 0.1003m.  80% bot calibrated = 0.1013m.
       public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
 
