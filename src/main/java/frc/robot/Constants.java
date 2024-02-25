@@ -252,7 +252,7 @@ public final class Constants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
 
       public static final double intakePercent = 0.3;
-      public static final double centeringPercent = 0.15;
+      public static final double centeringPercent = 0.15; // Need to calibrate, using talon instead of neo
   }
 
 }
