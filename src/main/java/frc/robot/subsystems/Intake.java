@@ -17,7 +17,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -41,7 +40,7 @@ public class Intake extends SubsystemBase implements Loggable {
 	private TalonFXConfiguration centeringConfig;
 	private VoltageOut centeringVoltageControl = new VoltageOut(0.0);
 
-  // Create Falcon variables for intake motor
+  // Create Falcon variables for centering motor
 	private final StatusSignal<Double> centeringTemp;				// Motor temperature, in degC
 	private final StatusSignal<Double> centeringDutyCycle;				// Motor duty cycle percent power, -1 to 1
 	private final StatusSignal<Double> centeringStatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
