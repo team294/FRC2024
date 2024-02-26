@@ -13,7 +13,11 @@ public class IntakeStop extends Command {
   private final Intake intake;
   private final FileLog log;
 
-  /** Creates a new IntakeStop. */
+  /**
+   * Stops the intake and centering motors
+   * @param intake intake subsystem
+   * @param log
+   */
   public IntakeStop(Intake intake, FileLog log) {
     this.intake = intake;
     this.log = log;
@@ -25,6 +29,9 @@ public class IntakeStop extends Command {
   @Override
   public void initialize() {
     intake.stopIntakeMotor();
+    intake.stopCenteringMotor();
+
+    log.writeLog(false, "IntakeStop", "Initialize");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
