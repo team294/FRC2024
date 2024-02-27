@@ -122,10 +122,10 @@ public final class Constants {
       public static final double kMaxAccelerationMetersPerSecondSquare = 10; // TODO NOT CALIBRATED
       public static final double kFullAccelerationMetersPerSecondSquare = 0.9 * kMaxAccelerationMetersPerSecondSquare;
       public static final double kNominalAccelerationMetersPerSecondSquare = 3.5; // TODO value from last year
-      public static final double kMaxRetractingAccelerationMetersPerSecondSquare = 2; // TODO value from last year
+      public static final double kMaxRetractingAccelerationMetersPerSecondSquare = 2; // TODO value from last year - not used in code currently
       public static final double kMaxTurningRadiansPerSecond = 11.0;  // TODO NOT CALIBRATED
       public static final double kNominalTurningRadiansPerSecond = Math.PI;
-      public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 35.0;            // TODO NOT CALIBRATED
+      public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 35.0;            // TODO NOT CALIBRATED - not used in code currently
       public static final double kNominalAngularAccelerationRadiansPerSecondSquared = Math.PI;
       public static final double kVDriveAvg = 0.2034; // TODO Calibrate.  0.2034 from 2023 robot.  In % output per meters per second.
       public static final double kVmFL = 1.0000;      // TODO Calibrate.  kV modifier for FL drive motor
