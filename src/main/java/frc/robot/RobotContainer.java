@@ -54,6 +54,7 @@ public class RobotContainer {
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
+  private final JeVoisCamera jevois = new JeVoisCamera(log);
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
   private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);

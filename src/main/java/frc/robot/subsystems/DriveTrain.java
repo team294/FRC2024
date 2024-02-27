@@ -103,7 +103,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     // configure navX gyro
     AHRS gyro = null;
 		try {
-      gyro = new AHRS(SerialPort.Port.kUSB);
+      gyro = new AHRS(SerialPort.Port.kUSB2);
       // gyro.zeroYaw();   // *** Do not zero the gyro hardware!  The hardware zeros asynchronously from this thread, so an immediate read-back of the gyro may not yet be zeroed.
       log.writeLogEcho(true, "Drive", "Gyro Initialize", "Firmware version", gyro.getFirmwareVersion() );
 		} catch (RuntimeException ex) {
