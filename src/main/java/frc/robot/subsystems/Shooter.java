@@ -100,7 +100,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     motor1Current = motor1.getSupplyCurrent();
 
     motor1Config = new TalonFXConfiguration();			// Factory default configuration
-    motor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
+    motor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Do not invert motor
 		motor1Config.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
     motor1Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.0;
 		motor1Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
