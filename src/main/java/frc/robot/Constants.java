@@ -253,8 +253,14 @@ public final class Constants {
                     // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
                     new Translation3d(Units.inchesToMeters(14.5), Units.inchesToMeters(0), Units.inchesToMeters(17.75)),
                     new Rotation3d(0, Units.degreesToRadians(23.5), Units.degreesToRadians(180))); // Cam mounted facing forward in center of robot
-        public static final String cameraName = "CenterCamera";
+        public static final String aprilTagCameraName = "CenterCamera";
+
+
+        public static final String noteCameraName = "NoteCamera";
+        public static final double pitchSetpoint = -20.0;
+        public static final double yawSetpoint = 0;
       }
+
 
         // JeVois
         public static class JeVoisConstants { 

@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -21,7 +19,6 @@ import frc.robot.Constants.VisionConstants.JeVoisConstants;
 import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.JeVoisCamera;
-import frc.robot.subsystems.NotePhotonCameraWrapper;
 import frc.robot.utilities.*;
 
 /**
@@ -29,6 +26,7 @@ import frc.robot.utilities.*;
  */
 public class DriveToNote extends Command {
   private final DriveTrain driveTrain;
+  private final JeVoisCamera camera;
   private final PIDController fwdRateController;
   private final PIDController leftRateController;
   private final PIDController turnRateController;
@@ -42,12 +40,14 @@ public class DriveToNote extends Command {
   // private final double maxRevRateChange = -1.4;
 
   /**
+   * @param camera JeVois camera subsystem
    * @param driveTrain drive train subsystem to use
    * @param log filelog to use
    */
-  public DriveToNote(DriveTrain driveTrain, FileLog log) {
+  public DriveToNote(JeVoisCamera camera, DriveTrain driveTrain, FileLog log) {
     this.driveTrain = driveTrain;
     this.log = log;
+    this.camera = camera;
     fwdRateController = new PIDController(0.1, 0, 0);
     leftRateController = new PIDController(0.04, 0, 0);
     turnRateController = new PIDController(0.2, 0, 0);
@@ -73,18 +73,16 @@ public class DriveToNote extends Command {
   @Override
   public void execute() {
     // curTime = System.currentTimeMillis() / 1000.0;
-    PhotonTrackedTarget bestTarget = driveTrain.getBestTarget();
-
-    fwdVelocity = fwdRateController.calculate(bestTarget.getPitch());
-    leftVelocity = leftRateController.calculate(bestTarget.getYaw());
-    turnRate = turnRateController.calculate(bestTarget.getYaw());
+    fwdVelocity = fwdRateController.calculate(camera.getClosestTargetY());
+    leftVelocity = leftRateController.calculate(camera.getClosestTargetX() - (JeVoisConstants.width / 2));
+    turnRate = turnRateController.calculate(camera.getClosestTargetX());
 
     fwdVelocity = MathUtil.clamp(fwdVelocity, -SwerveConstants.kMaxSpeedMetersPerSecond, SwerveConstants.kMaxSpeedMetersPerSecond);
     leftVelocity = MathUtil.clamp(leftVelocity, -SwerveConstants.kMaxSpeedMetersPerSecond, SwerveConstants.kMaxSpeedMetersPerSecond);
     turnRate = MathUtil.clamp(leftVelocity, -SwerveConstants.kMaxTurningRadiansPerSecond, SwerveConstants.kMaxTurningRadiansPerSecond);
 
     if(log.isMyLogRotation(logRotationKey)) {
-      log.writeLogEcho(false, "DriveToNote", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", turnRate);
+      log.writeLog(false, "DriveToNote", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", turnRate);
     }
     
     // double fwdRateChange = (fwdPercent - lastFwdPercent) / (curTime - lastTime);

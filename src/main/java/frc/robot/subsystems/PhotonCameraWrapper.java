@@ -53,7 +53,7 @@ public class PhotonCameraWrapper extends SubsystemBase {
     currAlliance = allianceSelection.getAlliance();
 
     if (photonCamera == null) {
-      photonCamera = new PhotonCamera(PhotonVisionConstants.cameraName);
+      photonCamera = new PhotonCamera(PhotonVisionConstants.aprilTagCameraName);
     }
 
 
@@ -101,8 +101,8 @@ public class PhotonCameraWrapper extends SubsystemBase {
 
   public void periodic() {
     if (allianceSelection.getAlliance() != currAlliance) {
-      init();
-      log.writeLogEcho(true, "PhotonCameraWrapper", "UpdateAlliance", "Alliance changed", currAlliance);
+      // init();
+      // log.writeLogEcho(true, "PhotonCameraWrapper", "UpdateAlliance", "Alliance changed", currAlliance);
     }
 
     // if (fastLogging || log.isMyLogRotation(logRotationKey)) {

@@ -54,7 +54,7 @@ public class RobotContainer {
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
-  private final JeVoisCamera jevois = new JeVoisCamera(log);
+  // private final JeVoisCamera jevois = new JeVoisCamera(log);
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
   private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);
@@ -110,6 +110,7 @@ public class RobotContainer {
     SmartDashboard.putData("Stop All Subsystems", new StopIntakeFeederShooter(intake, shooter, log));
     SmartDashboard.putData("Intake Piece", new IntakePiece(intake, shooter, log));
     SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
+    SmartDashboard.putData("Drive To Note", new DriveToNote(driveTrain, log));
   
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));

@@ -34,6 +34,8 @@ import frc.robot.utilities.*;
 
 // Vision imports
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import java.util.Optional;
 
 
@@ -65,6 +67,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   // variable to store vision camera
   private PhotonCameraWrapper camera;
+  private NotePhotonCameraWrapper noteCamera;
 
   // variable for vison-based aiming in DriveWithJoysticksAdvance
   private boolean aimLock = false;
@@ -85,6 +88,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     this.log = log; // save reference to the fileLog
     logRotationKey = log.allocateLogRotation();     // Get log rotation for this subsystem
     this.camera = new PhotonCameraWrapper(allianceSelection, log, logRotationKey);
+    this.noteCamera = new NotePhotonCameraWrapper(log, logRotationKey);
 
     // create swerve modules
     swerveFrontLeft = new SwerveModule("FL",
@@ -103,7 +107,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     // configure navX gyro
     AHRS gyro = null;
 		try {
-      gyro = new AHRS(SerialPort.Port.kUSB2);
+      gyro = new AHRS(SerialPort.Port.kUSB);
       // gyro.zeroYaw();   // *** Do not zero the gyro hardware!  The hardware zeros asynchronously from this thread, so an immediate read-back of the gyro may not yet be zeroed.
       log.writeLogEcho(true, "Drive", "Gyro Initialize", "Firmware version", gyro.getFirmwareVersion() );
 		} catch (RuntimeException ex) {
@@ -432,6 +436,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   public void enableFastLogging(boolean enabled) {
     fastLogging = enabled;
     camera.enableFastLogging(enabled);
+    noteCamera.enableFastLogging(enabled);
   }
 
   /**
@@ -559,6 +564,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   public void cameraInit() {
     camera.init();
+  }
+
+  public PhotonTrackedTarget getBestTarget() {
+    return noteCamera.getBestTarget();
   }
 
   public void setAimLock(boolean state) {

@@ -88,7 +88,8 @@ public class JeVoisCamera extends SubsystemBase {
     String curr = "";
     if (serialPort != null) {
       curr = serialPort.readString();
-      System.out.println(StringUtil.buildString("jevois: ", curr));
+      if (log.isMyLogRotation(logRotationKey))
+        System.out.println(StringUtil.buildString("jevois: ", curr));
     }
 
     if(curr.length() >=10 && curr.indexOf("D3") == 0){
