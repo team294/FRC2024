@@ -22,6 +22,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -63,6 +64,8 @@ public class Shooter extends SubsystemBase implements Loggable {
   private final StatusSignal<Double> feederVoltage;
   private final StatusSignal<Double> feederCurrent;
 
+  //Piece sensor inside the intake 
+  private final DigitalInput pieceSensor = new DigitalInput(Ports.DIOIntakePieceSensor);
 
   private SimpleMotorFeedforward motor1Feedforward; // todo
 
@@ -88,7 +91,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     motor2 = new TalonFX(Ports.CANShooter2);
     feeder = new TalonFX(Ports.CANFeeder);
     subsystemName = "Shooter";
-    // Configure motor2
+    // Configure motor1
     motor1Configurator = motor1.getConfigurator();
     motor1SupplyVoltage = motor1.getSupplyVoltage();
 	  motor1Temp = motor1.getDeviceTemp();
@@ -142,7 +145,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     // Make motor2 follow motor1
     //motor2.setControl(new Follower(motor1.getDeviceID(), false)); 
 
-    // Set the PID and stop the motor 1
+    // Set the PID and stop all motors
     setPIDSVA(
       ShooterConstants.Motor1kP,
       ShooterConstants.Motor1kI,
@@ -174,7 +177,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * Sets the voltage of the motor
+   * Sets the voltage of the motor 1 and 2
    * 
    * <p> Compensates for the current bus
 	 * voltage to ensure that the desired voltage is output even if the battery voltage is below
@@ -195,7 +198,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * Sets the voltage of the motor
+   * Sets the voltage of motor 1 and 2
    * 
    * <p> Compensates for the current bus
 	 * voltage to ensure that the desired voltage is output even if the battery voltage is below
@@ -217,7 +220,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * sets the percent of the motor, using voltage compensation if turned on
+   * sets the percent of motor 1, 2, and the feeder using voltage compensation if turned on
    * @param shooterPercent percent for the shooter
    * @param feederPercent percent for the feeder
    */
@@ -232,7 +235,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * sets the percent of the motor, using voltage compensation if turned on
+   * sets the percent of motor 1, 2, and feeder using voltage compensation if turned on
    * @param shooter1Percent percent for the shooter motor 1
    * @param shooter2Percent percent for the shooter motor 2
    * @param feederPercent percent for the feeder
@@ -248,7 +251,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
   
   /**
-   * sets the percent of the motor, using voltage compensation if turned on
+   * sets the percent of motor 1 and 2 using voltage compensation if turned on
    * @param percent percent for the shooter
    */
   public void setShooterMotorPercentOutput(double percent) {
@@ -261,7 +264,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * sets the percent of the motor, using voltage compensation if turned on
+   * sets the percent of motor 1 and 2 using voltage compensation if turned on
    * @param percent1 percent for the shooter motor 1
    * @param percent2 percent for the shooter motor 2
    */
@@ -275,7 +278,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * sets the percent of the motor, using voltage compensation if turned on
+   * sets the percent of the feeder, using voltage compensation if turned on
    * @param percent percent for the feeder
    */
   public void setFeederMotorPercentOutput(double percent) {
@@ -284,7 +287,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-  * Stops the motor
+  * Stops motor 1, 2, and feeder
   */
   public void stopMotor() {
     setMotorPercentOutput(0.0, 0.0);
@@ -361,7 +364,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
-   * @return velocity of feeder motor 1 in rpm
+   * @return velocity of feeder in rpm
    */
   public double getFeederVelocity() {
     feederEncoderVelocity.refresh();
@@ -433,7 +436,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     feederConfig.Slot0.kP = FeederP;
     feederConfig.Slot0.kP = FeederP;
 
-    // Apply configuration to the motors.  
+    // Apply configuration to all the motors.  
 		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
     motor1Configurator.apply(motor1Config);
     motor2Configurator.apply(motor2Config);
