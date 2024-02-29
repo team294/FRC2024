@@ -23,11 +23,16 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 0;
+    private static int trajectoryCount = 2;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
+        test(0),
+        driveToNoteFar(1);
 
+        @SuppressWarnings({"MemberName", "PMD.SingularField"})
+        public final int value;
+        TrajectoryType(int value) { this.value = value; }
     }
 
     /**
@@ -67,8 +72,27 @@ public class TrajectoryCache {
      */
     public TrajectoryCache(FileLog log){
         this.log = log;
-
-       
+        cache[TrajectoryType.test.value] = new TrajectoryFacing(
+            new Rotation2d(0),
+            new Rotation2d(Math.PI/2),
+            calcTrajectory("Test", .4, .4, false,
+            new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))),
+            List.of(
+                new Translation2d(1, -(2 - Math.sqrt(3))),
+                new Translation2d(Math.sqrt(2), -(2 - Math.sqrt(2))),
+                new Translation2d(Math.sqrt(3), -1)
+            ),
+            new Pose2d(2, -2, new Rotation2d(Math.toRadians(270)))
+            ));
+        cache[TrajectoryType.driveToNoteFar.value] = new TrajectoryFacing(
+            new Rotation2d(0), 
+            new Rotation2d(0), 
+            calcTrajectory("driveToNoteFar", .4, .4, false,
+            new Pose2d(2.5, 3.2, new Rotation2d(Math.toRadians(-15))), 
+            List.of(
+                new Translation2d(4, 2.5)
+            ), 
+            new Pose2d(8.1, 1.5, new Rotation2d(0))));
     }
 
 
