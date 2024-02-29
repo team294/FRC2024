@@ -113,6 +113,7 @@ public class RobotContainer {
   
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
+    SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
     SmartDashboard.putData("Shooter Set Velocity", new ShooterSetVelocity(shooter, log));
     SmartDashboard.putData("Shooter Set Voltage", new ShooterSetVoltage(shooter, log));
   }
