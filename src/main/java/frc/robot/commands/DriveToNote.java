@@ -76,6 +76,7 @@ public class DriveToNote extends Command {
     // curTime = System.currentTimeMillis() / 1000.0;
 
     PhotonPipelineResult latestResult = driveTrain.getLatestResult();
+    SmartDashboard.putBoolean("DriveToNote Has Target", latestResult.hasTargets());
     if (!latestResult.hasTargets()) {
       if(log.isMyLogRotation(logRotationKey)) {
         log.writeLog(false, "DriveToNote", "No targets captured");
@@ -87,12 +88,12 @@ public class DriveToNote extends Command {
     
 
     fwdVelocity = fwdRateController.calculate(bestTarget.getPitch());
-    leftVelocity = leftRateController.calculate(bestTarget.getYaw());
+    leftVelocity = -leftRateController.calculate(bestTarget.getYaw());
     turnRate = turnRateController.calculate(bestTarget.getYaw());
 
     fwdVelocity = MathUtil.clamp(fwdVelocity, -SwerveConstants.kMaxSpeedMetersPerSecond, SwerveConstants.kMaxSpeedMetersPerSecond);
     leftVelocity = MathUtil.clamp(leftVelocity, -SwerveConstants.kMaxSpeedMetersPerSecond, SwerveConstants.kMaxSpeedMetersPerSecond);
-    turnRate = MathUtil.clamp(leftVelocity, -SwerveConstants.kMaxTurningRadiansPerSecond, SwerveConstants.kMaxTurningRadiansPerSecond);
+    turnRate = MathUtil.clamp(turnRate, -SwerveConstants.kMaxTurningRadiansPerSecond, SwerveConstants.kMaxTurningRadiansPerSecond);
 
     if(log.isMyLogRotation(logRotationKey)) {
       log.writeLog(false, "DriveToNote", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", turnRate);
