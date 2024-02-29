@@ -12,7 +12,8 @@ public class ShooterCalibrationRamp extends Command {
   private final Shooter shooter;
   private final FileLog log;
 
-  private double volts;
+  private double percent;
+
   /** Creates a new FeedForwardTest. */
   public ShooterCalibrationRamp(Shooter shooter, FileLog log) {
     this.shooter = shooter;
@@ -24,31 +25,34 @@ public class ShooterCalibrationRamp extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    volts = 0.0;
+    percent = 0.0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     log.writeLog(false, shooter.getName(), "Increasing motor voltage",
-      "Volts", volts,
-      "Velocity", shooter.getShooter1Velocity()
+      "Top Volts", shooter.getShooterTopVoltage(),
+      "Top Velocity", shooter.getShooter1Velocity(),
+      "Bottom Volts", shooter.getShooterBottomVoltage(),
+      "Bottom Velocity", shooter.getShooter2Velocity()
     );
-    shooter.setVoltage(volts);
-    // Every 20ms, increase volts by 0.01
-    volts += 0.005;
+
+    // Every 20ms, increase percent slightly
+    percent += 0.0004;
+    shooter.setMotorPercentOutput(percent, 0.0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.stopMotor();
+    shooter.stopMotors();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // Do NOT exceed 5 volts for safety
-    return volts > 4.0;
+    // Do NOT exceed 35%  for safety
+    return percent > 0.35;
   }
 }
