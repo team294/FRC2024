@@ -29,11 +29,13 @@ import static frc.robot.Constants.Ports.*;
 import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Constants.FieldConstants;
 
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.utilities.*;
 
 // Vision imports
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import java.util.Optional;
@@ -568,6 +570,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   public PhotonTrackedTarget getBestTarget() {
     return noteCamera.getBestTarget();
+  }
+
+  public PhotonPipelineResult getLatestResult() {
+    return noteCamera.getLatestResult();
   }
 
   public void setAimLock(boolean state) {

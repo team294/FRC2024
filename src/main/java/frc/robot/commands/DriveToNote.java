@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.MathUtil;
@@ -73,7 +74,17 @@ public class DriveToNote extends Command {
   @Override
   public void execute() {
     // curTime = System.currentTimeMillis() / 1000.0;
-    PhotonTrackedTarget bestTarget = driveTrain.getBestTarget();
+
+    PhotonPipelineResult latestResult = driveTrain.getLatestResult();
+    if (!latestResult.hasTargets()) {
+      if(log.isMyLogRotation(logRotationKey)) {
+        log.writeLog(false, "DriveToNote", "No targets captured");
+      }
+        return;
+    }
+
+    PhotonTrackedTarget bestTarget = latestResult.getBestTarget();
+    
 
     fwdVelocity = fwdRateController.calculate(bestTarget.getPitch());
     leftVelocity = leftRateController.calculate(bestTarget.getYaw());
@@ -84,7 +95,7 @@ public class DriveToNote extends Command {
     turnRate = MathUtil.clamp(leftVelocity, -SwerveConstants.kMaxTurningRadiansPerSecond, SwerveConstants.kMaxTurningRadiansPerSecond);
 
     if(log.isMyLogRotation(logRotationKey)) {
-      log.writeLogEcho(false, "DriveToNote", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", turnRate);
+      log.writeLog(false, "DriveToNote", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", turnRate);
     }
     
     // double fwdRateChange = (fwdPercent - lastFwdPercent) / (curTime - lastTime);
@@ -94,6 +105,12 @@ public class DriveToNote extends Command {
     //   fwdPercent = lastFwdPercent +(curTime - lastTime)*maxRevRateChange;
 
     // }
+
+    SmartDashboard.putNumber("DriveToNote fwd", fwdVelocity);
+    SmartDashboard.putNumber("DriveToNote left", leftVelocity);
+    SmartDashboard.putNumber("DriveToNote turnRate", turnRate);
+    SmartDashboard.putNumber("DriveToNote BestTargetPitch", bestTarget.getPitch());
+    SmartDashboard.putNumber("DriveToNote BestTargetYaw", bestTarget.getYaw());
     
     driveTrain.drive(fwdVelocity, leftVelocity, turnRate, true, false);
 

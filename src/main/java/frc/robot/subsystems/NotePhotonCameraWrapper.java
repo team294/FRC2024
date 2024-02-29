@@ -5,6 +5,7 @@ import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
 import frc.robot.utilities.FileLog;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class NotePhotonCameraWrapper extends SubsystemBase {
@@ -57,5 +58,9 @@ public class NotePhotonCameraWrapper extends SubsystemBase {
      */
   public PhotonTrackedTarget getBestTarget() {
     return photonCamera.getLatestResult().getBestTarget();
+  }
+
+  public PhotonPipelineResult getLatestResult() {
+    return photonCamera.getLatestResult();
   }
 }
