@@ -4,10 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.configs.Pigeon2Configurator;
-import com.ctre.phoenix6.hardware.Pigeon2;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -21,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,8 +30,6 @@ import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Constants.FieldConstants;
 
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.utilities.*;
 
@@ -60,22 +56,17 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   private final SwerveModule swerveBackRight;
   
   // variables for gyro and gyro calibration
-  private final Pigeon2 pigeon = new Pigeon2(CANPigeonGyro, Ports.CANivoreBus);
-  // private final Pigeon2Configurator pigeonConfigurator = pigeon.getConfigurator();
-  // private Pigeon2Configuration pigeonConfig;
-  private final StatusSignal<Double> pigeonYaw = pigeon.getYaw();
-  private final StatusSignal<Double> pigeonPitch = pigeon.getPitch();
-  private final StatusSignal<Boolean> pigeonFault = pigeon.getFault_Hardware();
+  private final AHRS ahrs;
   private double yawZero = 0.0;
   private double pitchZero = 0.0;
 
   // variables to help calculate angular velocity for turnGyro
-  // private double prevAng; // last recorded gyro angle
-  // private double currAng; // current recorded gyro angle
-  // private double prevTime; // last time gyro angle was recorded
-  // private double currTime; // current time gyro angle is being recorded
-  // private double angularVelocity;  // Robot angular velocity in degrees per second
-  // private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
+  private double prevAng; // last recorded gyro angle
+  private double currAng; // current recorded gyro angle
+  private double prevTime; // last time gyro angle was recorded
+  private double currTime; // current time gyro angle is being recorded
+  private double angularVelocity;  // Robot angular velocity in degrees per second
+  private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
 
   // variable to store vision camera
   private PhotonCameraWrapper camera;
@@ -104,10 +95,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
     // create swerve modules
     swerveFrontLeft = new SwerveModule("FL",
-      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, false, true,
+      CANDriveFrontLeftMotor, CANDriveTurnFrontLeftMotor, CANTurnEncoderFrontLeft, true, false,
       false, offsetAngleFrontLeftMotor, SwerveConstants.kVmFL, log);
     swerveFrontRight = new SwerveModule("FR",
-      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, false, true,
+      CANDriveFrontRightMotor, CANDriveTurnFrontRightMotor, CANTurnEncoderFrontRight, true, false,
       false, offsetAngleFrontRightMotor, SwerveConstants.kVmFR, log);
     swerveBackLeft = new SwerveModule("BL",
       CANDriveBackLeftMotor, CANDriveTurnBackLeftMotor, CANTurnEncoderBackLeft, false, true,
@@ -116,28 +107,26 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       CANDriveBackRightMotor, CANDriveTurnBackRightMotor, CANTurnEncoderBackRight, false, true,
       false, offsetAngleBackRightMotor, SwerveConstants.kVmBR, log);
 
-    // configure gyro
-    // This Pigeon is mounted normally, so no need to change orientation
-    // pigeonConfig.MountPose.MountPoseYaw = 0;
-    // pigeonConfig.MountPose.MountPosePitch = 0;
-    // pigeonConfig.MountPose.MountPoseRoll = 0;
-    // This Pigeon has no need to trim the gyro
-    // pigeonConfig.GyroTrim.GyroScalarX = 0;
-    // pigeonConfig.GyroTrim.GyroScalarY = 0;
-    // pigeonConfig.GyroTrim.GyroScalarZ = 0;
-    // We want the thermal comp and no-motion cal enabled, with the compass disabled for best behavior
-    // pigeonConfig.Pigeon2Features.DisableNoMotionCalibration = false;
-    // pigeonConfig.Pigeon2Features.DisableTemperatureCompensation = false;
-    // pigeonConfig.Pigeon2Features.EnableCompass = false;
-    // pigeonConfigurator.apply(pigeonConfig);
+    // configure navX gyro
+    AHRS gyro = null;
+		try {
+      gyro = new AHRS(SerialPort.Port.kUSB);
+      // gyro.zeroYaw();   // *** Do not zero the gyro hardware!  The hardware zeros asynchronously from this thread, so an immediate read-back of the gyro may not yet be zeroed.
+      log.writeLogEcho(true, "Drive", "Gyro Initialize", "Firmware version", gyro.getFirmwareVersion() );
+		} catch (RuntimeException ex) {
+			DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+    }
+    ahrs = gyro;
 
     // zero gyro and initialize angular velocity variables
     zeroGyro();
-    // prevAng = getGyroRaw();
-    // currAng = getGyroRaw();
-    // prevTime = System.currentTimeMillis();
-    // currTime = System.currentTimeMillis();
-    // lfRunningAvg.reset();
+    prevAng = getGyroRaw();
+    currAng = getGyroRaw();
+    prevTime = System.currentTimeMillis();
+    currTime = System.currentTimeMillis();
+    lfRunningAvg.reset();
+
+    
 
     // create and initialize odometery
     // Set initial location to 0,0.
@@ -154,7 +143,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    * @return true = gryo is connected to Rio
    */
   public boolean isGyroReading() {
-    return !pigeonFault.refresh().getValue();
+    return ahrs.isConnected();
   }
 
   /**
@@ -163,14 +152,14 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    * @return raw gyro angle, in degrees.
    */
   public double getGyroRaw() {
-    return -pigeonYaw.refresh().getValueAsDouble();
+    return -ahrs.getAngle();
   }
 
   /**
 	 * @return double, gyro pitch from 180 to -180, in degrees (postitive is nose up, negative is nose down)
 	 */
 	public double getGyroPitchRaw() {
-		return -pigeonPitch.refresh().getValueAsDouble();     //TODO check sign with real robot configuration
+		return -ahrs.getPitch();
   }
 
   public void resetGyroPitch(){
@@ -216,8 +205,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    * Positive is turning left, negative is turning right.
    */
   public double getAngularVelocity () {
-    // return angularVelocity;
-    return -pigeon.getRate();     // TODO check if this is accurate!  If so, then delete the commented-out code to calc angularVelocity in periodic, constructor, etc
+    return angularVelocity;
   }
 
   /**
@@ -392,7 +380,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     SwerveModuleState[] swerveModuleStates =
         kDriveKinematics.toSwerveModuleStates(
             fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose().getRotation())
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getGyroRotation()))
                 : new ChassisSpeeds(xSpeed, ySpeed, rot),
             centerOfRotationMeters);
 
@@ -470,11 +458,11 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     // This method will be called once per scheduler run
     
     // save current angle and time for calculating angVel
-    // currAng = getGyroRaw();
-    // currTime = System.currentTimeMillis();
+    currAng = getGyroRaw();
+    currTime = System.currentTimeMillis();
  
     // calculate angVel in degrees per second
-    // angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
+    angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
 
     // update 
     updateOdometry();
@@ -495,7 +483,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       SmartDashboard.putBoolean("Drive isGyroReading", isGyroReading());
       SmartDashboard.putNumber("Drive Raw Gyro", getGyroRaw());
       SmartDashboard.putNumber("Drive Gyro Rotation", getGyroRotation());
-      SmartDashboard.putNumber("Drive AngVel", getAngularVelocity());
+      SmartDashboard.putNumber("Drive AngVel", angularVelocity);
       SmartDashboard.putNumber("Drive Pitch", getGyroPitch());
       
       // position from poseEstimator (helpful for autos)
@@ -515,8 +503,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     }
 
     // save current angVel values as previous values for next calculation
-    // prevAng = currAng;
-    // prevTime = currTime; 
+    prevAng = currAng;
+    prevTime = currTime; 
   }
 
   /**
@@ -528,7 +516,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     ChassisSpeeds robotSpeeds = getRobotSpeeds();
     log.writeLog(logWhenDisabled, "Drive", "Update Variables", 
       "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), 
-      "Gyro Velocity", getAngularVelocity(), "Pitch", getGyroPitch(), 
+      "Gyro Velocity", angularVelocity, "Pitch", getGyroPitch(), 
       "Odometry X", pose.getTranslation().getX(), "Odometry Y", pose.getTranslation().getY(), 
       "Odometry Theta", pose.getRotation().getDegrees(),
       "Drive X Velocity", robotSpeeds.vxMetersPerSecond, 
@@ -576,6 +564,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       field.setRobotPose(new Pose2d(x, y, rot));
     } else field.setRobotPose(poseEstimator.getEstimatedPosition());
   }  
+
+
 
   public void cameraInit() {
     camera.init();
