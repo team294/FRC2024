@@ -106,7 +106,9 @@ public final class Constants {
       public static final double kWheelDiameterMeters = 0.1013; // TODO check.  CALIBRATED.
       public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
-
+      public static final double kDriveEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kDriveGearRatio;
+      public static final double kTurningEncoderDegreesPerRotation = 360.0/ kTurningGearRatio;
+      
       // Robot calibration for feed-forward and max speeds
       public static final double voltageCompSaturation = 12.0;
       // Max speed is used to keep each motor from maxing out, which preserves ratio between motors 
