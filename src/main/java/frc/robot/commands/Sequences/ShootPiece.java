@@ -24,7 +24,7 @@ public class ShootPiece extends SequentialCommandGroup {
       new ShooterSetPercent(ShooterConstants.shooterPercent, shooter, log),
       new WaitCommand(1),
       new FeederSetPercent(ShooterConstants.feederPercent, shooter, log),
-      new IntakeSetPercent(IntakeConstants.intakePercent, intake,  log),
+      new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake,  log),
       new WaitCommand(1),
       new IntakeStop(intake, log),
       new ShooterFeederStop(shooter, log)

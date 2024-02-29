@@ -67,14 +67,14 @@ public class Shooter extends SubsystemBase implements Loggable {
   private SimpleMotorFeedforward motor1Feedforward; // todo
 
   private VoltageOut motorVoltageControl = new VoltageOut(0.0);
-  private VelocityVoltage motorVelocityControl = new VelocityVoltage(0.0);
+  private VelocityVoltage motorVelocityControl = new VelocityVoltage(0.0).withSlot(0);
 
   private boolean velocityControlOn;
   private double setpointRPM;
   private double shooterEncoderZero = 0.0;
   private double feederEncoderZero = 0.0;
   private double measuredRPM = 0.0;
-  private boolean fastLogging = false;
+  private boolean fastLogging = true;
   private int logRotationKey;
 
   /** Creates a new Shooter. */
@@ -281,7 +281,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   /**
    * @param velocity of shooter motor 1 in rpm
    */
-  public void setShooterVelocity(double rpm) {
+  public void setShooterVelocity(double rpm) { // TODO: change from rpm to rps for .withVelocity
     velocityControlOn = true;
     setpointRPM = rpm;
     motor1.setControl(motorVelocityControl.withVelocity(rpm));
@@ -302,7 +302,11 @@ public class Shooter extends SubsystemBase implements Loggable {
     motor1Config.Slot0.kP = P;
     motor1Config.Slot0.kI = I;
     motor1Config.Slot0.kD = D;
-    motor1Feedforward = new SimpleMotorFeedforward(S, V, A);
+    motor1Config.Slot0.kV = V;
+    motor1Config.Slot0.kS = S;
+
+    motor1Configurator.apply(motor1Config);
+    // motor1Feedforward = new SimpleMotorFeedforward(S, V, A);
     if (velocityControlOn) {
       // Reset velocity to force kS and kV updates to take effect
       setShooterVelocity(setpointRPM);
