@@ -44,7 +44,7 @@ public class ShooterSetPercent extends Command {
     if (fromShuffleboard) {
       percent = SmartDashboard.getNumber("Shooter Percent", 0.0);
     }
-    shooter.setShooterMotorPercentOutput(percent);
+    shooter.setShooterPercentOutput(percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

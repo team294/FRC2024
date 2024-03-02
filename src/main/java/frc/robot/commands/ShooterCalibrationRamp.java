@@ -32,15 +32,15 @@ public class ShooterCalibrationRamp extends Command {
   @Override
   public void execute() {
     log.writeLog(false, shooter.getName(), "Increasing motor voltage",
-      "Top Volts", shooter.getShooterTopVoltage(),
-      "Top Velocity", shooter.getShooter1Velocity(),
-      "Bottom Volts", shooter.getShooterBottomVoltage(),
-      "Bottom Velocity", shooter.getShooter2Velocity()
+      "Top Volts", shooter.getTopShooterVoltage(),
+      "Top Velocity", shooter.getTopShooterVelocity(),
+      "Bottom Volts", shooter.getBottomShooterVoltage(),
+      "Bottom Velocity", shooter.getBottomShooterVelocity()
     );
 
     // Every 20ms, increase percent slightly
     percent += 0.0004;
-    shooter.setMotorPercentOutput(percent, 0.0);
+    shooter.setMotorsPercentOutput(percent, 0.0);
   }
 
   // Called once the command ends or is interrupted.

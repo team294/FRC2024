@@ -172,7 +172,9 @@ public final class Constants {
     public static final class ShooterConstants {
       // TODO: add all necessary constants
       public static final double compensationVoltage = 12.0;
-      public static final double ticksPerRevolution = 2048.0;
+      public static final double ticksPerRevolution = 1.0;
+      public static final double shooterGearRatio = 1.0;   // TODO get from CAD.  Turn ratio from motor pinion to shooter wheels.
+      public static final double feederGearRatio = 1.0;   // TODO get from CAD.  Turn ratio from motor pinion to feeder wheels.
 
       // PIDSVA for Top Shooter motor
       public static final double ShooterTopkP = 0.5;
