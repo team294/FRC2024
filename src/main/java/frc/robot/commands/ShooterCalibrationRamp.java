@@ -8,36 +8,51 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
 
-public class ShooterFeederStop extends Command {
-
+public class ShooterCalibrationRamp extends Command {
   private final Shooter shooter;
   private final FileLog log;
 
-  /** Creates a new IntakeStop. */
-  public ShooterFeederStop(Shooter shooter, FileLog log) {
+  private double percent;
+
+  /** Creates a new FeedForwardTest. */
+  public ShooterCalibrationRamp(Shooter shooter, FileLog log) {
     this.shooter = shooter;
     this.log = log;
-    // Use addRequirements() here to declare subsystem dependencies.
+
     addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.stopMotors();
+    percent = 0.0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    log.writeLog(false, shooter.getName(), "Increasing motor voltage",
+      "Top Volts", shooter.getTopShooterVoltage(),
+      "Top Velocity", shooter.getTopShooterVelocity(),
+      "Bottom Volts", shooter.getBottomShooterVoltage(),
+      "Bottom Velocity", shooter.getBottomShooterVelocity()
+    );
+
+    // Every 20ms, increase percent slightly
+    percent += 0.0004;
+    shooter.setMotorsPercentOutput(percent, 0.0);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    shooter.stopMotors();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    // Do NOT exceed 35%  for safety
+    return percent > 0.35;
   }
 }
