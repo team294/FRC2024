@@ -75,6 +75,7 @@ public final class Constants {
 
       // Digital IO ports
       public static final int DIOIntakePieceSensor = 0;
+      public static final int DIOFeederPieceSensor = 1;
 
     }
 
@@ -155,10 +156,10 @@ public final class Constants {
       // Update the offset angles in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, set the wheels to zero degrees with the bevel gear facing to the right
-      public static double offsetAngleFrontLeftMotor = 0; // -72
-      public static double offsetAngleFrontRightMotor = 0; // -157
-      public static double offsetAngleBackLeftMotor = 0; // 44.5
-      public static double offsetAngleBackRightMotor = 0; // -82
+      public static double offsetAngleFrontLeftMotor = 0; // 110.7
+      public static double offsetAngleFrontRightMotor = 0; // 44.6
+      public static double offsetAngleBackLeftMotor = 0; // -67.1
+      public static double offsetAngleBackRightMotor = 0; // 152.1
 
         // Driving constants to cap acceleration
       public static final double maxAccelerationRate = 10.0;         // m/s^2
