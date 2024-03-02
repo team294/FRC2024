@@ -44,7 +44,7 @@ public class FeederSetPercent extends Command {
     if (fromShuffleboard) {
       percent = SmartDashboard.getNumber("Feeder Percent", 0.0);
     }
-    shooter.setFeederMotorPercentOutput(percent);
+    shooter.setFeederPercentOutput(percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

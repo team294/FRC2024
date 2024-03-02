@@ -3,57 +3,65 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.*;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.Loggable;
 import frc.robot.utilities.StringUtil;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase implements Loggable {
   private final FileLog log;
-
+  private boolean fastLogging = false;
+  private int logRotationKey;
   private final String subsystemName;
-  private final TalonFX motor1;
-	private final TalonFXConfigurator motor1Configurator;
-	private TalonFXConfiguration motor1Config;
-  private final TalonFX motor2;
-	private final TalonFXConfigurator motor2Configurator;
-  private TalonFXConfiguration motor2Config;
-  private final TalonFX feeder;
+
+  // Create Kraken for top shooter motor
+  private final TalonFX shooterTop = new TalonFX(Ports.CANShooterTop);
+	private final TalonFXConfigurator shooterTopConfigurator;
+	private TalonFXConfiguration shooterTopConfig;
+
+  // Create Kraken for bottom shooter motor
+  private final TalonFX shooterBottom = new TalonFX(Ports.CANShooterBottom);
+	private final TalonFXConfigurator shooterBottomConfigurator;
+  private TalonFXConfiguration shooterBottomConfig;
+
+  // Create Kraken for feeder motor
+  private final TalonFX feeder = new TalonFX(Ports.CANFeeder);
   private final TalonFXConfigurator feederConfigurator;
   private TalonFXConfiguration feederConfig;
-  private final StatusSignal<Double> motor1SupplyVoltage;				// Incoming bus voltage to motor controller, in volts
-	private final StatusSignal<Double> motor1Temp;				// Motor temperature, in degC
-	private final StatusSignal<Double> motor1DutyCycle;				// Motor duty cycle percent power, -1 to 1
-	private final StatusSignal<Double> motor1StatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
-	private final StatusSignal<Double> motor1EncoderPosition;			// Encoder position, in pinion rotations
-	private final StatusSignal<Double> motor1EncoderVelocity;
-  private final StatusSignal<Double> motor1Voltage;
-  private final StatusSignal<Double> motor1Current;
-  private final StatusSignal<Double> motor2SupplyVoltage;				// Incoming bus voltage to motor controller, in volts
-	private final StatusSignal<Double> motor2Temp;				// Motor temperature, in degC
-	private final StatusSignal<Double> motor2DutyCycle;				// Motor duty cycle percent power, -1 to 1
-	private final StatusSignal<Double> motor2StatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
-	private final StatusSignal<Double> motor2EncoderPosition;			// Encoder position, in pinion rotations
-	private final StatusSignal<Double> motor2EncoderVelocity;
-  private final StatusSignal<Double> motor2Voltage;
-  private final StatusSignal<Double> motor2Current;
+
+  // Create signals and sensors for motors
+  private final StatusSignal<Double> shooterTopSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
+	private final StatusSignal<Double> shooterTopTemp;				// Motor temperature, in degC
+	private final StatusSignal<Double> shooterTopDutyCycle;				// Motor duty cycle percent power, -1 to 1
+	private final StatusSignal<Double> shooterTopStatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
+	private final StatusSignal<Double> shooterTopEncoderPosition;			// Encoder position, in pinion rotations
+	private final StatusSignal<Double> shooterTopEncoderVelocity;
+  private final StatusSignal<Double> shooterTopVoltage;
+
+  private final StatusSignal<Double> shooterBottomSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
+	private final StatusSignal<Double> shooterBottomTemp;				// Motor temperature, in degC
+	private final StatusSignal<Double> shooterBottomDutyCycle;				// Motor duty cycle percent power, -1 to 1
+	private final StatusSignal<Double> shooterBottomStatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
+	private final StatusSignal<Double> shooterBottomEncoderPosition;			// Encoder position, in pinion rotations
+	private final StatusSignal<Double> shooterBottomEncoderVelocity;
+  private final StatusSignal<Double> shooterBottomVoltage;
+
   private final StatusSignal<Double> feederSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
 	private final StatusSignal<Double> feederTemp;				// Motor temperature, in degC
 	private final StatusSignal<Double> feederDutyCycle;				// Motor duty cycle percent power, -1 to 1
@@ -61,95 +69,112 @@ public class Shooter extends SubsystemBase implements Loggable {
 	private final StatusSignal<Double> feederEncoderPosition;			// Encoder position, in pinion rotations
 	private final StatusSignal<Double> feederEncoderVelocity;
   private final StatusSignal<Double> feederVoltage;
-  private final StatusSignal<Double> feederCurrent;
 
-
-  private SimpleMotorFeedforward motor1Feedforward; // todo
-
+  // Motor controls
   private VoltageOut motorVoltageControl = new VoltageOut(0.0);
   private VelocityVoltage motorVelocityControl = new VelocityVoltage(0.0).withSlot(0);
 
-  private boolean velocityControlOn;
-  private double setpointRPM;
-  private double shooterEncoderZero = 0.0;
-  private double feederEncoderZero = 0.0;
-  private double measuredRPM = 0.0;
-  private boolean fastLogging = true;
-  private int logRotationKey;
+  // Piece sensor inside the intake 
+  private final DigitalInput pieceSensor = new DigitalInput(Ports.DIOIntakePieceSensor);
 
-  /** Creates a new Shooter. */
+  // private SimpleMotorFeedforward motor1Feedforward = new SimpleMotorFeedforward(S, V, A); // TODO create and calibrate feed forward (or remove code)
+
+  private boolean velocityControlOn = false;
+  private double setpointRPMTop;
+  private double setpointRPMBottom;
+  
+  /**
+   * Create the shooter subsystem
+   * @param log
+   */
   public Shooter(FileLog log) {
     this.log = log;
     logRotationKey = log.allocateLogRotation();
-
-    motor1 = new TalonFX(Ports.CANShooter1);
-    motor2 = new TalonFX(Ports.CANShooter2);
-    feeder = new TalonFX(Ports.CANFeeder);
     subsystemName = "Shooter";
-    // Configure motor2
-    motor1Configurator = motor1.getConfigurator();
-    motor1SupplyVoltage = motor1.getSupplyVoltage();
-	  motor1Temp = motor1.getDeviceTemp();
-	  motor1DutyCycle = motor1.getDutyCycle();
-	  motor1StatorCurrent = motor1.getStatorCurrent();
-	  motor1EncoderPosition = motor1.getPosition();
-	  motor1EncoderVelocity = motor1.getVelocity();
-    motor1Voltage = motor1.getMotorVoltage();
-    motor1Current = motor1.getSupplyCurrent();
 
-    motor1Config = new TalonFXConfiguration();			// Factory default configuration
-    motor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
-		motor1Config.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
-    motor1Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.0;
-		motor1Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
+    // Configure top shooter motor
+    shooterTopConfigurator = shooterTop.getConfigurator();
+    shooterTopSupplyVoltage = shooterTop.getSupplyVoltage();
+	  shooterTopTemp = shooterTop.getDeviceTemp();
+	  shooterTopDutyCycle = shooterTop.getDutyCycle();
+	  shooterTopStatorCurrent = shooterTop.getStatorCurrent();
+	  shooterTopEncoderPosition = shooterTop.getPosition();
+	  shooterTopEncoderVelocity = shooterTop.getVelocity();
+    shooterTopVoltage = shooterTop.getMotorVoltage();
+
+    shooterTopConfig = new TalonFXConfiguration();			// Factory default configuration
+    shooterTopConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Do not invert motor
+		shooterTopConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;      // Coast mode to reduce wear on motor
+    shooterTopConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;         // # seconds from 0 to full power
+		shooterTopConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;     // # seconds from 0 to full power
     
-    // Configure motor2
-    motor2Configurator = motor1.getConfigurator();
-    motor2SupplyVoltage = motor1.getSupplyVoltage();
-	  motor2Temp = motor1.getDeviceTemp();
-	  motor2DutyCycle = motor1.getDutyCycle();
-	  motor2StatorCurrent =motor1.getStatorCurrent();
-	  motor2EncoderPosition = motor1.getPosition();
-	  motor2EncoderVelocity = motor1.getVelocity();
-    motor2Voltage = motor2.getMotorVoltage();
-    motor2Current = motor2.getSupplyCurrent();
+    // Configure bottom shooter motor
+    shooterBottomConfigurator = shooterBottom.getConfigurator();
+    shooterBottomSupplyVoltage = shooterBottom.getSupplyVoltage();
+	  shooterBottomTemp = shooterBottom.getDeviceTemp();
+	  shooterBottomDutyCycle = shooterBottom.getDutyCycle();
+	  shooterBottomStatorCurrent =shooterBottom.getStatorCurrent();
+	  shooterBottomEncoderPosition = shooterBottom.getPosition();
+	  shooterBottomEncoderVelocity = shooterBottom.getVelocity();
+    shooterBottomVoltage = shooterBottom.getMotorVoltage();
 
-    motor2Config = new TalonFXConfiguration();			// Factory default configuration
-    motor2Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
-		motor2Config.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
-    motor2Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.0;
-		motor2Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
+    shooterBottomConfig = new TalonFXConfiguration();			// Factory default configuration
+    shooterBottomConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
+		shooterBottomConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;     // Coast mode to reduce wear on motor
+    shooterBottomConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;        // # seconds from 0 to full power
+		shooterBottomConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;    // # seconds from 0 to full power
 
     // Configure feeder
-    feederConfigurator = motor1.getConfigurator();
-    feederSupplyVoltage = motor1.getSupplyVoltage();
-	  feederTemp = motor1.getDeviceTemp();
-	  feederDutyCycle = motor1.getDutyCycle();
-	  feederStatorCurrent =motor1.getStatorCurrent();
-	  feederEncoderPosition = motor1.getPosition();
-	  feederEncoderVelocity = motor1.getVelocity();
-    feederVoltage = motor2.getMotorVoltage();
-    feederCurrent = motor2.getSupplyCurrent();
+    feederConfigurator = feeder.getConfigurator();
+    feederSupplyVoltage = feeder.getSupplyVoltage();
+	  feederTemp = feeder.getDeviceTemp();
+	  feederDutyCycle = feeder.getDutyCycle();
+	  feederStatorCurrent =feeder.getStatorCurrent();
+	  feederEncoderPosition = feeder.getPosition();
+	  feederEncoderVelocity = feeder.getVelocity();
+    feederVoltage = feeder.getMotorVoltage();
 
     feederConfig = new TalonFXConfiguration();			// Factory default configuration
     feederConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
-		feederConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
-    feederConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.0;
-		feederConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
+		feederConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;      // Brake mode to hold piece in feeder
+    feederConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;         // # seconds from 0 to full power
+		feederConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;     // # seconds from 0 to full power
     
     // Make motor2 follow motor1
-    motor2.setControl(new Follower(motor1.getDeviceID(), false)); // TODO: check OpposeMasterDirection works
+    //motor2.setControl(new Follower(motor1.getDeviceID(), false)); 
 
-    // Set the PID and stop the motor
-    setPIDSVA(
-      ShooterConstants.kP,
-      ShooterConstants.kI,
-      ShooterConstants.kD,
-      ShooterConstants.kS,
-      ShooterConstants.kV,
-      ShooterConstants.kA
-    );
-    stopMotor();
+    // Set PID coefficients
+    motorVelocityControl.Slot = 0;
+    motorVelocityControl.OverrideBrakeDurNeutral = false;
+    shooterTopConfig.Slot0.kP = ShooterConstants.ShooterTopkP;
+    shooterTopConfig.Slot0.kI = ShooterConstants.ShooterTopkI;
+    shooterTopConfig.Slot0.kD = ShooterConstants.ShooterTopkD;
+    shooterTopConfig.Slot0.kS = ShooterConstants.ShooterTopkS;
+    shooterTopConfig.Slot0.kV = ShooterConstants.ShooterTopkV;
+    shooterTopConfig.Slot0.kA = ShooterConstants.ShooterTopkA;
+
+    shooterBottomConfig.Slot0.kP = ShooterConstants.ShooterBottomkP;
+    shooterBottomConfig.Slot0.kI = ShooterConstants.ShooterBottomkI;
+    shooterBottomConfig.Slot0.kD = ShooterConstants.ShooterBottomkD;
+    shooterBottomConfig.Slot0.kS = ShooterConstants.ShooterBottomkS;
+    shooterBottomConfig.Slot0.kV = ShooterConstants.ShooterBottomkV;
+    shooterBottomConfig.Slot0.kA = ShooterConstants.ShooterBottomkA;
+
+    feederConfig.Slot0.kP = ShooterConstants.FeederkP;
+    feederConfig.Slot0.kI = ShooterConstants.FeederkI;
+    feederConfig.Slot0.kD = ShooterConstants.FeederkD;
+    feederConfig.Slot0.kS = ShooterConstants.FeederkS;
+    feederConfig.Slot0.kV = ShooterConstants.FeederkV;
+    feederConfig.Slot0.kA = ShooterConstants.FeederkA;
+
+    // Apply configuration to all the motors.  
+		// This is a blocking call and will wait up to 50ms-70ms for each config to apply.  (initial test = 62ms delay)
+    shooterTopConfigurator.apply(shooterTopConfig);
+    shooterBottomConfigurator.apply(shooterBottomConfig);
+    feederConfigurator.apply(feederConfig);
+
+    // Stop all motors
+    stopMotors();
   }
 
   /**
@@ -159,179 +184,200 @@ public class Shooter extends SubsystemBase implements Loggable {
     return subsystemName;
   }
 
+  // *** Percent motor controls
+
   /**
-   * Sets the voltage of the motor
-   * 
-   * <p> Compensates for the current bus
-	 * voltage to ensure that the desired voltage is output even if the battery voltage is below
-	 * 12V - highly useful when the voltage outputs are "meaningful" (e.g. they come from a
-	 * feedforward calculation).
-	 *
-	 * <p>NOTE: This function *must* be called regularly in order for voltage compensation to work
-	 * properly - unlike the ordinary set function, it is not "set it and forget it."
-	 *
-   * @param voltage voltage
+   * Sets the percent of the top and bottom shooter motors, and the feeder.  All motors use voltage compensation.
+   * @param shooterPercent percent for both shooter motors, -1.0 to +1.0 (+ = shoot forward, - = backwards)
+   * @param feederPercent percent for the feeder motor, -1.0 to +1.0 (+ = shoot forward, - = backwards)
    */
-  public void setVoltage(double voltage) {
-    motor1.setVoltage(voltage);
-    velocityControlOn = false;
-    setpointRPM = 0.0;
+  public void setMotorsPercentOutput(double shooterPercent, double feederPercent) {
+    setShooterPercentOutput(shooterPercent, shooterPercent);
+    setFeederPercentOutput(feederPercent);
   }
 
   /**
-   * sets the percent of the motor, using voltage compensation if turned on
-   * @param shooterPercent percent for the shooter
-   * @param feederPercent percent for the feeder
+   * Sets the percent of the top and bottom shooter motors, and the feeder.  All motors use voltage compensation.
+   * @param shooterTopPercent percent for the top shooter motor, -1.0 to +1.0 (+ = shoot forward, - = backwards)
+   * @param shooterBottomPercent percent for the bottom shooter motor, -1.0 to +1.0 (+ = shoot forward, - = backwards)
+   * @param feederPercent percent for the feeder, -1.0 to +1.0 (+ = shoot forward, - = backwards)
    */
-  public void setMotorPercentOutput(double shooterPercent, double feederPercent) {
-    // Percent output control does not exist; multiply compensationVoltage by percent
-    motor1.setControl(motorVoltageControl.withOutput(shooterPercent * ShooterConstants.compensationVoltage));
-    velocityControlOn = false;
-    setpointRPM = 0.0;
-    feeder.setControl(motorVoltageControl.withOutput(feederPercent * ShooterConstants.compensationVoltage));
+  public void setMotorsPercentOutput(double shooterTopPercent, double shooterBottomPercent, double feederPercent) {
+    setShooterPercentOutput(shooterTopPercent, shooterBottomPercent);
+    setFeederPercentOutput(feederPercent);
   }
   
   /**
-   * sets the percent of the motor, using voltage compensation if turned on
-   * @param percent percent for the shooter
+   * Sets the percent of the top and bottom shooter motors.  All motors use voltage compensation.
+   * @param percent percent for the shooter motors, -1.0 to +1.0 (+ = shoot forward, - = backwards)
    */
-  public void setShooterMotorPercentOutput(double percent) {
-    // Percent output control does not exist; multiply compensationVoltage by percent
-    motor1.setControl(motorVoltageControl.withOutput(percent * ShooterConstants.compensationVoltage));
-    velocityControlOn = false;
-    setpointRPM = 0.0;
+  public void setShooterPercentOutput(double percent) {
+    setShooterPercentOutput(percent, percent);
   }
 
   /**
-   * sets the percent of the motor, using voltage compensation if turned on
-   * @param percent percent for the feeder
+   * Sets the percent of the top and bottom shooter motors.  All motors use voltage compensation.
+   * @param shooterTopPercent percent for the top shooter motor, -1.0 to +1.0 (+ = shoot forward, - = backwards)
+   * @param shooterBottomPercent percent for the bottom shooter motor, -1.0 to +1.0 (+ = shoot forward, - = backwards)
    */
-  public void setFeederMotorPercentOutput(double percent) {
+  public void setShooterPercentOutput(double shooterTopPercent, double shooterBottomPercent) {
+    // Percent output control does not exist; multiply compensationVoltage by percent
+    shooterTop.setControl(motorVoltageControl.withOutput(shooterTopPercent * ShooterConstants.compensationVoltage));
+    shooterBottom.setControl(motorVoltageControl.withOutput(shooterBottomPercent * ShooterConstants.compensationVoltage));
+    velocityControlOn = false;
+    setpointRPMTop = 0.0;
+    setpointRPMBottom = 0.0;
+  }
+
+  /**
+   * Sets the percent of the feeder motor, using voltage compensation.
+   * @param percent percent for the feeder motor, -1.0 to +1.0 (+ = shoot forward, - = backwards)
+   */
+  public void setFeederPercentOutput(double percent) {
     // Percent output control does not exist; multiply compensationVoltage by percent
     feeder.setControl(motorVoltageControl.withOutput(percent * ShooterConstants.compensationVoltage));
   }
 
   /**
-  * Stops the motor
+  * Stops both shooter motors and the feeder motor
   */
-  public void stopMotor() {
-    setMotorPercentOutput(0.0, 0.0);
-    velocityControlOn = false;
-    setpointRPM = 0.0;
+  public void stopMotors() {
+    setShooterPercentOutput(0.0, 0.0);
+    setFeederPercentOutput(0.0);
   }
 
+  // *** Velocity motor controls
+
   /**
-   * Returns the shooter motor 1 position
-   * @return position of shooter motor in raw units, without software zeroing
+   * Sets the target velocity for both shooter wheels
+   * @param rpm velocity of shooter wheels in rpm
    */
-  public double getShooterPositionRaw() {
-    motor1EncoderPosition.refresh();
-    return motor1EncoderPosition.getValueAsDouble();
+  public void setShooterVelocity(double rpm) { 
+    setShooterVelocity(rpm, rpm);
   }
 
   /**
-   * Returns the feeder motor position
-   * @return position of feeder motor in raw units, without software zeroing
+   * Sets the target velocity for both shooter wheels
+   * @param rpmTop velocity of top shooter wheel in rpm
+   * @param rpmBottom velocity of bottom shooter wheel in rpm
    */
-  public double getFeederPositionRaw() {
-    feederEncoderPosition.refresh();
-    return feederEncoderPosition.getValueAsDouble();
+  public void setShooterVelocity(double rpmTop, double rpmBottom) { 
+    velocityControlOn = true;
+    setpointRPMTop = rpmTop;
+    setpointRPMBottom = rpmBottom;
+    shooterTop.setControl(motorVelocityControl.withVelocity(rpmTop/60.0/ShooterConstants.shooterGearRatio));
+    shooterBottom.setControl(motorVelocityControl.withVelocity(rpmBottom/60.0/ShooterConstants.shooterGearRatio));
   }
 
   /**
-   * Returns the shooter motor 1 position
-   * @return position of shooter motor in revolutions
+   * @return difference between measured RPM and set point RPM for top shooter wheel
    */
-  public double getShooterPosition() {
-    return (getShooterPositionRaw() - shooterEncoderZero) / ShooterConstants.ticksPerRevolution;
+  public double getTopShooterVelocityPIDError() {
+    return getTopShooterVelocity() - setpointRPMTop;
   }
 
   /**
-   * Returns the feeder motor position
-   * @return position of shooter motor in revolutions
+   * @return difference between measured RPM and set point RPM for bottom shooter wheel
+   */
+  public double getBottomShooterVelocityPIDError() {
+    return getBottomShooterVelocity() - setpointRPMBottom;
+  }
+
+  // *** Motor sensors
+
+  /**
+   * Returns the top shooter position
+   * @return position of shooter in wheel rotations
+   */
+  public double getTopShooterPosition() {
+    shooterTopEncoderPosition.refresh();
+    return shooterTopEncoderPosition.getValueAsDouble() * ShooterConstants.shooterGearRatio;
+  }
+
+  /**
+   * Returns the bottom shooter position
+   * @return position of shooter in wheel rotations
+   */
+  public double getBottomShooterPosition() {
+    shooterBottomEncoderPosition.refresh();
+    return shooterBottomEncoderPosition.getValueAsDouble() * ShooterConstants.shooterGearRatio;
+  }
+
+  /**
+   * Returns the feeder position
+   * @return position of feeder in wheel rotations
    */
   public double getFeederPosition() {
-    return (getFeederPositionRaw() - feederEncoderZero) / ShooterConstants.ticksPerRevolution;
+    feederEncoderPosition.refresh();
+    return feederEncoderPosition.getValueAsDouble() * ShooterConstants.feederGearRatio;
   }
 
   /**
-	 * Zero the encoder position in software.
-	 */
-  public void zeroEncoder() {
-    shooterEncoderZero = getShooterPositionRaw();
-    feederEncoderZero = getFeederPositionRaw();
-  }
-
-  /**
-   * @return velocity of shooter motor 1 in rpm
+   * @return velocity of top shooter in wheel rpm
    */
-  public double getShooterVelocity() {
-    motor1EncoderVelocity.refresh();
-    return motor1EncoderVelocity.getValueAsDouble();
+  public double getTopShooterVelocity() {
+    shooterTopEncoderVelocity.refresh();
+    return shooterTopEncoderVelocity.getValueAsDouble() * 60.0 * ShooterConstants.shooterGearRatio;
   }
 
   /**
-   * @return velocity of feeder motor 1 in rpm
+   * @return velocity of bottom shooter in wheel rpm
+   */
+  public double getBottomShooterVelocity() {
+    shooterBottomEncoderVelocity.refresh();
+    return shooterBottomEncoderVelocity.getValueAsDouble() * 60.0 * ShooterConstants.shooterGearRatio;
+  }
+
+  /**
+   * @return velocity of feeder in wheel rpm
    */
   public double getFeederVelocity() {
     feederEncoderVelocity.refresh();
-    return feederEncoderVelocity.getValueAsDouble();
+    return feederEncoderVelocity.getValueAsDouble() * 60.0 * ShooterConstants.feederGearRatio;
   }
 
   /**
-   * @param velocity of shooter motor 1 in rpm
+   * Reads the top shooter voltage applied to the motor
+   * @return top shooter voltage, in volts
    */
-  public void setShooterVelocity(double rpm) { // TODO: change from rpm to rps for .withVelocity
-    velocityControlOn = true;
-    setpointRPM = rpm;
-    motor1.setControl(motorVelocityControl.withVelocity(rpm));
+  public double getTopShooterVoltage() {
+    return shooterTopVoltage.refresh().getValueAsDouble();
   }
 
   /**
-   * @param P
-   * @param I
-   * @param D
-   * @param S
-   * @param V
-   * @param A
+   * Reads the bottom shooter voltage applied to the motor
+   * @return bottom shooter voltage, in volts
    */
-  public void setPIDSVA(double P, double I, double D, double S, double V, double A) {
-    // Set PID coefficients
-    motorVelocityControl.Slot = 0;
-    motorVelocityControl.OverrideBrakeDurNeutral = true;
-    motor1Config.Slot0.kP = P;
-    motor1Config.Slot0.kI = I;
-    motor1Config.Slot0.kD = D;
-    motor1Config.Slot0.kV = V;
-    motor1Config.Slot0.kS = S;
-
-    motor1Configurator.apply(motor1Config);
-    // motor1Feedforward = new SimpleMotorFeedforward(S, V, A);
-    if (velocityControlOn) {
-      // Reset velocity to force kS and kV updates to take effect
-      setShooterVelocity(setpointRPM);
-    }
+  public double getBottomShooterVoltage() {
+    return shooterBottomVoltage.refresh().getValueAsDouble();
   }
+
+  // ***  Piece sensor
 
   /**
-   * @return difference between measured RPM and set point RPM
+   * 
+   * @return true if piece is in feeder
    */
-  public double getVelocityPIDError() {
-    return measuredRPM - setpointRPM;
+  public boolean isPiecePresent(){
+    return !pieceSensor.get();
   }
+
 
   @Override
   public void periodic() {
-    // Update the measured RPM
-    measuredRPM = getShooterVelocity();
-
     // Log
     if (fastLogging || log.isMyLogRotation(logRotationKey)) {
       updateLog(false);
-      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Voltage"), motor1Voltage.refresh().getValueAsDouble());
-      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Position Rev"), getShooterPosition());
-      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Velocity RPM"), measuredRPM);
-      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Temperature C"), motor1Temp.refresh().getValueAsDouble());
+
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Voltage"), getTopShooterVoltage());
+     // SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Position Rev"), getShooterPosition());
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Top RPM"), getTopShooterVelocity());
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Bottom RPM"), getBottomShooterVelocity());
+      SmartDashboard.putNumber(StringUtil.buildString("Feeder RPM"), getFeederVelocity());
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Top Temp C"), shooterTopTemp.refresh().getValueAsDouble());
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Bottom Temp C"), shooterBottomTemp.refresh().getValueAsDouble());
+      SmartDashboard.putNumber(StringUtil.buildString("Feeder Temp C"), feederTemp.refresh().getValueAsDouble());
+      SmartDashboard.putBoolean("Feeder has piece", isPiecePresent());
     }
   }
 
@@ -340,35 +386,30 @@ public class Shooter extends SubsystemBase implements Loggable {
    * @param logWhenDisabled true = log when disabled, false = discard the string
    */
   public void updateLog(boolean logWhenDisabled) {
-    // Log shooter
     log.writeLog(
       logWhenDisabled,
       subsystemName,
       "Update Variables",
-      "Bus Volt", motor1SupplyVoltage.refresh().getValueAsDouble(),
-      "Out Percent 1", motor1DutyCycle.refresh().getValueAsDouble(),
-      "Out Percent 2", motor2DutyCycle.refresh().getValueAsDouble(),
-      "Volt 1", motor1Voltage.refresh().getValueAsDouble(),
-      "Volt 2", motor2Voltage.refresh().getValueAsDouble(),
-      "Amps 1", motor1Current.refresh().getValueAsDouble(),
-      "Amps 2", motor2Current.refresh().getValueAsDouble(),
-      "Temperature 1", motor1Temp.refresh().getValueAsDouble(),
-      "Temperature 2", motor2Temp.refresh().getValueAsDouble(),
-      "Position", getShooterPosition(),
-      "Measured RPM", measuredRPM,
-      "Setpoint RPM", setpointRPM
-    );
-    // Log feeder
-    log.writeLog(
-      logWhenDisabled,
-      "Feeder",
-      "Update Variables",
-      "Bus Volt", feederSupplyVoltage.refresh().getValueAsDouble(),
-      "Out Percent 1", feederDutyCycle.refresh().getValueAsDouble(),
-      "Volt 1", feederVoltage.refresh().getValueAsDouble(),
-      "Amps 1", feederCurrent.refresh().getValueAsDouble(),
-      "Temperature 1", feederTemp.refresh().getValueAsDouble(),
-      "Position", getFeederPosition()
+      "Bus Volt", shooterTopSupplyVoltage.refresh().getValueAsDouble(),
+      "Out Percent Top", shooterTopDutyCycle.refresh().getValueAsDouble(),
+      "Out Percent Bottom", shooterBottomDutyCycle.refresh().getValueAsDouble(),
+      "Out Percent Feed", feederDutyCycle.refresh().getValueAsDouble(),
+      "Volt Top", getTopShooterVoltage(),
+      "Volt Bottom", getBottomShooterVoltage(),
+      "Volt Feed", feederVoltage.refresh().getValueAsDouble(),
+      "Amps Top", shooterTopStatorCurrent.refresh().getValueAsDouble(),
+      "Amps Bottom", shooterBottomStatorCurrent.refresh().getValueAsDouble(),
+      "Amps Feed", feederStatorCurrent.refresh().getValueAsDouble(),
+      "Temp Top", shooterTopTemp.refresh().getValueAsDouble(),
+      "Temp Bottom", shooterBottomTemp.refresh().getValueAsDouble(),
+      "Temp Feed", feederTemp.refresh().getValueAsDouble(),
+      "Meas RPM Top", getTopShooterVelocity(),
+      "Meas RPM Bottom", getBottomShooterVelocity(),
+      "Meas RPM Feed", getFeederVelocity(),
+      "Velocity Control", velocityControlOn,
+      "Set RPM Top", setpointRPMTop,
+      "Set RPM Bottom", setpointRPMBottom,
+      "Piece in Feeder", isPiecePresent()
     );
   }
 

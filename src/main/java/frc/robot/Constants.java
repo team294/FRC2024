@@ -63,8 +63,8 @@ public final class Constants {
       public static final int CANTurnEncoderBackLeft = 11;
       public static final int CANTurnEncoderBackRight = 12;
 
-      public static final int CANShooter1 = 13;
-      public static final int CANShooter2 = 14;
+      public static final int CANShooterTop = 13;
+      public static final int CANShooterBottom = 14;
 
       public static final int CANFeeder = 15;
 
@@ -174,14 +174,34 @@ public final class Constants {
     public static final class ShooterConstants {
       // TODO: add all necessary constants
       public static final double compensationVoltage = 12.0;
-      public static final double ticksPerRevolution = 2048.0;
-      // PIDSVA
-      public static final double kP = 0.5;
-      public static final double kI = 0.00;
-      public static final double kD = 0.0;
-      public static final double kS = 0.061256; // V; old: 0.004, new: 0.125
-      public static final double kV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
-      public static final double kA = 0.0;
+      public static final double ticksPerRevolution = 1.0;
+      public static final double shooterGearRatio = 1.0;   // TODO get from CAD.  Turn ratio from motor pinion to shooter wheels.
+      public static final double feederGearRatio = 1.0;   // TODO get from CAD.  Turn ratio from motor pinion to feeder wheels.
+
+      // PIDSVA for Top Shooter motor
+      public static final double ShooterTopkP = 0.5;
+      public static final double ShooterTopkI = 0.00;
+      public static final double ShooterTopkD = 0.0;
+      public static final double ShooterTopkS = 0.061256; // V; old: 0.004, new: 0.125
+      public static final double ShooterTopkV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double ShooterTopkA = 0.0;
+      
+      //PIDSVA for Bottom Shooter motor
+      public static final double ShooterBottomkP = 0.5;
+      public static final double ShooterBottomkI = 0.00;
+      public static final double ShooterBottomkD = 0.0;
+      public static final double ShooterBottomkS = 0.061256; // V; old: 0.004, new: 0.125
+      public static final double ShooterBottomkV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double ShooterBottomkA = 0.0;
+      
+      //PIDSVA for Feeder
+      public static final double FeederkP = 0.5;
+      public static final double FeederkI = 0.00;
+      public static final double FeederkD = 0.0;
+      public static final double FeederkS = 0.061256; // V; old: 0.004, new: 0.125
+      public static final double FeederkV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double FeederkA = 0.0;
+
 
       /*
         Volt  RPS 
@@ -190,8 +210,9 @@ public final class Constants {
         2.06	16.814453125
       */
 
-
+      public static final double velocityErrorTolerance = 100;
       public static final double shooterPercent = 0.25;
+      public static final double shooterVelocity = 2500;
 
       //Feeder Constants
       public static final double feederPercent = 0.3;
