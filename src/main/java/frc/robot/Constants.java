@@ -128,15 +128,15 @@ public final class Constants {
       public static final double kNominalTurningRadiansPerSecond = Math.PI;
       public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 35.0;            // TODO NOT CALIBRATED - not used in code currently
       public static final double kNominalAngularAccelerationRadiansPerSecondSquared = Math.PI;
-      public static final double kVDriveAvg = 0.1740; // TODO Calibrate.  0.2034 from 2023 robot.  In % output per meters per second.
-      public static final double kVmFL = 1.0182;      // TODO Calibrate.  kV modifier for FL drive motor
-      public static final double kVmFR = 0.9826;      // TODO Calibrate.  kV modifier for FR drive motor
-      public static final double kVmBL = 1.0102;      // TODO Calibrate.  kV modifier for BL drive motor
-      public static final double kVmBR = 0.9889;      // TODO Calibrate.  kV modifier for BR drive motor
+      public static final double kVDriveAvg = 0.1740; // init cal done.  TODO Calibrate.  0.2034 from 2023 robot.  In % output per meters per second.
+      public static final double kVmFL = 1.0182;      // init cal done.  TODO Calibrate.  kV modifier for FL drive motor
+      public static final double kVmFR = 0.9826;      // init cal done.  TODO Calibrate.  kV modifier for FR drive motor
+      public static final double kVmBL = 1.0102;      // init cal done.  TODO Calibrate.  kV modifier for BL drive motor
+      public static final double kVmBR = 0.9889;      // init cal done.  TODO Calibrate.  kV modifier for BR drive motor
 
       public static final double kADrive = 0.0;
       public static final double kADriveToPose = 0.000;  // formerly 0.060 TODO NOT CALIBRATED.  In % output per meters per second squared.
-      public static final double kSDrive = 0.0080; // formerly 0.0255, TODO NOT Calibrated.  In % output.
+      public static final double kSDrive = 0.0080; // init cal done.  formerly 0.0255, TODO NOT Calibrated.  In % output.
     }
 
     public static final class DriveConstants {
