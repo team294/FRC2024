@@ -75,7 +75,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   private VelocityVoltage motorVelocityControl = new VelocityVoltage(0.0).withSlot(0);
 
   // Piece sensor inside the intake 
-  private final DigitalInput pieceSensor = new DigitalInput(Ports.DIOIntakePieceSensor);
+  private final DigitalInput pieceSensor = new DigitalInput(Ports.DIOFeederPieceSensor);
 
   // private SimpleMotorFeedforward motor1Feedforward = new SimpleMotorFeedforward(S, V, A); // TODO create and calibrate feed forward (or remove code)
 
