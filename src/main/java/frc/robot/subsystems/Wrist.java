@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.*;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -37,18 +38,24 @@ public class Wrist extends SubsystemBase implements Loggable{
   private boolean fastLogging = false;
   private final String subsystemName;
   
-  private final TalonFX wristMotor = new TalonFX(Ports.CANWristMotor);
-	private final TalonFXConfigurator wristMotorConfigurator = wristMotor.getConfigurator();
-	private TalonFXConfiguration wristMotorConfig;
+  private final TalonFX wristMotor1 = new TalonFX(Ports.CANWristMotor1);
+  private final TalonFX wristMotor2 = new TalonFX(Ports.CANWristMotor2);
+	private final TalonFXConfigurator wristMotor1Configurator = wristMotor1.getConfigurator();
+	private TalonFXConfiguration wristMotor1Config;
+  private final TalonFXConfigurator wristMotor2Configurator = wristMotor2.getConfigurator();
+	private TalonFXConfiguration wristMotor2Config;
 	private VoltageOut wristVoltageControl = new VoltageOut(0.0);
   private PositionVoltage wristPositionControl = new PositionVoltage(0.0);
   
-	// Variables for motor signals and sensors
-	private final StatusSignal<Double> wristMotorTemp = wristMotor.getDeviceTemp();				  // Motor temperature, in degC
-	private final StatusSignal<ControlModeValue> wristControlMode = wristMotor.getControlMode();			// Motor control mode (typ. ControlModeValue.VoltageOut or .PositionVoltage)
-	private final StatusSignal<Double> wristDutyCycle = wristMotor.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
-	private final StatusSignal<Double> wristStatorCurrent = wristMotor.getStatorCurrent();	// Motor stator current, in amps (+=fwd, -=rev)
-	private final StatusSignal<Double> wristEncoderPostion = wristMotor.getPosition();			// Encoder position, in pinion rotations
+
+	// Variables for motor signals and sensors ***
+	private final StatusSignal<Double> wristMotorTemp = wristMotor1.getDeviceTemp();				  // Motor temperature, in degC
+	private final StatusSignal<ControlModeValue> wristControlMode = wristMotor1.getControlMode();			// Motor control mode (typ. ControlModeValue.VoltageOut or .PositionVoltage)
+	private final StatusSignal<Double> wristDutyCycle = wristMotor1.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
+	private final StatusSignal<Double> wristStatorCurrent = wristMotor1.getStatorCurrent();	// Motor stator current, in amps (+=fwd, -=rev)
+	private final StatusSignal<Double> wristEncoderPostion = wristMotor1.getPosition();			// Encoder position, in pinion rotations
+
+
 
   // Rev through-bore encoder
   private final DutyCycleEncoder revEncoder = new DutyCycleEncoder(Ports.DIOWristRevThroughBoreEncoder);
@@ -65,43 +72,63 @@ public class Wrist extends SubsystemBase implements Loggable{
     subsystemName = "Wrist";
 
 		// Start with factory default TalonFX configuration
-		wristMotorConfig = new TalonFXConfiguration();			// Factory default configuration
+		wristMotor1Config = new TalonFXConfiguration();			// Factory default configuration
+    wristMotor2Config = new TalonFXConfiguration();	
+
 		// wristMotorConfigurator.refresh(wristMotorConfig);			// Read current configuration.  This is blocking call, up to the default 50ms.
 
     // Configure motor
- 		wristMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor output so that +Volt moves wrist up
-		wristMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // Applies during VoltageControl only, since setting is being overridded for PositionControl
+ 		wristMotor1Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor 1 output so that +Volt moves wrist up
+		wristMotor1Config.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // Applies during VoltageControl only, since setting is being overridded for PositionControl
+    wristMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor 2 output so that +Volt moves wrist up
+		wristMotor2Config.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // Applies during VoltageControl only, since setting is being overridded for PositionControl
 		// wristMotorConfig.MotorOutput.DutyCycleNeutralDeadband = 0;  // Default = 0
 		// wristMotorConfig.MotorOutput.PeakForwardDutyCycle = 1.0;			// Default = 1.0.  We probably won't use duty-cycle control, since there is no longer voltage compensation
 		// wristMotorConfig.MotorOutput.PeakReverseDutyCycle = -1.0;			// Default = -1.0.  We probably won't use duty-cycle control, since there is no longer voltage compensation
-		wristMotorConfig.Voltage.PeakForwardVoltage = voltageCompSaturation;    // forward max output
-		wristMotorConfig.Voltage.PeakReverseVoltage = -voltageCompSaturation;   // back max output
-		wristMotorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;		      // 0.3 seconds
-		wristMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3; 		// 0.3 seconds
+		wristMotor1Config.Voltage.PeakForwardVoltage = voltageCompSaturation;    // forward max output for motor 1
+		wristMotor1Config.Voltage.PeakReverseVoltage = -voltageCompSaturation;   // back max output for motor 1
+		wristMotor1Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;		      // 0.3 seconds
+		wristMotor1Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3; 		// 0.3 seconds
+    wristMotor2Config.Voltage.PeakForwardVoltage = voltageCompSaturation;    // forward max output for motor 2
+		wristMotor2Config.Voltage.PeakReverseVoltage = -voltageCompSaturation;   // back max output for motor 2
+		wristMotor2Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;		      // 0.3 seconds for motor 2
+		wristMotor2Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3; 		// 0.3 seconds for motor 2
 
-    // Configure encoder on motor
-		wristMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    wristMotorConfig.ClosedLoopGeneral.ContinuousWrap = false;
+
+    // Configure encoder on motor 1 and 2
+		wristMotor1Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    wristMotor1Config.ClosedLoopGeneral.ContinuousWrap = false;
+    wristMotor2Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    wristMotor2Config.ClosedLoopGeneral.ContinuousWrap = false;
+
 
     // Configure PID for PositionVoltage control
     // Note:  In Phoenix 6, slots are selected in the ControlRequest (ex. PositionVoltage.Slot)
     wristPositionControl.Slot = 0;
     wristPositionControl.OverrideBrakeDurNeutral = true;
-    wristMotorConfig.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
-		wristMotorConfig.Slot0.kI = 0.0;
-		wristMotorConfig.Slot0.kD = 0.0;
-    wristMotorConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-		wristMotorConfig.Slot0.kG = kG;
+    wristMotor1Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
+		wristMotor1Config.Slot0.kI = 0.0;
+		wristMotor1Config.Slot0.kD = 0.0;
+    wristMotor1Config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+		wristMotor1Config.Slot0.kG = kG;
+    wristMotor2Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
+		wristMotor2Config.Slot0.kI = 0.0;
+		wristMotor2Config.Slot0.kD = 0.0;
+    wristMotor2Config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+		wristMotor2Config.Slot0.kG = kG;
 		// wristMotorConfig.Slot0.kS = 0.0;
 		// wristMotorConfig.Slot0.kV = 0.0;
 		// wristMotorConfig.Slot0.kA = 0.0;
 		// wristMotorConfig.Slot0.kG = 0.0;
 		// wristMotorConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
- 		// Apply configuration to the wrist motor.  
+ 		// Apply configuration to the wrist motor 1 and 2 
 		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
-		wristMotorConfigurator.apply(wristMotorConfig);
+		wristMotor1Configurator.apply(wristMotor1Config);
+    wristMotor2Configurator.apply(wristMotor2Config);
 
+    //Make wrist motor 2 follow motor 1 
+    wristMotor2.setControl(new Follower(wristMotor1.getDeviceID(), false)); 
     stopWrist();
 
     // Rev Through-Bore Encoder settings
@@ -129,14 +156,19 @@ public class Wrist extends SubsystemBase implements Loggable{
       calibrateWristEnc(getRevEncoderDegrees());
 
       // Configure soft limits on motor
-		  wristMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
-		  wristMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
-		  wristMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-      wristMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+		  wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
+		  wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
+		  wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+      // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
+		  // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
+		  // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-   		// Apply configuration to the wrist motor.  
+   		// Apply configuration to the wrist motor. 1 and 2 
       // This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
-      wristMotorConfigurator.apply(wristMotorConfig);
+      wristMotor1Configurator.apply(wristMotor1Config);
+      // wristMotor2Configurator.apply(wristMotor2Config);
     }
   }
 
@@ -152,14 +184,14 @@ public class Wrist extends SubsystemBase implements Loggable{
 	// ************ Wrist movement methods
 
   /**
-   * Stops wrist motor
+   * Stops both wrist motors 
    */
   public void stopWrist() {
     setWristMotorPercentOutput(0.0);
   }
 
   /**
-   * Sets percent power of wrist motor
+   * Sets percent power of both wrist motors
    * <p><b> There are no elevator interlocks on this method!!!! </b>
    * @param percentPower between -1.0 (down full speed) and 1.0 (up full speed)
    */
@@ -170,7 +202,7 @@ public class Wrist extends SubsystemBase implements Loggable{
       percentOutput = MathUtil.clamp(percentOutput, -maxUncalibratedPercentOutput, maxUncalibratedPercentOutput);
     }
 
-    wristMotor.setControl(wristVoltageControl.withOutput(percentOutput*voltageCompSaturation));
+    wristMotor1.setControl(wristVoltageControl.withOutput(percentOutput*voltageCompSaturation));
   }
 
  	/**
@@ -206,7 +238,7 @@ public class Wrist extends SubsystemBase implements Loggable{
       
 
       // Phoenix6 PositionVoltage control:  Position is in rotations, FeedFoward is in Volts
-      wristMotor.setControl(wristPositionControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
+      wristMotor1.setControl(wristPositionControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
                             .withFeedForward(kG * Math.cos(safeAngle*Math.PI/180.0) * voltageCompSaturation));
 
       

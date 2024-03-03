@@ -78,7 +78,8 @@ public final class Constants {
       public static final int DIOIntakePieceSensor = 0;
       public static final int DIOFeederPieceSensor = 1;
 
-    public static final int CANWristMotor = 0;
+    public static final int CANWristMotor1 = 0;
+    public static final int CANWristMotor2 = 0;
 
     public static final DutyCycle DIOWristRevThroughBoreEncoder = null;
 
