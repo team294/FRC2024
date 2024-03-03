@@ -42,6 +42,7 @@ public class RobotContainer {
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
   private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
+  private final BCRRobotState robotState = new BCRRobotState();
 
   // Define controllers
   // private final Joystick xboxController = new Joystick(OIConstants.usbXboxController); //assuming usbxboxcontroller is int
@@ -100,9 +101,9 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, shooter, log));
-    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, intake, log));
-    SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, shooter, robotState, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, intake, robotState, log));
+    SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, robotState, log));
   }
 
   /**
@@ -144,10 +145,10 @@ public class RobotContainer {
     }
 
     left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake, log));
-    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, log));
+    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, robotState, log));
 
-    right[1].onTrue(new ShootPiece(shooter, intake, log));
-    right[2].onTrue(new IntakePiece(intake, shooter, log));
+    right[1].onTrue(new ShootPiece(shooter, intake, robotState, log));
+    right[2].onTrue(new IntakePiece(intake, shooter, robotState, log));
    
      
   }

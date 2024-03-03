@@ -11,6 +11,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 import frc.robot.commands.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
@@ -19,7 +20,7 @@ import frc.robot.commands.ShooterSetVelocity.VelocityType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootPiece extends SequentialCommandGroup {
   /** Creates a new ShootPiece. */
-  public ShootPiece(Shooter shooter, Intake intake, FileLog log) {
+  public ShootPiece(Shooter shooter, Intake intake, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
