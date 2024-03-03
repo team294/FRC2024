@@ -49,7 +49,7 @@ public class DriveToPose extends Command {
   }
 
   private final GoalMode goalMode;
-  private final TrapezoidProfileBCR.Constraints trapProfileConstraints;
+  private TrapezoidProfileBCR.Constraints trapProfileConstraints;
   private Supplier<Pose2d> goalSupplier;    // Supplier for goalPose
   private Rotation2d rotation;              // Rotation for goalPose
   private Pose2d initialPose, goalPose;     // Starting and destination robot pose (location and rotation) on the field
@@ -204,6 +204,9 @@ public class DriveToPose extends Command {
     if(SmartDashboard.getNumber("DriveToPose Rot degrees", -9999) == -9999) {
       SmartDashboard.putNumber("DriveToPose Rot degrees", 0);
     }
+    if(SmartDashboard.getNumber("DriveToPose VelMax mps", -9999) == -9999) {
+      SmartDashboard.putNumber("DriveToPose VelMax mps", 2);
+    }
     // if(feedbackChooser.getSelected()==null) {
       feedbackChooser.setDefaultOption("Normal", FEEDBACK_NORMAL);
       feedbackChooser.addOption("Velocity only", FEEDBACK_VELOCITY_ONLY);
@@ -259,6 +262,10 @@ public class DriveToPose extends Command {
         double yPos = SmartDashboard.getNumber("DriveToPose YPos meters", 0);
         Rotation2d angleTarget = Rotation2d.fromDegrees(SmartDashboard.getNumber("DriveToPose Rot degrees", 0));
         goalPose = new Pose2d(xPos, yPos, angleTarget);
+
+        trapProfileConstraints.maxVelocity = MathUtil.clamp(SmartDashboard.getNumber("DriveToPose VelMax mps", 0), 
+          -SwerveConstants.kFullSpeedMetersPerSecond, SwerveConstants.kFullSpeedMetersPerSecond);
+
         int feedbackMode = feedbackChooser.getSelected();
         switch (feedbackMode) {
           case FEEDBACK_NONE:
