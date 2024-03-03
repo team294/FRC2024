@@ -38,8 +38,6 @@ public class Shooter extends SubsystemBase implements Loggable {
 	private final TalonFXConfigurator shooterBottomConfigurator;
   private TalonFXConfiguration shooterBottomConfig;
 
-
-
   // Create signals and sensors for motors
   private final StatusSignal<Double> shooterTopSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
 	private final StatusSignal<Double> shooterTopTemp;				// Motor temperature, in degC
@@ -128,12 +126,10 @@ public class Shooter extends SubsystemBase implements Loggable {
     shooterBottomConfig.Slot0.kV = ShooterConstants.ShooterBottomkV;
     shooterBottomConfig.Slot0.kA = ShooterConstants.ShooterBottomkA;
 
-   
     // Apply configuration to all the motors.  
 		// This is a blocking call and will wait up to 50ms-70ms for each config to apply.  (initial test = 62ms delay)
     shooterTopConfigurator.apply(shooterTopConfig);
     shooterBottomConfigurator.apply(shooterBottomConfig);
-   
 
     // Stop shooter motors
     stopMotors();
