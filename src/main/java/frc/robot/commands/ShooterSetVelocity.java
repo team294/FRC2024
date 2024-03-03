@@ -6,35 +6,46 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
 
-public class FeederSetPercent extends Command {
-  private double percent = 0.0;
+public class ShooterSetVelocity extends Command {
+  private double velocity = 0.0;
   private final FileLog log;
   private final Shooter shooter;
+  private final VelocityType type;
   private boolean fromShuffleboard;
+  private int counter;
 
-  /** Creates a new ShooterSetPercent. */
-  public FeederSetPercent(double percent, Shooter shooter, FileLog log) {
+  public enum VelocityType{
+    immediatelyEnd,
+    runForever, 
+    waitForVelocity
+  }
+
+  /** Creates a new ShooterSetVelocity. */
+  public ShooterSetVelocity(double velocity, VelocityType type, Shooter shooter, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.percent = percent;
+    this.velocity = velocity;
+    this.type = type;
     this.log = log;
     this.shooter = shooter;
     this.fromShuffleboard = false;
     addRequirements(shooter);
   }
 
-  public FeederSetPercent(Shooter shooter, FileLog log) {
+  public ShooterSetVelocity(VelocityType type, Shooter shooter, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.percent = 0.0;
+    this.velocity = 0.0;
+    this.type = type;
     this.log = log;
     this.shooter = shooter;
     this.fromShuffleboard = true;
     addRequirements(shooter);
 
-    if(SmartDashboard.getNumber("Feeder Percent", -9999.9) == -9999.9) {
-      SmartDashboard.putNumber("Feeder Percent", 0);
+    if(SmartDashboard.getNumber("Shooter velocity", -9999.9) == -9999.9) {
+      SmartDashboard.putNumber("Shooter velocity", 0);
     }
   }
 
@@ -42,9 +53,9 @@ public class FeederSetPercent extends Command {
   @Override
   public void initialize() {
     if (fromShuffleboard) {
-      percent = SmartDashboard.getNumber("Feeder Percent", 0.0);
+      velocity = SmartDashboard.getNumber("Shooter velocity", 0.0);
     }
-    shooter.setFeederPercentOutput(percent);
+    shooter.setShooterVelocity(velocity);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -58,6 +69,20 @@ public class FeederSetPercent extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    switch (type){
+      case immediatelyEnd:
+        return true;
+      case runForever:
+        return false;
+      case waitForVelocity:
+        if(Math.abs(shooter.getTopShooterVelocity() - velocity) < ShooterConstants.velocityErrorTolerance){
+          counter++;
+        }else{
+          counter = 0;
+        }
+        return counter >= 5;
+      default:
+        return true;
+    }
   }
 }

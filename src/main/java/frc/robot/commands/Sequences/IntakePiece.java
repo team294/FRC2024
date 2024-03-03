@@ -24,7 +24,7 @@ public class IntakePiece extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
-      new IntakeSetPercent(IntakeConstants.intakePercent, intake, log),
+      new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
       new FeederSetPercent(ShooterConstants.feederPercent, shooter, log),
       new WaitCommand(5).until(() -> intake.isPiecePresent()),
       new StopIntakeFeederShooter(intake, shooter, log)
