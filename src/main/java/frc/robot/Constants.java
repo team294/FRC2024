@@ -173,36 +173,34 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-      // TODO: add all necessary constants
       public static final double compensationVoltage = 12.0;
       public static final double ticksPerRevolution = 1.0;
-      public static final double shooterGearRatio = 1.0;   // TODO get from CAD.  Turn ratio from motor pinion to shooter wheels.
-      public static final double feederGearRatio = 1.0;   // TODO get from CAD.  Turn ratio from motor pinion to feeder wheels.
+      public static final double shooterGearRatio = (44.0/20.0) * (24.0/18.0);   // From CAD, shooter gears from motor to wheels = 44:20 then 24:18.  Turn ratio from motor pinion to shooter wheels.
+      public static final double feederGearRatio = (14.0/28.0) * (16.0/32.0);   // From CAD, feeder gears from motor to wheels = 14:28 then 16:32.  Turn ratio from motor pinion to feeder wheels.
 
       // PIDSVA for Top Shooter motor
-      public static final double ShooterTopkP = 0.5;
-      public static final double ShooterTopkI = 0.00;
-      public static final double ShooterTopkD = 0.0;
-      public static final double ShooterTopkS = 0.061256; // V; old: 0.004, new: 0.125
-      public static final double ShooterTopkV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
-      public static final double ShooterTopkA = 0.0;
+      public static final double ShooterTopkP = 0.5;          // TODO calibrate.  kP = (desired-output-volts) / (error-in-encoder-rps)
+      public static final double ShooterTopkI = 0.00;         // kI = (desired-output-volts) / (error-in-encoder-rps * s)
+      public static final double ShooterTopkD = 0.0;          // kD = (desired-output-volts) / (error-in-encoder-rps/s)
+      public static final double ShooterTopkS = 0.061256;     // kS = (desired-output-volts)
+      public static final double ShooterTopkV = 0.118681;     // kV = (desired-output-volts) / (target-velocity-in-encoder-rps)
+      public static final double ShooterTopkA = 0.0;          // kA = (desired-output-volts) / (target-accel-in-encoder-rot/sec^2)
       
       //PIDSVA for Bottom Shooter motor
       public static final double ShooterBottomkP = 0.5;
       public static final double ShooterBottomkI = 0.00;
       public static final double ShooterBottomkD = 0.0;
-      public static final double ShooterBottomkS = 0.061256; // V; old: 0.004, new: 0.125
-      public static final double ShooterBottomkV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double ShooterBottomkS = 0.061256;  // V; old: 0.004, new: 0.125
+      public static final double ShooterBottomkV = 0.118681;  // V * s / dist; old: 0.000155, new: 0.129166,
       public static final double ShooterBottomkA = 0.0;
       
       //PIDSVA for Feeder
-      public static final double FeederkP = 0.5;
-      public static final double FeederkI = 0.00;
-      public static final double FeederkD = 0.0;
-      public static final double FeederkS = 0.061256; // V; old: 0.004, new: 0.125
-      public static final double FeederkV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
-      public static final double FeederkA = 0.0;
-
+      // public static final double FeederkP = 0.5;
+      // public static final double FeederkI = 0.00;
+      // public static final double FeederkD = 0.0;
+      // public static final double FeederkS = 0.061256; // V; old: 0.004, new: 0.125
+      // public static final double FeederkV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
+      // public static final double FeederkA = 0.0;
 
       /*
         Volt  RPS 

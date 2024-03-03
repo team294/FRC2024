@@ -160,12 +160,12 @@ public class Shooter extends SubsystemBase implements Loggable {
     shooterBottomConfig.Slot0.kV = ShooterConstants.ShooterBottomkV;
     shooterBottomConfig.Slot0.kA = ShooterConstants.ShooterBottomkA;
 
-    feederConfig.Slot0.kP = ShooterConstants.FeederkP;
-    feederConfig.Slot0.kI = ShooterConstants.FeederkI;
-    feederConfig.Slot0.kD = ShooterConstants.FeederkD;
-    feederConfig.Slot0.kS = ShooterConstants.FeederkS;
-    feederConfig.Slot0.kV = ShooterConstants.FeederkV;
-    feederConfig.Slot0.kA = ShooterConstants.FeederkA;
+    // feederConfig.Slot0.kP = ShooterConstants.FeederkP;
+    // feederConfig.Slot0.kI = ShooterConstants.FeederkI;
+    // feederConfig.Slot0.kD = ShooterConstants.FeederkD;
+    // feederConfig.Slot0.kS = ShooterConstants.FeederkS;
+    // feederConfig.Slot0.kV = ShooterConstants.FeederkV;
+    // feederConfig.Slot0.kA = ShooterConstants.FeederkA;
 
     // Apply configuration to all the motors.  
 		// This is a blocking call and will wait up to 50ms-70ms for each config to apply.  (initial test = 62ms delay)
@@ -249,8 +249,8 @@ public class Shooter extends SubsystemBase implements Loggable {
   // *** Velocity motor controls
 
   /**
-   * Sets the target velocity for both shooter wheels
-   * @param rpm velocity of shooter wheels in rpm
+   * Sets the target velocity for both shooter wheels.
+   * @param rpm velocity of shooter wheels in rpm.  (+ = shoot forward, - = backwards)
    */
   public void setShooterVelocity(double rpm) { 
     setShooterVelocity(rpm, rpm);
@@ -258,8 +258,8 @@ public class Shooter extends SubsystemBase implements Loggable {
 
   /**
    * Sets the target velocity for both shooter wheels
-   * @param rpmTop velocity of top shooter wheel in rpm
-   * @param rpmBottom velocity of bottom shooter wheel in rpm
+   * @param rpmTop velocity of top shooter wheel in rpm  (+ = shoot forward, - = backwards)
+   * @param rpmBottom velocity of bottom shooter wheel in rpm  (+ = shoot forward, - = backwards)
    */
   public void setShooterVelocity(double rpmTop, double rpmBottom) { 
     velocityControlOn = true;
