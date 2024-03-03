@@ -90,6 +90,8 @@ public class Wrist extends SubsystemBase implements Loggable{
     wristMotorConfig.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
 		wristMotorConfig.Slot0.kI = 0.0;
 		wristMotorConfig.Slot0.kD = 0.0;
+    wristMotorConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+		wristMotorConfig.Slot0.kG = kG;
 		// wristMotorConfig.Slot0.kS = 0.0;
 		// wristMotorConfig.Slot0.kV = 0.0;
 		// wristMotorConfig.Slot0.kA = 0.0;
@@ -127,8 +129,8 @@ public class Wrist extends SubsystemBase implements Loggable{
       calibrateWristEnc(getRevEncoderDegrees());
 
       // Configure soft limits on motor
-		  wristMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderTickPosition(WristAngle.upperLimit.value);
-		  wristMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderTickPosition(WristAngle.lowerLimit.value);
+		  wristMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
+		  wristMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
 		  wristMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       wristMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
@@ -204,11 +206,11 @@ public class Wrist extends SubsystemBase implements Loggable{
       
 
       // Phoenix6 PositionVoltage control:  Position is in rotations, FeedFoward is in Volts
-      wristMotor.setControl(wristPositionControl.withPosition(wristDegreesToEncoderTickPosition(safeAngle))
+      wristMotor.setControl(wristPositionControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
                             .withFeedForward(kG * Math.cos(safeAngle*Math.PI/180.0) * voltageCompSaturation));
 
       
-      SmartDashboard.putNumber("Wrist set raw ticks", wristDegreesToEncoderTickPosition(safeAngle));
+      SmartDashboard.putNumber("Wrist set raw ticks", wristDegreesToEncoderRotations(safeAngle));
     }
   }
 
@@ -278,18 +280,18 @@ public class Wrist extends SubsystemBase implements Loggable{
    * 
    * @return raw encoder reading, in pinion rotations, adjusted direction (positive is towards stowed, negative is towards lower hard stop)
    */
-  public double getWristEncoderTicksRaw() {
+  public double getWristEncoderRotationsRaw() {
     wristEncoderPostion.refresh();          // Verified that this is not a blocking call.
     return wristEncoderPostion.getValueAsDouble();
   }
 
   /**
-   * Converts the wrist position in degrees to raw encoder ticks.  Assumes that the encoder is calibrated.
+   * Converts the wrist position in degrees to rotations.  Assumes that the encoder is calibrated.
    * @param degrees wrist position in degrees
-   * @return wrist position in encoder ticks
+   * @return wrist position in rotations
    */
-  private double wristDegreesToEncoderTickPosition(double degrees) {
-    return (degrees + wristCalZero) / kWristDegreesPerTick;
+  private double wristDegreesToEncoderRotations(double degrees) {
+    return (degrees + wristCalZero) / kWristDegreesPerRotation;
   }
 
   /**
@@ -300,7 +302,7 @@ public class Wrist extends SubsystemBase implements Loggable{
    */
   private double getWristEncoderDegrees() {
     // DO NOT normalize this angle.  It should not wrap, since the wrist mechanically can not cross the -180/+180 deg point
-    return getWristEncoderTicksRaw()* kWristDegreesPerTick - wristCalZero;
+    return getWristEncoderRotationsRaw()* kWristDegreesPerRotation - wristCalZero;
   }
 
   /**
@@ -336,7 +338,7 @@ public class Wrist extends SubsystemBase implements Loggable{
 		stopWrist();
 
     log.writeLog(false, "Wrist", "Uncalibrate wrist", 
-      "Rev angle", getRevEncoderDegrees(), "Enc Raw", getWristEncoderTicksRaw(),
+      "Rev angle", getRevEncoderDegrees(), "Enc Raw", getWristEncoderRotationsRaw(),
 			"Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget());
 
     wristCalibrated = false;
@@ -349,11 +351,11 @@ public class Wrist extends SubsystemBase implements Loggable{
   public void calibrateWristEnc(double angle) {
 		stopWrist();	// Stop motor, so it doesn't jump to new value
 
-    wristCalZero = getWristEncoderTicksRaw()* kWristDegreesPerTick - angle;
+    wristCalZero = getWristEncoderRotationsRaw()* kWristDegreesPerRotation - angle;
 		wristCalibrated = true;
 
     log.writeLog(false, "Wrist", "Calibrate wrist", "zero value", wristCalZero, 
-			"Rev angle", getRevEncoderDegrees(), "Enc Raw", getWristEncoderTicksRaw(),
+			"Rev angle", getRevEncoderDegrees(), "Enc Raw", getWristEncoderRotationsRaw(),
 			"Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget());
   }  
   
@@ -397,7 +399,7 @@ public class Wrist extends SubsystemBase implements Loggable{
     log.writeLog(logWhenDisabled, subsystemName, "Update Variables",
       "Temp", wristMotorTemp.refresh().getValueAsDouble(), "Percent Output", getWristMotorPercentOutput(),
       "Amps", wristStatorCurrent.refresh().getValueAsDouble(),
-      "WristCalZero", wristCalZero, "Enc Raw", getWristEncoderTicksRaw(), 
+      "WristCalZero", wristCalZero, "Enc Raw", getWristEncoderRotationsRaw(), 
       "Wrist Degrees", getWristEncoderDegrees(),
       "Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget(),
       "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees()
@@ -420,7 +422,7 @@ public class Wrist extends SubsystemBase implements Loggable{
       SmartDashboard.putBoolean("Wrist calibrated", wristCalibrated);
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
       SmartDashboard.putNumber("Wrist angle", getWristAngle());
-      SmartDashboard.putNumber("Wrist enc raw", getWristEncoderTicksRaw());
+      SmartDashboard.putNumber("Wrist enc raw", getWristEncoderRotationsRaw());
       SmartDashboard.putNumber("Wrist target angle", getCurrentWristTarget());
       SmartDashboard.putNumber("Wrist output", getWristMotorPercentOutput());
     }
