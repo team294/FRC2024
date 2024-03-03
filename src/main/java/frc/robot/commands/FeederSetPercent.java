@@ -6,32 +6,32 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.FileLog;
 
 public class FeederSetPercent extends Command {
   private double percent = 0.0;
   private final FileLog log;
-  private final Shooter shooter;
+  private final Feeder feeder;
   private boolean fromShuffleboard;
 
   /** Creates a new ShooterSetPercent. */
-  public FeederSetPercent(double percent, Shooter shooter, FileLog log) {
+  public FeederSetPercent(double percent, Feeder feeder, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.percent = percent;
     this.log = log;
-    this.shooter = shooter;
+    this.feeder = feeder;
     this.fromShuffleboard = false;
-    addRequirements(shooter);
+    addRequirements(feeder);
   }
 
-  public FeederSetPercent(Shooter shooter, FileLog log) {
+  public FeederSetPercent(Feeder feeder, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.percent = 0.0;
     this.log = log;
-    this.shooter = shooter;
+    this.feeder = feeder;
     this.fromShuffleboard = true;
-    addRequirements(shooter);
+    addRequirements(feeder);
 
     if(SmartDashboard.getNumber("Feeder Percent", -9999.9) == -9999.9) {
       SmartDashboard.putNumber("Feeder Percent", 0);
@@ -44,7 +44,7 @@ public class FeederSetPercent extends Command {
     if (fromShuffleboard) {
       percent = SmartDashboard.getNumber("Feeder Percent", 0.0);
     }
-    shooter.setFeederPercentOutput(percent);
+    feeder.setFeederPercentOutput(percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -7,11 +7,11 @@ package frc.robot.commands.Sequences;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.commands.FeederSetPercent;
 import frc.robot.commands.IntakeSetPercent;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.FileLog;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -19,15 +19,16 @@ import frc.robot.utilities.FileLog;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class IntakePiece extends SequentialCommandGroup {
   /** Creates a new IntakePiece. */
-  public IntakePiece(Intake intake, Shooter shooter, FileLog log) {
+  public IntakePiece(Intake intake, Feeder feeder, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
       new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
-      new FeederSetPercent(ShooterConstants.feederPercent, shooter, log),
+      new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
       new WaitCommand(5).until(() -> intake.isPiecePresent()),
-      new StopIntakeFeederShooter(intake, shooter, log)
+      new IntakeSetPercent(0, 0, intake, log),
+      new FeederSetPercent(0, feeder, log)
     );
   }
 }

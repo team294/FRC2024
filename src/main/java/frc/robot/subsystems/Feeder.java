@@ -125,7 +125,7 @@ public class Feeder extends SubsystemBase implements Loggable{
   public void setFeederVelocity(double rpm) { 
     velocityControlOn = true;
     setpointRPM = rpm;
-\    feeder.setControl(motorVelocityControl.withVelocity(rpm/60.0/FeederConstants.feederGearRatio));
+    feeder.setControl(motorVelocityControl.withVelocity(rpm/60.0/FeederConstants.feederGearRatio));
   }
 
   /**
