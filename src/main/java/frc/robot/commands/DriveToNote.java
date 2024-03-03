@@ -49,8 +49,8 @@ public class DriveToNote extends Command {
   public DriveToNote(DriveTrain driveTrain, FileLog log) {
     this.driveTrain = driveTrain;
     this.log = log;
-    fwdRateController = new PIDController(0.1, 0, 0);
-    leftRateController = new PIDController(0.04, 0, 0);
+    fwdRateController = new PIDController(0.4, 0, 0);
+    leftRateController = new PIDController(0.005, 0, 0);
     turnRateController = new PIDController(0.2, 0, 0);
     fwdRateController.setSetpoint(PhotonVisionConstants.pitchSetpoint); // setpoint is the bottom of the screen
     leftRateController.setSetpoint(PhotonVisionConstants.yawSetpoint); // setpoint is the middle line on the screen
