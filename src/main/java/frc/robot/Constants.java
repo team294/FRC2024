@@ -279,8 +279,8 @@ public final class Constants {
 
     public static final class WristConstants {
       public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.  Encoder counts per revolution of FalconFX motor pinion gear
-        public static final double kWristGearRatio = (50.0 / 1.0);       // From CAD, should be 50:1.  Gear reduction ratio between Falcon and gear driving the wrist (planetary and chain gears)
-        public static final double kWristDegreesPerTick =  360.0 / kEncoderCPR / kWristGearRatio * 0.9726;      // CALIBRATED (fudge factor 0.9726)
+        public static final double kWristGearRatio = (75.0 / 1.0);       // From CAD, should be 75:1.  Gear reduction ratio between Falcon and gear driving the wrist (planetary and chain gears)
+        public static final double kWristDegreesPerRotation =  360.0 / kEncoderCPR / kWristGearRatio;      // CALIBRATED (fudge factor was 0.9726 last year)
 
         public static final double voltageCompSaturation = 12.0;
         public static final double maxUncalibratedPercentOutput = 0.05;     // CALIBRATED
@@ -292,8 +292,10 @@ public final class Constants {
         // and -90 deg is with the CG of the wrist resting downward.
         public static double revEncoderOffsetAngleWrist = 0;    // -49.0 deg (was 69.0 deg before changing wrist chain)
 
-        public static final double kP = 0.72;   // Calc 0.72 from 2023 CALIBRATED kP value (0.03).  kP = (desired-output-volts) / (error-in-encoder-rotations)
-        public static final double kG = 0.03;   // CALIBRATED 0.03.  Feed foward percent-out to add to hold arm horizontal (0 deg)
+        public static final double kP = 0.0;   // Calc 0.72 from 2023 CALIBRATED kP value (0.03).  kP = (desired-output-volts) / (error-in-encoder-rotations)
+        public static final double kI = 0.0; 
+        public static final double kD = 0.0; 
+        public static final double kG = 0.1;   // CALIBRATED 0.03.  Feed foward percent-out to add to hold arm horizontal (0 deg)
 
         // Wrist regions
         public enum WristRegion {
@@ -314,15 +316,23 @@ public final class Constants {
         // Wrist pre-defined angles (in degrees)
         // 0 degrees = horizontal (in front of robot) relative to wrist center of gravity
         // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
+        // public enum WristAngle {
+        //     lowerLimit(-138.0),      // CALIBRATED
+        //     loadIntake(-135.0),    // CALIBRATED
+        //     startConfig(-115.0),     // CALIBRATED
+        //     loadHumanStation(10.0),      // CALIBRATED
+        //     scoreLow(0.0),
+        //     scoreMidHigh(20.0),         // Was 10.0
+        //     elevatorMoving(32.0),    // CALIBRATED
+        //     upperLimit(32.0);       // CALIBRATED
+        //     // score low 5 inches
+        //     @SuppressWarnings({"MemberName", "PMD.SingularField"})
+        //     public final double value;
+        //     WristAngle(double value) { this.value = value; }
+        // }
         public enum WristAngle {
-            lowerLimit(-138.0),      // CALIBRATED
-            loadIntake(-135.0),    // CALIBRATED
-            startConfig(-115.0),     // CALIBRATED
-            loadHumanStation(10.0),      // CALIBRATED
-            scoreLow(0.0),
-            scoreMidHigh(20.0),         // Was 10.0
-            elevatorMoving(32.0),    // CALIBRATED
-            upperLimit(32.0);       // CALIBRATED
+            lowerLimit(0.0),      // NOT CALIBRATED
+            upperLimit(50.0);       // NOT CALIBRATED
             // score low 5 inches
             @SuppressWarnings({"MemberName", "PMD.SingularField"})
             public final double value;

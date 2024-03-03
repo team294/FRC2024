@@ -38,6 +38,7 @@ public class RobotContainer {
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
   private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);
+  private final Wrist wrist = new Wrist(log);
 
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
@@ -91,6 +92,10 @@ public class RobotContainer {
 
     // Feeder commands
     SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(shooter, log));
+
+    // Wrist commands
+    SmartDashboard.putData("Wrist Set Percent", new WristSetPercentOutput(wrist, log));
+    SmartDashboard.putData("Wrist Set Angle", new WristSetAngle(wrist, log));
   
     // Drive base commands
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
