@@ -40,11 +40,6 @@ public class Shooter extends SubsystemBase implements Loggable {
 	private final TalonFXConfigurator shooterBottomConfigurator;
   private TalonFXConfiguration shooterBottomConfig;
 
-  // Create Kraken for feeder motor
-  private final TalonFX feeder = new TalonFX(Ports.CANFeeder);
-  private final TalonFXConfigurator feederConfigurator;
-  private TalonFXConfiguration feederConfig;
-
   // Create signals and sensors for motors
   private final StatusSignal<Double> shooterTopSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
 	private final StatusSignal<Double> shooterTopTemp;				// Motor temperature, in degC
@@ -62,20 +57,9 @@ public class Shooter extends SubsystemBase implements Loggable {
 	private final StatusSignal<Double> shooterBottomEncoderVelocity;
   private final StatusSignal<Double> shooterBottomVoltage;
 
-  private final StatusSignal<Double> feederSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
-	private final StatusSignal<Double> feederTemp;				// Motor temperature, in degC
-	private final StatusSignal<Double> feederDutyCycle;				// Motor duty cycle percent power, -1 to 1
-	private final StatusSignal<Double> feederStatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
-	private final StatusSignal<Double> feederEncoderPosition;			// Encoder position, in pinion rotations
-	private final StatusSignal<Double> feederEncoderVelocity;
-  private final StatusSignal<Double> feederVoltage;
-
   // Motor controls
   private VoltageOut motorVoltageControl = new VoltageOut(0.0);
   private VelocityVoltage motorVelocityControl = new VelocityVoltage(0.0).withSlot(0);
-
-  // Piece sensor inside the intake 
-  private final DigitalInput pieceSensor = new DigitalInput(Ports.DIOFeederPieceSensor);
 
   // private SimpleMotorFeedforward motor1Feedforward = new SimpleMotorFeedforward(S, V, A); // TODO create and calibrate feed forward (or remove code)
 
@@ -124,22 +108,6 @@ public class Shooter extends SubsystemBase implements Loggable {
     shooterBottomConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;        // # seconds from 0 to full power
 		shooterBottomConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;    // # seconds from 0 to full power
 
-    // Configure feeder
-    feederConfigurator = feeder.getConfigurator();
-    feederSupplyVoltage = feeder.getSupplyVoltage();
-	  feederTemp = feeder.getDeviceTemp();
-	  feederDutyCycle = feeder.getDutyCycle();
-	  feederStatorCurrent =feeder.getStatorCurrent();
-	  feederEncoderPosition = feeder.getPosition();
-	  feederEncoderVelocity = feeder.getVelocity();
-    feederVoltage = feeder.getMotorVoltage();
-
-    feederConfig = new TalonFXConfiguration();			// Factory default configuration
-    feederConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
-		feederConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;      // Brake mode to hold piece in feeder
-    feederConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;         // # seconds from 0 to full power
-		feederConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;     // # seconds from 0 to full power
-    
     // Make motor2 follow motor1
     //motor2.setControl(new Follower(motor1.getDeviceID(), false)); 
 
@@ -160,18 +128,10 @@ public class Shooter extends SubsystemBase implements Loggable {
     shooterBottomConfig.Slot0.kV = ShooterConstants.ShooterBottomkV;
     shooterBottomConfig.Slot0.kA = ShooterConstants.ShooterBottomkA;
 
-    feederConfig.Slot0.kP = ShooterConstants.FeederkP;
-    feederConfig.Slot0.kI = ShooterConstants.FeederkI;
-    feederConfig.Slot0.kD = ShooterConstants.FeederkD;
-    feederConfig.Slot0.kS = ShooterConstants.FeederkS;
-    feederConfig.Slot0.kV = ShooterConstants.FeederkV;
-    feederConfig.Slot0.kA = ShooterConstants.FeederkA;
-
     // Apply configuration to all the motors.  
 		// This is a blocking call and will wait up to 50ms-70ms for each config to apply.  (initial test = 62ms delay)
     shooterTopConfigurator.apply(shooterTopConfig);
     shooterBottomConfigurator.apply(shooterBottomConfig);
-    feederConfigurator.apply(feederConfig);
 
     // Stop all motors
     stopMotors();
