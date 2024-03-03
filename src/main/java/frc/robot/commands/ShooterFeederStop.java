@@ -21,7 +21,7 @@ public class ShooterFeederStop extends Command {
     this.feeder = feeder;
     this.log = log;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shooter);
+    addRequirements(shooter, feeder);
   }
 
   // Called when the command is initially scheduled.
