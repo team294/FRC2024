@@ -178,8 +178,8 @@ public final class Constants {
     public static final class ShooterConstants {
       public static final double compensationVoltage = 12.0;
       public static final double ticksPerRevolution = 1.0;
-      public static final double shooterGearRatio = (44.0/20.0) * (24.0/18.0);   // From CAD, shooter gears from motor to wheels = 44:20 then 24:18.  Turn ratio from motor pinion to shooter wheels.
-      public static final double feederGearRatio = (14.0/28.0) * (16.0/32.0);   // From CAD, feeder gears from motor to wheels = 14:28 then 16:32.  Turn ratio from motor pinion to feeder wheels.
+      public static final double shooterGearRatio = 1.0;  //(44.0/20.0) * (24.0/18.0);   // From CAD, shooter gears from motor to wheels = 44:20 then 24:18.  Turn ratio from motor pinion to shooter wheels.
+      public static final double feederGearRatio = 1.0; //(14.0/28.0) * (16.0/32.0);   // From CAD, feeder gears from motor to wheels = 14:28 then 16:32.  Turn ratio from motor pinion to feeder wheels.
 
       // PIDSVA for Top Shooter motor
       public static final double ShooterTopkP = 0.5;          // TODO calibrate.  kP = (desired-output-volts) / (error-in-encoder-rps)
