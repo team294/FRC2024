@@ -73,10 +73,13 @@ public final class Constants {
 
       public static final int CANPigeonGyro = 18;
 
-      // Digital IO ports
-      public static final int DIOIntakePieceSensor = 0;
-      public static final int DIOFeederPieceSensor = 1;
+      public static final int CANWrist1 = 19;
+      public static final int CANWrist2 = 20;
 
+      // Digital IO ports
+      public static final int DIOFeederPieceSensor = 0;
+      public static final int DIOWristEncoder = 1;
+      public static final int DIOIntakePieceSensor = 9;
     }
 
     public static final class OIConstants {
