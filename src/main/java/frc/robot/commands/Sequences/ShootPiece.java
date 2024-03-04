@@ -25,11 +25,13 @@ public class ShootPiece extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ShooterSetVelocity(ShooterConstants.shooterVelocity, VelocityType.waitForVelocity, shooter, log),
-      new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
-      new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake,  log),
+      // new ShooterSetVelocity(ShooterConstants.shooterVelocity, VelocityType.waitForVelocity, shooter, log),
+      new ShooterSetPercent(0.2, shooter, log),
       new WaitCommand(1),
-      new IntakeStop(intake, log),
+      new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
+      // new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake,  log),
+      new WaitCommand(1),
+      // new IntakeStop(intake, log),
       new ShooterFeederStop(shooter, feeder, log)
     );
   }
