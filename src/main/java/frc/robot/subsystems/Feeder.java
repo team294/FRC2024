@@ -107,6 +107,8 @@ public class Feeder extends SubsystemBase implements Loggable{
   public void setFeederPercentOutput(double percent) {
     // Percent output control does not exist; multiply compensationVoltage by percent
     feeder.setControl(motorVoltageControl.withOutput(percent * FeederConstants.compensationVoltage));
+    velocityControlOn = false;
+    setpointRPM = 0.0;
   }
 
   /**

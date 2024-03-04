@@ -59,8 +59,6 @@ public class Shooter extends SubsystemBase implements Loggable {
   private VoltageOut motorVoltageControl = new VoltageOut(0.0);
   private VelocityVoltage motorVelocityControl = new VelocityVoltage(0.0).withSlot(0);
 
-  // private SimpleMotorFeedforward motor1Feedforward = new SimpleMotorFeedforward(S, V, A); // TODO create and calibrate feed forward (or remove code)
-
   private boolean velocityControlOn = false;
   private double setpointRPMTop;
   private double setpointRPMBottom;
@@ -146,25 +144,6 @@ public class Shooter extends SubsystemBase implements Loggable {
 
   /**
    * Sets the percent of the top and bottom shooter motors.  All motors use voltage compensation.
-   * @param shooterPercent percent for both shooter motors, -1.0 to +1.0 (+ = shoot forward, - = backwards)
-   */
-  public void setMotorsPercentOutput(double shooterPercent) {
-    setShooterPercentOutput(shooterPercent, shooterPercent);
-   
-  }
-
-  /**
-   * Sets the percent of the top and bottom shooter motors.  All motors use voltage compensation.
-   * @param shooterTopPercent percent for the top shooter motor, -1.0 to +1.0 (+ = shoot forward, - = backwards)
-   * @param shooterBottomPercent percent for the bottom shooter motor, -1.0 to +1.0 (+ = shoot forward, - = backwards)
-   */
-  public void setMotorsPercentOutput(double shooterTopPercent, double shooterBottomPercent) {
-    setShooterPercentOutput(shooterTopPercent, shooterBottomPercent);
-    
-  }
-  
-  /**
-   * Sets the percent of the top and bottom shooter motors.  All motors use voltage compensation.
    * @param percent percent for the shooter motors, -1.0 to +1.0 (+ = shoot forward, - = backwards)
    */
   public void setShooterPercentOutput(double percent) {
@@ -184,8 +163,6 @@ public class Shooter extends SubsystemBase implements Loggable {
     setpointRPMTop = 0.0;
     setpointRPMBottom = 0.0;
   }
-
- 
 
   /**
   * Stops shooter motors
