@@ -99,7 +99,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     shooterBottomVoltage = shooterBottom.getMotorVoltage();
 
     shooterBottomConfig = new TalonFXConfiguration();			// Factory default configuration
-    shooterBottomConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
+    shooterBottomConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor
 		shooterBottomConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;     // Coast mode to reduce wear on motor
     shooterBottomConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;        // # seconds from 0 to full power
 		shooterBottomConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;    // # seconds from 0 to full power
@@ -174,8 +174,8 @@ public class Shooter extends SubsystemBase implements Loggable {
   // *** Velocity motor controls
 
   /**
-   * Sets the target velocity for both shooter wheels
-   * @param rpm velocity of shooter wheels in rpm
+   * Sets the target velocity for both shooter wheels.
+   * @param rpm velocity of shooter wheels in rpm.  (+ = shoot forward, - = backwards)
    */
   public void setShooterVelocity(double rpm) { 
     setShooterVelocity(rpm, rpm);
@@ -183,8 +183,8 @@ public class Shooter extends SubsystemBase implements Loggable {
 
   /**
    * Sets the target velocity for both shooter wheels
-   * @param rpmTop velocity of top shooter wheel in rpm
-   * @param rpmBottom velocity of bottom shooter wheel in rpm
+   * @param rpmTop velocity of top shooter wheel in rpm  (+ = shoot forward, - = backwards)
+   * @param rpmBottom velocity of bottom shooter wheel in rpm  (+ = shoot forward, - = backwards)
    */
   public void setShooterVelocity(double rpmTop, double rpmBottom) { 
     velocityControlOn = true;
