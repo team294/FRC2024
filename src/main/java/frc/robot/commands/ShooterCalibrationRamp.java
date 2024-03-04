@@ -40,7 +40,7 @@ public class ShooterCalibrationRamp extends Command {
 
     // Every 20ms, increase percent slightly
     percent += 0.0004;
-    shooter.setMotorsPercentOutput(percent, 0.0);
+    shooter.setShooterPercentOutput(percent);
   }
 
   // Called once the command ends or is interrupted.

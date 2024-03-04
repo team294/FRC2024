@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.FileLog;
 import frc.robot.commands.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
@@ -19,16 +21,16 @@ import frc.robot.commands.ShooterSetVelocity.VelocityType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootPiece extends SequentialCommandGroup {
   /** Creates a new ShootPiece. */
-  public ShootPiece(Shooter shooter, Intake intake, FileLog log) {
+  public ShootPiece(Shooter shooter, Feeder feeder, Intake intake, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ShooterSetVelocity(ShooterConstants.shooterVelocity, VelocityType.waitForVelocity, shooter, log),
-      new FeederSetPercent(ShooterConstants.feederPercent, shooter, log),
+      new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
       new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake,  log),
       new WaitCommand(1),
       new IntakeStop(intake, log),
-      new ShooterFeederStop(shooter, log)
+      new ShooterFeederStop(shooter, feeder, log)
     );
   }
 }

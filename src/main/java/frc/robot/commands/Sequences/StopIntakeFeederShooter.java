@@ -9,6 +9,7 @@ import frc.robot.commands.IntakeStop;
 import frc.robot.commands.ShooterFeederStop;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.FileLog;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -16,12 +17,12 @@ import frc.robot.utilities.FileLog;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class StopIntakeFeederShooter extends SequentialCommandGroup {
   /** Creates a new StopIntakeShooter. */
-  public StopIntakeFeederShooter(Intake intake, Shooter shooter, FileLog log) {
+  public StopIntakeFeederShooter(Intake intake, Shooter shooter, Feeder feeder, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new IntakeStop(intake, log),
-      new ShooterFeederStop(shooter, log)
+      new ShooterFeederStop(shooter, feeder, log)
     );
   }
 }
