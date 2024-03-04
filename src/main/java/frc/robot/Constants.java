@@ -221,7 +221,7 @@ public final class Constants {
       public static final double kV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
       public static final double kA = 0.0;
 
-      public static final double feederPercent = 0.3;
+      public static final double feederPercent = 0.2;
     }
 
     public static final class TrajectoryConstants {
