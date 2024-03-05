@@ -156,9 +156,9 @@ public class SwerveModule {
     // Note:  In Phoenix 6, slots are selected in the ControlRequest (ex. PositionVoltage.Slot)
     driveVelocityControl.Slot = 0;
     driveVelocityControl.OverrideBrakeDurNeutral = true;
-    driveMotorConfig.Slot0.kP = 0.24;		// TODO calibrate.  2023 Phoenix5 = 0.10.  kP = (desired-output-volts) / (error-in-encoder-rps)
+    driveMotorConfig.Slot0.kP = 0.30;		// CALIBRATED.  2023 Phoenix5 = 0.10.  kP = (desired-output-volts) / (error-in-encoder-rps)
 		driveMotorConfig.Slot0.kI = 0.0;
-		driveMotorConfig.Slot0.kD = 0.000012;    // TODO calibrate.  2023 Phoenix5 = 0.005.  kD = (desired-output-volts) / (error-in-encoder-rps/s)
+		driveMotorConfig.Slot0.kD = 0.000012;    // CALIBRATED.  2023 Phoenix5 = 0.005.  kD = (desired-output-volts) / (error-in-encoder-rps/s)
 		// driveMotorConfig.Slot0.kS = 0.0;
 		// driveMotorConfig.Slot0.kV = 0.0;
 		// driveMotorConfig.Slot0.kA = 0.0;
