@@ -4,9 +4,9 @@
 
 package frc.robot.commands.Sequences;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.IntakeStop;
-import frc.robot.commands.ShooterFeederStop;
+import frc.robot.commands.*;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
@@ -22,7 +22,11 @@ public class StopIntakeFeederShooter extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new IntakeStop(intake, log),
-      new ShooterFeederStop(shooter, log)
+      new ShooterFeederStop(shooter, log),
+      new ConditionalCommand(
+        new RobotStateSet(BCRRobotState.State.IDLE_WITH_PIECE, robotState, log), 
+        new RobotStateSet(BCRRobotState.State.IDLE_NO_PIECE, robotState, log),
+         shooter::isPiecePresent)
     );
   }
 }
