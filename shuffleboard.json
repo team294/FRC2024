@@ -804,7 +804,7 @@
           "9,2": {
             "size": [
               2,
-              2
+              3
             ],
             "content": {
               "_type": "List Layout",
@@ -840,6 +840,20 @@
                   "_title": "Drive To Pose",
                   "_glyph": 148,
                   "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/DriveToPose VelMax mps",
+                  "_title": "DriveToPose VelMax mps",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "ComboBox Chooser",
+                  "_source0": "network_table:///SmartDashboard/DriveToPose Feedback",
+                  "_title": "Feedback",
+                  "_glyph": 148,
+                  "_showGlyph": false
                 }
               ]
             }
@@ -857,7 +871,7 @@
               "_showGlyph": false
             }
           },
-          "9,4": {
+          "11,0": {
             "size": [
               2,
               2
@@ -1265,7 +1279,8 @@
               "Y-axis/Automatic bounds": true,
               "Y-axis/Upper bound": 1.0,
               "Y-axis/Lower bound": -1.0,
-              "Y-axis/Unit": "ul"
+              "Y-axis/Unit": "ul",
+              "Visible data/SmartDashboard/Shooter Bottom RPM": true
             }
           },
           "7,3": {
@@ -1284,7 +1299,8 @@
               "Y-axis/Automatic bounds": true,
               "Y-axis/Upper bound": 1.0,
               "Y-axis/Lower bound": -1.0,
-              "Y-axis/Unit": "ul"
+              "Y-axis/Unit": "ul",
+              "Visible data/SmartDashboard/Shooter Top RPM": true
             }
           },
           "3,0": {
