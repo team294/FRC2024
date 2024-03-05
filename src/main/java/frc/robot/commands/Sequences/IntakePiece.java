@@ -10,6 +10,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.commands.FeederSetPercent;
 import frc.robot.commands.IntakeSetPercent;
+import frc.robot.commands.RobotStateSet;
 import frc.robot.commands.RobotStateSetIdle;
 import frc.robot.subsystems.Intake;
 import frc.robot.utilities.BCRRobotState;
@@ -31,6 +32,7 @@ public class IntakePiece extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
+      new RobotStateSet(BCRRobotState.State.INTAKE_TO_FEEDER, robotState, log),
       new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
       new WaitCommand(10).until(() -> feeder.isPiecePresent()),
