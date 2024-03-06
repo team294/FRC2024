@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.Ports;
-//import frc.robot.Constants.ElevatorConstants.ElevatorRegion;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.Constants.WristConstants.WristRegion;
 import frc.robot.utilities.FileLog;
@@ -38,8 +37,8 @@ public class Wrist extends SubsystemBase implements Loggable{
   private boolean fastLogging = false;
   private final String subsystemName;
   
-  private final TalonFX wristMotor1 = new TalonFX(Ports.CANWristMotor1);
-  private final TalonFX wristMotor2 = new TalonFX(Ports.CANWristMotor2);
+  private final TalonFX wristMotor1 = new TalonFX(Ports.CANWrist1);
+  private final TalonFX wristMotor2 = new TalonFX(Ports.CANWrist2);
 	private final TalonFXConfigurator wristMotor1Configurator = wristMotor1.getConfigurator();
 	private TalonFXConfiguration wristMotor1Config;
   private final TalonFXConfigurator wristMotor2Configurator = wristMotor2.getConfigurator();
@@ -48,14 +47,17 @@ public class Wrist extends SubsystemBase implements Loggable{
   private PositionVoltage wristPositionControl = new PositionVoltage(0.0);
   
 
-	// Variables for motor signals and sensors ***
-	private final StatusSignal<Double> wristMotorTemp = wristMotor1.getDeviceTemp();				  // Motor temperature, in degC
-	private final StatusSignal<ControlModeValue> wristControlMode = wristMotor1.getControlMode();			// Motor control mode (typ. ControlModeValue.VoltageOut or .PositionVoltage)
-	private final StatusSignal<Double> wristDutyCycle = wristMotor1.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
-	private final StatusSignal<Double> wristStatorCurrent = wristMotor1.getStatorCurrent();	// Motor stator current, in amps (+=fwd, -=rev)
-	private final StatusSignal<Double> wristEncoderPostion = wristMotor1.getPosition();			// Encoder position, in pinion rotations
+	// Variables for motor signals and sensors
+	private final StatusSignal<Double> wrist1Temp = wristMotor1.getDeviceTemp();				  // Motor temperature, in degC
+	private final StatusSignal<ControlModeValue> wrist1ControlMode = wristMotor1.getControlMode();			// Motor control mode (typ. ControlModeValue.VoltageOut or .PositionVoltage)
+	private final StatusSignal<Double> wrist1DutyCycle = wristMotor1.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
+	private final StatusSignal<Double> wrist1StatorCurrent = wristMotor1.getStatorCurrent();	// Motor stator current, in amps (+=fwd, -=rev)
+	private final StatusSignal<Double> wrist1EncoderPostion = wristMotor1.getPosition();			// Encoder position, in pinion rotations
 
-
+	private final StatusSignal<Double> wrist2Temp = wristMotor2.getDeviceTemp();				  // Motor temperature, in degC
+	private final StatusSignal<Double> wrist2DutyCycle = wristMotor2.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
+	private final StatusSignal<Double> wrist2StatorCurrent = wristMotor2.getStatorCurrent();	// Motor stator current, in amps (+=fwd, -=rev)
+	private final StatusSignal<Double> wrist2EncoderPostion = wristMotor2.getPosition();			// Encoder position, in pinion rotations
 
   // Rev through-bore encoder
   private final DutyCycleEncoder revEncoder = new DutyCycleEncoder(Ports.DIOWristRevThroughBoreEncoder);
@@ -75,13 +77,9 @@ public class Wrist extends SubsystemBase implements Loggable{
 		wristMotor1Config = new TalonFXConfiguration();			// Factory default configuration
     wristMotor2Config = new TalonFXConfiguration();	
 
-		// wristMotorConfigurator.refresh(wristMotorConfig);			// Read current configuration.  This is blocking call, up to the default 50ms.
-
     // Configure motor
  		wristMotor1Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor 1 output so that +Volt moves wrist up
 		wristMotor1Config.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // Applies during VoltageControl only, since setting is being overridded for PositionControl
-    wristMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor 2 output so that +Volt moves wrist up
-		wristMotor2Config.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // Applies during VoltageControl only, since setting is being overridded for PositionControl
 		// wristMotorConfig.MotorOutput.DutyCycleNeutralDeadband = 0;  // Default = 0
 		// wristMotorConfig.MotorOutput.PeakForwardDutyCycle = 1.0;			// Default = 1.0.  We probably won't use duty-cycle control, since there is no longer voltage compensation
 		// wristMotorConfig.MotorOutput.PeakReverseDutyCycle = -1.0;			// Default = -1.0.  We probably won't use duty-cycle control, since there is no longer voltage compensation
@@ -89,18 +87,21 @@ public class Wrist extends SubsystemBase implements Loggable{
 		wristMotor1Config.Voltage.PeakReverseVoltage = -voltageCompSaturation;   // back max output for motor 1
 		wristMotor1Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;		      // 0.3 seconds
 		wristMotor1Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3; 		// 0.3 seconds
+
+    wristMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor 2 output so that +Volt moves wrist up
+		wristMotor2Config.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // Applies during VoltageControl only, since setting is being overridded for PositionControl
     wristMotor2Config.Voltage.PeakForwardVoltage = voltageCompSaturation;    // forward max output for motor 2
 		wristMotor2Config.Voltage.PeakReverseVoltage = -voltageCompSaturation;   // back max output for motor 2
 		wristMotor2Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;		      // 0.3 seconds for motor 2
 		wristMotor2Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3; 		// 0.3 seconds for motor 2
 
-
     // Configure encoder on motor 1 and 2
 		wristMotor1Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     wristMotor1Config.ClosedLoopGeneral.ContinuousWrap = false;
+    // wristMotor1Config.Feedback.SensorToMechanismRatio = 1.0;
+    // wristMotor1Config.Feedback.FeedbackRotorOffset = 0.0;
     wristMotor2Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     wristMotor2Config.ClosedLoopGeneral.ContinuousWrap = false;
-
 
     // Configure PID for PositionVoltage control
     // Note:  In Phoenix 6, slots are selected in the ControlRequest (ex. PositionVoltage.Slot)
@@ -109,18 +110,15 @@ public class Wrist extends SubsystemBase implements Loggable{
     wristMotor1Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
 		wristMotor1Config.Slot0.kI = 0.0;
 		wristMotor1Config.Slot0.kD = 0.0;
-    wristMotor1Config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-		wristMotor1Config.Slot0.kG = kG;
+
     wristMotor2Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
 		wristMotor2Config.Slot0.kI = 0.0;
 		wristMotor2Config.Slot0.kD = 0.0;
-    wristMotor2Config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-		wristMotor2Config.Slot0.kG = kG;
-		// wristMotorConfig.Slot0.kS = 0.0;
-		// wristMotorConfig.Slot0.kV = 0.0;
-		// wristMotorConfig.Slot0.kA = 0.0;
-		// wristMotorConfig.Slot0.kG = 0.0;
-		// wristMotorConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+		// wristMotor1Config.Slot0.kS = 0.0;
+		// wristMotor1Config.Slot0.kV = 0.0;
+		// wristMotor1Config.Slot0.kA = 0.0;
+		// wristMotor1Config.Slot0.kG = 0.0;
+		// wristMotor1Config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
  		// Apply configuration to the wrist motor 1 and 2 
 		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
@@ -128,7 +126,7 @@ public class Wrist extends SubsystemBase implements Loggable{
     wristMotor2Configurator.apply(wristMotor2Config);
 
     //Make wrist motor 2 follow motor 1 
-    wristMotor2.setControl(new Follower(wristMotor1.getDeviceID(), false)); 
+    wristMotor2.setControl(new Follower(wristMotor1.getDeviceID(), true));     // TODO Verify if OpposeMasterDirection should be true or false
     stopWrist();
 
     // Rev Through-Bore Encoder settings
@@ -142,6 +140,7 @@ public class Wrist extends SubsystemBase implements Loggable{
     } else {
       wristCalibrated = false;
       RobotPreferences.recordStickyFaults("Wrist-ThroughBoreEncoder", log);
+      log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder connected", false);
     }
 
     // Wait 0.25 seconds before adjusting the wrist calibration.  The reason is that .setInverted (above)
@@ -155,7 +154,7 @@ public class Wrist extends SubsystemBase implements Loggable{
     if (wristCalibrated) {
       calibrateWristEnc(getRevEncoderDegrees());
 
-      // Configure soft limits on motor
+      // Configure soft limits on motor     //TODO will this limit both motors???
 		  wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
 		  wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
 		  wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -178,8 +177,6 @@ public class Wrist extends SubsystemBase implements Loggable{
   public String getName() {
     return subsystemName;
   }
-
-  /**
 
 	// ************ Wrist movement methods
 
@@ -210,8 +207,8 @@ public class Wrist extends SubsystemBase implements Loggable{
 	 * @return between -1.0 (down) and 1.0 (up)
 	 */
 	public double getWristMotorPercentOutput() {
-		wristDutyCycle.refresh();			// Verified that this is not a blocking call.
-		return wristDutyCycle.getValueAsDouble();
+		wrist1DutyCycle.refresh();			// Verified that this is not a blocking call.
+		return wrist1DutyCycle.getValueAsDouble();
 	}
 
   /**
@@ -220,7 +217,7 @@ public class Wrist extends SubsystemBase implements Loggable{
    * @return true = position control, false = direct percent output control
    */
   public boolean isWristMotorPositionControl() {
-    return wristControlMode.refresh().getValue() == ControlModeValue.PositionVoltage;
+    return wrist1ControlMode.refresh().getValue() == ControlModeValue.PositionVoltage;
   }
 
   /**
@@ -233,22 +230,22 @@ public class Wrist extends SubsystemBase implements Loggable{
       // Keep wrist in usable range
       safeAngle = MathUtil.clamp(angle, WristAngle.lowerLimit.value, WristAngle.upperLimit.value);
 
-      WristRegion curRegion = getRegion(getWristAngle());
-
-      
+      // WristRegion curRegion = getRegion(getWristAngle());
+      // Check and apply interlocks      
 
       // Phoenix6 PositionVoltage control:  Position is in rotations, FeedFoward is in Volts
       wristMotor1.setControl(wristPositionControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
                             .withFeedForward(kG * Math.cos(safeAngle*Math.PI/180.0) * voltageCompSaturation));
 
-      
+      log.writeLog(false, subsystemName, "Set angle", "Desired angle", angle, "Set angle", safeAngle);
+
       SmartDashboard.putNumber("Wrist set raw ticks", wristDegreesToEncoderRotations(safeAngle));
     }
   }
 
   /**
 	 * Returns the angle that wrist is trying to move to in degrees.
-	 * If the wrist is not calibrated, then returns wrist lowerLimit in backFar region to engage all interlocks,
+	 * If the wrist is not calibrated, then returns wrist lowerLimit,
    * since we really don't know where the wrist is at.  If the wrist is in manual control mode, then
    * returns the actual wrist position.
 	 * @return desired degree of wrist angle
@@ -281,8 +278,7 @@ public class Wrist extends SubsystemBase implements Loggable{
 	 * @return corresponding wrist region
 	 */
 	private WristRegion getRegion(double degrees) {
-      if (degrees <= boundBackMain) return WristRegion.back;
-      else return WristRegion.main; 
+    return WristRegion.main; 
 	}
 
 	/**
@@ -297,11 +293,11 @@ public class Wrist extends SubsystemBase implements Loggable{
 
     WristRegion curRegion = getRegion(getWristAngle());
 
-    if (isWristMotorPositionControl()) {
-      WristRegion targetRegion = getRegion(safeAngle);
+    // if (isWristMotorPositionControl()) {
+    //   WristRegion targetRegion = getRegion(safeAngle);
 
-      if (targetRegion != WristRegion.main) curRegion = WristRegion.back;
-    }
+    //   if (targetRegion != WristRegion.main) curRegion = WristRegion.back;
+    // }
       
     return curRegion;
 	}
@@ -313,8 +309,8 @@ public class Wrist extends SubsystemBase implements Loggable{
    * @return raw encoder reading, in pinion rotations, adjusted direction (positive is towards stowed, negative is towards lower hard stop)
    */
   public double getWristEncoderRotationsRaw() {
-    wristEncoderPostion.refresh();          // Verified that this is not a blocking call.
-    return wristEncoderPostion.getValueAsDouble();
+    wrist1EncoderPostion.refresh();          // Verified that this is not a blocking call.
+    return wrist1EncoderPostion.getValueAsDouble();
   }
 
   /**
@@ -339,7 +335,7 @@ public class Wrist extends SubsystemBase implements Loggable{
 
   /**
 	 * Returns the angle that wrist is currently positioned at in degrees.
-	 * If the wrist is not calibrated, then returns wrist lowerLimit in backFar region to engage all interlocks,
+	 * If the wrist is not calibrated, then returns wrist lowerLimit,
    * since we really don't know where the wrist is at.
 	 * @return current degree of wrist angle
 	 */
@@ -401,7 +397,7 @@ public class Wrist extends SubsystemBase implements Loggable{
   public void calibrateRevEncoderDegrees(double offsetDegrees) {
     revEncoderZero = -offsetDegrees;
     log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "encoderZero", revEncoderZero, 
-        "raw encoder", revEncoder.get()*360.0, "encoder degrees", getRevEncoderDegrees());
+        "raw encoder", revEncoder.get()*360.0/kRevEncoderGearRatio, "encoder degrees", getRevEncoderDegrees());
   }
 
   /**
@@ -418,7 +414,7 @@ public class Wrist extends SubsystemBase implements Loggable{
    * facing away from the robot, and -90 deg is with the CG of the wrist resting downward.
    */
   public double getRevEncoderDegrees() {
-    return MathBCR.normalizeAngle(revEncoder.get()*360.0 - revEncoderZero);
+    return MathBCR.normalizeAngle(revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
   }
 
  	// ************ Periodic and information methods
@@ -429,8 +425,10 @@ public class Wrist extends SubsystemBase implements Loggable{
    */
   public void updateWristLog(boolean logWhenDisabled) {
     log.writeLog(logWhenDisabled, subsystemName, "Update Variables",
-      "Temp", wristMotorTemp.refresh().getValueAsDouble(), "Percent Output", getWristMotorPercentOutput(),
-      "Amps", wristStatorCurrent.refresh().getValueAsDouble(),
+      "Temp1", wrist1Temp.refresh().getValueAsDouble(), "Percent Output1", getWristMotorPercentOutput(),
+      "Amps1", wrist1StatorCurrent.refresh().getValueAsDouble(),
+      "Temp2", wrist2Temp.refresh().getValueAsDouble(), "Percent Output2", wrist2DutyCycle.refresh().getValueAsDouble(),
+      "Amps2", wrist2StatorCurrent.refresh().getValueAsDouble(),
       "WristCalZero", wristCalZero, "Enc Raw", getWristEncoderRotationsRaw(), 
       "Wrist Degrees", getWristEncoderDegrees(),
       "Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget(),
@@ -454,9 +452,11 @@ public class Wrist extends SubsystemBase implements Loggable{
       SmartDashboard.putBoolean("Wrist calibrated", wristCalibrated);
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
       SmartDashboard.putNumber("Wrist angle", getWristAngle());
-      SmartDashboard.putNumber("Wrist enc raw", getWristEncoderRotationsRaw());
       SmartDashboard.putNumber("Wrist target angle", getCurrentWristTarget());
-      SmartDashboard.putNumber("Wrist output", getWristMotorPercentOutput());
+      SmartDashboard.putNumber("Wrist enc1 raw", getWristEncoderRotationsRaw());
+      SmartDashboard.putNumber("Wrist enc2 raw", wrist2EncoderPostion.refresh().getValueAsDouble());
+      SmartDashboard.putNumber("Wrist output1", getWristMotorPercentOutput());
+      SmartDashboard.putNumber("Wrist output2", wrist2DutyCycle.refresh().getValueAsDouble());
     }
         
     if (fastLogging || log.isMyLogRotation(logRotationKey)) {
