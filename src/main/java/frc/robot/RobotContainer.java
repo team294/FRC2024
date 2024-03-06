@@ -38,11 +38,13 @@ public class RobotContainer {
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
   private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);
+  private final Feeder feeder = new Feeder(log);
   private final Wrist wrist = new Wrist(log);
 
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
   private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
+  private final BCRRobotState robotState = new BCRRobotState();
 
   // Define controllers
   // private final Joystick xboxController = new Joystick(OIConstants.usbXboxController); //assuming usbxboxcontroller is int
@@ -60,8 +62,8 @@ public class RobotContainer {
     configureButtonBindings(); // configure button bindings
     // configureShuffleboard();  configure shuffleboard
 
-    // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
-    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
+    driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
+    // driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
 
   }
 
@@ -88,10 +90,10 @@ public class RobotContainer {
     SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));
     SmartDashboard.putData("Shooter Set Velocity", new ShooterSetVelocity(VelocityType.immediatelyEnd, shooter, log));
     SmartDashboard.putData("Shooter Calibration", new ShooterCalibrationRamp(shooter, log));
-    SmartDashboard.putData("ShooterFeeder Stop", new ShooterFeederStop(shooter, log));
+    SmartDashboard.putData("ShooterFeeder Stop", new ShooterFeederStop(shooter, feeder, log));
 
     // Feeder commands
-    SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(shooter, log));
+    SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(feeder, log));
 
     // Wrist commands
     SmartDashboard.putData("Wrist Set Percent", new WristSetPercentOutput(wrist, log));
@@ -105,9 +107,9 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, shooter, log));
-    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, intake, log));
-    SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, robotState, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, feeder, robotState, log));
+    SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
   }
 
   /**
@@ -149,11 +151,11 @@ public class RobotContainer {
     }
 
     left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake, log));
-    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, log));
 
-    right[1].onTrue(new ShootPiece(shooter, intake, log));
-    right[2].onTrue(new IntakePiece(intake, shooter, log));
-   
+    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
+
+    right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
+    right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
      
   }
 

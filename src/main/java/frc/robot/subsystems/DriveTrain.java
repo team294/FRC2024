@@ -59,7 +59,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   // private final Pigeon2Configurator pigeonConfigurator = pigeon.getConfigurator();
   // private Pigeon2Configuration pigeonConfig;
   private final StatusSignal<Double> pigeonYaw = pigeon.getYaw();
-  private final StatusSignal<Double> pigeonPitch = pigeon.getPitch();
+  private final StatusSignal<Double> pigeonPitch = pigeon.getRoll();    // Pigeon is mounted rotated by 90deg, so robot pitch is pigeon roll
   private final StatusSignal<Boolean> pigeonFault = pigeon.getFault_Hardware();
   private double yawZero = 0.0;
   private double pitchZero = 0.0;
@@ -149,18 +149,18 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   /**
    * Gets the raw gyro angle (can be greater than 360).
-   * Angle from gyro is negated, so that + = left and - = right
+   * Angle from gyro is so that + = left and - = right
    * @return raw gyro angle, in degrees.
    */
   public double getGyroRaw() {
-    return -pigeonYaw.refresh().getValueAsDouble();
+    return pigeonYaw.refresh().getValueAsDouble();
   }
 
   /**
 	 * @return double, gyro pitch from 180 to -180, in degrees (postitive is nose up, negative is nose down)
 	 */
 	public double getGyroPitchRaw() {
-		return -pigeonPitch.refresh().getValueAsDouble();     //TODO check sign with real robot configuration
+		return pigeonPitch.refresh().getValueAsDouble();
   }
 
   public void resetGyroPitch(){

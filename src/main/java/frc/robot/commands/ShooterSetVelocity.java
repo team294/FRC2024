@@ -24,7 +24,13 @@ public class ShooterSetVelocity extends Command {
     waitForVelocity
   }
 
-  /** Creates a new ShooterSetVelocity. */
+  /**
+   * Sets the shooter wheel velocity (rpm) for top and bottom shooter motors.
+   * @param velocity wheel velocity, in rpm  (+ = shoot forward, - = backwards)
+   * @param type ShooterSetVelocity.VelocityType = immediatelyEnd, runForever, or waitForVelocity
+   * @param shooter shooter subsystem
+   * @param log
+   */
   public ShooterSetVelocity(double velocity, VelocityType type, Shooter shooter, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.velocity = velocity;
@@ -35,6 +41,12 @@ public class ShooterSetVelocity extends Command {
     addRequirements(shooter);
   }
 
+  /**
+   * Sets the shooter wheel velocity (rpm) based upon input from Shuffleboard (+ = shoot forward, - = backwards).
+   * @param type ShooterSetVelocity.VelocityType = immediatelyEnd, runForever, or waitForVelocity
+   * @param shooter shooter subsystem
+   * @param log
+   */
   public ShooterSetVelocity(VelocityType type, Shooter shooter, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.velocity = 0.0;
@@ -52,6 +64,10 @@ public class ShooterSetVelocity extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (type == VelocityType.waitForVelocity) {
+      shooter.enableFastLogging(true);
+    }
+
     if (fromShuffleboard) {
       velocity = SmartDashboard.getNumber("Shooter velocity", 0.0);
     }
@@ -64,7 +80,9 @@ public class ShooterSetVelocity extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    shooter.enableFastLogging(false);
+  }
 
   // Returns true when the command should end.
   @Override
