@@ -59,6 +59,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings(); // configure button bindings
+    configureTriggers();
     // configureShuffleboard();  configure shuffleboard
 
     driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
@@ -107,6 +108,10 @@ public class RobotContainer {
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
   }
 
+  private void configureTriggers(){
+    Trigger intakeStopTrigger = new Trigger(()-> feeder.isPiecePresent());
+    intakeStopTrigger.onTrue(new IntakeStopState(feeder, intake, robotState, log));
+  }
   /**
    * Configures XBox buttons and controls
    */
