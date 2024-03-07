@@ -21,7 +21,8 @@ public class WristSetAngle extends Command {
   private final boolean fromShuffleboard;
 
   /**
-   * Moves wrist to target angle
+   * Moves wrist to target angle.  Command ends when wrist is within 5 degrees of the target position.
+   * <p> This command does nothing and immediately returns if the wrist is not calibrated.
    * @param angle target angle in degrees.  (0 = horizontal in front of robot, + = up, - = down)
    */
   public WristSetAngle(double angle, Wrist wrist, FileLog log) {
@@ -34,7 +35,8 @@ public class WristSetAngle extends Command {
   }
 
   /**
-   * Moves wrist to target position
+   * Moves wrist to target position.  Command ends when wrist is within 5 degrees of the target position.
+   * <p> This command does nothing and immediately returns if the wrist is not calibrated.
    * @param position WristAngle (see Constants)
    */
   public WristSetAngle(WristAngle pos, Wrist wrist, FileLog log) {
@@ -47,7 +49,8 @@ public class WristSetAngle extends Command {
   }
 
   /**
-   * Moves wrist to target angle from Shuffleboard
+   * Moves wrist to target angle from Shuffleboard.  Command ends when wrist is within 5 degrees of the target position.
+   * <p> This command does nothing and immediately returns if the wrist is not calibrated.
    */
   public WristSetAngle(Wrist wrist, FileLog log) {
     this.wrist = wrist;
@@ -79,6 +82,7 @@ public class WristSetAngle extends Command {
   // Called once after isFinished returns true
   @Override
   public void end(boolean interrupted) {
+    log.writeLog(false, "WristSetAngle", "End", "Target", angle, "Current angle", wrist.getWristAngle());
   }
 
   // Make this return true when this Command no longer needs to run execute()

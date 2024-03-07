@@ -17,7 +17,8 @@ public class WristSetPercentOutput extends Command {
   private final boolean fromShuffleboard;
 
   /**
-   * Sets the speed of the wrist
+   * Sets the percent power of the wrist.
+   * <p> Command does not end.  When interrupted, it turns off the wrist motor.
    * @param percent percent output, -1 (down) to +1 (up)
    * @param wrist
    * @param log
@@ -32,7 +33,8 @@ public class WristSetPercentOutput extends Command {
   }
 
   /**
-   * Sets the speed of the wrist from Shuffleboard
+   * Sets the percent power of the wrist from Shuffleboard, -1 (down) to +1 (up).
+   * <p> Command does not end.  When interrupted, it turns off the wrist motor.
    * @param wrist
    * @param log
    */
@@ -54,7 +56,7 @@ public class WristSetPercentOutput extends Command {
       percent = SmartDashboard.getNumber("Wrist Output to set", 0);
     }
     wrist.setWristMotorPercentOutput(percent);
-    log.writeLog(false, "WristSetPercentOutput", "Initialize");
+    log.writeLog(false, "WristSetPercentOutput", "Initialize", "percent", percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -63,7 +65,9 @@ public class WristSetPercentOutput extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    wrist.stopWrist();
+  }
 
   // Returns true when the command should end.
   @Override
