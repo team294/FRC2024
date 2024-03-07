@@ -63,8 +63,8 @@ public final class Constants {
       public static final int CANTurnEncoderBackLeft = 11;
       public static final int CANTurnEncoderBackRight = 12;
 
-      public static final int CANShooter1 = 13;
-      public static final int CANShooter2 = 14;
+      public static final int CANShooterTop = 13;
+      public static final int CANShooterBottom = 14;
 
       public static final int CANFeeder = 15;
 
@@ -73,9 +73,13 @@ public final class Constants {
 
       public static final int CANPigeonGyro = 18;
 
-      // Digital IO ports
-      public static final int DIOIntakePieceSensor = 0;
+      public static final int CANWrist1 = 19;
+      public static final int CANWrist2 = 20;
 
+      // Digital IO ports
+      public static final int DIOFeederPieceSensor = 0;
+      public static final int DIOWristEncoder = 1;
+      public static final int DIOIntakePieceSensor = 9;
     }
 
     public static final class OIConstants {
@@ -91,19 +95,21 @@ public final class Constants {
     }
 
     public static final class RobotDimensions {
-      //left to right distance between the drivetrain wheels; should be measured from center to center
-      public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.626;      // TODO update.  0.626m CALIBRATED.  80% bot CAD = 0.60325m
-      //front-back distance between the drivetrain wheels; should be measured from center to center
-      public static final double DRIVETRAIN_WHEELBASE_METERS = 0.626;       // TODO update.  0.626m CALIBRATED.  80% bot CAD = 0.60325m
+      // Drivebase adjustment for path-of-wheel diameter when turning in place
+      private static final double DrivetrainAdjustmentFactor = 1.000;       // TODO CALIBRATE
+      // left to right distance between the drivetrain wheels; should be measured from center to center
+      public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.61595 * DrivetrainAdjustmentFactor;      // 0.61595m CALIBRATED.  Competition bot CAD = 24.25" = 0.61595m. 80% bot CAD = 0.60325m, calibrated = 0.626m.
+      // front-back distance between the drivetrain wheels; should be measured from center to center
+      public static final double DRIVETRAIN_WHEELBASE_METERS = 0.52705 * DrivetrainAdjustmentFactor;       // 0.52705m CALIBRATED.  Competition bot CAD = 20.75" = 0.52705m.  80% bot CAD = 0.60325m, calibrated = 0.626m.
 
     }
 
     public static final class SwerveConstants {
         // Encoder calibration to meters travelled or wheel facing degrees
-      public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.  Encoder counts per revolution of motor pinion gear
-      public static final double kDriveGearRatio = (8.14 / 1.0);      // TODO check.  CALIBRATED.   Mk4i = 8.14:1 (L1-std gears).  Mk4i = 6.75:1 (L2-fast gears)
-      public static final double kTurningGearRatio = (150.0/7.0 / 1.0); // TODO check.  CALIBRATED = 150.0/7.0.  Mk4i = 150/7 : 1
-      public static final double kWheelDiameterMeters = 0.1013; // TODO check.  CALIBRATED.
+      public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.0.  Encoder counts per revolution of motor pinion gear
+      public static final double kDriveGearRatio = (5.903 / 1.0);      // 2024=Modified L2.  CALIBRATED.   Mk4i = 8.14:1 (L1-std gears), 6.75:1 (L2-fast gears), 5.903 (modified L2 16-tooth gear).  
+      public static final double kTurningGearRatio = (150.0/7.0 / 1.0); // CALIBRATED = 150.0/7.0.  Mk4i = 150/7 : 1
+      public static final double kWheelDiameterMeters = 0.1003 * 1.001; // 1.001 adjustment CALIBRATED.  Colson wheel = nominal 4" diameter, actual 3.95" = 0.1003m.  80% bot calibrated = 0.1013m.
       public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
       public static final double kDriveEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kDriveGearRatio;
@@ -122,20 +128,20 @@ public final class Constants {
       public static final double kMaxAccelerationMetersPerSecondSquare = 10; // TODO NOT CALIBRATED
       public static final double kFullAccelerationMetersPerSecondSquare = 0.9 * kMaxAccelerationMetersPerSecondSquare;
       public static final double kNominalAccelerationMetersPerSecondSquare = 3.5; // TODO value from last year
-      public static final double kMaxRetractingAccelerationMetersPerSecondSquare = 2; // TODO value from last year
+      public static final double kMaxRetractingAccelerationMetersPerSecondSquare = 2; // TODO value from last year - not used in code currently
       public static final double kMaxTurningRadiansPerSecond = 11.0;  // TODO NOT CALIBRATED
       public static final double kNominalTurningRadiansPerSecond = Math.PI;
-      public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 35.0;            // TODO NOT CALIBRATED
+      public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 35.0;            // TODO NOT CALIBRATED - not used in code currently
       public static final double kNominalAngularAccelerationRadiansPerSecondSquared = Math.PI;
-      public static final double kVDriveAvg = 0.2034; // TODO Calibrate.  0.2034 from 2023 robot.  In % output per meters per second.
-      public static final double kVmFL = 1.0000;      // TODO Calibrate.  kV modifier for FL drive motor
-      public static final double kVmFR = 1.0000;      // TODO Calibrate.  kV modifier for FR drive motor
-      public static final double kVmBL = 1.0000;      // TODO Calibrate.  kV modifier for BL drive motor
-      public static final double kVmBR = 1.0000;      // TODO Calibrate.  kV modifier for BR drive motor
+      public static final double kVDriveAvg = 0.1740; // init cal done.  TODO Calibrate.  0.2034 from 2023 robot.  In % output per meters per second.
+      public static final double kVmFL = 1.0182;      // init cal done.  TODO Calibrate.  kV modifier for FL drive motor
+      public static final double kVmFR = 0.9826;      // init cal done.  TODO Calibrate.  kV modifier for FR drive motor
+      public static final double kVmBL = 1.0102;      // init cal done.  TODO Calibrate.  kV modifier for BL drive motor
+      public static final double kVmBR = 0.9889;      // init cal done.  TODO Calibrate.  kV modifier for BR drive motor
 
       public static final double kADrive = 0.0;
-      public static final double kADriveToPose = 0.060;  // formerly 0.060 TODO NOT CALIBRATED.  In % output per meters per second squared.
-      public static final double kSDrive = 0.0266; // formerly 0.0255, TODO NOT Calibrated.  In % output.
+      public static final double kADriveToPose = 0.050;  // formerly 0.060  CALIBRATED.  In % output per meters per second squared.
+      public static final double kSDrive = 0.0080; // init cal done.  formerly 0.0255, CALIBRATED.  In % output.
     }
 
     public static final class DriveConstants {
@@ -155,10 +161,10 @@ public final class Constants {
       // Update the offset angles in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, set the wheels to zero degrees with the bevel gear facing to the right
-      public static double offsetAngleFrontLeftMotor = 0; // -72
-      public static double offsetAngleFrontRightMotor = 0; // -157
-      public static double offsetAngleBackLeftMotor = 0; // 44.5
-      public static double offsetAngleBackRightMotor = 0; // -82
+      public static double offsetAngleFrontLeftMotor = 0; // 110.7
+      public static double offsetAngleFrontRightMotor = 0; // 44.6
+      public static double offsetAngleBackLeftMotor = 0; // -67.1
+      public static double offsetAngleBackRightMotor = 0; // 152.1
 
         // Driving constants to cap acceleration
       public static final double maxAccelerationRate = 10.0;         // m/s^2
@@ -194,16 +200,25 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-      // TODO: add all necessary constants
       public static final double compensationVoltage = 12.0;
-      public static final double ticksPerRevolution = 2048.0;
-      // PIDSVA
-      public static final double kP = 0.5;
-      public static final double kI = 0.00;
-      public static final double kD = 0.0;
-      public static final double kS = 0.061256; // V; old: 0.004, new: 0.125
-      public static final double kV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
-      public static final double kA = 0.0;
+      public static final double ticksPerRevolution = 1.0;
+      public static final double shooterGearRatio = 1.0;  //(44.0/20.0) * (24.0/18.0);   // From CAD, shooter gears from motor to wheels = 44:20 then 24:18.  Turn ratio from motor pinion to shooter wheels.
+
+      // PIDSVA for Top Shooter motor
+      public static final double ShooterTopkP = 0.5;          // TODO calibrate.  kP = (desired-output-volts) / (error-in-encoder-rps)
+      public static final double ShooterTopkI = 0.00;         // kI = (desired-output-volts) / (error-in-encoder-rps * s)
+      public static final double ShooterTopkD = 0.0;          // kD = (desired-output-volts) / (error-in-encoder-rps/s)
+      public static final double ShooterTopkS = 0.061256;     // kS = (desired-output-volts)
+      public static final double ShooterTopkV = 0.118681;     // kV = (desired-output-volts) / (target-velocity-in-encoder-rps)
+      public static final double ShooterTopkA = 0.0;          // kA = (desired-output-volts) / (target-accel-in-encoder-rot/sec^2)
+      
+      //PIDSVA for Bottom Shooter motor
+      public static final double ShooterBottomkP = 0.5;
+      public static final double ShooterBottomkI = 0.00;
+      public static final double ShooterBottomkD = 0.0;
+      public static final double ShooterBottomkS = 0.061256;  // V; old: 0.004, new: 0.125
+      public static final double ShooterBottomkV = 0.118681;  // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double ShooterBottomkA = 0.0;
 
       /*
         Volt  RPS 
@@ -212,11 +227,25 @@ public final class Constants {
         2.06	16.814453125
       */
 
-
+      public static final double velocityErrorTolerance = 100;
       public static final double shooterPercent = 0.25;
+      public static final double shooterVelocity = 2500;
+    }
 
-      //Feeder Constants
-      public static final double feederPercent = 0.3;
+    public static final class FeederConstants {
+      public static final double compensationVoltage = 12.0;
+      public static final double ticksPerRevolution = 1.0;
+      public static final double feederGearRatio = 1.0; //(14.0/28.0) * (16.0/32.0);   // From CAD, feeder gears from motor to wheels = 14:28 then 16:32.  Turn ratio from motor pinion to feeder wheels.
+      
+      //PIDSVA for Feeder
+      public static final double kP = 0.5;
+      public static final double kI = 0.00;
+      public static final double kD = 0.0;
+      public static final double kS = 0.061256; // V; old: 0.004, new: 0.125
+      public static final double kV = 0.118681; // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double kA = 0.0;
+
+      public static final double feederPercent = 0.2;
     }
 
     public static final class TrajectoryConstants {
@@ -293,8 +322,8 @@ public final class Constants {
     public static final class IntakeConstants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
 
-      public static final double intakePercent = 0.3;
-      public static final double centeringPercent = 0.15; // Need to calibrate, using talon instead of neo
+      public static final double intakePercent = 0.6;
+      public static final double centeringPercent = 0.3; // Need to calibrate, using talon instead of neo
   }
 
 }

@@ -4,30 +4,39 @@
 
 package frc.robot.commands.Sequences;
 
+import edu.wpi.first.units.Velocity;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.Intake;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.BCRRobotState;
+import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.FileLog;
 import frc.robot.commands.*;
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+import frc.robot.commands.ShooterSetVelocity.VelocityType;
+
 public class ShootPiece extends SequentialCommandGroup {
-  /** Creates a new ShootPiece. */
-  public ShootPiece(Shooter shooter, Intake intake, FileLog log) {
+
+  /**
+   * Shoots a piece using fixed shooter percent speed.
+   * @param shooter
+   * @param feeder
+   * @param robotState
+   * @param log
+   */
+  public ShootPiece(Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ShooterSetPercent(ShooterConstants.shooterPercent, shooter, log),
+      // new ShooterSetVelocity(ShooterConstants.shooterVelocity, VelocityType.waitForVelocity, shooter, log),
+      new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log),
+      new ShooterSetPercent(0.2, shooter, log),
       new WaitCommand(1),
-      new FeederSetPercent(ShooterConstants.feederPercent, shooter, log),
-      new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake,  log),
+      new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
       new WaitCommand(1),
-      new IntakeStop(intake, log),
-      new ShooterFeederStop(shooter, log)
+      new ShooterFeederStop(shooter, feeder, log),
+      new RobotStateSetIdle(robotState, feeder, log)
     );
   }
 }

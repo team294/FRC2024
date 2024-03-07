@@ -4,19 +4,11 @@
 
 package frc.robot;
 
-import java.beans.FeatureDescriptor;
-import java.util.List;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -27,21 +19,15 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
-import frc.robot.Constants.SwerveConstants;
-import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.commands.*;
-import frc.robot.commands.Sequences.IntakePiece;
-import frc.robot.commands.Sequences.ShootPiece;
-import frc.robot.commands.Sequences.StopIntakeFeederShooter;
+import frc.robot.commands.Sequences.*;
+import frc.robot.commands.ShooterSetVelocity.VelocityType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
-import frc.robot.utilities.TrajectoryCache.TrajectoryFacing;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,10 +45,12 @@ public class RobotContainer {
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
   private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);
+  private final Feeder feeder = new Feeder(log);
 
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
   private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
+  private final BCRRobotState robotState = new BCRRobotState();
 
   // Define controllers
   // private final Joystick xboxController = new Joystick(OIConstants.usbXboxController); //assuming usbxboxcontroller is int
@@ -100,28 +88,40 @@ public class RobotContainer {
   }
 
   private void configureSmartDashboard() {
-    // Add commands
+    // Intake commands
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
-    SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));
-    SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(shooter, log));
-    SmartDashboard.putData("FeedForward Test", new ShooterCalibrationRamp(shooter, log));
-    SmartDashboard.putData("ShooterFeeder Stop", new ShooterFeederStop(shooter, log));
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
-    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, intake, log));
-    SmartDashboard.putData("Stop All Subsystems", new StopIntakeFeederShooter(intake, shooter, log));
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, shooter, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, feeder, robotState, log));
+    SmartDashboard.putData("Stop All Subsystems", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, robotState, log));
     SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
     SmartDashboard.putData("Drive To Note", new DriveToNote(driveTrain, log));
+
+    // Shooter commands
+    SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));
+    SmartDashboard.putData("Shooter Set Velocity", new ShooterSetVelocity(VelocityType.immediatelyEnd, shooter, log));
+    SmartDashboard.putData("Shooter Calibration", new ShooterCalibrationRamp(shooter, log));
+    SmartDashboard.putData("ShooterFeeder Stop", new ShooterFeederStop(shooter, feeder, log));
+
+    // Feeder commands
+    SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(feeder, log));
   
+    // Drive base commands
+    SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
+    SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
     SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
     SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToNoteFar.value], driveTrain, log));
 
-    SmartDashboard.putData("Shooter Set Velocity", new ShooterSetVelocity(shooter, log));
-    SmartDashboard.putData("Shooter Set Voltage", new ShooterSetVoltage(shooter, log));
 
+    SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
+
+    // Sequences
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, robotState, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, feeder, robotState, log));
+    SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
   }
 
   /**
@@ -165,10 +165,10 @@ public class RobotContainer {
     //left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, intake, log));
     left[1].onTrue(new SetAimLock(driveTrain, true, log));
     left[1].onFalse(new SetAimLock(driveTrain, false, log));
-    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, log));
+    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
     
-    right[1].onTrue(new ShootPiece(shooter, intake, log));
-    right[2].onTrue(new IntakePiece(intake, shooter, log));
+    right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
+    right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
    
      
   }
