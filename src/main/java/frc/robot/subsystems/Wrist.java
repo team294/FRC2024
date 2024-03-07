@@ -16,6 +16,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -62,6 +63,8 @@ public class Wrist extends SubsystemBase implements Loggable{
   // Rev through-bore encoder
   private final DutyCycleEncoder revEncoder = new DutyCycleEncoder(Ports.DIOWristRevThroughBoreEncoder);
 
+  private boolean revStickyFaultReported = false;   // True if we have reported a sticky fault
+  private long revEncoderBootCount = 0;       // Count number of periodic cycles since the rev encoder has booted
   private double revEncoderZero = 0;          // Reference raw encoder reading for encoder.  Calibration sets this to the absolute position from RobotPreferences.
   private double wristCalZero = 0;   		      // Wrist encoder position at O degrees, in degrees (i.e. the calibration factor).  Calibration sets this to match the REV through bore encoder.
   private boolean wristCalibrated = false;    // Default to wrist being uncalibrated.  Calibrate from robot preferences or "Calibrate Wrist Zero" button on dashboard
@@ -78,7 +81,7 @@ public class Wrist extends SubsystemBase implements Loggable{
     wristMotor2Config = new TalonFXConfiguration();	
 
     // Configure motor
- 		wristMotor1Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor 1 output so that +Volt moves wrist up
+ 		wristMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor 1 output so that +Volt moves wrist up
 		wristMotor1Config.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // Applies during VoltageControl only, since setting is being overridded for PositionControl
 		// wristMotorConfig.MotorOutput.DutyCycleNeutralDeadband = 0;  // Default = 0
 		// wristMotorConfig.MotorOutput.PeakForwardDutyCycle = 1.0;			// Default = 1.0.  We probably won't use duty-cycle control, since there is no longer voltage compensation
@@ -126,49 +129,20 @@ public class Wrist extends SubsystemBase implements Loggable{
     wristMotor2Configurator.apply(wristMotor2Config);
 
     //Make wrist motor 2 follow motor 1 
-    wristMotor2.setControl(new Follower(wristMotor1.getDeviceID(), true));     // TODO Verify if OpposeMasterDirection should be true or false
-    stopWrist();
-
-    // Rev Through-Bore Encoder settings
-    // Wait for through-bore encoder to connect, up to 0.25 sec
-    long t = System.currentTimeMillis() + 250;
-    while (System.currentTimeMillis() < t && !isRevEncoderConnected());    
-    if (isRevEncoderConnected()) {
-      // Copy calibration to wrist encoder
-      calibrateRevEncoderDegrees(revEncoderOffsetAngleWrist);
-      wristCalibrated = true;
-    } else {
-      wristCalibrated = false;
-      RobotPreferences.recordStickyFaults("Wrist-ThroughBoreEncoder", log);
-      log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder connected", false);
-    }
-
-    // Wait 0.25 seconds before adjusting the wrist calibration.  The reason is that .setInverted (above)
-    // changes the sign of read encoder value, but that change can be delayed up to 50ms for a round trip
-    // from the Rio to the Talon and back to the Rio.  So, reading angles could give the wrong value if
-    // we don't wait (random weird behavior).
-		// Verified that this is still needed after migrating to Phoenix6.
-    // DO NOT GET RID OF THIS WITHOUT TALKING TO DON OR ROB.
+    wristMotor2.setControl(new Follower(wristMotor1.getDeviceID(), true));     // OpposeMasterDirection=true because motors are flipped relative to each other
+    
+    // NOTE!!! When the TalonFX encoder settings are changed above, then the next call to 
+    // getTurningEncoderDegrees() may contain an old value, not the value based on 
+    // the updated configuration settings above!!!!  The CANBus runs asynchronously from this code, so 
+    // sending the updated configuration to the CanCoder/TalonFX and then receiving an updated position measurement back
+    // may take longer than this code.
+    // The timeouts in the configuration code above should take care of this, but it does not always wait long enough.
+    // So, add a wait time here:
     Wait.waitTime(250);
 
-    if (wristCalibrated) {
-      calibrateWristEnc(getRevEncoderDegrees());
+    stopWrist();
 
-      // Configure soft limits on motor     //TODO will this limit both motors???
-		  wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
-		  wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
-		  wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-      wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
-		  // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
-		  // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-      // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-
-   		// Apply configuration to the wrist motor. 1 and 2 
-      // This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
-      wristMotor1Configurator.apply(wristMotor1Config);
-      // wristMotor2Configurator.apply(wristMotor2Config);
-    }
+    // Rev Encoder takes a while to boot.  Calibrate encoder in Wrist.periodic() after it boots.
   }
 
   /**
@@ -396,6 +370,12 @@ public class Wrist extends SubsystemBase implements Loggable{
    */
   public void calibrateRevEncoderDegrees(double offsetDegrees) {
     revEncoderZero = -offsetDegrees;
+    
+    // Avoid wrap point on Rev encoder
+    if (getRevEncoderDegrees() < WristAngle.lowerLimit.value - 5.0) {
+      revEncoderZero -= 360.0/kRevEncoderGearRatio;
+    }
+
     log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "encoderZero", revEncoderZero, 
         "raw encoder", revEncoder.get()*360.0/kRevEncoderGearRatio, "encoder degrees", getRevEncoderDegrees());
   }
@@ -414,7 +394,9 @@ public class Wrist extends SubsystemBase implements Loggable{
    * facing away from the robot, and -90 deg is with the CG of the wrist resting downward.
    */
   public double getRevEncoderDegrees() {
-    return MathBCR.normalizeAngle(revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
+    // Note that rev encoder is reversed [-revEncoder.get()], since mounting of the encoder
+    // is flipped on the wrist axle.
+    return MathBCR.normalizeAngle(-revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
   }
 
  	// ************ Periodic and information methods
@@ -451,7 +433,7 @@ public class Wrist extends SubsystemBase implements Loggable{
       SmartDashboard.putBoolean("Wrist Rev connected", isRevEncoderConnected());
       SmartDashboard.putBoolean("Wrist calibrated", wristCalibrated);
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
-      SmartDashboard.putNumber("Wrist angle", getWristAngle());
+      SmartDashboard.putNumber("Wrist angle", getWristEncoderDegrees());
       SmartDashboard.putNumber("Wrist target angle", getCurrentWristTarget());
       SmartDashboard.putNumber("Wrist enc1 raw", getWristEncoderRotationsRaw());
       SmartDashboard.putNumber("Wrist enc2 raw", wrist2EncoderPostion.refresh().getValueAsDouble());
@@ -461,6 +443,57 @@ public class Wrist extends SubsystemBase implements Loggable{
         
     if (fastLogging || log.isMyLogRotation(logRotationKey)) {
       updateWristLog(false);
+    }
+
+    // Rev Through-Bore Encoder takes a while to boot up.
+    // After it boots up, it takes up to 40ms sec to settle into an accurate reading.
+    // Wait for 5 periodic cycles after the encoder boots up before calibrating.
+    if (!wristCalibrated) {
+      if (isRevEncoderConnected()) {
+        revEncoderBootCount++;
+        log.writeLog(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder connected", true,
+          "Boot cylces", revEncoderBootCount,
+          "Rev angle", getRevEncoderDegrees());  
+      }
+      if (isRevEncoderConnected() && revEncoderBootCount >= 5) {
+        // Calibrate Rev encoder
+        calibrateRevEncoderDegrees(revEncoderOffsetAngleWrist);
+        wristCalibrated = true;
+        log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder calibrated", true,
+          "Boot cylces", revEncoderBootCount,
+          "Rev angle", getRevEncoderDegrees());  
+
+        // Copy calibration to wrist encoder
+        calibrateWristEnc(getRevEncoderDegrees());
+
+        // Configure soft limits on motor     //TODO will this limit both motors???
+        wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
+        wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
+        wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
+        // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
+        // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+  
+          // Apply configuration to the wrist motor. 1 and 2 
+        // This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
+        wristMotor1Configurator.apply(wristMotor1Config);
+        // wristMotor2Configurator.apply(wristMotor2Config);    
+      }
+    }
+
+    // If driver station is no longer disabled and Rev encoder is not connect, then 
+    // record a sticky fault (once)
+    if (!revStickyFaultReported && !wristCalibrated && !DriverStation.isDisabled()) {
+      revStickyFaultReported = true;
+      RobotPreferences.recordStickyFaults("Wrist-ThroughBoreEncoder", log);
+      log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder connected", false);
+    }
+
+    // If the driver station is disabled, then turn off any position control for the wrist motor
+    if (DriverStation.isDisabled()) {
+      stopWrist();
     }
 
     // Un-calibrates the wrist if the angle is outside of bounds.
