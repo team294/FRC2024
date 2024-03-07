@@ -39,6 +39,7 @@ public class RobotContainer {
   private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);
   private final Feeder feeder = new Feeder(log);
+  private final LED led = new LED(Constants.Ports.CANLED, "LED", log);
 
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);

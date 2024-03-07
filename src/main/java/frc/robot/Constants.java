@@ -76,6 +76,8 @@ public final class Constants {
       public static final int CANWrist1 = 19;
       public static final int CANWrist2 = 20;
 
+      public static final int CANLED = 21;
+
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
       public static final int DIOWristEncoder = 1;
