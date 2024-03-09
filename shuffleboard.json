@@ -974,15 +974,29 @@
                 },
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Wrist enc raw",
-                  "_title": "Wrist enc raw",
+                  "_source0": "network_table:///SmartDashboard/Wrist enc1 raw",
+                  "_title": "Wrist enc1 raw",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Wrist output",
-                  "_title": "Wrist output",
+                  "_source0": "network_table:///SmartDashboard/Wrist enc2 raw",
+                  "_title": "Wrist enc2 raw",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Wrist output1",
+                  "_title": "Wrist output1",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Wrist output2",
+                  "_title": "Wrist output2",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
@@ -995,8 +1009,8 @@
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Wrist Set Output",
-                  "_title": "Wrist Set Output",
+                  "_source0": "network_table:///SmartDashboard/Wrist Set Percent",
+                  "_title": "Wrist Set Percent",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
@@ -1018,27 +1032,6 @@
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Wrist Angle to set",
                   "_title": "Wrist Angle to set",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Wrist Stowed Position",
-                  "_title": "Wrist Stowed Position",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Wrist ElevMove Position",
-                  "_title": "Wrist ElevMove Position",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Wrist Scoring Position",
-                  "_title": "Wrist Scoring Position",
                   "_glyph": 148,
                   "_showGlyph": false
                 }

@@ -128,7 +128,7 @@ public class DriveResetPose extends Command {
       curY = driveTrain.getPose().getY();
     }
     
-    log.writeLog(false, "DriveResetPose", "Init", "X", curX, "Y", curY, "Angle", curAngle);
+    log.writeLog(true, "DriveResetPose", "Init", "X", curX, "Y", curY, "Angle", curAngle);
 
     if( !tolerance ||
         Math.abs(curX - driveTrain.getPose().getX()) > 0.5 || 

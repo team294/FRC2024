@@ -45,6 +45,7 @@ public class FeederSetPercent extends Command {
       percent = SmartDashboard.getNumber("Feeder Percent", 0.0);
     }
     feeder.setFeederPercentOutput(percent);
+    log.writeLog(false, "FeederSetPercent", "Init", "Percent", percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
