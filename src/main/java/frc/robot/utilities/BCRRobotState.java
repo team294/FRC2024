@@ -18,7 +18,7 @@ public class BCRRobotState {
     private State state;
 
     /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE */
-    public void BCRRobotState() {
+    public BCRRobotState() {
         setState(State.IDLE_NO_PIECE);
     }
 
@@ -26,7 +26,7 @@ public class BCRRobotState {
      * Creates a new BCRRobotState with the given initial State
      * @param state initial State
      */
-    public void BCRRobotState(State state) {
+    public BCRRobotState(State state) {
         setState(state);
     }
 
