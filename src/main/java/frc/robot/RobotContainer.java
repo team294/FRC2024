@@ -14,9 +14,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import frc.robot.Constants.CoordType;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.StopType;
 import frc.robot.commands.*;
 import frc.robot.commands.Sequences.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
@@ -99,11 +100,10 @@ public class RobotContainer {
     SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
+    
     SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
-    SmartDashboard.putData("Source Start to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToSourceCloseNote.value], driveTrain, log));
-    SmartDashboard.putData("Center to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToCenterCloseNote.value], driveTrain, log));
-    SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToNoteFar.value], driveTrain, log));
-    SmartDashboard.putData("Drive from start to Score", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.centerToScorePos.value], driveTrain, log));
+    SmartDashboard.putData("Source Start to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log));
+    SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveCenterToFarNoteRed.value], driveTrain, log));
 
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
