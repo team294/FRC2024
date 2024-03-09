@@ -4,6 +4,9 @@
 
 package frc.robot.utilities;
 
+import frc.robot.Constants.BCRColor;
+import frc.robot.subsystems.LED;
+
 /** A wrapper class for State objects (see state machine file) */
 public class BCRRobotState {
     /** The enum that keeps track of all possible states for the robot */
@@ -14,19 +17,26 @@ public class BCRRobotState {
         SHOOTING
     }
 
-    /** The current State of the robot */
+    // The current State of the robot
     private State state;
+    // The LED subsystem
+    private LED led;
 
-    /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE */
-    public BCRRobotState() {
+    /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE
+     * @param led the LED subsystem to match color with state
+    */
+    public BCRRobotState(LED led) {
+        this.led = led;
         setState(State.IDLE_NO_PIECE);
     }
 
     /**
      * Creates a new BCRRobotState with the given initial State
      * @param state initial State
+     * @param led the LED subsystem to match color with state
      */
-    public BCRRobotState(State state) {
+    public BCRRobotState(State state, LED led) {
+        this.led = led;
         setState(state);
     }
 
@@ -41,16 +51,16 @@ public class BCRRobotState {
      */
     public void setState(State state) {
         this.state = state;
-        // TODO: set LEDs
+        // Set LEDs to match the state, as defined in Constants.BCRColor
         switch (this.state) {
         case IDLE_NO_PIECE:
-            // white
+            led.setLEDs(BCRColor.IDLE_NO_PIECE);
         case IDLE_WITH_PIECE:
-            // orange
+            led.setLEDs(BCRColor.IDLE_WITH_PIECE);
         case INTAKE_TO_FEEDER:
-            // red
+            led.setLEDs(BCRColor.INTAKE_TO_FEEDER);
         case SHOOTING:
-            // green
+            led.setLEDs(BCRColor.SHOOTING);
         }
     }
 }

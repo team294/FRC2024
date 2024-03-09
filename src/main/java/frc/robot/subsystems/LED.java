@@ -11,6 +11,7 @@ import com.ctre.phoenix.led.CANdle;
 
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.BCRColor;
 import frc.robot.utilities.FileLog;
 
 public class LED extends SubsystemBase {
@@ -75,6 +76,10 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b, int w, int index, int count) {
     candle.setLEDs(r, g, b, w, index, count);
+  }
+
+  public void setLEDs(BCRColor color) {
+    candle.setLEDs(color.r, color.g, color.b);
   }
 
   @Override

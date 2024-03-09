@@ -284,6 +284,22 @@ public final class Constants {
 
       public static final double intakePercent = 0.6;
       public static final double centeringPercent = 0.3; // Need to calibrate, using talon instead of neo
-  }
+    }
 
+    /** Colors for the LEDs based on different robot states (see BCRRobotState) */
+    public enum BCRColor {
+      IDLE_NO_PIECE(255, 255, 255), // White
+      IDLE_WITH_PIECE(255, 51, 0), // Orange
+      INTAKE_TO_FEEDER(255, 0, 0), // Red
+      SHOOTING(0, 255, 100); // Green
+
+      public final int r;
+      public final int g;
+      public final int b;
+      BCRColor(int r, int g, int b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+      }
+    }
 }

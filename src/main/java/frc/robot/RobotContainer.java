@@ -44,7 +44,7 @@ public class RobotContainer {
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
   private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
-  private final BCRRobotState robotState = new BCRRobotState();
+  private final BCRRobotState robotState = new BCRRobotState(led);
 
   // Define controllers
   // private final Joystick xboxController = new Joystick(OIConstants.usbXboxController); //assuming usbxboxcontroller is int
@@ -101,6 +101,9 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
+
+    // LED commands
+    SmartDashboard.putData("CANdle Set Color Uniform", new CANdleSetColorUniform(led, log));
 
     // Sequences
     SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, robotState, log));
