@@ -72,6 +72,8 @@ public class ShooterSetVelocity extends Command {
       velocity = SmartDashboard.getNumber("Shooter velocity", 0.0);
     }
     shooter.setShooterVelocity(velocity);
+    log.writeLog(false, "ShooterSetVelocity", "Initialize", 
+      "Velocity", velocity, "Velocity Type", type.toString());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -82,6 +84,7 @@ public class ShooterSetVelocity extends Command {
   @Override
   public void end(boolean interrupted) {
     shooter.enableFastLogging(false);
+    log.writeLog(false, "ShooterSetVelocity", "End");
   }
 
   // Returns true when the command should end.
