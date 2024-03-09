@@ -52,8 +52,11 @@ public class Wrist extends SubsystemBase implements Loggable{
 	private final StatusSignal<Double> wrist1Temp = wristMotor1.getDeviceTemp();				  // Motor temperature, in degC
 	private final StatusSignal<ControlModeValue> wrist1ControlMode = wristMotor1.getControlMode();			// Motor control mode (typ. ControlModeValue.VoltageOut or .PositionVoltage)
 	private final StatusSignal<Double> wrist1DutyCycle = wristMotor1.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
+  private final StatusSignal<Double> wrist1MotorVotage = wristMotor1.getMotorVoltage();       // Motor output voltage
 	private final StatusSignal<Double> wrist1StatorCurrent = wristMotor1.getStatorCurrent();	// Motor stator current, in amps (+=fwd, -=rev)
 	private final StatusSignal<Double> wrist1EncoderPostion = wristMotor1.getPosition();			// Encoder position, in pinion rotations
+  private final StatusSignal<Double> wrist1EncoderVelocity = wristMotor1.getVelocity();     // Encoder velocity, in pinion rotations per second
+  private final StatusSignal<Double> wrist1EncoderAcceleration = wristMotor1.getAcceleration();     // Encoder acceleration, in pinion rotations per second^2
 
 	private final StatusSignal<Double> wrist2Temp = wristMotor2.getDeviceTemp();				  // Motor temperature, in degC
 	private final StatusSignal<Double> wrist2DutyCycle = wristMotor2.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
@@ -411,7 +414,11 @@ public class Wrist extends SubsystemBase implements Loggable{
       "Amps1", wrist1StatorCurrent.refresh().getValueAsDouble(),
       "Temp2", wrist2Temp.refresh().getValueAsDouble(), "Percent Output2", wrist2DutyCycle.refresh().getValueAsDouble(),
       "Amps2", wrist2StatorCurrent.refresh().getValueAsDouble(),
-      "WristCalZero", wristCalZero, "Enc Raw", getWristEncoderRotationsRaw(), 
+      "Volts1", wrist1MotorVotage.refresh().getValueAsDouble(),
+      "Enc Pos Raw", getWristEncoderRotationsRaw(),
+      "Enc Vel Raw", wrist1EncoderVelocity.refresh().getValueAsDouble(),
+      "Enc Accel Raw", wrist1EncoderAcceleration.refresh().getValueAsDouble(),
+      "WristCalZero", wristCalZero,
       "Wrist Degrees", getWristEncoderDegrees(),
       "Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget(),
       "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees()
