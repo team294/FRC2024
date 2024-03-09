@@ -98,6 +98,7 @@ public class RobotContainer {
     // Wrist commands
     SmartDashboard.putData("Wrist Set Percent", new WristSetPercentOutput(wrist, log));
     SmartDashboard.putData("Wrist Set Angle", new WristSetAngle(wrist, log));
+    SmartDashboard.putData("Wrist Calibration", new WristCalibrationRamp(0.01, 0.4, wrist, log));
   
     // Drive base commands
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
