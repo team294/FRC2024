@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -37,6 +38,7 @@ public class DriveToPose extends Command {
   private final Timer timer = new Timer();
   private SwerveDriveKinematics kinematics;
   private HolonomicDriveControllerBCR controller;
+  private boolean openLoopSwerve = false;           // True to turn off feedback on swerve modules
 
   private double maxThetaErrorDegrees = TrajectoryConstants.maxThetaErrorDegrees;      
   private double maxPositionErrorMeters = TrajectoryConstants.maxPositionErrorMeters;   
@@ -47,7 +49,7 @@ public class DriveToPose extends Command {
   }
 
   private final GoalMode goalMode;
-  private final TrapezoidProfileBCR.Constraints trapProfileConstraints;
+  private TrapezoidProfileBCR.Constraints trapProfileConstraints;
   private Supplier<Pose2d> goalSupplier;    // Supplier for goalPose
   private Rotation2d rotation;              // Rotation for goalPose
   private Pose2d initialPose, goalPose;     // Starting and destination robot pose (location and rotation) on the field
@@ -56,6 +58,11 @@ public class DriveToPose extends Command {
   private TrapezoidProfileBCR profile;      // Relative linear distance/speeds from initial pose to goal pose 
 
   private Translation2d curRobotTranslation;    // Current robot translation relative to initialTranslation
+
+  private SendableChooser<Integer> feedbackChooser = new SendableChooser<>();   // Shuffleboard chooser for turning parameters on/off for tuning the drive base
+	private static final int FEEDBACK_NORMAL = 0;           // Use position and velocity feedback.
+	private static final int FEEDBACK_VELOCITY_ONLY = 1;    // Use velocity feedback only.  Don't use position feedback.
+	private static final int FEEDBACK_NONE = 2;             // Turn off velocity and position feedback.
 
   /**
    * Drives the robot to the desired pose in field coordinates.
@@ -197,6 +204,15 @@ public class DriveToPose extends Command {
     if(SmartDashboard.getNumber("DriveToPose Rot degrees", -9999) == -9999) {
       SmartDashboard.putNumber("DriveToPose Rot degrees", 0);
     }
+    if(SmartDashboard.getNumber("DriveToPose VelMax mps", -9999) == -9999) {
+      SmartDashboard.putNumber("DriveToPose VelMax mps", 2);
+    }
+    // if(feedbackChooser.getSelected()==null) {
+      feedbackChooser.setDefaultOption("Normal", FEEDBACK_NORMAL);
+      feedbackChooser.addOption("Velocity only", FEEDBACK_VELOCITY_ONLY);
+      feedbackChooser.addOption("None", FEEDBACK_NONE);
+      SmartDashboard.putData("DriveToPose Feedback", feedbackChooser);
+    // }
   }
 
   /**
@@ -227,6 +243,7 @@ public class DriveToPose extends Command {
     timer.reset();
     timer.start();
     controller.reset();
+    controller.setEnabled(true);
 
     // Get the initial pose
     initialPose = driveTrain.getPose();
@@ -245,6 +262,25 @@ public class DriveToPose extends Command {
         double yPos = SmartDashboard.getNumber("DriveToPose YPos meters", 0);
         Rotation2d angleTarget = Rotation2d.fromDegrees(SmartDashboard.getNumber("DriveToPose Rot degrees", 0));
         goalPose = new Pose2d(xPos, yPos, angleTarget);
+
+        trapProfileConstraints.maxVelocity = MathUtil.clamp(SmartDashboard.getNumber("DriveToPose VelMax mps", 0), 
+          -SwerveConstants.kFullSpeedMetersPerSecond, SwerveConstants.kFullSpeedMetersPerSecond);
+
+        int feedbackMode = feedbackChooser.getSelected();
+        switch (feedbackMode) {
+          case FEEDBACK_NONE:
+            openLoopSwerve = true;
+            controller.setEnabled(false);
+            break;
+          case FEEDBACK_VELOCITY_ONLY:
+            openLoopSwerve = false;
+            controller.setEnabled(false);
+            break;
+          default:    // Normal driving
+            openLoopSwerve = false;
+            controller.setEnabled(true);
+            break;
+        }
         break;
       case angleAbsolute:  // absolute angle, keep robot position
         goalPose = new Pose2d(driveTrain.getPose().getTranslation(), rotation);
@@ -302,7 +338,7 @@ public class DriveToPose extends Command {
         controller.calculate(robotPose, desiredPose, desiredVelocityMetersPerSecond, desiredRotation);
     var targetModuleStates = kinematics.toSwerveModuleStates(targetChassisSpeeds);
 
-    driveTrain.setModuleStates(targetModuleStates, false); // TODO: set back to false after calibrating
+    driveTrain.setModuleStates(targetModuleStates, openLoopSwerve);
 
     ChassisSpeeds robotSpeeds = driveTrain.getRobotSpeeds();
     log.writeLog(false, "DriveToPose", "Execute", 
@@ -324,7 +360,6 @@ public class DriveToPose extends Command {
         "Robot rot", robotPose.getRotation().getDegrees(),
         "Pitch", driveTrain.getGyroPitch()
     );
-
   }
 
   // Called once the command ends or is interrupted.
