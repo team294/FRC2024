@@ -5,13 +5,9 @@
 package frc.robot.commands.Sequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.FeederConstants;
-import frc.robot.commands.FeederSetPercent;
-import frc.robot.commands.IntakeSetPercent;
-import frc.robot.commands.RobotStateSet;
-import frc.robot.commands.RobotStateSetIdle;
+import frc.robot.commands.*;
 import frc.robot.subsystems.Intake;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.subsystems.Feeder;
@@ -20,8 +16,11 @@ import frc.robot.utilities.FileLog;
 public class IntakePiece extends SequentialCommandGroup {
 
   /**
-   * Intakes a piece.  Stops after the feeder sensor detects a piece, or 
-   * after 10 seconds if no piece is found.
+   * Turns on the intake and feeder motors, and sets the robot state
+   * to INTAKE_TO_FEEDER.
+   * <p><b>Note:</b> This sequence does not stop intaking!  This requires a 
+   * trigger to turn off intaking when a piece gets to the feeder, or the
+   * driver can manually turn off intaking.
    * @param intake
    * @param feeder
    * @param robotState
@@ -34,11 +33,7 @@ public class IntakePiece extends SequentialCommandGroup {
     addCommands(
       new RobotStateSet(BCRRobotState.State.INTAKE_TO_FEEDER, robotState, log),
       new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
-      new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
-      new WaitCommand(10).until(() -> feeder.isPiecePresent()),
-      new IntakeSetPercent(0, 0, intake, log),
-      new FeederSetPercent(0, feeder, log),
-      new RobotStateSetIdle(robotState, feeder, log)
-    );
+      new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
+      );
   }
 }
