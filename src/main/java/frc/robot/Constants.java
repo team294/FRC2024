@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.utilities.TrapezoidProfileBCR;
 
 /**
@@ -353,4 +354,20 @@ public final class Constants {
         this.b = b;
       }
     }
+
+    public static final class LEDConstants {
+        public enum LEDSegment {
+            CANdle(0, 8, null),
+            Strip1(8, 60, null),
+            Full(0, 68, null);
+
+            public final int index, count;
+            public Color[][] animation;
+            public int state;
+            LEDSegment(int index, int count, Color[][] animation){ this.index = index; this.count = count; this.animation = animation;state = 0;}
+        }
+
+        // public static final double NumLEDs = 68;
+    }
+
 }
