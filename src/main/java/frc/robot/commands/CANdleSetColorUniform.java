@@ -15,9 +15,7 @@ import frc.robot.utilities.FileLog;
 public class CANdleSetColorUniform extends InstantCommand {
   LED led;
   FileLog log;
-  short r;
-  short g;
-  short b;
+  int r, g, b;
   boolean fromSmartDashboard = false;
 
   /** Set the colour of all LEDs to the given rgb value
@@ -27,7 +25,7 @@ public class CANdleSetColorUniform extends InstantCommand {
    * @param led the LED subsystem; it will light up
    * @param log the File Log
   */
-  public CANdleSetColorUniform(short r, short g, short b, LED led, FileLog log) {
+  public CANdleSetColorUniform(int r, int g, int b, LED led, FileLog log) {
     // Usa addRequirements() here to declare subsystem dependencies.
     this.r = r;
     this.g = g;
@@ -56,9 +54,9 @@ public class CANdleSetColorUniform extends InstantCommand {
   public void initialize() {
     if (fromSmartDashboard) {
       // Update the values
-      r = (short) SmartDashboard.getNumber("CANdleUniformR", 0);
-      g = (short) SmartDashboard.getNumber("CANdleUniformG", 0);
-      b = (short) SmartDashboard.getNumber("CANdleUniformB", 0);
+      this.r = (int) SmartDashboard.getNumber("CANdleUniformR", 0);
+      this.g = (int) SmartDashboard.getNumber("CANdleUniformG", 0);
+      this.b = (int) SmartDashboard.getNumber("CANdleUniformB", 0);
     }
     led.setLEDs(r, g, b);
   }

@@ -339,9 +339,9 @@ public final class Constants {
 
     /** Colors for the LEDs based on different robot states (see BCRRobotState) */
     public enum BCRColor {
-      IDLE_NO_PIECE(255, 255, 255), // White
-      IDLE_WITH_PIECE(255, 51, 0), // Orange
-      INTAKE_TO_FEEDER(255, 0, 0), // Red
+      IDLE_NO_PIECE(255, 255 ,255), // White
+      IDLE_WITH_PIECE(255, 30, 0), // Orange
+      INTAKE_TO_FEEDER(255, 0, 20), // Red
       SHOOTING(0, 255, 100); // Green
 
       public final int r;

@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.concurrent.CancellationException;
-
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
@@ -56,7 +54,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Set all the LEDs to a specific colour
+   * Set all the LEDs to a specific colour using RGB values
    * @param r the red portion of the colour (0-255)
    * @param g the green portion of the colour (0-255)
    * @param b the blue portion of the colour (0-255)
@@ -64,9 +62,8 @@ public class LED extends SubsystemBase {
   public void setLEDs(int r, int g, int b) {
     candle.setLEDs(r, g, b);
   }
-
   /**
-   * Sets a specific range of LEDs to a specific colour
+   * Sets a specific range of LEDs to a specific colour using RGBW, Index, and Count values
    * @param r the red portion of the colour (0-255)
    * @param g the green portion of the colour (0-255)
    * @param b the blue portion of the colour (0-255)
@@ -77,9 +74,19 @@ public class LED extends SubsystemBase {
   public void setLEDs(int r, int g, int b, int w, int index, int count) {
     candle.setLEDs(r, g, b, w, index, count);
   }
-
+  /**
+   * Sets the LED color based on robot state
+   * @param color the state to use (ex: IDLE_NO_PIECE)
+   */
   public void setLEDs(BCRColor color) {
     candle.setLEDs(color.r, color.g, color.b);
+  }
+  /**
+   * Takes in color and sets correct RGB values
+   * @param color
+   */
+  public void setLEDs(Color color) {
+    setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255));
   }
 
   @Override

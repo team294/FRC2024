@@ -4,6 +4,10 @@
 
 package frc.robot.commands;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
@@ -16,14 +20,15 @@ public class RobotStateSet extends InstantCommand {
   /**
    * Immediately sets the Robot State object to the given state.
    * This will update wherever the object is used.
-   * @param newState
-   * @param robotState
-   * @param log
+   * @param newState State to set (ex: IDLE_NO_PIECE)
+   * @param robotState robotState object
+   * @param log log
    */
   public RobotStateSet(BCRRobotState.State newState, BCRRobotState robotState, FileLog log) {
     this.newState = newState;
     this.robotState = robotState;
     this.log = log;
+    // SmartDashboard.putNumber("StateTest", 0);
   }
 
   // Called when the command is initially scheduled.
