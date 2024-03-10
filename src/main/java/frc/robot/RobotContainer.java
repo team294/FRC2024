@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -24,6 +26,7 @@ import frc.robot.commands.Sequences.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
+import frc.robot.utilities.BCRRobotState.State;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -61,8 +64,9 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    configureButtonBindings(); // configure button bindings
-    // configureShuffleboard();  configure shuffleboard
+    configureButtonBindings();
+    configureTriggers();
+    configureShuffleboard();
 
     driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
     // driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
@@ -79,11 +83,12 @@ public class RobotContainer {
     configureXboxButtons(); // configure xbox controller
     configureJoystickButtons(); // configure joysticks
     configureCopanel(); // configure copanel
-
-    configureSmartDashboard();
   }
 
-  private void configureSmartDashboard() {
+  /**
+   * Configures Shuffleboard for the robot
+   */
+  private void configureShuffleboard() {
     // Intake commands
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
@@ -96,10 +101,13 @@ public class RobotContainer {
 
     // Feeder commands
     SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(feeder, log));
+    SmartDashboard.putData("Feeder Stop", new FeederSetPercent(0.0, feeder, log));
 
     // Wrist commands
     SmartDashboard.putData("Wrist Set Percent", new WristSetPercentOutput(wrist, log));
     SmartDashboard.putData("Wrist Set Angle", new WristSetAngle(wrist, log));
+    SmartDashboard.putData("Wrist Calibration", new WristCalibrationRamp(0.01, 0.4, wrist, log));
+    SmartDashboard.putData("Wrist Stop", new WristSetPercentOutput(0.0, wrist, log));
   
     // Drive base commands
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
@@ -129,6 +137,22 @@ public class RobotContainer {
     SmartDashboard.putData("Source Center Three Piece Shoot", new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
 
 
+  }
+
+  /**
+   * Creates triggers needed for the robot.
+   */
+  private void configureTriggers(){
+    // Trigger to turn off intaking when a piece is detected in the feeder.
+    // Note that this trigger will only turn off intaking if the robot is
+    // currently in the INTAKE_TO_FEEDER state; otherwise, it does nothing.
+    Trigger intakeStopTrigger = new Trigger(()-> feeder.isPiecePresent());
+    intakeStopTrigger.onTrue(
+      new ConditionalCommand(
+        new StopIntakingSequence(feeder, intake, robotState, log),
+        new WaitCommand(0.01), 
+        () -> robotState.getState() == State.INTAKE_TO_FEEDER)      
+      );
   }
 
   /**
