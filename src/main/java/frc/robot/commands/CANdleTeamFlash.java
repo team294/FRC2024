@@ -4,11 +4,8 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.led.CANdle;
-
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.Constants.LEDConstants.LEDSegment;
 import frc.robot.subsystems.LED;
 import frc.robot.utilities.FileLog;
@@ -16,20 +13,19 @@ import frc.robot.utilities.FileLog;
 public class CANdleTeamFlash extends Command {
   private LED led;
   private FileLog log;
-  private boolean fromShuffleboard;
   private Color color = new Color();
   private double t;
   private double executionsPerChange;
   private LEDSegment segment;
   /** Creates a new CANdleStop. */
 
+  // TODO Needs fixing.  Needs JavaDocs.
 
   public CANdleTeamFlash(LED led, LEDSegment segment, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.led = led;
     this.segment = segment;
     this.log = log;
-    fromShuffleboard = true;
 
     addRequirements(led);
   }
@@ -39,7 +35,6 @@ public class CANdleTeamFlash extends Command {
     this.led = led;
     this.segment = LEDSegment.Full;
     this.log = log;
-    fromShuffleboard = true;
 
     addRequirements(led);
   }

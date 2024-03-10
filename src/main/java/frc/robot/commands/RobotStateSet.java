@@ -4,10 +4,6 @@
 
 package frc.robot.commands;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
@@ -28,7 +24,6 @@ public class RobotStateSet extends InstantCommand {
     this.newState = newState;
     this.robotState = robotState;
     this.log = log;
-    // SmartDashboard.putNumber("StateTest", 0);
   }
 
   // Called when the command is initially scheduled.

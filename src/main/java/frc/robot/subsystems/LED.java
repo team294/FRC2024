@@ -9,6 +9,7 @@ import com.ctre.phoenix.led.CANdle;
 
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.BCRColor;
 import frc.robot.utilities.FileLog;
 
@@ -17,11 +18,15 @@ public class LED extends SubsystemBase {
   private final CANdle candle;
   private String subsystemName;
 
-  /** Creates a new LED. */
-  public LED(int CANPort, String subsystemName, FileLog log) {
+  /**
+   * Creates the CANdle LED subsystem.
+   * @param subsystemName
+   * @param log
+   */
+  public LED(String subsystemName, FileLog log) {
     this.log = log;
     this.subsystemName = subsystemName;
-    this.candle = new CANdle(CANPort, "");
+    this.candle = new CANdle(Constants.Ports.CANLED);
   }
 
   /** Gets the subsystem name */
@@ -62,6 +67,7 @@ public class LED extends SubsystemBase {
   public void setLEDs(int r, int g, int b) {
     candle.setLEDs(r, g, b);
   }
+
   /**
    * Sets a specific range of LEDs to a specific colour using RGBW, Index, and Count values
    * @param r the red portion of the colour (0-255)
@@ -74,6 +80,7 @@ public class LED extends SubsystemBase {
   public void setLEDs(int r, int g, int b, int w, int index, int count) {
     candle.setLEDs(r, g, b, w, index, count);
   }
+
   /**
    * Sets the LED color based on robot state
    * @param color the state to use (ex: IDLE_NO_PIECE)
@@ -81,6 +88,7 @@ public class LED extends SubsystemBase {
   public void setLEDs(BCRColor color) {
     candle.setLEDs(color.r, color.g, color.b);
   }
+  
   /**
    * Takes in color and sets correct RGB values
    * @param color
