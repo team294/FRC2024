@@ -38,21 +38,5 @@
     "properties": {
       "persistent": true
     }
-  },
-  {
-    "name": "/Preferences/problemSubsystem",
-    "type": "string",
-    "value": "RobotPreferences",
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/problemExists",
-    "type": "boolean",
-    "value": true,
-    "properties": {
-      "persistent": true
-    }
   }
 ]

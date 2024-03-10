@@ -14,7 +14,12 @@ public class ShooterCalibrationRamp extends Command {
 
   private double percent;
 
-  /** Creates a new FeedForwardTest. */
+  /**
+   * Slowly ramps voltage to the shooter motors.  Used for logging data to calibrate
+   * kS and kV for the shooter motors.
+   * @param shooter
+   * @param log
+   */
   public ShooterCalibrationRamp(Shooter shooter, FileLog log) {
     this.shooter = shooter;
     this.log = log;

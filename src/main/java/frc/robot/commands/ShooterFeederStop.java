@@ -29,6 +29,7 @@ public class ShooterFeederStop extends Command {
   public void initialize() {
     shooter.stopMotors();
     feeder.stopFeeder();
+    log.writeLog(false, "ShooterFeederStop", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

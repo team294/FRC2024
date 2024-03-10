@@ -5,14 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.configs.Pigeon2Configurator;
+// import com.ctre.phoenix6.configs.Pigeon2Configuration;
+// import com.ctre.phoenix6.configs.Pigeon2Configurator;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -29,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.Ports.*;
 
 import static frc.robot.Constants.DriveConstants.*;
-import static frc.robot.Constants.FieldConstants;
 
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Ports;
@@ -293,10 +289,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    */
   public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop) {
 
-    
-
+    // Desaturate wheel speeds to a little below max speed.  It takes a while to accelerate to
+    // max speed, so reducing the max will help movement accuracy.
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredStates, SwerveConstants.kMaxSpeedMetersPerSecond);
+        desiredStates, SwerveConstants.kFullSpeedMetersPerSecond);
 
     // Convert states to chassisspeeds
     ChassisSpeeds chassisSpeeds = kDriveKinematics.toChassisSpeeds(desiredStates);
