@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -65,7 +66,6 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
-    configureTriggers();
     configureShuffleboard();
 
     // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
@@ -83,6 +83,7 @@ public class RobotContainer {
     configureXboxButtons(); // configure xbox controller
     configureJoystickButtons(); // configure joysticks
     configureCopanel(); // configure copanel
+    configureTriggers();
   }
 
   /**
@@ -146,7 +147,7 @@ public class RobotContainer {
     // Trigger to turn off intaking when a piece is detected in the feeder.
     // Note that this trigger will only turn off intaking if the robot is
     // currently in the INTAKE_TO_FEEDER state; otherwise, it does nothing.
-    Trigger intakeStopTrigger = new Trigger(()-> feeder.isPiecePresent());
+    Trigger intakeStopTrigger = new Trigger(()-> feeder.isPiecePresent() && DriverStation.isTeleopEnabled());
     intakeStopTrigger.onTrue(
       new ConditionalCommand(
         new StopIntakingSequence(feeder, intake, robotState, log),
@@ -322,6 +323,8 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
+
+    
   }
 
   /**

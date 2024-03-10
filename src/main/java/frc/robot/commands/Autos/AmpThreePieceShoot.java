@@ -4,15 +4,15 @@
 
 package frc.robot.commands.Autos;
 
-
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.StopType;
 import frc.robot.commands.DriveTrajectory;
-import frc.robot.commands.Sequences.IntakePiece;
+import frc.robot.commands.Sequences.IntakePieceAuto;
 import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
@@ -27,33 +27,30 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AmpThreePieceShoot extends CenterTwoPieceShoot {
-  /** Creates a new CenterSourceThreePieceShoot. */
+public class AmpThreePieceShoot extends SequentialCommandGroup {
+  /** Creates a new AmpTwoPieceShoot. */
   public AmpThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    super(intake, shooter, driveTrain, feeder, robotState, cache, alliance, log);
     addCommands(
       new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
-        new IntakePiece(intake, feeder, robotState, log),
+        new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new WaitCommand(0.5).until(() -> feeder.isPiecePresent()),
       new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
-        new IntakePiece(intake, feeder, robotState, log),
+        new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new WaitCommand(0.5).until(() -> feeder.isPiecePresent()),
       new ShootPiece(shooter, feeder, robotState, log)
     );
   }

@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.StopType;
 import frc.robot.commands.DriveTrajectory;
-import frc.robot.commands.Sequences.IntakePiece;
+import frc.robot.commands.Sequences.IntakePieceAuto;
 import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
@@ -35,14 +35,13 @@ public class SourceTwoPieceShoot extends SequentialCommandGroup {
     addCommands(
       new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
-        new IntakePiece(intake, feeder, robotState, log),
+        new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new WaitCommand(0.5).until(() -> feeder.isPiecePresent()),
       new ShootPiece(shooter, feeder, robotState, log)
     );
   }
