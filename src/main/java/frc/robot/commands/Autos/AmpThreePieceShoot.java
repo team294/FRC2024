@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Autos;
 
+
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -44,10 +45,13 @@ public class AmpThreePieceShoot extends CenterTwoPieceShoot {
       ),
       new WaitCommand(0.5).until(() -> feeder.isPiecePresent()),
       new ShootPiece(shooter, feeder, robotState, log),
-      new ConditionalCommand(
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log), 
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value], driveTrain, log), 
-        () -> alliance.getAlliance() == Alliance.Red
+      new ParallelCommandGroup(
+        new IntakePiece(intake, feeder, robotState, log),
+        new ConditionalCommand(
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value], driveTrain, log), 
+          () -> alliance.getAlliance() == Alliance.Red
+        )
       ),
       new WaitCommand(0.5).until(() -> feeder.isPiecePresent()),
       new ShootPiece(shooter, feeder, robotState, log)
