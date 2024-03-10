@@ -4,7 +4,6 @@
 
 package frc.robot.utilities;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.BCRColor;
 import frc.robot.subsystems.LED;
 
@@ -53,17 +52,20 @@ public class BCRRobotState {
     public void setState(State state) {
         this.state = state;
 
-        // Set LEDs to match the state, as defined in Constants.BCRColor - DO NOT MAKE A SWITCH CASE IT DOESN'T WORK
-        if (state == State.IDLE_NO_PIECE) {
-            led.setLEDs(BCRColor.IDLE_NO_PIECE); // White
-        } else if (state == State.IDLE_WITH_PIECE) {
-            led.setLEDs(BCRColor.IDLE_WITH_PIECE); // Orange
-        } else if (state == State.INTAKE_TO_FEEDER) {
-            led.setLEDs(BCRColor.INTAKE_TO_FEEDER); // Blue
-        } else if (state == State.SHOOTING) {
-            led.setLEDs(BCRColor.SHOOTING); // Green
-        } else {
-            led.setLEDs(255,0,255);
+        // Set LEDs to match the state, as defined in Constants.BCRColor; remember break statements
+        switch (this.state) {
+        case IDLE_NO_PIECE:
+            led.setLEDs(BCRColor.IDLE_NO_PIECE);
+            break;
+        case IDLE_WITH_PIECE:
+            led.setLEDs(BCRColor.IDLE_WITH_PIECE);
+            break;
+        case INTAKE_TO_FEEDER:
+            led.setLEDs(BCRColor.INTAKE_TO_FEEDER);
+            break;
+        case SHOOTING:
+            led.setLEDs(BCRColor.SHOOTING);
+            break;
         }
     }
 }
