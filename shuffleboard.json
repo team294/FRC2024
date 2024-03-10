@@ -1000,7 +1000,7 @@
                   "_title": "Piece Present",
                   "_glyph": 148,
                   "_showGlyph": false,
-                  "Colors/Color when true": "#FF0000FF",
+                  "Colors/Color when true": "#FF9966FF",
                   "Colors/Color when false": "#000000FF"
                 },
                 {
@@ -1151,7 +1151,7 @@
                   "_title": "Feeder has piece",
                   "_glyph": 148,
                   "_showGlyph": false,
-                  "Colors/Color when true": "#FF0000FF",
+                  "Colors/Color when true": "#FF9966FF",
                   "Colors/Color when false": "#000000FF"
                 },
                 {
@@ -1339,9 +1339,9 @@
     }
   ],
   "windowGeometry": {
-    "x": 1912.0,
-    "y": -8.0,
-    "width": 1936.0,
-    "height": 1048.0
+    "x": 1.0,
+    "y": 1.0,
+    "width": 1918.0,
+    "height": 1030.0
   }
 }
