@@ -1,0 +1,29 @@
+----------------------------
+2024-03-08 21:03:18.564,FileLog,Open,sim\logfilesim.J1.2024-03-08.21-03-18.csv
+2024-03-08 21:03:18.605,Alliance Selection,SetAlliance,Alliance Chooser,Auto,Alliance,Red
+2024-03-08 21:03:18.606,Alliance Selection,Initialize,Alliance from DriverStation,Red
+2024-03-08 21:03:19.230,SwerveModule FL,ZeroDriveEncoder,driveEncoderZero,0.0,raw encoder,0.0,encoder meters,0.0
+2024-03-08 21:03:19.231,SwerveModule FL,calibrateCanCoder,cancoderZero,-0.0,raw encoder,-90.0,encoder degrees,-90.0
+2024-03-08 21:03:19.233,SwerveModule FL,calibrateTurningEncoder,turningEncoderZero,5.357142857142857,raw encoder,0.0,set degrees,-90.0,encoder degrees,-90.0
+2024-03-08 21:03:19.817,SwerveModule FR,ZeroDriveEncoder,driveEncoderZero,0.0,raw encoder,0.0,encoder meters,0.0
+2024-03-08 21:03:19.818,SwerveModule FR,calibrateCanCoder,cancoderZero,-0.0,raw encoder,-90.0,encoder degrees,-90.0
+2024-03-08 21:03:19.818,SwerveModule FR,calibrateTurningEncoder,turningEncoderZero,5.357142857142857,raw encoder,0.0,set degrees,-90.0,encoder degrees,-90.0
+2024-03-08 21:03:20.257,SwerveModule BL,ZeroDriveEncoder,driveEncoderZero,0.0,raw encoder,0.0,encoder meters,0.0
+2024-03-08 21:03:20.258,SwerveModule BL,calibrateCanCoder,cancoderZero,-0.0,raw encoder,-90.0,encoder degrees,-90.0
+2024-03-08 21:03:20.259,SwerveModule BL,calibrateTurningEncoder,turningEncoderZero,5.357142857142857,raw encoder,0.0,set degrees,-90.0,encoder degrees,-90.0
+2024-03-08 21:03:20.737,SwerveModule BR,ZeroDriveEncoder,driveEncoderZero,0.0,raw encoder,0.0,encoder meters,0.0
+2024-03-08 21:03:20.737,SwerveModule BR,calibrateCanCoder,cancoderZero,-0.0,raw encoder,-90.0,encoder degrees,-90.0
+2024-03-08 21:03:20.738,SwerveModule BR,calibrateTurningEncoder,turningEncoderZero,5.357142857142857,raw encoder,0.0,set degrees,-90.0,encoder degrees,-90.0
+2024-03-08 21:03:21.522,RobotPreferences,Sticky Faults Logged,
+2024-03-08 21:03:21.523,Disabled,Robot disabled,
+2024-03-08 21:03:21.976,PhotonCameraWrapper,Init,Starting
+2024-03-08 21:03:22.332,PhotonCameraWrapper,Init,Loaded april tags from file
+2024-03-08 21:03:22.334,PhotonCameraWrapper,Init,Done
+2024-03-08 21:03:22.334,PhotonCameraWrapper,UpdateAlliance,Alliance changed,Red
+2024-03-08 21:03:22.335,Wrist,calibrateThroughBoreEncoder,Rev encoder connected,true,Boot cylces,1,Rev angle,-0.0
+2024-03-08 21:03:22.361,Wrist,calibrateThroughBoreEncoder,Rev encoder connected,true,Boot cylces,2,Rev angle,-0.0
+2024-03-08 21:03:22.364,Wrist,calibrateThroughBoreEncoder,Rev encoder connected,true,Boot cylces,3,Rev angle,-0.0
+2024-03-08 21:03:22.370,Wrist,calibrateThroughBoreEncoder,Rev encoder connected,true,Boot cylces,4,Rev angle,-0.0
+2024-03-08 21:03:22.372,Wrist,calibrateThroughBoreEncoder,Rev encoder connected,true,Boot cylces,5,Rev angle,-0.0
+2024-03-08 21:03:22.373,Wrist,calibrateThroughBoreEncoder,encoderZero,-0.0,raw encoder,0.0,encoder degrees,0.0
+2024-03-08 21:03:22.374,Wrist,calibrateThroughBoreEncoder,Rev encoder calibrated,true,Boot cylces,5,Rev angle,0.0

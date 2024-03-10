@@ -98,10 +98,13 @@ public class RobotContainer {
 
     // Feeder commands
     SmartDashboard.putData("Feeder Set Percent", new FeederSetPercent(feeder, log));
+    SmartDashboard.putData("Feeder Stop", new FeederSetPercent(0.0, feeder, log));
 
     // Wrist commands
     SmartDashboard.putData("Wrist Set Percent", new WristSetPercentOutput(wrist, log));
     SmartDashboard.putData("Wrist Set Angle", new WristSetAngle(wrist, log));
+    SmartDashboard.putData("Wrist Calibration", new WristCalibrationRamp(0.01, 0.4, wrist, log));
+    SmartDashboard.putData("Wrist Stop", new WristSetPercentOutput(0.0, wrist, log));
   
     // Drive base commands
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));

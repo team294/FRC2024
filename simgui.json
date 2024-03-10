@@ -1,0 +1,32 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Alliance Selection": "String Chooser",
+      "/SmartDashboard/Autonomous routine": "String Chooser",
+      "/SmartDashboard/Drive Calibration": "Command",
+      "/SmartDashboard/Drive Reset Pose": "Command",
+      "/SmartDashboard/Drive Straight": "Command",
+      "/SmartDashboard/Drive To Pose": "Command",
+      "/SmartDashboard/Drive Turn Calibration": "Command",
+      "/SmartDashboard/DriveToPose Feedback": "String Chooser",
+      "/SmartDashboard/Feeder Set Percent": "Command",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Intake Piece": "Command",
+      "/SmartDashboard/Intake Set Percent": "Command",
+      "/SmartDashboard/Intake Stop": "Command",
+      "/SmartDashboard/Shoot Piece": "Command",
+      "/SmartDashboard/Shooter Calibration": "Command",
+      "/SmartDashboard/Shooter Set Percent": "Command",
+      "/SmartDashboard/Shooter Set Velocity": "Command",
+      "/SmartDashboard/ShooterFeeder Stop": "Command",
+      "/SmartDashboard/Stop All": "Command",
+      "/SmartDashboard/Wrist Calibration": "Command",
+      "/SmartDashboard/Wrist Set Angle": "Command",
+      "/SmartDashboard/Wrist Set Percent": "Command"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}
