@@ -4,17 +4,11 @@
 
 package frc.robot.utilities;
 
-import java.util.Arrays;
-import java.util.List;
-
 import edu.wpi.first.apriltag.AprilTag;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.FieldConstants;
 
 /**
  * A class representing field coordinates.
@@ -78,6 +72,8 @@ public class Field {
     public Field(AllianceSelection alliance, FileLog log){
         this.alliance = alliance;
         this.log = log;
+
+        this.log.writeLogEcho(true, "Field", "Constructor", "Alliance", alliance.toString());
     }
 
     /**

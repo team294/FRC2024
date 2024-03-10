@@ -9,6 +9,8 @@ package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.WristConstants;
 
 import static frc.robot.Constants.*;
 
@@ -35,6 +37,7 @@ public class RobotPreferences {
         DriveConstants.offsetAngleBackRightMotor = readDouble("Drive.offsetAngleBackRightMotor", DriveConstants.offsetAngleBackRightMotor);        
         // DriveConstants.updateDerivedConstants();
 
+        WristConstants.revEncoderOffsetAngleWrist = readDouble("Wrist.offsetAngleWrist", WristConstants.revEncoderOffsetAngleWrist);
     }
 
     /**

@@ -47,7 +47,7 @@ public class Shooter extends SubsystemBase implements Loggable {
 	private final StatusSignal<Double> shooterTopEncoderVelocity;
   private final StatusSignal<Double> shooterTopVoltage;
 
-  private final StatusSignal<Double> shooterBottomSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
+  // private final StatusSignal<Double> shooterBottomSupplyVoltage;				// Incoming bus voltage to motor controller, in volts
 	private final StatusSignal<Double> shooterBottomTemp;				// Motor temperature, in degC
 	private final StatusSignal<Double> shooterBottomDutyCycle;				// Motor duty cycle percent power, -1 to 1
 	private final StatusSignal<Double> shooterBottomStatorCurrent;		// Motor stator current, in amps (+=fwd, -=rev)
@@ -90,7 +90,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     
     // Configure bottom shooter motor
     shooterBottomConfigurator = shooterBottom.getConfigurator();
-    shooterBottomSupplyVoltage = shooterBottom.getSupplyVoltage();
+    // shooterBottomSupplyVoltage = shooterBottom.getSupplyVoltage();
 	  shooterBottomTemp = shooterBottom.getDeviceTemp();
 	  shooterBottomDutyCycle = shooterBottom.getDutyCycle();
 	  shooterBottomStatorCurrent =shooterBottom.getStatorCurrent();
@@ -270,7 +270,8 @@ public class Shooter extends SubsystemBase implements Loggable {
     if (fastLogging || log.isMyLogRotation(logRotationKey)) {
       updateLog(false);
 
-      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Voltage"), getTopShooterVoltage());
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Top Voltage"), getTopShooterVoltage());
+      SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Bottom Voltage"), getBottomShooterVoltage());
      // SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Position Rev"), getShooterPosition());
       SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Top RPM"), getTopShooterVelocity());
       SmartDashboard.putNumber(StringUtil.buildString(subsystemName, " Bottom RPM"), getBottomShooterVelocity());
