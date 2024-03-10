@@ -19,11 +19,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.commands.*;
-import frc.robot.commands.Autos.AmpThreePieceShoot;
-import frc.robot.commands.Autos.AmpTwoPieceShoot;
-import frc.robot.commands.Autos.CenterTwoPieceShoot;
-import frc.robot.commands.Autos.SourceThreePieceShoot;
-import frc.robot.commands.Autos.SourceTwoPieceShoot;
+import frc.robot.commands.Autos.*;
 import frc.robot.commands.Sequences.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
 import frc.robot.subsystems.*;
@@ -128,6 +124,10 @@ public class RobotContainer {
     SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Center Three Piece Shoot", new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+
 
   }
 

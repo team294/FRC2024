@@ -43,9 +43,11 @@ public class AutoSelection {
 
 		// auto selections
 		autoChooser.setDefaultOption("None", NONE);
+		autoChooser.addOption("CenterTwoPieceShoot", CenterTwoPieceShoot);
+		autoChooser.addOption("AmpTwoPieceShoot", AmpTwoPieceShoot);
+		autoChooser.addOption("AmpTwoPieceShoot", AmpTwoPieceShoot);
 		
 		
-
 	
 		// show auto selection widget on Shuffleboard
 		SmartDashboard.putData("Autonomous routine", autoChooser);
