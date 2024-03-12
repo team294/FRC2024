@@ -97,7 +97,7 @@ public class RobotContainer {
     SmartDashboard.putData("Stop All Subsystems", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
     SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, robotState, log));
     SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
-    SmartDashboard.putData("Drive To Note", new DriveToNote(driveTrain, log));
+    SmartDashboard.putData("Drive To Note", new DriveToNote(feeder, driveTrain, log));
 
     // Shooter commands
     SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));

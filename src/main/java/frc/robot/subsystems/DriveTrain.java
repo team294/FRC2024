@@ -544,7 +544,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
         EstimatedRobotPose camPose = result.get();
         // only updates odometry if close enough
         // TODO change how it decides if it's too far
-        //if (camPose.estimatedPose.getX() < 3.3) {
+        if (camPose.estimatedPose.getX() < 3.3) {
           poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
 
           //field.getObject("Vision").setPose(camPose.estimatedPose.toPose2d());
@@ -555,7 +555,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
           SmartDashboard.putNumber("Odo X", poseEstimator.getEstimatedPosition().getX());
           SmartDashboard.putNumber("Odo Y", poseEstimator.getEstimatedPosition().getY());
           SmartDashboard.putNumber("Odo rot", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
-       // }
+       }
       }
 
     }

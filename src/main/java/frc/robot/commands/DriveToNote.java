@@ -21,6 +21,7 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants.JeVoisConstants;
 import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.JeVoisCamera;
 import frc.robot.subsystems.NotePhotonCameraWrapper;
 import frc.robot.utilities.*;
@@ -30,6 +31,7 @@ import frc.robot.utilities.*;
  */
 public class DriveToNote extends Command {
   private final DriveTrain driveTrain;
+  private final Feeder feeder; 
   private final PIDController fwdRateController;
   private final PIDController leftRateController;
   private final PIDController turnRateController;
@@ -46,12 +48,13 @@ public class DriveToNote extends Command {
    * @param driveTrain drive train subsystem to use
    * @param log filelog to use
    */
-  public DriveToNote(DriveTrain driveTrain, FileLog log) {
+  public DriveToNote(Feeder feeder, DriveTrain driveTrain, FileLog log) {
+    this.feeder = feeder;
     this.driveTrain = driveTrain;
     this.log = log;
-    fwdRateController = new PIDController(0.4, 0, 0);
-    leftRateController = new PIDController(0.005, 0, 0);
-    turnRateController = new PIDController(0.2, 0, 0);
+    fwdRateController = new PIDController(0.1, 0.0, 0);
+    leftRateController = new PIDController(0.0, 0, 0);
+    turnRateController = new PIDController(0.15, 0, 0);
     fwdRateController.setSetpoint(PhotonVisionConstants.pitchSetpoint); // setpoint is the bottom of the screen
     leftRateController.setSetpoint(PhotonVisionConstants.yawSetpoint); // setpoint is the middle line on the screen
     turnRateController.setSetpoint(PhotonVisionConstants.yawSetpoint); // setpoint is the middle line on the screen
@@ -65,7 +68,7 @@ public class DriveToNote extends Command {
   @Override
   public void initialize() {
     driveTrain.setDriveModeCoast(false);
-
+    
     // lastFwdPercent = 0;
     // lastTime = System.currentTimeMillis() / 1000.0;
   }
@@ -86,15 +89,16 @@ public class DriveToNote extends Command {
     PhotonTrackedTarget bestTarget = latestResult.getBestTarget();
     
 
-    fwdVelocity = fwdRateController.calculate(bestTarget.getPitch());
+    fwdVelocity = -fwdRateController.calculate(bestTarget.getPitch());
     leftVelocity = leftRateController.calculate(bestTarget.getYaw());
     turnRate = turnRateController.calculate(bestTarget.getYaw());
 
     fwdVelocity = MathUtil.clamp(fwdVelocity, -SwerveConstants.kMaxSpeedMetersPerSecond, SwerveConstants.kMaxSpeedMetersPerSecond);
     leftVelocity = MathUtil.clamp(leftVelocity, -SwerveConstants.kMaxSpeedMetersPerSecond, SwerveConstants.kMaxSpeedMetersPerSecond);
-    turnRate = MathUtil.clamp(leftVelocity, -SwerveConstants.kMaxTurningRadiansPerSecond, SwerveConstants.kMaxTurningRadiansPerSecond);
+    turnRate = MathUtil.clamp(turnRate, -SwerveConstants.kMaxTurningRadiansPerSecond, SwerveConstants.kMaxTurningRadiansPerSecond);
 
     if(log.isMyLogRotation(logRotationKey)) {
+      System.out.println(bestTarget.getYaw());
       log.writeLog(false, "DriveToNote", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", turnRate);
     }
     
@@ -112,7 +116,7 @@ public class DriveToNote extends Command {
     SmartDashboard.putNumber("DriveToNote BestTargetPitch", bestTarget.getPitch());
     SmartDashboard.putNumber("DriveToNote BestTargetYaw", bestTarget.getYaw());
     
-    driveTrain.drive(fwdVelocity, leftVelocity, turnRate, true, false);
+    driveTrain.drive(fwdVelocity, leftVelocity, turnRate, false, false);
 
     // lastFwdPercent = fwdPercent;
     // lastTime = curTime;
@@ -126,6 +130,6 @@ public class DriveToNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return feeder.isPiecePresent();
   }
 }
