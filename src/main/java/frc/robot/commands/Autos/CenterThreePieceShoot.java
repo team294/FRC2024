@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Autos;
 
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -27,18 +28,19 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AmpThreePieceShoot extends SequentialCommandGroup {
-  /** Creates a new AmpTwoPieceShoot. */
-  public AmpThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+public class CenterThreePieceShoot extends CenterTwoPieceShoot {
+  /** Creates a new CenterThreePieceShoot. */
+  public CenterThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    super(intake, shooter, driveTrain, feeder, robotState, cache, alliance, log);
     addCommands(
       new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteBlue.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNoteToFarNoteRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNoteToFarNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
@@ -46,17 +48,8 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value], driveTrain, log), 
-          () -> alliance.getAlliance() == Alliance.Red
-        )
-      ),
-      new ShootPiece(shooter, feeder, robotState, log),
-      new ParallelCommandGroup(
-        new IntakePieceAuto(intake, feeder, robotState, log),
-        new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNoteToFarNoteRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNoteToFarNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
