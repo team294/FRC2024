@@ -327,7 +327,7 @@ public final class Constants {
       // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
       public enum WristAngle {
           lowerLimit(-3.0),      // CALIBRATED
-          upperLimit(105.0);       // CALIBRATED
+          upperLimit(65.0);       // CALIBRATED
 
           @SuppressWarnings({"MemberName", "PMD.SingularField"})
           public final double value;
