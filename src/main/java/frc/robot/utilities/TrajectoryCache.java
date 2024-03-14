@@ -189,17 +189,21 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Drive Center To Far Note Red", .4, .4, false,
-            new Pose2d(8.2, 7.4, new Rotation2d(Math.toRadians(-30))), 
-            List.of(), 
-            new Pose2d(8.5, 4.0, new Rotation2d(0))
+            new Pose2d(3.1, 3.2, new Rotation2d(Math.toRadians(-30))), 
+            List.of(
+                new Translation2d(5.3, 3.4)
+            ), 
+            new Pose2d(8.2, 4.1, new Rotation2d(0))
             ));
         cache[TrajectoryType.driveCenterNoteToFarNoteBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Drive Center To Far Note Red", .4, .4, false,
-            new Pose2d(8.2, 0.8, new Rotation2d(Math.toRadians(30))), 
-            List.of(), 
-            new Pose2d(8.5, 4.0, new Rotation2d(0))
+            new Pose2d(3.1, 5, new Rotation2d(Math.toRadians(30))), 
+            List.of(
+                new Translation2d(5.3, 4.8)
+            ), 
+            new Pose2d(8.2, 4.1, new Rotation2d(0))
             ));
     }
 
