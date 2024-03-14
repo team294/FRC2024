@@ -24,9 +24,10 @@ public class AutoSelection {
 	public static final int NONE = 0;
 	public static final int test = 1;
 	public static final int CenterTwoPieceShoot = 2;
-	public static final int SourceTwoPieceShoot = 3;
-	public static final int AmpTwoPieceShoot = 4;
-	public static final int AmpThreePieceShoot = 5;
+	public static final int CenterThreePieceShoot = 3;
+	public static final int SourceTwoPieceShoot = 4;
+	public static final int AmpTwoPieceShoot = 5;
+	public static final int AmpThreePieceShoot = 6;
 
 
 
@@ -92,6 +93,10 @@ public class AutoSelection {
 		else if(autoPlan == CenterTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Two Piece Shoot");
 			autonomousCommand = new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+		else if(autoPlan == CenterThreePieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Center Two Piece Shoot");
+			autonomousCommand = new CenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == SourceTwoPieceShoot){
