@@ -137,6 +137,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     // Set initial location to 0,0.
     poseEstimator = new SwerveDrivePoseEstimator(kDriveKinematics, Rotation2d.fromDegrees(getGyroRotation()), 
        getModulePositions(), new Pose2d(0, 0, Rotation2d.fromDegrees(0)) );
+    // poseEstimator.setVisionMeasurementStdDevs(); // TODO
     SmartDashboard.putData("Field", field);
   }
   
@@ -544,7 +545,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
         EstimatedRobotPose camPose = result.get();
         // only updates odometry if close enough
         // TODO change how it decides if it's too far
-        if (camPose.estimatedPose.getX() < 3.3) {
+        if (camPose.estimatedPose.getX() < 5) {
           poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
 
           //field.getObject("Vision").setPose(camPose.estimatedPose.toPose2d());
