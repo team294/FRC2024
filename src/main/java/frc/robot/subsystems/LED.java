@@ -37,12 +37,9 @@ public class LED extends SubsystemBase {
    * @param subsystemName
    * @param log
    */
-  public LED(String subsystemName, FileLog log) {
+  public LED(int CANPort, String subsystemName, FileLog log) {
     this.log = log;
     this.subsystemName = subsystemName;
-<<<<<<< Updated upstream
-    this.candle = new CANdle(Constants.Ports.CANLED);
-=======
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
     this.currentState = BCRRobotState.State.IDLE_NO_PIECE;
@@ -60,7 +57,6 @@ public class LED extends SubsystemBase {
     );
     segments.put(LEDSegmentRange.CANdle, CANdle);
     segments.put(LEDSegmentRange.Strip1, strip1);
->>>>>>> Stashed changes
   }
 
   /** Get the subsystem's name
