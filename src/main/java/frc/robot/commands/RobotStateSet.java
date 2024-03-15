@@ -33,3 +33,4 @@ public class RobotStateSet extends InstantCommand {
     log.writeLog(true, "RobotStateSet", newState.toString());
   }
 }
+  

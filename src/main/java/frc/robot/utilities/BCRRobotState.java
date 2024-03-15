@@ -4,17 +4,20 @@
 
 package frc.robot.utilities;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.BCRColor;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.subsystems.LED;
 
 /** A wrapper class for State objects (see state machine file) */
 public class BCRRobotState {
     /** The enum that keeps track of all possible states for the robot */
     public static enum State {
-        IDLE_NO_PIECE,
-        IDLE_WITH_PIECE,
-        INTAKE_TO_FEEDER,
-        SHOOTING
+        IDLE_NO_PIECE,           // Driving around with no piece
+        IDLE_WITH_PIECE,         // Have piece but can't shoot yet
+        INTAKE_NO_PIECE,         // Intake running
+        SHOOT_READY,             // Shot will be on target
+        STICKY_FAULTS            // Errors
     }
 
     // The current State of the robot
@@ -51,21 +54,6 @@ public class BCRRobotState {
      */
     public void setState(State state) {
         this.state = state;
-
-        // Set LEDs to match the state, as defined in Constants.BCRColor; remember break statements
-        switch (this.state) {
-        case IDLE_NO_PIECE:
-            led.setLEDs(BCRColor.IDLE_NO_PIECE);
-            break;
-        case IDLE_WITH_PIECE:
-            led.setLEDs(BCRColor.IDLE_WITH_PIECE);
-            break;
-        case INTAKE_TO_FEEDER:
-            led.setLEDs(BCRColor.INTAKE_TO_FEEDER);
-            break;
-        case SHOOTING:
-            led.setLEDs(BCRColor.SHOOTING);
-            break;
-        }
+        led.updateStateAll(this.state);
     }
 }

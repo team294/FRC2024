@@ -347,34 +347,52 @@ public final class Constants {
 
     /** Colors for the LEDs based on different robot states (see BCRRobotState) */
     public enum BCRColor {
-      IDLE_NO_PIECE(255, 255, 255), // White
-      IDLE_WITH_PIECE(255, 30, 0), // Orange
-      INTAKE_TO_FEEDER(255, 0, 20), // Red
-      SHOOTING(0, 255, 100); // Green
+      IDLE_NO_PIECE(255, 255, 255), // White    (driving around with no piece)
+      IDLE_WITH_PIECE(255, 30, 0), // Orange    (have piece but can't shoot yet)
+      INTAKE_NO_PIECE(0, 0, 255), // Blue       (intake running)
+      SHOOT_READY(0, 255, 0), // Green          (shot will be on target)
+      STICKY_FAULTS(255, 0, 0); //Red           (errors)
 
-      public final int r;
-      public final int g;
-      public final int b;
+      // last 10 seconds, flash
+
+      public final int r, g, b;
       BCRColor(int r, int g, int b) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+          this.r = r;
+          this.g = g;
+          this.b = b;
       }
-    }
+  }
 
     public static final class LEDConstants {
-        public enum LEDSegment {
-            CANdle(0, 8, null),
-            Strip1(8, 60, null),
-            Full(0, 68, null);
+      public static final class Patterns {
+          // Static Patterns
+          public static final Color[] blueOrangeStatic = {Color.kBlue, Color.kOrange};
+          // Animated Patterns
+          public static final Color[][] blueOrangeMovingAnim = {{Color.kBlue, Color.kOrange},{Color.kOrange,Color.kBlue}};
+          public static final Color[][] rainbowArray = {
+              {Color.kRed, Color.kOrangeRed, Color.kOrange, Color.kRed, Color.kOrangeRed, Color.kOrange},
+              {Color.kGreen, Color.kGreenYellow, Color.kLime, Color.kGreen, Color.kGreenYellow, Color.kLime},
+              {Color.kBlue, Color.kAliceBlue, Color.kAquamarine, Color.kBlue, Color.kAliceBlue, Color.kAquamarine}
+          };
+          // Utilities
+          public static final Color[] noPatternStatic = {};
+          public static final Color[][] noPatternAnimation = {{}};
+          public static final Color[] clearPatternStatic = {Color.kBlack};
+      }
 
-            public final int index, count;
-            public Color[][] animation;
-            public int state;
-            LEDSegment(int index, int count, Color[][] animation){ this.index = index; this.count = count; this.animation = animation;state = 0;}
-        }
+      public enum LEDSegmentRange {
+          CANdle(0, 8),
+          Strip1(8, 60),
+          Full(0, 68);
 
-        // public static final double NumLEDs = 68;
-    }
+          public final int index, count;
+          LEDSegmentRange(int index, int count) {
+              this.index = index;
+              this.count = count;
+          }
+      }
+
+      // public static final double NumLEDs = 68;
+  }
 
 }

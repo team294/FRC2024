@@ -6,7 +6,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+<<<<<<< Updated upstream
 import frc.robot.Constants.LEDConstants.LEDSegment;
+=======
+import frc.robot.Constants;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
+>>>>>>> Stashed changes
 import frc.robot.subsystems.LED;
 import frc.robot.utilities.FileLog;
 
@@ -16,12 +21,12 @@ public class CANdleTeamFlash extends Command {
   private Color color = new Color();
   private double t;
   private double executionsPerChange;
-  private LEDSegment segment;
+  private LEDSegmentRange segment;
   /** Creates a new CANdleStop. */
 
   // TODO Needs fixing.  Needs JavaDocs.
 
-  public CANdleTeamFlash(LED led, LEDSegment segment, FileLog log) {
+  public CANdleTeamFlash(LED led, LEDSegmentRange segment, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.led = led;
     this.segment = segment;
@@ -33,7 +38,7 @@ public class CANdleTeamFlash extends Command {
   public CANdleTeamFlash(LED led, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.led = led;
-    this.segment = LEDSegment.Full;
+    this.segment = LEDSegmentRange.Full;
     this.log = log;
 
     addRequirements(led);
