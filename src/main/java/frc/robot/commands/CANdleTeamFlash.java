@@ -18,10 +18,13 @@ public class CANdleTeamFlash extends Command {
   private double t;
   private double executionsPerChange;
   private LEDSegmentRange segment;
-  /** Creates a new CANdleStop. */
 
-  // TODO Needs fixing.  Needs JavaDocs.
-
+  /**
+   * Creates a new CANdleTeamFlash
+   * @param led led to use
+   * @param segment segment to use
+   * @param log log file to write
+   */
   public CANdleTeamFlash(LED led, LEDSegmentRange segment, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.led = led;
@@ -31,6 +34,11 @@ public class CANdleTeamFlash extends Command {
     addRequirements(led);
   }
 
+  /**
+   * Creates a new CANdleTeamFlash
+   * @param led led to use
+   * @param log log file to write
+   */
   public CANdleTeamFlash(LED led, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.led = led;
