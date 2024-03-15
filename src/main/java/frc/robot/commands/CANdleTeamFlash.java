@@ -6,12 +6,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-<<<<<<< Updated upstream
-import frc.robot.Constants.LEDConstants.LEDSegment;
-=======
 import frc.robot.Constants;
 import frc.robot.Constants.LEDConstants.LEDSegmentRange;
->>>>>>> Stashed changes
 import frc.robot.subsystems.LED;
 import frc.robot.utilities.FileLog;
 

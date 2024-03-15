@@ -42,7 +42,7 @@ public class RobotContainer {
   private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);
   private final Feeder feeder = new Feeder(log);
-  private final LED led = new LED("LED", log);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", log);
   private final Wrist wrist = new Wrist(log);
 
   // Define other utilities
