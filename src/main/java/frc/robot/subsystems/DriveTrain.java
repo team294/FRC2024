@@ -27,9 +27,11 @@ import static frc.robot.Constants.Ports.*;
 
 import static frc.robot.Constants.DriveConstants.*;
 
+import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.RobotStateSet;
 import frc.robot.utilities.*;
 
 // Vision imports
@@ -59,6 +61,9 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   private final StatusSignal<Boolean> pigeonFault = pigeon.getFault_Hardware();
   private double yawZero = 0.0;
   private double pitchZero = 0.0;
+
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", log);
+  private final BCRRobotState robotState = new BCRRobotState(led);                // Need this to alert if gyro is not reading
 
   // variables to help calculate angular velocity for turnGyro
   // private double prevAng; // last recorded gyro angle
@@ -469,6 +474,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
       if(!isGyroReading()) {
         RobotPreferences.recordStickyFaults("Gyro", log);
+        new RobotStateSet(BCRRobotState.State.STICKY_FAULTS, robotState, log);
       }
 
       // Update data on SmartDashboard
