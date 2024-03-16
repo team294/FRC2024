@@ -91,7 +91,6 @@ public class AutoSelection {
 
 		double waitTime = SmartDashboard.getNumber("Autonomous delay", 0);
 		waitTime = MathUtil.clamp(waitTime, 0, 15);		// make sure autoDelay isn't negative and is only active during auto
-    	if (autonomousCommand == null) {
 
 		if (autoPlan == NONE) {
 			// Starting position = facing drivers
@@ -140,7 +139,6 @@ public class AutoSelection {
 			autonomousCommand = new WaitCommand(1);
 		}
 
-		}
 	return autonomousCommand;
 
 	}
