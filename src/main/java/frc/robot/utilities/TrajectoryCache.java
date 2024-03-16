@@ -23,7 +23,7 @@ public class TrajectoryCache {
     private FileLog log;
    
 
-    private static int trajectoryCount = 17;
+    private static int trajectoryCount = 15;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
@@ -32,18 +32,16 @@ public class TrajectoryCache {
         driveToSourceCloseNoteBlue(2),
         driveToCenterCloseNoteRed(3),
         driveToCenterCloseNoteBlue(4),
-        driveFromCenterToAmpCloseRed(5),
-        driveFromCenterToAmpCloseBlue(6),
-        driveToAmpCloseNoteRed(7),
-        driveToAmpCloseNoteBlue(8),
-        driveAmpNoteToFarNoteRed(9),
-        driveAmpNoteToFarNoteBlue(10),
-        driveSourceNoteToFarNoteRed(11),
-        driveSourceNoteToFarNoteBlue(12),
-        driveCenterAmpNoteRed(13),
-        driveCenterAmpNoteBlue(14),
-        driveFromAmpToCenterRed(15),
-        driveFromAmpToCenterBlue(16);
+        driveToAmpCloseNoteRed(5),
+        driveToAmpCloseNoteBlue(6),
+        driveAmpNoteToFarNoteRed(7),
+        driveAmpNoteToFarNoteBlue(8),
+        driveSourceNoteToFarNoteRed(9),
+        driveSourceNoteToFarNoteBlue(10),
+        driveCenterAmpNoteRed(11),
+        driveCenterAmpNoteBlue(12),
+        driveFromAmpToCenterRed(13),
+        driveFromAmpToCenterBlue(14);
 
 
         @SuppressWarnings({"MemberName", "PMD.SingularField"})
@@ -127,7 +125,8 @@ public class TrajectoryCache {
             new Pose2d(3.1, 3.2, new Rotation2d(0))
             ));
 
-        cache[TrajectoryType.driveToCenterCloseNoteBlue.value] = new TrajectoryFacing(new Rotation2d(0), 
+        cache[TrajectoryType.driveToCenterCloseNoteBlue.value] = new TrajectoryFacing(
+            new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Center Start to near note Blue", .4, .4, false, 
             new Pose2d(1.5, 5, new Rotation2d(0)), 
@@ -135,13 +134,7 @@ public class TrajectoryCache {
             new Pose2d(3.1, 5, new Rotation2d(0))
             ));
 
-        cache[TrajectoryType.driveFromCenterToAmpCloseRed.value] = new TrajectoryFacing(new Rotation2d(0), 
-            new Rotation2d(-33), 
-            calcTrajectory("Center Start to near note Red", .4, .4, false, 
-            new Pose2d(3.1, 3.2, new Rotation2d(0)), 
-            List.of(), 
-            new Pose2d(3.1, 1.2, new Rotation2d(0))
-            ));
+            
         cache[TrajectoryType.driveToAmpCloseNoteRed.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(-33)), 
             new Rotation2d(Math.toRadians(-33)), 
