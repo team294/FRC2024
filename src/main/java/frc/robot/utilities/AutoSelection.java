@@ -12,10 +12,22 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.CoordType;
+<<<<<<< Updated upstream
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+=======
+import frc.robot.Constants.StopType;
+import frc.robot.commands.DriveResetPose;
+import frc.robot.commands.DriveTrajectory;
+import frc.robot.commands.Autos.*;
+import frc.robot.commands.Sequences.ShootPiece;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+>>>>>>> Stashed changes
 
 
 /**
@@ -24,6 +36,18 @@ import frc.robot.subsystems.*;
 public class AutoSelection {
 
 	public static final int NONE = 0;
+<<<<<<< Updated upstream
+=======
+	public static final int test = 1;
+	public static final int shootOne = 2;
+	public static final int CenterTwoPieceShoot = 3;
+	public static final int SourceTwoPieceShoot = 4;
+	public static final int AmpTwoPieceShoot = 5;
+	public static final int AmpThreePieceShoot = 6;
+	public static final int CenterSourceThreePieceShoot = 7;
+
+
+>>>>>>> Stashed changes
 
 
 	private final AllianceSelection allianceSelection;
@@ -40,7 +64,15 @@ public class AutoSelection {
 
 		// auto selections
 		autoChooser.setDefaultOption("None", NONE);
+<<<<<<< Updated upstream
 		
+=======
+		autoChooser.addOption("CenterTwoPieceShoot", CenterTwoPieceShoot);
+		autoChooser.addOption("SourceTwoPieceShoot", SourceTwoPieceShoot);
+		autoChooser.addOption("AmpTwoPieceShoot", AmpTwoPieceShoot);
+		autoChooser.addOption("AmpThreePieceShoot", AmpThreePieceShoot);
+		autoChooser.addOption("OnePieceShoot", shootOne);
+>>>>>>> Stashed changes
 		
 
 	
@@ -78,7 +110,46 @@ public class AutoSelection {
 			autonomousCommand = new DriveResetPose(180, false, driveTrain, log);
 		}
 
+<<<<<<< Updated upstream
         if (autonomousCommand == null) {
+=======
+		if(autoPlan == test){
+			log.writeLogEcho(true, "AutoSelect", "run Test");
+			autonomousCommand = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
+		}
+
+		if(autoPlan == shootOne){
+			log.writeLogEcho(true, "AutoSelect", "run One Piece Shoot");
+			autonomousCommand = new ShootPiece(shooter, feeder, robotState, log);
+		}
+
+		else if(autoPlan == CenterTwoPieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Center Two Piece Shoot");
+			autonomousCommand = new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == SourceTwoPieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Source Two Piece Shoot");
+			autonomousCommand = new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == AmpTwoPieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Amp Two Piece Shoot");
+			autonomousCommand = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == CenterSourceThreePieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Source Center Three Piece Shoot");
+			autonomousCommand = new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == AmpThreePieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Amp Three Piece Shoot");
+			autonomousCommand = new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+        else if (autonomousCommand == null) {
+>>>>>>> Stashed changes
 			log.writeLogEcho(true, "AutoSelect", "No autocommand found");
 			autonomousCommand = new WaitCommand(1);
 		}
