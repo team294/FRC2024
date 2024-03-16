@@ -43,7 +43,11 @@ public class SourceCenterThreePieceShoot extends SourceTwoPieceShoot {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      
+      new ConditionalCommand(
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartBlue.value], driveTrain, log), 
+          () -> alliance.getAlliance() == Alliance.Red
+      ),
       new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
@@ -52,6 +56,11 @@ public class SourceCenterThreePieceShoot extends SourceTwoPieceShoot {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
+      ),
+      new ConditionalCommand(
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartBlue.value], driveTrain, log), 
+          () -> alliance.getAlliance() == Alliance.Red
       ),
       new ShootPiece(shooter, feeder, robotState, log)
     );
