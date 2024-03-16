@@ -6,22 +6,28 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import frc.robot.Constants.CoordType;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.StopType;
 import frc.robot.commands.*;
+import frc.robot.commands.Autos.*;
 import frc.robot.commands.Sequences.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
+import frc.robot.utilities.BCRRobotState.State;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,11 +65,11 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    configureButtonBindings(); // configure button bindings
-    // configureShuffleboard();  configure shuffleboard
+    configureButtonBindings();
+    configureShuffleboard();
 
-    driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
-    // driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
+    // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
+    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
 
   }
 
@@ -77,11 +83,13 @@ public class RobotContainer {
     configureXboxButtons(); // configure xbox controller
     configureJoystickButtons(); // configure joysticks
     configureCopanel(); // configure copanel
-
-    configureSmartDashboard();
+    configureTriggers();
   }
 
-  private void configureSmartDashboard() {
+  /**
+   * Configures Shuffleboard for the robot
+   */
+  private void configureShuffleboard() {
     // Intake commands
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
@@ -107,12 +115,45 @@ public class RobotContainer {
     SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
+    
+    SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
+    SmartDashboard.putData("Source Start to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log));
+    SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log));
+
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
     SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, robotState, log));
     SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, feeder, robotState, log));
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
+
+    // Autos
+    SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Amp Two Piece Shoot", new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Center Three Piece Shoot", new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+
+
+  }
+
+  /**
+   * Creates triggers needed for the robot.
+   */
+  private void configureTriggers(){
+    // Trigger to turn off intaking when a piece is detected in the feeder.
+    // Note that this trigger will only turn off intaking if the robot is
+    // currently in the INTAKE_TO_FEEDER state; otherwise, it does nothing.
+    Trigger intakeStopTrigger = new Trigger(()-> feeder.isPiecePresent() && DriverStation.isTeleopEnabled());
+    intakeStopTrigger.onTrue(
+      new ConditionalCommand(
+        new StopIntakingSequence(feeder, intake, robotState, log),
+        new WaitCommand(0.01), 
+        () -> robotState.getState() == State.INTAKE_TO_FEEDER)      
+      );
   }
 
   /**
@@ -191,7 +232,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelection.getAutoCommand(driveTrain, log);
+    return autoSelection.getAutoCommand(intake, shooter, feeder, driveTrain, trajectoryCache, robotState, log);
   }
 
 
@@ -282,6 +323,8 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
+
+    
   }
 
   /**

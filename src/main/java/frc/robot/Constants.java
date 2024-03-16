@@ -96,7 +96,7 @@ public final class Constants {
 
     public static final class RobotDimensions {
       // Drivebase adjustment for path-of-wheel diameter when turning in place
-      private static final double DrivetrainAdjustmentFactor = 1.000;       // TODO CALIBRATE
+      private static final double DrivetrainAdjustmentFactor = 1.011;       // 1.011 CALIBRATED
       // left to right distance between the drivetrain wheels; should be measured from center to center
       public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.61595 * DrivetrainAdjustmentFactor;      // 0.61595m CALIBRATED.  Competition bot CAD = 24.25" = 0.61595m. 80% bot CAD = 0.60325m, calibrated = 0.626m.
       // front-back distance between the drivetrain wheels; should be measured from center to center
@@ -119,23 +119,30 @@ public final class Constants {
       // and ensures that the robot travels in the requested direction.  So, use min value of all 4 motors,
       // and further derate (initial test by 5%) to account for some battery droop under heavy loads.
       // Max speed measured values x/x/2024:  All 4 motors are between 4.6 an 4.7 meters/sec.  So use 4.5 as a conservative value
-      public static final double kMaxSpeedMetersPerSecond = 4.5;          // TODO NOT CALIBRATED
+      public static final double kMaxSpeedMetersPerSecond = 4.5;          // CALIBRATED
       public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;
       public static final double kNominalSpeedMetersPerSecond = 0.5*kMaxSpeedMetersPerSecond;
       // Max acceleration measured x/x/2024 (with full robot weight):  Average ~11 m/sec^2.  Keep value at 10.0 for now.
-      public static final double kMaxAccelerationMetersPerSecondSquare = 10; // TODO NOT CALIBRATED
+      public static final double kMaxAccelerationMetersPerSecondSquare = 10; // TODO NOT CALIBRATED.  Max = 30 m/s^2 (not full robot weight)
       public static final double kFullAccelerationMetersPerSecondSquare = 0.9 * kMaxAccelerationMetersPerSecondSquare;
       public static final double kNominalAccelerationMetersPerSecondSquare = 3.5; // TODO value from last year
-      public static final double kMaxRetractingAccelerationMetersPerSecondSquare = 2; // TODO value from last year - not used in code currently
       public static final double kMaxTurningRadiansPerSecond = 11.0;  // TODO NOT CALIBRATED
       public static final double kNominalTurningRadiansPerSecond = Math.PI;
       public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 35.0;            // TODO NOT CALIBRATED - not used in code currently
       public static final double kNominalAngularAccelerationRadiansPerSecondSquared = Math.PI;
-      public static final double kVDriveAvg = 0.1740; // init cal done.  TODO Calibrate.  0.2034 from 2023 robot.  In % output per meters per second.
-      public static final double kVmFL = 1.0182;      // init cal done.  TODO Calibrate.  kV modifier for FL drive motor
-      public static final double kVmFR = 0.9826;      // init cal done.  TODO Calibrate.  kV modifier for FR drive motor
-      public static final double kVmBL = 1.0102;      // init cal done.  TODO Calibrate.  kV modifier for BL drive motor
-      public static final double kVmBR = 0.9889;      // init cal done.  TODO Calibrate.  kV modifier for BR drive motor
+
+      public static final double kVDriveAvg = 0.1740; // 0.1740  CALIBRATED.  0.2034 from 2023 robot.  In % output per meters per second.
+      private static final double kVmFLrel = 1.0182;      // init cal 1.0182.  CALIBRATED.  kV modifier for FL drive motor
+      private static final double kVmFRrel = 0.9826;      // init cal 0.9826.  CALIBRATED.  kV modifier for FR drive motor
+      private static final double kVmBLrel = 1.0102;      // init cal 1.0102.  CALIBRATED.  kV modifier for BL drive motor
+      private static final double kVmBRrel = 0.9889;      // init cal 0.9889.  CALIBRATED.  kV modifier for BR drive motor
+      // Normalize kVm constants
+      private static double kVmAvg = (kVmFLrel + kVmFRrel + kVmBLrel + kVmBRrel)/4.0;
+      public static final double kVmFL = kVmFLrel / kVmAvg;
+      public static final double kVmFR = kVmFRrel / kVmAvg;
+      public static final double kVmBL = kVmBLrel / kVmAvg;
+      public static final double kVmBR = kVmBRrel / kVmAvg;
+
 
       public static final double kADrive = 0.0;
       public static final double kADriveToPose = 0.050;  // formerly 0.060  CALIBRATED.  In % output per meters per second squared.
@@ -294,10 +301,16 @@ public final class Constants {
       // and -90 deg is with the CG of the wrist resting downward.
       public static double revEncoderOffsetAngleWrist = 0;    // 5.0 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
 
-      public static final double kP = 0.5;   // Calc 0.72 from 2023 TODO CALIBRATE. kP value (0.03).  kP = (desired-output-volts) / (error-in-encoder-rotations)
+      public static final double kP = 0.3;   // 0.3 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
       public static final double kD = 0.0; 
-      public static final double kG = 0.0;   // 0.1 initially, TODO CALIBRATE.  2023 was 0.03.  Feed foward percent-out to add to hold arm horizontal (0 deg)
+      public static final double kG = 0.14;   // 0.14 CALIBRATED.  Feed foward voltage to add to hold arm horizontal (0 deg)
+      public static final double kS = 0.077;   // 0.077 CALIBRATED
+      public static final double kV = 0.114;   // 0.114 CALIBRATED
+
+      public static final double MMCruiseVelocity = 40.0;   // 40.0 Calibrated.  Max trapezoid velocity in motor rps.
+      public static final double MMAcceleration = MMCruiseVelocity/0.35;    // Calibrated.  Accel in 0.35 sec.  Max trapezoid acceleration in motor rot/sec^2.  MMVel/MMAccel = (# seconds to full velocity)
+      public static final double MMJerk = MMAcceleration/0.05;  // Calibrated.  Jerk in 0.05 sec.  Max trapezoid jerk in motor rot/sec^3.  MMAccel/MMJerk = (# seconds to full accel)
 
       // Wrist regions
       public enum WristRegion {
@@ -320,7 +333,7 @@ public final class Constants {
       // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
       public enum WristAngle {
           lowerLimit(-3.0),      // CALIBRATED
-          upperLimit(105.0);       // CALIBRATED
+          upperLimit(65.0);       // CALIBRATED
 
           @SuppressWarnings({"MemberName", "PMD.SingularField"})
           public final double value;

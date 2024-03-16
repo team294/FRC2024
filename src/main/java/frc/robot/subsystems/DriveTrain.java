@@ -32,6 +32,7 @@ import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.utilities.*;
 
+import org.opencv.features2d.FlannBasedMatcher;
 // Vision imports
 import org.photonvision.EstimatedRobotPose;
 import java.util.Optional;
@@ -289,10 +290,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    */
   public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop) {
 
-    
-
+    // Desaturate wheel speeds to a little below max speed.  It takes a while to accelerate to
+    // max speed, so reducing the max will help movement accuracy.
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredStates, SwerveConstants.kMaxSpeedMetersPerSecond);
+        desiredStates, SwerveConstants.kFullSpeedMetersPerSecond);
 
     // Convert states to chassisspeeds
     ChassisSpeeds chassisSpeeds = kDriveKinematics.toChassisSpeeds(desiredStates);
