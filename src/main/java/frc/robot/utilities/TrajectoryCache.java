@@ -51,7 +51,6 @@ public class TrajectoryCache {
         TrajectoryType(int value) { this.value = value; }
     }
 
-    }
 
     /**
      * A trajectory with initial and final facing for the robot
