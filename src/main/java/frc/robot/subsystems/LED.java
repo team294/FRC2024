@@ -107,6 +107,16 @@ public class LED extends SubsystemBase {
 
   /**
    * Set the pattern and resizes it to fit the LED strip
+   * @param color the color to use
+   * @param segment the segment to use
+   */
+  public void setColor(Color color, LEDSegmentRange segment) {
+    Color[] pattern = {color};
+    setPattern(pattern, segment);
+  }
+
+  /**
+   * Set the pattern and resizes it to fit the LED strip
    * @param pattern the pattern to use
    * @param segment the segment to use
    */
@@ -118,6 +128,24 @@ public class LED extends SubsystemBase {
     }
   }
 
+  public void setPattern(Color[] pattern, Color edgeColor, LEDSegmentRange segment) {
+    if (pattern.length == 0) return;
+
+    setLEDs(edgeColor, segment.index, 2);
+    setLEDs(edgeColor, segment.count + segment.index-1, 2);
+    
+    for (int indexLED = 2, indexPattern = 0; indexLED < segment.count-2; indexLED++, indexPattern++) {
+      if (indexPattern >= pattern.length) indexPattern = 0;
+      setLEDs(pattern[indexPattern], segment.index + indexLED);
+    }
+  }
+
+  /**
+   * Sets the animation for a given certain led segment
+   * @param animation animation to display
+   * @param segment segment to play animation on
+   * @param loop whether the animation repeats
+   */
   public void setAnimation(Color[][] animation, LEDSegmentRange segment, boolean loop) {
     if (segments.containsKey(segment)) {
       segments.get(segment).setAnimation(animation, loop);
@@ -228,10 +256,16 @@ public class LED extends SubsystemBase {
   @Override
   public void periodic() {
     // Every scheduler run, update the animations for all segments
-    if(RobotPreferences.getStickyFaults()) segments.get(LEDSegmentRange.Strip1).setEdge(Color.kRed, 2);
+    if(RobotPreferences.getStickyFaults()) segments.get(LEDSegmentRange.Strip1).setEdgeColor(Color.kRed);
+    else segments.get(LEDSegmentRange.Strip1).setEdgeColor(Color.kBlack);
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       // Display this segments
-      setPattern(segments.get(segmentKey).getCurrentFrame(), segmentKey);
+      LEDSegment segment = segments.get(segmentKey);
+      if(segment.getEdgeColor() != Color.kBlack && segment.getEdgeColor() != null){
+        setPattern(segments.get(segmentKey).getCurrentFrame(), segment.getEdgeColor(), segmentKey);
+      } else {
+        setPattern(segments.get(segmentKey).getCurrentFrame(), segmentKey);
+      }
       // Move to the next frame
       shouldClear = segments.get(segmentKey).advanceFrame();
       if (shouldClear) {

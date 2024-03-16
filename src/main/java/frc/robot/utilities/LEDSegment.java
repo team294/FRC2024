@@ -8,6 +8,7 @@ public class LEDSegment {
     private int index, count, frame;
     private boolean loop;
     private Color[][] animation;
+    private Color edgeColor;
 
     /**
      * Create the LED segment 
@@ -22,6 +23,7 @@ public class LEDSegment {
         this.frame = 0;
         this.loop = loop;
         this.animation = animation;
+        this.edgeColor = Color.kBlack;
     }
 
     /**
@@ -45,15 +47,13 @@ public class LEDSegment {
         this.loop = loop;
     }
 
-    public void setEdge(Color color, int width){
-        for(Color[] pattern : animation){
-            for(int i = 0; i < width; i++){
-                pattern[i] = color;
-                pattern[pattern.length-(i+1)] = color;
-            }
-        }
+    public void setEdgeColor(Color color){
+        edgeColor = color;
     }
 
+    public Color getEdgeColor(){
+        return edgeColor;
+    }
 
     public Color[] getCurrentFrame() {
         if (isFinished()) return Constants.LEDConstants.Patterns.noPatternStatic;
