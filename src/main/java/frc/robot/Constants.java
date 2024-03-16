@@ -301,10 +301,16 @@ public final class Constants {
       // and -90 deg is with the CG of the wrist resting downward.
       public static double revEncoderOffsetAngleWrist = 0;    // 5.0 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
 
-      public static final double kP = 0.5;   // Calc 0.72 from 2023 TODO CALIBRATE. kP value (0.03).  kP = (desired-output-volts) / (error-in-encoder-rotations)
+      public static final double kP = 0.3;   // 0.3 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
       public static final double kD = 0.0; 
-      public static final double kG = 0.0;   // 0.1 initially, TODO CALIBRATE.  2023 was 0.03.  Feed foward percent-out to add to hold arm horizontal (0 deg)
+      public static final double kG = 0.14;   // 0.14 CALIBRATED.  Feed foward voltage to add to hold arm horizontal (0 deg)
+      public static final double kS = 0.077;   // 0.077 CALIBRATED
+      public static final double kV = 0.114;   // 0.114 CALIBRATED
+
+      public static final double MMCruiseVelocity = 40.0;   // 40.0 Calibrated.  Max trapezoid velocity in motor rps.
+      public static final double MMAcceleration = MMCruiseVelocity/0.35;    // Calibrated.  Accel in 0.35 sec.  Max trapezoid acceleration in motor rot/sec^2.  MMVel/MMAccel = (# seconds to full velocity)
+      public static final double MMJerk = MMAcceleration/0.05;  // Calibrated.  Jerk in 0.05 sec.  Max trapezoid jerk in motor rot/sec^3.  MMAccel/MMJerk = (# seconds to full accel)
 
       // Wrist regions
       public enum WristRegion {

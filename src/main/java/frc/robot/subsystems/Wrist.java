@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -46,6 +47,7 @@ public class Wrist extends SubsystemBase implements Loggable{
 	private TalonFXConfiguration wristMotor2Config;
 	private VoltageOut wristVoltageControl = new VoltageOut(0.0);
   private PositionVoltage wristPositionControl = new PositionVoltage(0.0);
+  private MotionMagicVoltage wristMMVoltageControl = new MotionMagicVoltage(0.0);
   
 
 	// Variables for motor signals and sensors
@@ -104,8 +106,8 @@ public class Wrist extends SubsystemBase implements Loggable{
     // Configure encoder on motor 1 and 2
 		wristMotor1Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     wristMotor1Config.ClosedLoopGeneral.ContinuousWrap = false;
-    // wristMotor1Config.Feedback.SensorToMechanismRatio = 1.0;
-    // wristMotor1Config.Feedback.FeedbackRotorOffset = 0.0;
+    // wristMotor1Config.Feedback.SensorToMechanismRatio = 1.0;       // Need to set for MotionMagic if using Phoenix kG!!!
+    // wristMotor1Config.Feedback.FeedbackRotorOffset = 0.0;          // Need to set for MotionMagic if using Phoenix kG!!!
     wristMotor2Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     wristMotor2Config.ClosedLoopGeneral.ContinuousWrap = false;
 
@@ -113,18 +115,25 @@ public class Wrist extends SubsystemBase implements Loggable{
     // Note:  In Phoenix 6, slots are selected in the ControlRequest (ex. PositionVoltage.Slot)
     wristPositionControl.Slot = 0;
     wristPositionControl.OverrideBrakeDurNeutral = true;
+    wristMMVoltageControl.Slot = 0;
+    wristMMVoltageControl.OverrideBrakeDurNeutral = true;
     wristMotor1Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
 		wristMotor1Config.Slot0.kI = 0.0;
 		wristMotor1Config.Slot0.kD = 0.0;
+		wristMotor1Config.Slot0.kS = kS;
+		wristMotor1Config.Slot0.kV = kV;
+		wristMotor1Config.Slot0.kA = 0.0;
+		// wristMotor1Config.Slot0.kG = kG;                   // We don't have a 1:1 encoder right now, so don't use Phoenix kG.  Use kG in Arbitrary Feed Forward instead
+		// wristMotor1Config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;       // Also see SensorToMechanismRatio and FeedbackRotorOffset above
 
-    wristMotor2Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
-		wristMotor2Config.Slot0.kI = 0.0;
-		wristMotor2Config.Slot0.kD = 0.0;
-		// wristMotor1Config.Slot0.kS = 0.0;
-		// wristMotor1Config.Slot0.kV = 0.0;
-		// wristMotor1Config.Slot0.kA = 0.0;
-		// wristMotor1Config.Slot0.kG = 0.0;
-		// wristMotor1Config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    //set Magic Motion Settings
+		wristMotor1Config.MotionMagic.MotionMagicCruiseVelocity = MMCruiseVelocity;
+		wristMotor1Config.MotionMagic.MotionMagicAcceleration = MMAcceleration;
+		wristMotor1Config.MotionMagic.MotionMagicJerk = MMJerk;
+
+    // wristMotor2Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
+		// wristMotor2Config.Slot0.kI = 0.0;
+		// wristMotor2Config.Slot0.kD = 0.0;
 
  		// Apply configuration to the wrist motor 1 and 2 
 		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
@@ -194,7 +203,8 @@ public class Wrist extends SubsystemBase implements Loggable{
    * @return true = position control, false = direct percent output control
    */
   public boolean isWristMotorPositionControl() {
-    return wrist1ControlMode.refresh().getValue() == ControlModeValue.PositionVoltage;
+    return (wrist1ControlMode.refresh().getValue() == ControlModeValue.PositionVoltage) || 
+            (wrist1ControlMode.refresh().getValue() == ControlModeValue.MotionMagicVoltage);
   }
 
   /**
@@ -210,9 +220,12 @@ public class Wrist extends SubsystemBase implements Loggable{
       // WristRegion curRegion = getRegion(getWristAngle());
       // Check and apply interlocks      
 
-      // Phoenix6 PositionVoltage control:  Position is in rotations, FeedFoward is in Volts
-      wristMotor1.setControl(wristPositionControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
-                            .withFeedForward(kG * Math.cos(safeAngle*Math.PI/180.0) * voltageCompSaturation));
+      // Phoenix6 PositionVoltage control:  Position is in rotor rotations, FeedFoward is in Volts
+      // wristMotor1.setControl(wristPositionControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
+      //                       .withFeedForward(kG * Math.cos(safeAngle*Math.PI/180.0) ));
+      // Phoenix6 MotionMagicVoltage control:  Position is in rotor rotations, FeedFoward is in Volts
+      wristMotor1.setControl(wristMMVoltageControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
+                            .withFeedForward(kG * Math.cos(safeAngle*Math.PI/180.0) ));
 
       log.writeLog(false, subsystemName, "Set angle", "Desired angle", angle, "Set angle", safeAngle);
 
