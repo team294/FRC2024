@@ -201,7 +201,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(-33)), 
             new Rotation2d(Math.toRadians(0)), 
             calcTrajectory("Amp Start to Close Note Red", .8, .4, false, 
-            new Pose2d(3.1, 1.2, new Rotation2d(Math.toRadians(-147))), 
+            new Pose2d(3.1, 1.2, new Rotation2d(Math.toRadians(147))), 
             List.of(
                 new Translation2d(2.2, 2.7)
             ), 
@@ -212,7 +212,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(33)), 
             new Rotation2d(Math.toRadians(0)), 
             calcTrajectory("Amp Start to Close Note Blue", .8, .4, false, 
-            new Pose2d(3.1, 7.0, new Rotation2d(Math.toRadians(147))), 
+            new Pose2d(3.1, 7.0, new Rotation2d(Math.toRadians(-147))), 
             List.of(
                 new Translation2d(2.2, 5.5)
             ), 
@@ -223,7 +223,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(0)), 
             new Rotation2d(Math.toRadians(33)), 
             calcTrajectory("Amp Start to Close Note Red", .8, .4, false, 
-            new Pose2d(3.1, 3.2, new Rotation2d(Math.toRadians(-147))), 
+            new Pose2d(3.1, 3.2, new Rotation2d(Math.toRadians(147))), 
             List.of(
                 new Translation2d(2.1, 3.8)
             ), 
@@ -234,7 +234,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(0)), 
             new Rotation2d(Math.toRadians(-33)), 
             calcTrajectory("Amp Start to Close Note Red", .8, .4, false, 
-            new Pose2d(3.1, 3.2, new Rotation2d(Math.toRadians(147))), 
+            new Pose2d(3.1, 3.2, new Rotation2d(Math.toRadians(-147))), 
             List.of(
                 new Translation2d(2.1, 4.4)
             ), 
