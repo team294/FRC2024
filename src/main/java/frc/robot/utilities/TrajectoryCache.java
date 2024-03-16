@@ -43,7 +43,14 @@ public class TrajectoryCache {
         driveFromAmpToCenterRed(13),
         driveFromAmpToCenterBlue(14),
         driveFromAmpNoteToCenterStartRed(15),
-        driveFromAmpNoteToCenterStartRed(16);
+        driveFromAmpNoteToCenterStartBlue(16);
+
+
+        @SuppressWarnings({"MemberName", "PMD.SingularField"})
+        public final int value;
+        TrajectoryType(int value) { this.value = value; }
+    }
+
     }
 
     /**
