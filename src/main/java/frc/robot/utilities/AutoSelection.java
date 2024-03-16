@@ -1,14 +1,8 @@
 package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.CoordType;
@@ -35,7 +29,8 @@ public class AutoSelection {
 	public static final int SourceTwoPieceShoot = 4;
 	public static final int AmpTwoPieceShoot = 5;
 	public static final int AmpThreePieceShoot = 6;
-	public static final int CenterSourceThreePieceShoot = 7;
+	public static final int CenterAmpThreePieceShoot = 7;
+	public static final int CenterAmpSourceFourPieceShoot = 8;
 
 
 
@@ -59,6 +54,8 @@ public class AutoSelection {
 		autoChooser.addOption("AmpTwoPieceShoot", AmpTwoPieceShoot);
 		autoChooser.addOption("AmpThreePieceShoot", AmpThreePieceShoot);
 		autoChooser.addOption("OnePieceShoot", shootOne);
+		autoChooser.addOption("CenterThreePieceShoot", CenterAmpThreePieceShoot);
+		autoChooser.addOption("CenterFourPiece", CenterAmpSourceFourPieceShoot);
 		
 
 	
@@ -121,14 +118,19 @@ public class AutoSelection {
 			autonomousCommand = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
-		else if(autoPlan == CenterSourceThreePieceShoot){
-			log.writeLogEcho(true, "AutoSelect", "run Source Center Three Piece Shoot");
+		else if(autoPlan == CenterAmpThreePieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Amp Center Three Piece Shoot");
 			autonomousCommand = new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == AmpThreePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Amp Three Piece Shoot");
 			autonomousCommand = new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == CenterAmpSourceFourPieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Center Four Piece");
+			autonomousCommand = new CenterFourNearNoteShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
         else if (autonomousCommand == null) {
