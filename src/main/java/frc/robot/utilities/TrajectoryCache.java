@@ -220,24 +220,6 @@ public class TrajectoryCache {
             new Pose2d(3.1, 5.0, new Rotation2d(0))
             ));
 
-        cache[TrajectoryType.driveCenterAmpNoteRed.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(0)), 
-            new Rotation2d(Math.toRadians(-33)), 
-            calcTrajectory("Amp Close Amp Note Back To Center", .8, .4, false, 
-            new Pose2d(3.1, 1.2, new Rotation2d(Math.toRadians(-33))), 
-            List.of(), 
-            new Pose2d(1.5, 3.2, new Rotation2d(0))
-            ));
-
-        cache[TrajectoryType.driveCenterAmpNoteBlue.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(0)), 
-            new Rotation2d(Math.toRadians(33)), 
-            calcTrajectory("Center Start to Amp Note Blue", .8, .4, false, 
-            new Pose2d(1.5, 5.0, new Rotation2d(Math.toRadians(33))), 
-            List.of(), 
-            new Pose2d(3.1, 7.0, new Rotation2d(33))
-            ));
-
     }
 
 
