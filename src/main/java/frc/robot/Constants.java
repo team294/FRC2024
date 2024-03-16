@@ -356,8 +356,8 @@ public final class Constants {
       IDLE_NO_PIECE(255, 255, 255), // White    (driving around with no piece)
       IDLE_WITH_PIECE(255, 30, 0), // Orange    (have piece but can't shoot yet)
       INTAKE_NO_PIECE(0, 0, 255), // Blue       (intake running)
-      SHOOT_READY(0, 255, 0), // Green          (shot will be on target)
-      STICKY_FAULTS(255, 0, 0); //Red           (errors)
+      SHOOTING(0, 255, 0),       // Green       (shot ready)
+      TARGETING_SPEAKER(255, 255, 0); // Yellow (targeting speaker)
 
       // last 10 seconds, flash
 

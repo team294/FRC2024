@@ -288,7 +288,6 @@ public class RobotContainer {
     // Check for CAN bus error.  This is to prevent the issue that caused us to be eliminated in 2020!
     if (driveTrain.canBusError()) {
       RobotPreferences.recordStickyFaults("CAN Bus", log);
-      new RobotStateSet(BCRRobotState.State.STICKY_FAULTS, robotState, log);
     }
     // boolean error = true;  
     // if (error == false) {

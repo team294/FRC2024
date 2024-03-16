@@ -17,7 +17,7 @@ public class BCRRobotState {
         IDLE_WITH_PIECE,         // Have piece, not shooting
         INTAKING,                // Intake running
         SHOOTING,                // Robot is in the process of shooting a piece
-        STICKY_FAULTS            // Errors
+        TARGETING_SPEAKER        // Robot is aiming @ speaker
     }
 
     // The current State of the robot

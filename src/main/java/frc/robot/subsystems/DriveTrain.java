@@ -63,9 +63,6 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   private double yawZero = 0.0;
   private double pitchZero = 0.0;
 
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", log);
-  private final BCRRobotState robotState = new BCRRobotState(led);                // Need this to alert if gyro is not reading
-
   // variables to help calculate angular velocity for turnGyro
   // private double prevAng; // last recorded gyro angle
   // private double currAng; // current recorded gyro angle
@@ -475,7 +472,6 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
       if(!isGyroReading()) {
         RobotPreferences.recordStickyFaults("Gyro", log);
-        new RobotStateSet(BCRRobotState.State.STICKY_FAULTS, robotState, log);
       }
 
       // Update data on SmartDashboard
