@@ -21,10 +21,6 @@ import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.Autos.*;
 import frc.robot.commands.Sequences.ShootPiece;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
 
 
 /**
@@ -60,6 +56,7 @@ public class AutoSelection {
 		autoChooser.setDefaultOption("None", NONE);
 		autoChooser.addOption("CenterTwoPieceShoot", CenterTwoPieceShoot);
 		autoChooser.addOption("SourceTwoPieceShoot", SourceTwoPieceShoot);
+		autoChooser.addOption("CenterSourceThreePieceShoot", CenterSourceThreePieceShoot);
 		autoChooser.addOption("AmpTwoPieceShoot", AmpTwoPieceShoot);
 		autoChooser.addOption("AmpThreePieceShoot", AmpThreePieceShoot);
 		autoChooser.addOption("OnePieceShoot", shootOne);
@@ -84,7 +81,7 @@ public class AutoSelection {
 	 * @return the command to run
 	 */
 
-	public Command getAutoCommand(DriveTrain driveTrain, FileLog log) {
+	public Command getAutoCommand(Intake intake, Shooter shooter, Feeder feeder, DriveTrain driveTrain, TrajectoryCache trajectoryCache, BCRRobotState robotState, FileLog log) {
 		Command autonomousCommand = null;
 
 		// Get parameters from Shuffleboard
@@ -94,7 +91,7 @@ public class AutoSelection {
 
 		double waitTime = SmartDashboard.getNumber("Autonomous delay", 0);
 		waitTime = MathUtil.clamp(waitTime, 0, 15);		// make sure autoDelay isn't negative and is only active during auto
-    if (autonomousCommand == null) {
+    	if (autonomousCommand == null) {
 
 		if (autoPlan == NONE) {
 			// Starting position = facing drivers
@@ -143,7 +140,9 @@ public class AutoSelection {
 			autonomousCommand = new WaitCommand(1);
 		}
 
-		return autonomousCommand;
+		}
+	return autonomousCommand;
+
 	}
 
 }

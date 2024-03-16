@@ -49,7 +49,7 @@ public class RobotContainer {
 
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
-  private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
+  private final AutoSelection autoSelection = new AutoSelection(driveTrain, feeder, intake, shooter, wrist, trajectoryCache, allianceSelection, log);
   private final BCRRobotState robotState = new BCRRobotState();
 
   // Define controllers
