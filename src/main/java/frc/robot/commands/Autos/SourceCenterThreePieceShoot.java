@@ -38,11 +38,12 @@ public class SourceCenterThreePieceShoot extends SourceTwoPieceShoot {
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteBlue.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterAmpNoteRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterAmpNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
+      
       new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),

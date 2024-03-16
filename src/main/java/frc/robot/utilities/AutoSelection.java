@@ -12,12 +12,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.CoordType;
-<<<<<<< Updated upstream
-import frc.robot.Constants.SwerveConstants;
-import frc.robot.Constants.TrajectoryConstants;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
-=======
 import frc.robot.Constants.StopType;
 import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
@@ -27,7 +21,6 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
->>>>>>> Stashed changes
 
 
 /**
@@ -36,8 +29,6 @@ import frc.robot.subsystems.Shooter;
 public class AutoSelection {
 
 	public static final int NONE = 0;
-<<<<<<< Updated upstream
-=======
 	public static final int test = 1;
 	public static final int shootOne = 2;
 	public static final int CenterTwoPieceShoot = 3;
@@ -47,7 +38,6 @@ public class AutoSelection {
 	public static final int CenterSourceThreePieceShoot = 7;
 
 
->>>>>>> Stashed changes
 
 
 	private final AllianceSelection allianceSelection;
@@ -64,15 +54,11 @@ public class AutoSelection {
 
 		// auto selections
 		autoChooser.setDefaultOption("None", NONE);
-<<<<<<< Updated upstream
-		
-=======
 		autoChooser.addOption("CenterTwoPieceShoot", CenterTwoPieceShoot);
 		autoChooser.addOption("SourceTwoPieceShoot", SourceTwoPieceShoot);
 		autoChooser.addOption("AmpTwoPieceShoot", AmpTwoPieceShoot);
 		autoChooser.addOption("AmpThreePieceShoot", AmpThreePieceShoot);
 		autoChooser.addOption("OnePieceShoot", shootOne);
->>>>>>> Stashed changes
 		
 
 	
@@ -110,9 +96,6 @@ public class AutoSelection {
 			autonomousCommand = new DriveResetPose(180, false, driveTrain, log);
 		}
 
-<<<<<<< Updated upstream
-        if (autonomousCommand == null) {
-=======
 		if(autoPlan == test){
 			log.writeLogEcho(true, "AutoSelect", "run Test");
 			autonomousCommand = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
@@ -149,7 +132,6 @@ public class AutoSelection {
 		}
 
         else if (autonomousCommand == null) {
->>>>>>> Stashed changes
 			log.writeLogEcho(true, "AutoSelect", "No autocommand found");
 			autonomousCommand = new WaitCommand(1);
 		}
