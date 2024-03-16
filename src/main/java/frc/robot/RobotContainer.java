@@ -46,13 +46,16 @@ public class RobotContainer {
   private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);
   private final Feeder feeder = new Feeder(log);
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", log);
   private final Wrist wrist = new Wrist(log);
 
   // Define other utilities
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
   private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
-  private final BCRRobotState robotState = new BCRRobotState(led);
+  private final BCRRobotState robotState = new BCRRobotState();
+  
+  // Is a subsystem, but requires a utility
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", robotState, log);
+
 
   // Define controllers
   // private final Joystick xboxController = new Joystick(OIConstants.usbXboxController); //assuming usbxboxcontroller is int

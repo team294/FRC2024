@@ -13,19 +13,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.BCRColor;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LEDConstants.*;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.LEDSegment;
+import frc.robot.utilities.RobotPreferences;
 
 
 public class LED extends SubsystemBase {
   private final FileLog log;
   private final CANdle candle;
   private String subsystemName;
+  private BCRRobotState robotState;
   private BCRRobotState.State currentState;
+  private boolean stickyFault;
+  private boolean shouldClear;
 
   // LED Segments
   //private LEDSegment CANdle;
@@ -37,12 +42,15 @@ public class LED extends SubsystemBase {
    * @param subsystemName
    * @param log
    */
-  public LED(int CANPort, String subsystemName, FileLog log) {
+  public LED(int CANPort, String subsystemName, BCRRobotState robotState, FileLog log) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
+    this.robotState = robotState;
     this.currentState = BCRRobotState.State.IDLE_NO_PIECE;
+    this.stickyFault = false;
+    this.shouldClear = false;
 
     // Create the LED segments
     LEDSegment CANdle = new LEDSegment(
@@ -194,18 +202,11 @@ public class LED extends SubsystemBase {
     candle.setLEDs(color.r, color.g, color.b, 0, index, count);
   }
 
-  public void updateStateAll(BCRRobotState.State state) {
+  public void updateStateLEDs(LEDSegmentRange segment) {
     // Store the state for periodics
-    currentState = state;
-    // Update the LEDs now
-    updateStateLEDs(LEDSegmentRange.Full, state);
-  }
-
-  public void updateStateLEDs(LEDSegmentRange segment, BCRRobotState.State state) {
-    // Store the state for periodics
-    currentState = state;
+    currentState = robotState.getState();
     // Set LEDs to match the state, as defined in Constants.BCRColor
-    switch (state) {
+    switch (currentState) {
     case IDLE_NO_PIECE:
       setLEDs(BCRColor.IDLE_NO_PIECE, segment.index, segment.count);
       break;
@@ -227,13 +228,14 @@ public class LED extends SubsystemBase {
   @Override
   public void periodic() {
     // Every scheduler run, update the animations for all segments
+    if(RobotPreferences.getStickyFaults()) segments.get(LEDSegmentRange.Strip1).setEdge(Color.kRed, 2);
     for (LEDSegmentRange segmentKey : segments.keySet()) {
-      // Display this segment
+      // Display this segments
       setPattern(segments.get(segmentKey).getCurrentFrame(), segmentKey);
       // Move to the next frame
-      boolean shouldClear = segments.get(segmentKey).advanceFrame();
+      shouldClear = segments.get(segmentKey).advanceFrame();
       if (shouldClear) {
-        updateStateLEDs(segmentKey, currentState);
+        updateStateLEDs(segmentKey);
       }
     }
   }

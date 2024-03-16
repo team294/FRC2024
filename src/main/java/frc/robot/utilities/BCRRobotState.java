@@ -4,11 +4,6 @@
 
 package frc.robot.utilities;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.BCRColor;
-import frc.robot.Constants.LEDConstants.LEDSegmentRange;
-import frc.robot.subsystems.LED;
-
 /** A wrapper class for State objects (see state machine file) */
 public class BCRRobotState {
     /** The enum that keeps track of all possible states for the robot */
@@ -22,24 +17,18 @@ public class BCRRobotState {
 
     // The current State of the robot
     private State state;
-    // The LED subsystem
-    private LED led;
-
+    
     /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE
-     * @param led the LED subsystem to match color with state
     */
-    public BCRRobotState(LED led) {
-        this.led = led;
+    public BCRRobotState() {
         setState(State.IDLE_NO_PIECE);
     }
 
     /**
      * Creates a new BCRRobotState with the given initial State
      * @param state initial State
-     * @param led the LED subsystem to match color with state
      */
-    public BCRRobotState(State state, LED led) {
-        this.led = led;
+    public BCRRobotState(State state) {
         setState(state);
     }
 
@@ -54,6 +43,5 @@ public class BCRRobotState {
      */
     public void setState(State state) {
         this.state = state;
-        led.updateStateAll(this.state);
     }
 }

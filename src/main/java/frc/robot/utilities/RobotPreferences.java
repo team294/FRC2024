@@ -132,6 +132,10 @@ public class RobotPreferences {
         Preferences.setBoolean("problemExists", problemExists);
     }
 
+    public static boolean getStickyFaults(){
+        return problemExists;
+    }
+
     /**
      * Verifies that RobotPreferences is not empty (reset all preferences by accident)
      * @return true = preferences exist on robot

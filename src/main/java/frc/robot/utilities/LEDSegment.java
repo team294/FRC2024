@@ -45,6 +45,15 @@ public class LEDSegment {
         this.loop = loop;
     }
 
+    public void setEdge(Color color, int width){
+        for(Color[] pattern : animation){
+            for(int i = 0; i < width; i++){
+                pattern[i] = color;
+                pattern[pattern.length-(i+1)] = color;
+            }
+        }
+    }
+
 
     public Color[] getCurrentFrame() {
         if (isFinished()) return Constants.LEDConstants.Patterns.noPatternStatic;
