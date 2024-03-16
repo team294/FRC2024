@@ -212,10 +212,10 @@ public class LED extends SubsystemBase {
     case IDLE_WITH_PIECE:
       setLEDs(BCRColor.IDLE_WITH_PIECE, segment.index, segment.count);
       break;
-    case INTAKE_NO_PIECE:
+    case INTAKING:
       setLEDs(BCRColor.INTAKE_NO_PIECE, segment.index, segment.count);
       break;
-    case SHOOT_READY:
+    case SHOOTING:
       setLEDs(BCRColor.SHOOT_READY, segment.index, segment.count);
       break;
     case STICKY_FAULTS:

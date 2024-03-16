@@ -31,7 +31,7 @@ public class IntakePiece extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
-      new RobotStateSet(BCRRobotState.State.INTAKE_NO_PIECE, robotState, log),
+      new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log),
       new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
       );

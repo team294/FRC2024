@@ -157,7 +157,7 @@ public class RobotContainer {
       new ConditionalCommand(
         new StopIntakingSequence(feeder, intake, robotState, log),
         new WaitCommand(0.01), 
-        () -> robotState.getState() == State.INTAKE_NO_PIECE)      
+        () -> robotState.getState() == State.INTAKING)      
       );
   }
 
