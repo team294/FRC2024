@@ -188,19 +188,19 @@ public final class Constants {
       public static final double shooterGearRatio = 24.0/18.0;  // From CAD, shooter belt from motor to wheels = 24:18.  Turn ratio from motor pinion to shooter wheels.
 
       // PIDSVA for Top Shooter motor
-      public static final double ShooterTopkP = 0.5;          // TODO calibrate.  kP = (desired-output-volts) / (error-in-encoder-rps)
+      public static final double ShooterTopkP = 0.5;          // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rps)
       public static final double ShooterTopkI = 0.00;         // kI = (desired-output-volts) / (error-in-encoder-rps * s)
       public static final double ShooterTopkD = 0.0;          // kD = (desired-output-volts) / (error-in-encoder-rps/s)
-      public static final double ShooterTopkS = 0.061256;     // kS = (desired-output-volts)
-      public static final double ShooterTopkV = 0.118681;     // kV = (desired-output-volts) / (target-velocity-in-encoder-rps)
+      public static final double ShooterTopkS = 0.139;        // kS = (desired-output-volts)
+      public static final double ShooterTopkV = 0.1112;       // kV = (desired-output-volts) / (target-velocity-in-encoder-rps)
       public static final double ShooterTopkA = 0.0;          // kA = (desired-output-volts) / (target-accel-in-encoder-rot/sec^2)
       
       //PIDSVA for Bottom Shooter motor
-      public static final double ShooterBottomkP = 0.5;
+      public static final double ShooterBottomkP = 0.5;       // 0.5
       public static final double ShooterBottomkI = 0.00;
       public static final double ShooterBottomkD = 0.0;
-      public static final double ShooterBottomkS = 0.061256;  // V; old: 0.004, new: 0.125
-      public static final double ShooterBottomkV = 0.118681;  // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double ShooterBottomkS = 0.145;     // V; old: 0.004, new: 0.125
+      public static final double ShooterBottomkV = 0.1140;    // V * s / dist; old: 0.000155, new: 0.129166,
       public static final double ShooterBottomkA = 0.0;
 
       /*
