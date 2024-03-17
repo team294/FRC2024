@@ -27,14 +27,14 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class SourceCenterThreePieceShoot extends SourceTwoPieceShoot {
+public class CenterThreePieceShoot extends SourceTwoPieceShoot {
   /** Creates a new SourceCenterThreePieceShoot. */
-  public SourceCenterThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public CenterThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     super(intake, shooter, driveTrain, feeder, robotState, cache, alliance, log);
     addCommands(
-       new ShootPiece(shooter, feeder, robotState, log),
+      new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(

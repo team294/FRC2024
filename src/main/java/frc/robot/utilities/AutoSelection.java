@@ -97,12 +97,12 @@ public class AutoSelection {
 			autonomousCommand = new DriveResetPose(180, false, driveTrain, log);
 		}
 
-		if(autoPlan == test){
+		else if(autoPlan == test){
 			log.writeLogEcho(true, "AutoSelect", "run Test");
 			autonomousCommand = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
 		}
 
-		if(autoPlan == shootOne){
+		else if(autoPlan == shootOne){
 			log.writeLogEcho(true, "AutoSelect", "run One Piece Shoot");
 			autonomousCommand = new ShootPiece(shooter, feeder, robotState, log);
 		}
@@ -124,7 +124,7 @@ public class AutoSelection {
 
 		else if(autoPlan == CenterSourceThreePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Source Center Three Piece Shoot");
-			autonomousCommand = new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new CenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == AmpThreePieceShoot){
