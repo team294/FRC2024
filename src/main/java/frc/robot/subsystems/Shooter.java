@@ -83,7 +83,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     shooterTopVoltage = shooterTop.getMotorVoltage();
 
     shooterTopConfig = new TalonFXConfiguration();			// Factory default configuration
-    shooterTopConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Do not invert motor
+    shooterTopConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// Invert motor
 		shooterTopConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;      // Coast mode to reduce wear on motor
     shooterTopConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;         // # seconds from 0 to full power
 		shooterTopConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;     // # seconds from 0 to full power
