@@ -31,6 +31,11 @@ public class LED extends SubsystemBase {
   private BCRRobotState.State currentState;
   private boolean stickyFault;
   private boolean shouldClear;
+  private double degreesFromSpeaker;
+  private double accuracyDisplayThreshold;
+  private int accuracy;
+
+  private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
 
   // LED Segments
   //private LEDSegment CANdle;
@@ -51,6 +56,8 @@ public class LED extends SubsystemBase {
     this.currentState = BCRRobotState.State.IDLE_NO_PIECE;
     this.stickyFault = false;
     this.shouldClear = false;
+    this.accuracyDisplayThreshold = 35;
+    this.accuracy = 0;
 
     // Create the LED segments
     LEDSegment CANdle = new LEDSegment(
@@ -128,13 +135,13 @@ public class LED extends SubsystemBase {
     }
   }
 
-  public void setPattern(Color[] pattern, Color edgeColor, LEDSegmentRange segment) {
-    if (pattern.length == 0) return;
+  public void setPattern(Color[] pattern, Color edgeColor, int edgeWidth, LEDSegmentRange segment) {
+    if (pattern.length < (edgeWidth*2)+1) return;
 
-    setLEDs(edgeColor, segment.index, 2);
-    setLEDs(edgeColor, segment.count + segment.index-1, 2);
+    setLEDs(edgeColor, segment.index, edgeWidth);
+    setLEDs(edgeColor, segment.count + segment.index-edgeWidth, edgeWidth);
     
-    for (int indexLED = 2, indexPattern = 0; indexLED < segment.count-2; indexLED++, indexPattern++) {
+    for (int indexLED = edgeWidth, indexPattern = 0; indexLED < segment.count-edgeWidth; indexLED++, indexPattern++) {
       if (indexPattern >= pattern.length) indexPattern = 0;
       setLEDs(pattern[indexPattern], segment.index + indexLED);
     }
@@ -253,8 +260,28 @@ public class LED extends SubsystemBase {
     }
   }
 
+  /**
+   *  Calculates the degrees from the direction the robot is facing to the direction towards the speaker
+   */
+  //TODO: Write function
+  private void calculateDegreesFromSpeaker(){
+    degreesFromSpeaker = 0;
+  }
+
   @Override
   public void periodic() {
+
+    calculateDegreesFromSpeaker();
+
+    if(degreesFromSpeaker <= accuracyDisplayThreshold){
+      accuracy = (int)((accuracyDisplayPattern.length/2)*(1-((degreesFromSpeaker-1)/accuracyDisplayThreshold)));
+      if (accuracy > (accuracyDisplayPattern.length/2)) {
+        setColor(Color.kGreen, LEDSegmentRange.Strip1);
+      } else {
+        setPattern(accuracyDisplayPattern, Color.kGreen, accuracy, LEDSegmentRange.Strip1);
+      }
+    }
+
     // Every scheduler run, update the animations for all segments
     if(RobotPreferences.getStickyFaults()) segments.get(LEDSegmentRange.Strip1).setEdgeColor(Color.kRed);
     else segments.get(LEDSegmentRange.Strip1).setEdgeColor(Color.kBlack);
@@ -262,7 +289,7 @@ public class LED extends SubsystemBase {
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
       if(segment.getEdgeColor() != Color.kBlack && segment.getEdgeColor() != null){
-        setPattern(segments.get(segmentKey).getCurrentFrame(), segment.getEdgeColor(), segmentKey);
+        setPattern(segments.get(segmentKey).getCurrentFrame(), segment.getEdgeColor(), 2, segmentKey);
       } else {
         setPattern(segments.get(segmentKey).getCurrentFrame(), segmentKey);
       }

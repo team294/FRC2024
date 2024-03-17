@@ -9,6 +9,7 @@ public class LEDSegment {
     private boolean loop;
     private Color[][] animation;
     private Color edgeColor;
+    private int edgeWidth;
 
     /**
      * Create the LED segment 
@@ -49,6 +50,10 @@ public class LEDSegment {
 
     public void setEdgeColor(Color color){
         edgeColor = color;
+    }
+
+    public void setEdgeWidth(int width){
+        edgeWidth = width;
     }
 
     public Color getEdgeColor(){
