@@ -301,7 +301,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // 5.0 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // -130 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
 
       public static final double kP = 0.3;   // 0.3 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
@@ -334,8 +334,8 @@ public final class Constants {
       // 0 degrees = horizontal (in front of robot) relative to wrist center of gravity
       // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
       public enum WristAngle {
-          lowerLimit(-3.0),      // CALIBRATED
-          upperLimit(65.0);       // CALIBRATED
+          lowerLimit(-83.0),      // CALIBRATED
+          upperLimit(90.0);       // CALIBRATED
 
           @SuppressWarnings({"MemberName", "PMD.SingularField"})
           public final double value;

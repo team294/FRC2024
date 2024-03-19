@@ -415,9 +415,9 @@ public class Wrist extends SubsystemBase implements Loggable{
    * facing away from the robot, and -90 deg is with the CG of the wrist resting downward.
    */
   public double getRevEncoderDegrees() {
-    // Note that rev encoder is reversed [-revEncoder.get()], since mounting of the encoder
-    // is flipped on the wrist axle.
-    return MathBCR.normalizeAngle(-revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
+    // Note that rev encoder is not reversed [revEncoder.get()], since mounting of the encoder
+    // is no longer flipped on the wrist axle.
+    return MathBCR.normalizeAngle(revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
   }
 
  	// ************ Bump switch methods
