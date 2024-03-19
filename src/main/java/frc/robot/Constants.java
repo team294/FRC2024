@@ -294,7 +294,7 @@ public final class Constants {
       public static final double kRevEncoderGearRatio = (48.0 / 22.0);   // From CAD, should be 48:22.  Gear reduction ratio between Rev Thru-Bore encoder and gear driving the wrist (chain/gears)
       
       public static final double voltageCompSaturation = 12.0;
-      public static final double maxUncalibratedPercentOutput = 0.1;     // CALIBRATED
+      public static final double maxUncalibratedPercentOutput = 0.15;     // CALIBRATED
       public static final double maxPercentOutput = 1.0;          // CALIBRATED
 
       // Update the REV through bore encoder offset angle in RobotPreferences (in Shuffleboard), not in this code!
@@ -303,14 +303,14 @@ public final class Constants {
       // and -90 deg is with the CG of the wrist resting downward.
       public static double revEncoderOffsetAngleWrist = 0;    // -130 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
 
-      public static final double kP = 0.3;   // 0.3 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
+      public static final double kP = 0.3;   // 0.3 TODO CALIBRATE.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
       public static final double kD = 0.0; 
-      public static final double kG = 0.14;   // 0.14 CALIBRATED.  Feed foward voltage to add to hold arm horizontal (0 deg)
-      public static final double kS = 0.077;   // 0.077 CALIBRATED
-      public static final double kV = 0.114;   // 0.114 CALIBRATED
+      public static final double kG = 0.174;   // 0.174 CALIBRATED.  Feed foward voltage to add to hold arm horizontal (0 deg)
+      public static final double kS = 0.0367;  // 0.0367 CALIBRATED
+      public static final double kV = 0.1171;  // 0.1171 CALIBRATED
 
-      public static final double MMCruiseVelocity = 40.0;   // 40.0 Calibrated.  Max trapezoid velocity in motor rps.
+      public static final double MMCruiseVelocity = 90.0;   // 90.0 Calibrated.  Arm can reach ~95.  Max trapezoid velocity in motor rps.
       public static final double MMAcceleration = MMCruiseVelocity/0.35;    // Calibrated.  Accel in 0.35 sec.  Max trapezoid acceleration in motor rot/sec^2.  MMVel/MMAccel = (# seconds to full velocity)
       public static final double MMJerk = MMAcceleration/0.05;  // Calibrated.  Jerk in 0.05 sec.  Max trapezoid jerk in motor rot/sec^3.  MMAccel/MMJerk = (# seconds to full accel)
 
