@@ -51,12 +51,11 @@ public class SourceFourPieceShoot extends SourceThreePieceShoot {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new ShootPiece(shooter, feeder, robotState, log),
-       new ParallelCommandGroup(
+      new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceFarToSourceCenterFarRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceFarToSourceCenterFarBlue.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNoteToFarNoteRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNoteToFarNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
