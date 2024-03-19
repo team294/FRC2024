@@ -79,6 +79,8 @@ public final class Constants {
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
       public static final int DIOWristRevThroughBoreEncoder = 1;
+      public static final int DIOWristLowerLimit1 = 2;
+      public static final int DIOWristLowerLimit2 = 3;
       public static final int DIOIntakePieceSensor = 9;
     }
 
@@ -286,10 +288,10 @@ public final class Constants {
 
     public static final class WristConstants {
       public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.  Encoder counts per revolution of FalconFX motor pinion gear
-      public static final double kWristGearRatio = (75.0 / 1.0);   // From CAD, should be 75:1.  Gear reduction ratio between motor pinion and gear driving the wrist (planetary and chain gears)
+      public static final double kWristGearRatio = (5.0*5.0*3.0 * 48.0 / 22.0);   // From CAD, should be 5*5*3 * 48:22.  Gear reduction ratio between motor pinion and gear driving the wrist (planetary and chain gears)
       public static final double kWristDegreesPerRotation =  360.0 / kEncoderCPR / kWristGearRatio;      // CALIBRATED (fudge factor was 0.9726 last year)
 
-      public static final double kRevEncoderGearRatio = (3.0 / 1.0);   // From CAD, should be 3:1.  Gear reduction ratio between Rev Thru-Bore encoder and gear driving the wrist (chain/gears)
+      public static final double kRevEncoderGearRatio = (48.0 / 22.0);   // From CAD, should be 48:22.  Gear reduction ratio between Rev Thru-Bore encoder and gear driving the wrist (chain/gears)
       
       public static final double voltageCompSaturation = 12.0;
       public static final double maxUncalibratedPercentOutput = 0.1;     // CALIBRATED
