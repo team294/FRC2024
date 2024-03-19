@@ -13,6 +13,7 @@ import frc.robot.utilities.BCRRobotState;
 import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.FileLog;
 import frc.robot.commands.*;
+import frc.robot.commands.ShooterSetVelocity.VelocityType;
 
 public class ShootPiece extends SequentialCommandGroup {
 
@@ -29,8 +30,9 @@ public class ShootPiece extends SequentialCommandGroup {
     addCommands(
       // new ShooterSetVelocity(ShooterConstants.shooterVelocity, VelocityType.waitForVelocity, shooter, log),
       new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log),
-      new ShooterSetPercent(0.2, shooter, log),
-      new WaitCommand(1),
+      // new ShooterSetPercent(0.2, shooter, log),
+      // new WaitCommand(1),
+      new ShooterSetVelocity(4000, 4400, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5),
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
       new WaitCommand(1),
       new ShooterFeederStop(shooter, feeder, log),
