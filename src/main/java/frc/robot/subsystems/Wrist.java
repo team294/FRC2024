@@ -423,12 +423,28 @@ public class Wrist extends SubsystemBase implements Loggable{
  	// ************ Bump switch methods
 
   /**
+   * Checks bump switch 1 to check if the wrist is at the lower limit.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  private boolean isWristAtLowerLimit1() {
+    return !lowerLimit1.get();
+  }
+
+  /**
+   * Checks bump switch 2 to check if the wrist is at the lower limit.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  private boolean isWristAtLowerLimit2() {
+    return !lowerLimit2.get();
+  }
+
+  /**
    * Checks bump switches to check if the wrist is at the lower limit.
    * If either bump switch (or both switches) are pressed, then this method returns true.
    * @return true = at lower limit, false = not at lower limit
    */
   public boolean isWristAtLowerLimit() {
-    return lowerLimit1.get() || lowerLimit1.get();
+    return isWristAtLowerLimit1() || isWristAtLowerLimit2();
   }
 
  	// ************ Periodic and information methods
@@ -451,7 +467,7 @@ public class Wrist extends SubsystemBase implements Loggable{
       "Wrist Degrees", getWristEncoderDegrees(),
       "Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget(),
       "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees(),
-      "Lower Limit 1", lowerLimit1.get(), "Lower Limit 2", lowerLimit2.get()
+      "Lower Limit 1", isWristAtLowerLimit1(), "Lower Limit 2", isWristAtLowerLimit2()
     );
   }
 
@@ -469,6 +485,8 @@ public class Wrist extends SubsystemBase implements Loggable{
     if (log.isMyLogRotation(logRotationKey)) {
       SmartDashboard.putBoolean("Wrist Rev connected", isRevEncoderConnected());
       SmartDashboard.putBoolean("Wrist calibrated", wristCalibrated);
+      // SmartDashboard.putBoolean("Wrist LL1", isWristAtLowerLimit1());
+      // SmartDashboard.putBoolean("Wrist LL2", isWristAtLowerLimit2());
       SmartDashboard.putBoolean("Wrist lower limit", isWristAtLowerLimit());
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
       SmartDashboard.putNumber("Wrist angle", getWristEncoderDegrees());
