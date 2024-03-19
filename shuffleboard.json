@@ -889,6 +889,15 @@
                   "Colors/Color when false": "#8B0000FF"
                 },
                 {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Wrist lower limit",
+                  "_title": "Wrist lower limit",
+                  "_glyph": 148,
+                  "_showGlyph": false,
+                  "Colors/Color when true": "#0000FFFF",
+                  "Colors/Color when false": "#000000FF"
+                },
+                {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Wrist output1",
                   "_title": "Wrist output1",

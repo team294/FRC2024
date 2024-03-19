@@ -17,6 +17,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,6 +65,10 @@ public class Wrist extends SubsystemBase implements Loggable{
 	private final StatusSignal<Double> wrist2DutyCycle = wristMotor2.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
 	private final StatusSignal<Double> wrist2StatorCurrent = wristMotor2.getStatorCurrent();	// Motor stator current, in amps (+=fwd, -=rev)
 	private final StatusSignal<Double> wrist2EncoderPostion = wristMotor2.getPosition();			// Encoder position, in pinion rotations
+
+  // Wrist bump switches
+  private final DigitalInput lowerLimit1 = new DigitalInput(Ports.DIOWristLowerLimit1);
+  private final DigitalInput lowerLimit2 = new DigitalInput(Ports.DIOWristLowerLimit2);
 
   // Rev through-bore encoder
   private final DutyCycleEncoder revEncoder = new DutyCycleEncoder(Ports.DIOWristRevThroughBoreEncoder);
@@ -410,9 +415,36 @@ public class Wrist extends SubsystemBase implements Loggable{
    * facing away from the robot, and -90 deg is with the CG of the wrist resting downward.
    */
   public double getRevEncoderDegrees() {
-    // Note that rev encoder is reversed [-revEncoder.get()], since mounting of the encoder
-    // is flipped on the wrist axle.
-    return MathBCR.normalizeAngle(-revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
+    // Note that rev encoder is not reversed [revEncoder.get()], since mounting of the encoder
+    // is no longer flipped on the wrist axle.
+    return MathBCR.normalizeAngle(revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
+  }
+
+ 	// ************ Bump switch methods
+
+  /**
+   * Checks bump switch 1 to check if the wrist is at the lower limit.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  private boolean isWristAtLowerLimit1() {
+    return !lowerLimit1.get();
+  }
+
+  /**
+   * Checks bump switch 2 to check if the wrist is at the lower limit.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  private boolean isWristAtLowerLimit2() {
+    return !lowerLimit2.get();
+  }
+
+  /**
+   * Checks bump switches to check if the wrist is at the lower limit.
+   * If either bump switch (or both switches) are pressed, then this method returns true.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  public boolean isWristAtLowerLimit() {
+    return isWristAtLowerLimit1() || isWristAtLowerLimit2();
   }
 
  	// ************ Periodic and information methods
@@ -434,7 +466,8 @@ public class Wrist extends SubsystemBase implements Loggable{
       "WristCalZero", wristCalZero,
       "Wrist Degrees", getWristEncoderDegrees(),
       "Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget(),
-      "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees()
+      "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees(),
+      "Lower Limit 1", isWristAtLowerLimit1(), "Lower Limit 2", isWristAtLowerLimit2()
     );
   }
 
@@ -452,6 +485,9 @@ public class Wrist extends SubsystemBase implements Loggable{
     if (log.isMyLogRotation(logRotationKey)) {
       SmartDashboard.putBoolean("Wrist Rev connected", isRevEncoderConnected());
       SmartDashboard.putBoolean("Wrist calibrated", wristCalibrated);
+      // SmartDashboard.putBoolean("Wrist LL1", isWristAtLowerLimit1());
+      // SmartDashboard.putBoolean("Wrist LL2", isWristAtLowerLimit2());
+      SmartDashboard.putBoolean("Wrist lower limit", isWristAtLowerLimit());
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
       SmartDashboard.putNumber("Wrist angle", getWristEncoderDegrees());
       SmartDashboard.putNumber("Wrist target angle", getCurrentWristTarget());
@@ -514,6 +550,22 @@ public class Wrist extends SubsystemBase implements Loggable{
     // If the driver station is disabled, then turn off any position control for the wrist motor
     if (DriverStation.isDisabled()) {
       stopWrist();
+    }
+
+    // If the wrist hits the bump switch, then stop the wrist from moving down further
+    if (isWristAtLowerLimit()) {
+      if (wristCalibrated && isWristMotorPositionControl()) {
+        // Wrist is calibrated and under position control, so don't let the position go down any further
+        if (getCurrentWristTarget() < getWristEncoderDegrees()) {
+          // Current target angle is below current angle.  Reset target to current angle
+          setWristAngle(getWristEncoderDegrees());
+        }
+      } else {
+        // Wrist is under voltage (direct speed) control.  Stop it if it is moving down
+        if (getWristMotorPercentOutput()<0) {
+          stopWrist();
+        }
+      }
     }
 
     // Un-calibrates the wrist if the angle is outside of bounds.
