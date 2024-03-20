@@ -178,6 +178,13 @@ public class RobotContainer {
     Trigger xbPOVRight = xboxController.povRight();
     Trigger xbPOVLeft = xboxController.povLeft();
     Trigger xbPOVDown = xboxController.povDown();
+
+
+    xbRT.onTrue(new ShootPiece(shooter, feeder, robotState, log));
+    // xbLT.onTrue() auto aim
+    xbY.onTrue(new WristSetAngle(-41, wrist, log));
+    xbB.onTrue(new WristSetAngle(-55, wrist, log));
+    xbA.onTrue(new WristSetAngle(-70, wrist, log));
    
     
   }
