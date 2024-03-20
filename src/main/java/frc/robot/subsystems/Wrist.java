@@ -10,12 +10,14 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,6 +48,7 @@ public class Wrist extends SubsystemBase implements Loggable{
 	private TalonFXConfiguration wristMotor2Config;
 	private VoltageOut wristVoltageControl = new VoltageOut(0.0);
   private PositionVoltage wristPositionControl = new PositionVoltage(0.0);
+  private MotionMagicVoltage wristMMVoltageControl = new MotionMagicVoltage(0.0);
   
 
 	// Variables for motor signals and sensors
@@ -62,6 +65,10 @@ public class Wrist extends SubsystemBase implements Loggable{
 	private final StatusSignal<Double> wrist2DutyCycle = wristMotor2.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
 	private final StatusSignal<Double> wrist2StatorCurrent = wristMotor2.getStatorCurrent();	// Motor stator current, in amps (+=fwd, -=rev)
 	private final StatusSignal<Double> wrist2EncoderPostion = wristMotor2.getPosition();			// Encoder position, in pinion rotations
+
+  // Wrist bump switches
+  private final DigitalInput lowerLimit1 = new DigitalInput(Ports.DIOWristLowerLimit1);
+  private final DigitalInput lowerLimit2 = new DigitalInput(Ports.DIOWristLowerLimit2);
 
   // Rev through-bore encoder
   private final DutyCycleEncoder revEncoder = new DutyCycleEncoder(Ports.DIOWristRevThroughBoreEncoder);
@@ -104,8 +111,8 @@ public class Wrist extends SubsystemBase implements Loggable{
     // Configure encoder on motor 1 and 2
 		wristMotor1Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     wristMotor1Config.ClosedLoopGeneral.ContinuousWrap = false;
-    // wristMotor1Config.Feedback.SensorToMechanismRatio = 1.0;
-    // wristMotor1Config.Feedback.FeedbackRotorOffset = 0.0;
+    // wristMotor1Config.Feedback.SensorToMechanismRatio = 1.0;       // Need to set for MotionMagic if using Phoenix kG!!!
+    // wristMotor1Config.Feedback.FeedbackRotorOffset = 0.0;          // Need to set for MotionMagic if using Phoenix kG!!!
     wristMotor2Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     wristMotor2Config.ClosedLoopGeneral.ContinuousWrap = false;
 
@@ -113,18 +120,25 @@ public class Wrist extends SubsystemBase implements Loggable{
     // Note:  In Phoenix 6, slots are selected in the ControlRequest (ex. PositionVoltage.Slot)
     wristPositionControl.Slot = 0;
     wristPositionControl.OverrideBrakeDurNeutral = true;
+    wristMMVoltageControl.Slot = 0;
+    wristMMVoltageControl.OverrideBrakeDurNeutral = true;
     wristMotor1Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
 		wristMotor1Config.Slot0.kI = 0.0;
 		wristMotor1Config.Slot0.kD = 0.0;
+		wristMotor1Config.Slot0.kS = kS;
+		wristMotor1Config.Slot0.kV = kV;
+		wristMotor1Config.Slot0.kA = 0.0;
+		// wristMotor1Config.Slot0.kG = kG;                   // We don't have a 1:1 encoder right now, so don't use Phoenix kG.  Use kG in Arbitrary Feed Forward instead
+		// wristMotor1Config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;       // Also see SensorToMechanismRatio and FeedbackRotorOffset above
 
-    wristMotor2Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
-		wristMotor2Config.Slot0.kI = 0.0;
-		wristMotor2Config.Slot0.kD = 0.0;
-		// wristMotor1Config.Slot0.kS = 0.0;
-		// wristMotor1Config.Slot0.kV = 0.0;
-		// wristMotor1Config.Slot0.kA = 0.0;
-		// wristMotor1Config.Slot0.kG = 0.0;
-		// wristMotor1Config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    //set Magic Motion Settings
+		wristMotor1Config.MotionMagic.MotionMagicCruiseVelocity = MMCruiseVelocity;
+		wristMotor1Config.MotionMagic.MotionMagicAcceleration = MMAcceleration;
+		wristMotor1Config.MotionMagic.MotionMagicJerk = MMJerk;
+
+    // wristMotor2Config.Slot0.kP = kP;		// kP = (desired-output-volts) / (error-in-encoder-rotations)
+		// wristMotor2Config.Slot0.kI = 0.0;
+		// wristMotor2Config.Slot0.kD = 0.0;
 
  		// Apply configuration to the wrist motor 1 and 2 
 		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
@@ -194,7 +208,8 @@ public class Wrist extends SubsystemBase implements Loggable{
    * @return true = position control, false = direct percent output control
    */
   public boolean isWristMotorPositionControl() {
-    return wrist1ControlMode.refresh().getValue() == ControlModeValue.PositionVoltage;
+    return (wrist1ControlMode.refresh().getValue() == ControlModeValue.PositionVoltage) || 
+            (wrist1ControlMode.refresh().getValue() == ControlModeValue.MotionMagicVoltage);
   }
 
   /**
@@ -210,9 +225,12 @@ public class Wrist extends SubsystemBase implements Loggable{
       // WristRegion curRegion = getRegion(getWristAngle());
       // Check and apply interlocks      
 
-      // Phoenix6 PositionVoltage control:  Position is in rotations, FeedFoward is in Volts
-      wristMotor1.setControl(wristPositionControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
-                            .withFeedForward(kG * Math.cos(safeAngle*Math.PI/180.0) * voltageCompSaturation));
+      // Phoenix6 PositionVoltage control:  Position is in rotor rotations, FeedFoward is in Volts
+      // wristMotor1.setControl(wristPositionControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
+      //                       .withFeedForward(kG * Math.cos(safeAngle*Math.PI/180.0) ));
+      // Phoenix6 MotionMagicVoltage control:  Position is in rotor rotations, FeedFoward is in Volts
+      wristMotor1.setControl(wristMMVoltageControl.withPosition(wristDegreesToEncoderRotations(safeAngle))
+                            .withFeedForward(kG * Math.cos(safeAngle*Math.PI/180.0) ));
 
       log.writeLog(false, subsystemName, "Set angle", "Desired angle", angle, "Set angle", safeAngle);
 
@@ -397,9 +415,36 @@ public class Wrist extends SubsystemBase implements Loggable{
    * facing away from the robot, and -90 deg is with the CG of the wrist resting downward.
    */
   public double getRevEncoderDegrees() {
-    // Note that rev encoder is reversed [-revEncoder.get()], since mounting of the encoder
-    // is flipped on the wrist axle.
-    return MathBCR.normalizeAngle(-revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
+    // Note that rev encoder is not reversed [revEncoder.get()], since mounting of the encoder
+    // is no longer flipped on the wrist axle.
+    return MathBCR.normalizeAngle(revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
+  }
+
+ 	// ************ Bump switch methods
+
+  /**
+   * Checks bump switch 1 to check if the wrist is at the lower limit.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  private boolean isWristAtLowerLimit1() {
+    return !lowerLimit1.get();
+  }
+
+  /**
+   * Checks bump switch 2 to check if the wrist is at the lower limit.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  private boolean isWristAtLowerLimit2() {
+    return !lowerLimit2.get();
+  }
+
+  /**
+   * Checks bump switches to check if the wrist is at the lower limit.
+   * If either bump switch (or both switches) are pressed, then this method returns true.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  public boolean isWristAtLowerLimit() {
+    return isWristAtLowerLimit1() || isWristAtLowerLimit2();
   }
 
  	// ************ Periodic and information methods
@@ -421,7 +466,8 @@ public class Wrist extends SubsystemBase implements Loggable{
       "WristCalZero", wristCalZero,
       "Wrist Degrees", getWristEncoderDegrees(),
       "Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget(),
-      "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees()
+      "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees(),
+      "Lower Limit 1", isWristAtLowerLimit1(), "Lower Limit 2", isWristAtLowerLimit2()
     );
   }
 
@@ -439,6 +485,9 @@ public class Wrist extends SubsystemBase implements Loggable{
     if (log.isMyLogRotation(logRotationKey)) {
       SmartDashboard.putBoolean("Wrist Rev connected", isRevEncoderConnected());
       SmartDashboard.putBoolean("Wrist calibrated", wristCalibrated);
+      // SmartDashboard.putBoolean("Wrist LL1", isWristAtLowerLimit1());
+      // SmartDashboard.putBoolean("Wrist LL2", isWristAtLowerLimit2());
+      SmartDashboard.putBoolean("Wrist lower limit", isWristAtLowerLimit());
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
       SmartDashboard.putNumber("Wrist angle", getWristEncoderDegrees());
       SmartDashboard.putNumber("Wrist target angle", getCurrentWristTarget());
@@ -501,6 +550,22 @@ public class Wrist extends SubsystemBase implements Loggable{
     // If the driver station is disabled, then turn off any position control for the wrist motor
     if (DriverStation.isDisabled()) {
       stopWrist();
+    }
+
+    // If the wrist hits the bump switch, then stop the wrist from moving down further
+    if (isWristAtLowerLimit()) {
+      if (wristCalibrated && isWristMotorPositionControl()) {
+        // Wrist is calibrated and under position control, so don't let the position go down any further
+        if (getCurrentWristTarget() < getWristEncoderDegrees()) {
+          // Current target angle is below current angle.  Reset target to current angle
+          setWristAngle(getWristEncoderDegrees());
+        }
+      } else {
+        // Wrist is under voltage (direct speed) control.  Stop it if it is moving down
+        if (getWristMotorPercentOutput()<0) {
+          stopWrist();
+        }
+      }
     }
 
     // Un-calibrates the wrist if the angle is outside of bounds.

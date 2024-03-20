@@ -1,22 +1,19 @@
 package frc.robot.utilities;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.StopType;
-import frc.robot.Constants.SwerveConstants;
-import frc.robot.Constants.TrajectoryConstants;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.commands.DriveResetPose;
+import frc.robot.commands.DriveTrajectory;
+import frc.robot.commands.Autos.*;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 
 /**
@@ -26,6 +23,11 @@ public class AutoSelection {
 
 	public static final int NONE = 0;
 	public static final int test = 1;
+	public static final int CenterTwoPieceShoot = 2;
+	public static final int SourceTwoPieceShoot = 3;
+	public static final int AmpTwoPieceShoot = 4;
+	public static final int AmpThreePieceShoot = 5;
+
 
 
 	private final AllianceSelection allianceSelection;
@@ -42,9 +44,12 @@ public class AutoSelection {
 
 		// auto selections
 		autoChooser.setDefaultOption("None", NONE);
+		autoChooser.addOption("CenterTwoPieceShoot", CenterTwoPieceShoot);
+		autoChooser.addOption("SourceTwoPieceShoot", SourceTwoPieceShoot);
+		autoChooser.addOption("AmpTwoPieceShoot", AmpTwoPieceShoot);
+		autoChooser.addOption("AmpThreePieceShoot", AmpThreePieceShoot);
 		
 		
-
 	
 		// show auto selection widget on Shuffleboard
 		SmartDashboard.putData("Autonomous routine", autoChooser);
@@ -63,7 +68,7 @@ public class AutoSelection {
 	 * @return the command to run
 	 */
 
-	public Command getAutoCommand(DriveTrain driveTrain, FileLog log) {
+	public Command getAutoCommand(Intake intake, Shooter shooter, Feeder feeder, DriveTrain driveTrain, TrajectoryCache trajectoryCache, BCRRobotState robotState, FileLog log) {
 		Command autonomousCommand = null;
 
 		// Get parameters from Shuffleboard
@@ -84,8 +89,27 @@ public class AutoSelection {
 			log.writeLogEcho(true, "AutoSelect", "run Test");
 			autonomousCommand = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
 		}
+		else if(autoPlan == CenterTwoPieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Center Two Piece Shoot");
+			autonomousCommand = new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
 
-        if (autonomousCommand == null) {
+		else if(autoPlan == SourceTwoPieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Source Two Piece Shoot");
+			autonomousCommand = new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == AmpTwoPieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Amp Two Piece Shoot");
+			autonomousCommand = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == AmpThreePieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Amp Three Piece Shoot");
+			autonomousCommand = new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+        else if (autonomousCommand == null) {
 			log.writeLogEcho(true, "AutoSelect", "No autocommand found");
 			autonomousCommand = new WaitCommand(1);
 		}

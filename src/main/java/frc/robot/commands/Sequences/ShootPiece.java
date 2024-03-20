@@ -7,7 +7,6 @@ package frc.robot.commands.Sequences;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.BCRRobotState;
@@ -31,8 +30,9 @@ public class ShootPiece extends SequentialCommandGroup {
     addCommands(
       // new ShooterSetVelocity(ShooterConstants.shooterVelocity, VelocityType.waitForVelocity, shooter, log),
       new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log),
-      new ShooterSetPercent(0.2, shooter, log),
-      new WaitCommand(1),
+      // new ShooterSetPercent(0.2, shooter, log),
+      // new WaitCommand(1),
+      new ShooterSetVelocity(4000, 4400, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5),
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
       new WaitCommand(1),
       new ShooterFeederStop(shooter, feeder, log),
