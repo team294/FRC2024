@@ -182,9 +182,10 @@ public class RobotContainer {
 
     xbRT.onTrue(new ShootPiece(shooter, feeder, robotState, log));
     // xbLT.onTrue() auto aim
-    xbY.onTrue(new WristSetAngle(-41, wrist, log));
-    xbB.onTrue(new WristSetAngle(-55, wrist, log));
+    xbY.onTrue(new WristSetAngle(-81, wrist, log));
+    xbB.onTrue(new WristSetAngle(-41, wrist, log));
     xbA.onTrue(new WristSetAngle(-70, wrist, log));
+    xbX.onTrue(new WristSetAngle(75, wrist, log)); // Make a score amp sequence and use that sequence to instead of set angle
    
     
   }
@@ -201,9 +202,9 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake, log));
+    left[1].onTrue(new DriveResetPose(driveTrain, log));
 
-    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
+    left[2].onTrue(new ShootPiece(shooter, feeder, robotState, log)));
 
     right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
     right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
