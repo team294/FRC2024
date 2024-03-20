@@ -190,7 +190,7 @@ public class RobotContainer {
     xbY.onTrue(new SetShooterWrist(WristAngle.farShotAngle, shooter, wrist, log));
     xbB.onTrue(new SetShooterWrist(WristAngle.trapSpeakerAngle, shooter, wrist, log));
     xbA.onTrue(new SetShooterWrist(WristAngle.speakerAngle, shooter, wrist, log));
-    xbX.onTrue(new WristSetAngle(WristAngle.ampAngle, wrist, log)); // Make a score amp sequence and use that sequence to instead of set angle
+    xbX.onTrue(new WristSetAngle(WristAngle.ampShot, wrist, log)); // Make a score amp sequence and use that sequence to instead of set angle
    
     
   }
