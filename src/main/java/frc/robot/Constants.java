@@ -232,6 +232,7 @@ public final class Constants {
       public static final double kA = 0.0;
 
       public static final double feederPercent = 0.2;
+      public static final double feederAmpShot = -0.3;
     }
 
     public static final class TrajectoryConstants {
@@ -296,7 +297,7 @@ public final class Constants {
       
       public static final double voltageCompSaturation = 12.0;
       public static final double maxUncalibratedPercentOutput = 0.15;     // CALIBRATED
-      public static final double maxPercentOutput = 1.0;          // CALIBRATED
+      public static final double maxPercentOutput = 0.4;          // CALIBRATED
 
       // Update the REV through bore encoder offset angle in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
@@ -304,7 +305,7 @@ public final class Constants {
       // and -90 deg is with the CG of the wrist resting downward.
       public static double revEncoderOffsetAngleWrist = 0;    // -130 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
 
-      public static final double kP = 0.3;   // 0.3 TODO CALIBRATE.  kP = (desired-output-volts) / (error-in-encoder-rotations)
+      public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
       public static final double kD = 0.0; 
       public static final double kG = 0.174;   // 0.174 CALIBRATED.  Feed foward voltage to add to hold arm horizontal (0 deg)
@@ -339,8 +340,10 @@ public final class Constants {
           speakerAngle(-41),
           trapSpeakerAngle(-75),
           farShotAngle(-83),
-          overheadShotAngle(70),
-          ampAngle(75),
+          overheadShotAngle(60),
+          climbStop(-55.0),
+          ampShot(50.0),
+          climbStart(65.0),
           upperLimit(90.0);       // CALIBRATED
 
           @SuppressWarnings({"MemberName", "PMD.SingularField"})
@@ -352,7 +355,7 @@ public final class Constants {
     public static final class IntakeConstants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
 
-      public static final double intakePercent = 0.6;
-      public static final double centeringPercent = 0.3; // Need to calibrate, using talon instead of neo
+      public static final double intakePercent = 0.7;       // 0.7
+      public static final double centeringPercent = 0.4;    // 0.4
     }
 }
