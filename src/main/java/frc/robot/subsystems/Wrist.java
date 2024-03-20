@@ -368,7 +368,8 @@ public class Wrist extends SubsystemBase implements Loggable{
   }
 
   /**
-   * Calibrates the wrist encoder, assuming we know the wrist's current angle
+   * Calibrates the wrist encoder, assuming we know the wrist's current angle.
+   * Sets wristCalibrated = true.
    * @param angle current angle that the wrist is physically at, in degrees
    */
   public void calibrateWristEnc(double angle) {
@@ -392,7 +393,7 @@ public class Wrist extends SubsystemBase implements Loggable{
   public void calibrateRevEncoderDegrees(double offsetDegrees) {
     revEncoderZero = -offsetDegrees;
     
-    // Avoid wrap point on Rev encoder
+    // Avoid wrap point on Rev encoder      // TODO where is the wrap point?  What is truly safe?
     if (getRevEncoderDegrees() < WristAngle.lowerLimit.value - 5.0) {
       revEncoderZero -= 360.0/kRevEncoderGearRatio;
     }
@@ -489,6 +490,7 @@ public class Wrist extends SubsystemBase implements Loggable{
       // SmartDashboard.putBoolean("Wrist LL2", isWristAtLowerLimit2());
       SmartDashboard.putBoolean("Wrist lower limit", isWristAtLowerLimit());
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
+      SmartDashboard.putNumber("Wrist Rev raw", revEncoder.get());
       SmartDashboard.putNumber("Wrist angle", getWristEncoderDegrees());
       SmartDashboard.putNumber("Wrist target angle", getCurrentWristTarget());
       SmartDashboard.putNumber("Wrist enc1 raw", getWristEncoderRotationsRaw());
@@ -505,21 +507,21 @@ public class Wrist extends SubsystemBase implements Loggable{
     // After it boots up, it takes up to 40ms sec to settle into an accurate reading.
     // Wait for 5 periodic cycles after the encoder boots up before calibrating.
     if (!wristCalibrated) {
-      if (isRevEncoderConnected()) {
+      if (isRevEncoderConnected() && revEncoderBootCount < 5) {
         revEncoderBootCount++;
         log.writeLog(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder connected", true,
           "Boot cylces", revEncoderBootCount,
           "Rev angle", getRevEncoderDegrees());  
       }
-      if (isRevEncoderConnected() && revEncoderBootCount >= 5) {
+      if (isRevEncoderConnected() && revEncoderBootCount >= 5 && isWristAtLowerLimit()) {
         // Calibrate Rev encoder
         calibrateRevEncoderDegrees(revEncoderOffsetAngleWrist);
-        wristCalibrated = true;
         log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder calibrated", true,
           "Boot cylces", revEncoderBootCount,
           "Rev angle", getRevEncoderDegrees());  
 
         // Copy calibration to wrist encoder
+        // This sets wristCalibrated to true
         calibrateWristEnc(getRevEncoderDegrees());
 
         // Configure soft limits on motor     //TODO will this limit both motors???
