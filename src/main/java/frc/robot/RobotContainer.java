@@ -21,6 +21,8 @@ import frc.robot.Constants.CoordType;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.StopType;
+import frc.robot.Constants.WristConstants;
+import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.*;
 import frc.robot.commands.Autos.*;
 import frc.robot.commands.Sequences.*;
@@ -180,12 +182,15 @@ public class RobotContainer {
     Trigger xbPOVDown = xboxController.povDown();
 
 
-    xbRT.onTrue(new ShootPiece(shooter, feeder, robotState, log));
-    // xbLT.onTrue() auto aim
-    xbY.onTrue(new WristSetAngle(-81, wrist, log));
-    xbB.onTrue(new WristSetAngle(-41, wrist, log));
-    xbA.onTrue(new WristSetAngle(-70, wrist, log));
-    xbX.onTrue(new WristSetAngle(75, wrist, log)); // Make a score amp sequence and use that sequence to instead of set angle
+    xbLB.onTrue(new SetShooterWrist(WristAngle.overheadShotAngle, shooter, wrist, log));
+
+    xbRT.onTrue(new IntakePiece(intake, feeder, robotState, log));
+    xbLT.onTrue(new IntakeSetPercent(-.3, -.3, intake, log));
+
+    xbY.onTrue(new SetShooterWrist(WristAngle.farShotAngle, shooter, wrist, log));
+    xbB.onTrue(new SetShooterWrist(WristAngle.trapSpeakerAngle, shooter, wrist, log));
+    xbA.onTrue(new SetShooterWrist(WristAngle.speakerAngle, shooter, wrist, log));
+    xbX.onTrue(new WristSetAngle(WristAngle.ampAngle, wrist, log)); // Make a score amp sequence and use that sequence to instead of set angle
    
     
   }
@@ -203,11 +208,14 @@ public class RobotContainer {
     }
 
     left[1].onTrue(new DriveResetPose(driveTrain, log));
+    left[2].onTrue(new ShootPiece(shooter, feeder, robotState, log));
 
-    left[2].onTrue(new ShootPiece(shooter, feeder, robotState, log)));
-
-    right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
+    // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
+    // right[2] //Turn to face amp
+    
+    // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
     right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
+    
      
   }
 

@@ -214,7 +214,8 @@ public final class Constants {
 
       public static final double velocityErrorTolerance = 100;
       public static final double shooterPercent = 0.25;
-      public static final double shooterVelocity = 2500;
+      public static final double shooterVelocityTop = 4000;
+      public static final double shooterVelocityBottom = 4400;
     }
 
     public static final class FeederConstants {
@@ -335,6 +336,11 @@ public final class Constants {
       // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
       public enum WristAngle {
           lowerLimit(-83.0),      // CALIBRATED
+          speakerAngle(-41),
+          trapSpeakerAngle(-75),
+          farShotAngle(-83),
+          overheadShotAngle(70),
+          ampAngle(75),
           upperLimit(90.0);       // CALIBRATED
 
           @SuppressWarnings({"MemberName", "PMD.SingularField"})
