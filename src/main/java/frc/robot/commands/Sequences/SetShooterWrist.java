@@ -4,11 +4,12 @@
 
 package frc.robot.commands.Sequences;
 
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.ShooterCalibrationRamp;
+import frc.robot.commands.SetSpeakerMode;
 import frc.robot.commands.ShooterSetVelocity;
 import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
@@ -20,13 +21,14 @@ import frc.robot.utilities.*;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class SetShooterWrist extends SequentialCommandGroup {
   /** Creates a new SetShooterWrist. */
-  public SetShooterWrist(WristAngle angle, Shooter shooter, Wrist wrist, FileLog log) {
+  public SetShooterWrist(WristAngle angle, Shooter shooter, Wrist wrist, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ParallelCommandGroup(
         new WristSetAngle(angle, wrist, log),
-        new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log)
+        new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log),
+        new SetSpeakerMode(true, robotState, log)
       )
     );
   }

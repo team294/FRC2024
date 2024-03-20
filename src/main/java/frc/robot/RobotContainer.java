@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -125,7 +127,7 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, robotState, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));
     SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, feeder, robotState, log));
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
 
@@ -149,7 +151,7 @@ public class RobotContainer {
     // Trigger to turn off intaking when a piece is detected in the feeder.
     // Note that this trigger will only turn off intaking if the robot is
     // currently in the INTAKE_TO_FEEDER state; otherwise, it does nothing.
-    Trigger intakeStopTrigger = new Trigger(()-> feeder.isPiecePresent() && DriverStation.isTeleopEnabled());
+    Trigger intakeStopTrigger = new Trigger(()-> feeder.isPiecePresent() && DriverStation.isTeleopEnabled() && wrist.getWristAngle() > WristAngle.intakeLimit.value);
     intakeStopTrigger.onTrue(
       new ConditionalCommand(
         new StopIntakingSequence(feeder, intake, robotState, log),
@@ -182,14 +184,22 @@ public class RobotContainer {
     Trigger xbPOVDown = xboxController.povDown();
 
 
-    xbLB.onTrue(new SetShooterWrist(WristAngle.overheadShotAngle, shooter, wrist, log));
+    xbLB.onTrue(new SetShooterWrist(WristAngle.overheadShotAngle, shooter, wrist, robotState, log));
 
-    xbRT.onTrue(new IntakePiece(intake, feeder, robotState, log));
+    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, robotState, log));
     xbLT.onTrue(new IntakeSetPercent(-.3, -.3, intake, log));
 
-    xbY.onTrue(new SetShooterWrist(WristAngle.farShotAngle, shooter, wrist, log));
-    xbB.onTrue(new SetShooterWrist(WristAngle.trapSpeakerAngle, shooter, wrist, log));
-    xbA.onTrue(new SetShooterWrist(WristAngle.speakerAngle, shooter, wrist, log));
+    xbY.onTrue(
+      new ParallelCommandGroup(
+        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
+        new SetSpeakerMode(true, robotState, log)
+      )  
+      ); //Store Wrist
+    
+    xbB.onTrue(new SetShooterWrist(WristAngle.trapSpeakerAngle, shooter, wrist, robotState, log));
+    
+    xbA.onTrue(new SetShooterWrist(WristAngle.speakerAngle, shooter, wrist, robotState, log));
+    
     xbX.onTrue(new WristSetAngle(WristAngle.ampShot, wrist, log)); // Make a score amp sequence and use that sequence to instead of set angle
    
     
@@ -208,7 +218,16 @@ public class RobotContainer {
     }
 
     left[1].onTrue(new DriveResetPose(driveTrain, log));
-    left[2].onTrue(new ShootPiece(shooter, feeder, robotState, log));
+    left[2].onTrue(new ConditionalCommand(
+        new ConditionalCommand(
+          new ShootPiece(shooter, feeder, robotState, log),
+          new ShootPieceAmp(feeder, robotState, log),
+          () -> robotState.isSpeakerMode()
+        ),
+        new WaitCommand(0),
+        () -> robotState.getState() == State.IDLE_WITH_PIECE
+      )
+    );
 
     // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
     // right[2] //Turn to face amp

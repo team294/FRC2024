@@ -4,11 +4,15 @@
 
 package frc.robot.commands.Sequences;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.FileLog;
@@ -26,14 +30,20 @@ public class IntakePiece extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public IntakePiece(Intake intake, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public IntakePiece(Intake intake, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
-      new RobotStateSet(BCRRobotState.State.INTAKE_TO_FEEDER, robotState, log),
-      new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
-      new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
-      );
+      new ConditionalCommand(
+        new SequentialCommandGroup(
+          new RobotStateSet(BCRRobotState.State.INTAKE_TO_FEEDER, robotState, log),
+          new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
+          new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
+        ),
+        new WaitCommand(0),
+        () -> (robotState.getState() == BCRRobotState.State.IDLE_NO_PIECE && wrist.getWristAngle() < WristAngle.intakeLimit.value)
+      )
+    );
   }
 }

@@ -299,6 +299,8 @@ public final class Constants {
       public static final double maxUncalibratedPercentOutput = 0.15;     // CALIBRATED
       public static final double maxPercentOutput = 0.4;          // CALIBRATED
 
+      public static final double climbPercentOutput = -0.2;
+
       // Update the REV through bore encoder offset angle in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
@@ -337,6 +339,7 @@ public final class Constants {
       // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
       public enum WristAngle {
           lowerLimit(-83.0),      // CALIBRATED
+          intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
           speakerAngle(-41),
           trapSpeakerAngle(-75),
           farShotAngle(-83),
