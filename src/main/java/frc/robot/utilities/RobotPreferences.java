@@ -132,7 +132,11 @@ public class RobotPreferences {
         Preferences.setBoolean("problemExists", problemExists);
     }
 
-    public static boolean getStickyFaults(){
+    /**
+     * Returns true if there is currently a sticky fault
+     * @return true = sticky fault, false = no faults
+     */
+    public static boolean isStickyFaultActive() {
         return problemExists;
     }
 

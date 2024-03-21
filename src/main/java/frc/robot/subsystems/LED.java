@@ -66,9 +66,14 @@ public class LED extends SubsystemBase {
     this.accuracy = 0;
 
     // Create the LED segments
-    LEDSegment CANdle = new LEDSegment(
-      LEDConstants.LEDSegmentRange.CANdle.index,
-      LEDConstants.LEDSegmentRange.CANdle.count,
+    LEDSegment CANdleTop = new LEDSegment(
+      LEDConstants.LEDSegmentRange.CANdleTop.index,
+      LEDConstants.LEDSegmentRange.CANdleTop.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment CANdleBottom = new LEDSegment(
+      LEDConstants.LEDSegmentRange.CANdleBottom.index,
+      LEDConstants.LEDSegmentRange.CANdleBottom.count,
       LEDConstants.Patterns.noPatternAnimation
     );
     LEDSegment strip1 = new LEDSegment(
@@ -76,7 +81,8 @@ public class LED extends SubsystemBase {
       LEDConstants.LEDSegmentRange.Strip1.count,
       LEDConstants.Patterns.noPatternAnimation
     );
-    segments.put(LEDSegmentRange.CANdle, CANdle);
+    segments.put(LEDSegmentRange.CANdleTop, CANdleTop);
+    segments.put(LEDSegmentRange.CANdleBottom, CANdleBottom);
     segments.put(LEDSegmentRange.Strip1, strip1);
   }
 
@@ -164,8 +170,8 @@ public class LED extends SubsystemBase {
       segments.get(segment).setAnimation(animation, loop);
     } else if (segment == LEDSegmentRange.Full) {
       // Special case
-      segments.get(LEDSegmentRange.CANdle).setAnimation(animation, loop);
-      segments.get(LEDSegmentRange.Strip1).setAnimation(animation, loop);
+      segments.get(LEDSegmentRange.CANdleTop).setAnimation(animation, loop);
+      segments.get(LEDSegmentRange.CANdleBottom).setAnimation(animation, loop);
     }
   }
 
@@ -266,32 +272,22 @@ public class LED extends SubsystemBase {
     }
   }
 
-  /**
-   *  Calculates the degrees from the direction the robot is facing to the direction towards the speaker
-   */
-  //TODO: Write function
-  private void calculateDegreesFromSpeaker(){
-    degreesFromSpeaker = 0;
-    degreesFromSpeaker =  (driveTrain.getPose().getRotation().getRadians() - Math.atan(driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos()/driveTrain.getPose().getX()));
-  }
 
   @Override
   public void periodic() {
 
-    calculateDegreesFromSpeaker();
-
-    if(degreesFromSpeaker <= accuracyDisplayThreshold){
-      accuracy = (int)((accuracyDisplayPattern.length/2)*(1-((degreesFromSpeaker-1)/accuracyDisplayThreshold)));
-      if (accuracy > (accuracyDisplayPattern.length/2)) {
-        setColor(Color.kGreen, LEDSegmentRange.Strip1);
-      } else {
-        setPattern(accuracyDisplayPattern, Color.kGreen, accuracy, LEDSegmentRange.Strip1);
-      }
-    }
+    // if(degreesFromSpeaker <= accuracyDisplayThreshold){
+    //   accuracy = (int)((accuracyDisplayPattern.length/2)*(1-((degreesFromSpeaker-1)/accuracyDisplayThreshold)));
+    //   if (accuracy > (accuracyDisplayPattern.length/2)) {
+    //     setColor(Color.kGreen, LEDSegmentRange.Strip1);
+    //   } else {
+    //     setPattern(accuracyDisplayPattern, Color.kGreen, accuracy, LEDSegmentRange.Strip1);
+    //   }
+    // }
 
     // Every scheduler run, update the animations for all segments
-    if(RobotPreferences.getStickyFaults()) segments.get(LEDSegmentRange.Strip1).setEdgeColor(Color.kRed);
-    else segments.get(LEDSegmentRange.Strip1).setEdgeColor(Color.kBlack);
+    if(RobotPreferences.isStickyFaultActive()) segments.get(LEDSegmentRange.CANdleBottom).setEdgeColor(Color.kRed);
+    else segments.get(LEDSegmentRange.CANdleBottom).setEdgeColor(Color.kBlack);
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);

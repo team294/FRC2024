@@ -280,8 +280,6 @@ public final class Constants {
     public static class FieldConstants {
       public static final double length = Units.feetToMeters(54);
       public static final double width = Units.feetToMeters(27);
-      public static final double yPosSpeakerBlue = 2.663;
-      public static final double yPosSpeakerRed = width - yPosSpeakerBlue;
     }
 
     public static class VisionConstants {
@@ -405,9 +403,10 @@ public final class Constants {
       }
 
       public enum LEDSegmentRange {
-          CANdle(0, 8),
-          Strip1(8, 60),
-          Full(0, 68);
+          CANdleTop(0, 3),
+          CANdleBottom(4, 7),
+          Strip1(8, 67),
+          Full(0, 67);
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
