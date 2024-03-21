@@ -342,10 +342,10 @@ public final class Constants {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
           speakerShotFromSpeaker(-41),
-          speakerShotFromPodium(-75),
-          speakerShotFromMidStage(-75),
+          speakerShotFromPodium(-72),  //128" field edge to front of bumper, ~144" to robot origin
+          speakerShotFromMidStage(-79),
           farShotAngle(-83),
-          overheadShotAngle(60),
+          overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-55.0),
           ampShot(50.0),
           climbStart(65.0),
