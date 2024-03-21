@@ -307,15 +307,26 @@ public final class Constants {
       public static class PhotonVisionConstants {
         public static final int width = 1200;
         //TODO NEED TO CALIBRATE
-        public static final Transform3d robotToCam =
+        public static final Transform3d robotToCamFront =
                 new Transform3d(
                     // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
-                    new Translation3d(Units.inchesToMeters(4), Units.inchesToMeters(0), Units.inchesToMeters(27.5)),
+                    new Translation3d(Units.inchesToMeters(8.9375), Units.inchesToMeters(0), Units.inchesToMeters(25.03125)),
                     new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(180))); // Cam mounted facing forward in center of robot
-        public static final String aprilTagCameraName = "Arducam_OV9281_USB_Camera";
+        public static final String aprilTagCameraName = "AprilTagCamera";
+        // 1.75 physical center to wheel center
+        // 16.75 wheel cetner to intake center without bumper
+        
+        public static final Transform3d robotToCamBack =
+                new Transform3d(
+                    // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
+                    new Translation3d(Units.inchesToMeters(6.125), Units.inchesToMeters(0), Units.inchesToMeters(25.03125)),
+                    new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(180))); // Cam mounted facing forward in center of robot
+
+             
+        public static final String aprilTagCameraBackName = "AprilTagCameraBack";
 
 
-        public static final String noteCameraName = "HD_USB_Camera (1)";
+        public static final String noteCameraName = "NoteCamera";
         public static final double pitchSetpoint = -13;
         public static final double yawSetpoint = 0;
       }

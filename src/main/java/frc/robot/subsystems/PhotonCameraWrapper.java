@@ -53,7 +53,7 @@ public class PhotonCameraWrapper extends SubsystemBase {
     currAlliance = allianceSelection.getAlliance();
 
     if (photonCamera == null) {
-      photonCamera = new PhotonCamera(PhotonVisionConstants.aprilTagCameraName);
+      photonCamera = new PhotonCamera(PhotonVisionConstants.aprilTagCameraBackName);
     }
 
 
@@ -84,7 +84,7 @@ public class PhotonCameraWrapper extends SubsystemBase {
       aprilTagFieldLayout,
       PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
       photonCamera,
-      PhotonVisionConstants.robotToCam);
+      PhotonVisionConstants.robotToCamFront);
       
     hasInit = true;
 
