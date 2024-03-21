@@ -16,7 +16,7 @@ public class RobotStateSet extends InstantCommand {
   /**
    * Immediately sets the Robot State object to the given state.
    * This will update wherever the object is used.
-   * @param newState State to set (ex: IDLE_NO_PIECE)
+   * @param newState State to set (ex: IDLE)
    * @param robotState robotState object
    * @param log log
    */

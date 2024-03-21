@@ -52,7 +52,7 @@ public class LED extends SubsystemBase {
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
     this.robotState = robotState;
-    this.currentState = BCRRobotState.State.IDLE_NO_PIECE;
+    this.currentState = BCRRobotState.State.IDLE;
     this.stickyFault = false;
     this.shouldClear = false;
     this.accuracyDisplayThreshold = 35;
@@ -225,7 +225,7 @@ public class LED extends SubsystemBase {
     candle.setLEDs(r, g, b, 0, segment.index, segment.count);
   }
   /**
-   * Sets LEDs using BCR color enum (ex: IDLE_NO_PIECE)
+   * Sets LEDs using BCR color enum (ex: IDLE)
    * @param color color to set
    */
   public void setLEDs(BCRColor color) {
@@ -233,7 +233,7 @@ public class LED extends SubsystemBase {
   }
   
   /**
-   * Sets LEDs using robot state (ex: IDLE_NO_PIECE)
+   * Sets LEDs using robot state (ex: IDLE)
    * @param color color to set
    * @param index index to start at
    * @param count number of LEDs
@@ -242,19 +242,20 @@ public class LED extends SubsystemBase {
     candle.setLEDs(color.r, color.g, color.b, 0, index, count);
   }
 
+  /**
+   * 
+   * @param segment
+   */
   public void updateStateLEDs(LEDSegmentRange segment) {
     // Store the state for periodics
     currentState = robotState.getState();
     // Set LEDs to match the state, as defined in Constants.BCRColor
     switch (currentState) {
-    case IDLE_NO_PIECE:
-      setLEDs(BCRColor.IDLE_NO_PIECE, segment.index, segment.count);
-      break;
-    case IDLE_WITH_PIECE:
-      setLEDs(BCRColor.IDLE_WITH_PIECE, segment.index, segment.count);
+    case IDLE:
+      setLEDs(BCRColor.IDLE, segment.index, segment.count);
       break;
     case INTAKING:
-      setLEDs(BCRColor.INTAKE_NO_PIECE, segment.index, segment.count);
+      setLEDs(BCRColor.INTAKING, segment.index, segment.count);
       break;
     case SHOOTING:
       setLEDs(BCRColor.SHOOTING, segment.index, segment.count);

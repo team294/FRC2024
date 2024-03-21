@@ -369,13 +369,9 @@ public final class Constants {
 
     /** Colors for the LEDs based on different robot states (see BCRRobotState) */
     public enum BCRColor {
-      IDLE_NO_PIECE(255, 255, 255), // White    (driving around with no piece)
-      IDLE_WITH_PIECE(255, 30, 0), // Orange    (have piece but can't shoot yet)
-      INTAKE_NO_PIECE(0, 0, 255), // Blue       (intake running)
-      SHOOTING(0, 255, 0),       // Green       (shot ready)
-      TARGETING_SPEAKER(255, 255, 0); // Yellow (targeting speaker)
-
-      // last 10 seconds, flash
+      IDLE(255, 255, 255), // White             (nothing running)
+      INTAKING(0, 0, 255), // Blue       (intake running)
+      SHOOTING(0, 255, 0);       // Green       (shooter running)
 
       public final int r, g, b;
       BCRColor(int r, int g, int b) {

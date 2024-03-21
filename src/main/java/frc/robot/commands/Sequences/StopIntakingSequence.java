@@ -14,8 +14,7 @@ import frc.robot.utilities.FileLog;
 public class StopIntakingSequence extends ParallelCommandGroup {
   
   /**
-   * Stops the intaking sequence and sets the robot state to either IDLE_WITH_PIECE or IDLE_NO_PIECE,
-   * using the feeder sensor to decide if it has a piece.
+   * Stops the intaking sequence and sets the robot state to IDLE
    * @param feeder Feeder subsystem
    * @param intake Intake subsystem
    * @param robotState Object with current robot state
