@@ -15,6 +15,7 @@ import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
+import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.Sequences.IntakePieceAuto;
 import frc.robot.commands.Sequences.SetShooterWristSpeaker;
 import frc.robot.commands.Sequences.ShootPiece;
@@ -43,14 +44,18 @@ public class CenterThreePieceShoot extends SourceTwoPieceShoot {
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
        new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
+        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(0, 0, 0, false, driveTrain, log),
+            new DriveResetPose(1.5, 3.2, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterAmpNoteRed.value], driveTrain, log)
           )
           , 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterAmpNoteBlue.value], driveTrain, log), 
+          new SequentialCommandGroup(
+            new DriveResetPose(1.5, 5.0, 0, false, driveTrain, log),
+            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterAmpNoteBlue.value], driveTrain, log)
+          ), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
@@ -63,6 +68,7 @@ public class CenterThreePieceShoot extends SourceTwoPieceShoot {
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
+        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log), 
@@ -77,7 +83,8 @@ public class CenterThreePieceShoot extends SourceTwoPieceShoot {
       ),
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(shooter, feeder, robotState, log)
+      new ShootPiece(shooter, feeder, robotState, log),
+      new WristSetAngle(WristAngle.lowerLimit, wrist, log)
     );
   }
 }
