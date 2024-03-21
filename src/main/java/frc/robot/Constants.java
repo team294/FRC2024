@@ -289,6 +289,8 @@ public final class Constants {
     public static class FieldConstants {
       public static final double length = Units.feetToMeters(54);
       public static final double width = Units.feetToMeters(27);
+      public static final double yPosSpeakerRed = 2.663;
+      public static final double yPosSpeakerBlue = width - yPosSpeakerRed;
     }
 
     public static class VisionConstants {
