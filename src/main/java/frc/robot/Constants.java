@@ -128,7 +128,7 @@ public final class Constants {
       // and ensures that the robot travels in the requested direction.  So, use min value of all 4 motors,
       // and further derate (initial test by 5%) to account for some battery droop under heavy loads.
       // Max speed measured values 3/18/2024:  All 4 motors are 4.17, 4.08, 4.2, 4.09 meters/sec.  So use 4.0 as a conservative value
-      public static final double kMaxSpeedMetersPerSecond = 4.0;          // CALIBRATED
+      public static final double kMaxSpeedMetersPerSecond = 3.7;          // A3:  Reduced from 4.0 to 3.7.  CALIBRATED
       public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;
       public static final double kNominalSpeedMetersPerSecond = 0.5*kMaxSpeedMetersPerSecond;
       // Max acceleration measured 3/18/2024 (with full robot weight):  7.6 - 8.4 m/sec^2.  Keep value at 7.5.
@@ -154,7 +154,7 @@ public final class Constants {
 
 
       public static final double kADrive = 0.0;
-      public static final double kADriveToPose = 0.050;  // formerly 0.060  CALIBRATED.  In % output per meters per second squared.
+      public static final double kADriveToPose = 0.100;  // formerly 0.050, updated to 0.100 for A3  TODO NOT CALIBRATED.  In % output per meters per second squared.
       public static final double kSDrive = 0.0080; // init cal done.  formerly 0.0255, CALIBRATED.  In % output.
     }
 
@@ -403,10 +403,10 @@ public final class Constants {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
           speakerShotFromSpeaker(-41),
-          speakerShotFromPodium(-75),
-          speakerShotFromMidStage(-75),
+          speakerShotFromPodium(-72),  //128" field edge to front of bumper, ~144" to robot origin
+          speakerShotFromMidStage(-79),
           farShotAngle(-83),
-          overheadShotAngle(60),
+          overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-55.0),
           ampShot(50.0),
           climbStart(65.0),
