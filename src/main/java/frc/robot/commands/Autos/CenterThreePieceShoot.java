@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.Sequences.IntakePieceAuto;
@@ -34,7 +35,7 @@ public class CenterThreePieceShoot extends SourceTwoPieceShoot {
     // addCommands(new FooCommand(), new BarCommand());
     super(intake, shooter, driveTrain, feeder, robotState, cache, alliance, log);
     addCommands(
-      new ShootPiece(shooter, feeder, robotState, log),
+       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
