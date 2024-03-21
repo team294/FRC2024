@@ -151,7 +151,7 @@ public class RobotContainer {
     // Trigger to turn off intaking when a piece is detected in the feeder.
     // Note that this trigger will only turn off intaking if the robot is
     // currently in the INTAKE_TO_FEEDER state; otherwise, it does nothing.
-    Trigger intakeStopTrigger = new Trigger(()-> feeder.isPiecePresent() && DriverStation.isTeleopEnabled() && wrist.getWristAngle() > WristAngle.intakeLimit.value);
+    Trigger intakeStopTrigger = new Trigger(()-> DriverStation.isTeleopEnabled() && (feeder.isPiecePresent() ||  wrist.getWristAngle() > WristAngle.intakeLimit.value) );
     intakeStopTrigger.onTrue(
       new ConditionalCommand(
         new StopIntakingSequence(feeder, intake, robotState, log),
