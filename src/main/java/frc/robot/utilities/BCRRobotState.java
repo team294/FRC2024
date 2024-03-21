@@ -17,9 +17,11 @@ public class BCRRobotState {
 
     // The current State of the robot
     private State state;
-    
-    /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE
-    */
+
+    //True if in speaker mode, false if in amp mode
+    private boolean speakerMode = true; 
+
+    /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE */
     public BCRRobotState() {
         setState(State.IDLE_NO_PIECE);
     }
@@ -35,6 +37,22 @@ public class BCRRobotState {
     /** Gets the current State of the robot */
     public State getState() {
         return state;
+    }
+
+    /**
+     * returns if shooter/wrist are in speaker mode or amp mode
+     * @return true = speaker mode, false = amp mode
+     */
+    public boolean isSpeakerMode(){
+        return speakerMode;
+    }
+
+    /**
+     * Set if the robot is in speaker mode or amp mode
+     * @param speakerMode true = speaker mode, false = amp mode
+     */
+    public void setSpeakerMode(boolean speakerMode){
+        this.speakerMode = speakerMode;
     }
 
     /**

@@ -17,6 +17,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,6 +65,10 @@ public class Wrist extends SubsystemBase implements Loggable{
 	private final StatusSignal<Double> wrist2DutyCycle = wristMotor2.getDutyCycle();				  // Motor duty cycle percent power, -1 to 1
 	private final StatusSignal<Double> wrist2StatorCurrent = wristMotor2.getStatorCurrent();	// Motor stator current, in amps (+=fwd, -=rev)
 	private final StatusSignal<Double> wrist2EncoderPostion = wristMotor2.getPosition();			// Encoder position, in pinion rotations
+
+  // Wrist bump switches
+  private final DigitalInput lowerLimit1 = new DigitalInput(Ports.DIOWristLowerLimit1);
+  private final DigitalInput lowerLimit2 = new DigitalInput(Ports.DIOWristLowerLimit2);
 
   // Rev through-bore encoder
   private final DutyCycleEncoder revEncoder = new DutyCycleEncoder(Ports.DIOWristRevThroughBoreEncoder);
@@ -363,7 +368,8 @@ public class Wrist extends SubsystemBase implements Loggable{
   }
 
   /**
-   * Calibrates the wrist encoder, assuming we know the wrist's current angle
+   * Calibrates the wrist encoder, assuming we know the wrist's current angle.
+   * Sets wristCalibrated = true.
    * @param angle current angle that the wrist is physically at, in degrees
    */
   public void calibrateWristEnc(double angle) {
@@ -382,15 +388,17 @@ public class Wrist extends SubsystemBase implements Loggable{
   /**
    * Calibrates the REV through bore encoder, so that 0 should be with the CG of the wrist horizontal 
    * facing away from the robot, and -90 deg is with the CG of the wrist resting downward.
+   * <p> <b> NOTE!!!! </b> Only call this method when the wrist is in/near the down position!!!!
    * @param offsetDegrees Desired encoder zero angle, in absolute magnet position reading
    */
   public void calibrateRevEncoderDegrees(double offsetDegrees) {
     revEncoderZero = -offsetDegrees;
     
-    // Avoid wrap point on Rev encoder
-    if (getRevEncoderDegrees() < WristAngle.lowerLimit.value - 5.0) {
-      revEncoderZero -= 360.0/kRevEncoderGearRatio;
-    }
+    // Avoid wrap point on Rev encoder.
+    // Assume that the wrist is in/near the down position.  Then the Rev encoder should be between
+    // 0 and 1 (rotation units).  If the encoder has wrapped, then adjust the encoder zero point
+    // by the number of integer encoder rotations.
+    revEncoderZero += 360.0/kRevEncoderGearRatio * Math.floor( revEncoder.get() );
 
     log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "encoderZero", revEncoderZero, 
         "raw encoder", revEncoder.get()*360.0/kRevEncoderGearRatio, "encoder degrees", getRevEncoderDegrees());
@@ -410,9 +418,36 @@ public class Wrist extends SubsystemBase implements Loggable{
    * facing away from the robot, and -90 deg is with the CG of the wrist resting downward.
    */
   public double getRevEncoderDegrees() {
-    // Note that rev encoder is reversed [-revEncoder.get()], since mounting of the encoder
-    // is flipped on the wrist axle.
-    return MathBCR.normalizeAngle(-revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
+    // Note that rev encoder is not reversed [revEncoder.get()], since mounting of the encoder
+    // is no longer flipped on the wrist axle.
+    return MathBCR.normalizeAngle(revEncoder.get()*360.0/kRevEncoderGearRatio - revEncoderZero);
+  }
+
+ 	// ************ Bump switch methods
+
+  /**
+   * Checks bump switch 1 to check if the wrist is at the lower limit.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  private boolean isWristAtLowerLimit1() {
+    return !lowerLimit1.get();
+  }
+
+  /**
+   * Checks bump switch 2 to check if the wrist is at the lower limit.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  private boolean isWristAtLowerLimit2() {
+    return !lowerLimit2.get();
+  }
+
+  /**
+   * Checks bump switches to check if the wrist is at the lower limit.
+   * If either bump switch (or both switches) are pressed, then this method returns true.
+   * @return true = at lower limit, false = not at lower limit
+   */
+  public boolean isWristAtLowerLimit() {
+    return isWristAtLowerLimit1() || isWristAtLowerLimit2();
   }
 
  	// ************ Periodic and information methods
@@ -434,7 +469,8 @@ public class Wrist extends SubsystemBase implements Loggable{
       "WristCalZero", wristCalZero,
       "Wrist Degrees", getWristEncoderDegrees(),
       "Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget(),
-      "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees()
+      "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees(),
+      "Lower Limit 1", isWristAtLowerLimit1(), "Lower Limit 2", isWristAtLowerLimit2()
     );
   }
 
@@ -452,7 +488,11 @@ public class Wrist extends SubsystemBase implements Loggable{
     if (log.isMyLogRotation(logRotationKey)) {
       SmartDashboard.putBoolean("Wrist Rev connected", isRevEncoderConnected());
       SmartDashboard.putBoolean("Wrist calibrated", wristCalibrated);
+      // SmartDashboard.putBoolean("Wrist LL1", isWristAtLowerLimit1());
+      // SmartDashboard.putBoolean("Wrist LL2", isWristAtLowerLimit2());
+      SmartDashboard.putBoolean("Wrist lower limit", isWristAtLowerLimit());
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
+      SmartDashboard.putNumber("Wrist Rev raw", revEncoder.get());
       SmartDashboard.putNumber("Wrist angle", getWristEncoderDegrees());
       SmartDashboard.putNumber("Wrist target angle", getCurrentWristTarget());
       SmartDashboard.putNumber("Wrist enc1 raw", getWristEncoderRotationsRaw());
@@ -469,21 +509,21 @@ public class Wrist extends SubsystemBase implements Loggable{
     // After it boots up, it takes up to 40ms sec to settle into an accurate reading.
     // Wait for 5 periodic cycles after the encoder boots up before calibrating.
     if (!wristCalibrated) {
-      if (isRevEncoderConnected()) {
+      if (isRevEncoderConnected() && revEncoderBootCount < 5) {
         revEncoderBootCount++;
         log.writeLog(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder connected", true,
           "Boot cylces", revEncoderBootCount,
           "Rev angle", getRevEncoderDegrees());  
       }
-      if (isRevEncoderConnected() && revEncoderBootCount >= 5) {
+      if (isRevEncoderConnected() && revEncoderBootCount >= 5 && isWristAtLowerLimit()) {
         // Calibrate Rev encoder
         calibrateRevEncoderDegrees(revEncoderOffsetAngleWrist);
-        wristCalibrated = true;
         log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder calibrated", true,
           "Boot cylces", revEncoderBootCount,
           "Rev angle", getRevEncoderDegrees());  
 
         // Copy calibration to wrist encoder
+        // This sets wristCalibrated to true
         calibrateWristEnc(getRevEncoderDegrees());
 
         // Configure soft limits on motor     //TODO will this limit both motors???
@@ -514,6 +554,22 @@ public class Wrist extends SubsystemBase implements Loggable{
     // If the driver station is disabled, then turn off any position control for the wrist motor
     if (DriverStation.isDisabled()) {
       stopWrist();
+    }
+
+    // If the wrist hits the bump switch, then stop the wrist from moving down further
+    if (isWristAtLowerLimit()) {
+      if (wristCalibrated && isWristMotorPositionControl()) {
+        // Wrist is calibrated and under position control, so don't let the position go down any further
+        if (getCurrentWristTarget() < getWristEncoderDegrees()) {
+          // Current target angle is below current angle.  Reset target to current angle
+          setWristAngle(getWristEncoderDegrees());
+        }
+      } else {
+        // Wrist is under voltage (direct speed) control.  Stop it if it is moving down
+        if (getWristMotorPercentOutput()<0) {
+          stopWrist();
+        }
+      }
     }
 
     // Un-calibrates the wrist if the angle is outside of bounds.
