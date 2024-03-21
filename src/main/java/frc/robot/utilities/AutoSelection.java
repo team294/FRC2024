@@ -30,7 +30,7 @@ import frc.robot.subsystems.Wrist;
 public class AutoSelection {
 
 	public static final int NONE = 0;
-	// public static final int test = 1;
+	public static final int test = 1;
 	public static final int shootOne = 2;
 	public static final int CenterTwoPieceShoot = 3;
 	public static final int SourceTwoPieceShoot = 4;
@@ -100,10 +100,10 @@ public class AutoSelection {
 			autonomousCommand = new DriveResetPose(180, false, driveTrain, log);
 		}
 
-		// else if(autoPlan == test){
-		// 	log.writeLogEcho(true, "AutoSelect", "run Test");
-		// 	autonomousCommand = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
-		// }
+		else if(autoPlan == test){
+			log.writeLogEcho(true, "AutoSelect", "run Test");
+			autonomousCommand = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
+		}
 
 		else if(autoPlan == shootOne){
 			log.writeLogEcho(true, "AutoSelect", "run One Piece Shoot");
