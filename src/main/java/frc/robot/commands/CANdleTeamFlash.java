@@ -65,8 +65,6 @@ public class CANdleTeamFlash extends Command {
         else {
             led.setLEDs(0,255,255);
         }
-        // color = new Color(r, g, b);
-        // led.setLEDs(color, 0);
         t += 1;
         if (t > 16) {
             t = 0;

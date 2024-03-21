@@ -17,8 +17,6 @@ import frc.robot.Robot;
 import frc.robot.Constants.BCRColor;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LEDConstants.*;
-import frc.robot.utilities.AllianceSelection;
-import frc.robot.utilities.AutoSelection;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.LEDSegment;
