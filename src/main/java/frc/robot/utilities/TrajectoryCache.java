@@ -27,7 +27,7 @@ public class TrajectoryCache {
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
-        test(0),
+        // test(0),
         driveToSourceCloseNoteRed(1),
         driveToSourceCloseNoteBlue(2),
         driveToCenterCloseNoteRed(3),
