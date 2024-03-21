@@ -8,9 +8,8 @@ package frc.robot.utilities;
 public class BCRRobotState {
     /** The enum that keeps track of all possible states for the robot */
     public static enum State {
-        IDLE_NO_PIECE,
-        IDLE_WITH_PIECE,
-        INTAKE_TO_FEEDER,
+        IDLE,
+        INTAKING,
         SHOOTING
     }
 
@@ -22,7 +21,7 @@ public class BCRRobotState {
 
     /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE */
     public BCRRobotState() {
-        setState(State.IDLE_NO_PIECE);
+        setState(State.IDLE);
     }
 
     /**
