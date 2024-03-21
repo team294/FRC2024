@@ -22,6 +22,7 @@ public class SpeakerModeSet extends InstantCommand {
    */
   public SpeakerModeSet(boolean speakerMode, BCRRobotState robotState, FileLog log) {
     this.speakerMode = speakerMode;
+    this.robotState = robotState;
     this.log = log;
   }
 
