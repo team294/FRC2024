@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.commands.*;
@@ -40,7 +41,6 @@ public class RobotContainer {
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
-  // private final JeVoisCamera jevois = new JeVoisCamera(log);
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
   private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);
@@ -70,7 +70,7 @@ public class RobotContainer {
 
     // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
     driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, allianceSelection, driveTrain, log));
-    driveTrain.cameraInit();
+
   }
 
   /**
@@ -93,12 +93,6 @@ public class RobotContainer {
     // Intake commands
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
-    SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
-    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, feeder, robotState, log));
-    SmartDashboard.putData("Stop All Subsystems", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, robotState, log));
-    SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
-    SmartDashboard.putData("Drive To Note", new DriveToNote(feeder, driveTrain, log));
 
     // Shooter commands
     SmartDashboard.putData("Shooter Set Percent", new ShooterSetPercent(shooter, log));
@@ -200,14 +194,12 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    //left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, intake, log));
-    left[1].onTrue(new SetAimLock(driveTrain, true, log));
-    left[1].onFalse(new SetAimLock(driveTrain, false, log));
+    left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake, log));
+
     left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
-    
+
     right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
     right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
-   
      
   }
 
@@ -289,7 +281,6 @@ public class RobotContainer {
    */
   public void disabledPeriodic() {
     // Check for CAN bus error.  This is to prevent the issue that caused us to be eliminated in 2020!
-    driveTrain.updateOdometry();
     if (driveTrain.canBusError()) {
       RobotPreferences.recordStickyFaults("CAN Bus", log);
     }  //    TODO May want to flash this to the driver with some obvious signal!

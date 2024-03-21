@@ -104,6 +104,11 @@ public final class Constants {
       // front-back distance between the drivetrain wheels; should be measured from center to center
       public static final double DRIVETRAIN_WHEELBASE_METERS = 0.52705 * DrivetrainAdjustmentFactor;       // 0.52705m CALIBRATED.  Competition bot CAD = 20.75" = 0.52705m.  80% bot CAD = 0.60325m, calibrated = 0.626m.
 
+      // distance from the ground to the center of the wrist joint (m)
+      public static final double heightFromGroundToWristPivot = 0.5762625;
+
+      // distance from the center of the wrist pivot to the intersection of the path the notes travel through the shooter (m)
+      public static final double lengthOfArmFromWristPivotToCenterPathOfShooter = 0.365125;
     }
 
     public static final class SwerveConstants {
@@ -301,6 +306,7 @@ public final class Constants {
       public static final double width = Units.feetToMeters(27);
       public static final double yPosSpeakerRed = 2.663;
       public static final double yPosSpeakerBlue = width - yPosSpeakerRed;
+      public static final double heightOfSpeaker = 2.03;
     }
 
     public static class VisionConstants {
