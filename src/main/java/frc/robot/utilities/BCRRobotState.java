@@ -18,7 +18,7 @@ public class BCRRobotState {
     private State state;
 
     //True if in speaker mode, false if in amp mode
-    private boolean speakerMode; 
+    private boolean speakerMode = true; 
 
     /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE */
     public BCRRobotState() {

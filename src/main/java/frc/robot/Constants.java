@@ -216,6 +216,7 @@ public final class Constants {
       public static final double shooterPercent = 0.25;
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
+      public static final double shooterVelocityPit = 500;
     }
 
     public static final class FeederConstants {
@@ -340,8 +341,9 @@ public final class Constants {
       public enum WristAngle {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
-          speakerAngle(-41),
-          trapSpeakerAngle(-75),
+          speakerShotFromSpeaker(-41),
+          speakerShotFromPodium(-75),
+          speakerShotFromMidStage(-75),
           farShotAngle(-83),
           overheadShotAngle(60),
           climbStop(-55.0),

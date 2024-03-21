@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
@@ -128,7 +129,7 @@ public class RobotContainer {
 
     // Sequences
     SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));
-    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, feeder, robotState, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log));
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
 
     // Autos
@@ -151,13 +152,12 @@ public class RobotContainer {
     // Trigger to turn off intaking when a piece is detected in the feeder.
     // Note that this trigger will only turn off intaking if the robot is
     // currently in the INTAKE_TO_FEEDER state; otherwise, it does nothing.
-    Trigger intakeStopTrigger = new Trigger(()-> DriverStation.isTeleopEnabled() && (feeder.isPiecePresent() ||  wrist.getWristAngle() > WristAngle.intakeLimit.value) );
+    Trigger intakeStopTrigger = new Trigger(()-> DriverStation.isTeleopEnabled() && 
+      robotState.getState() == State.INTAKE_TO_FEEDER &&
+      (feeder.isPiecePresent() ||  wrist.getWristAngle() > WristAngle.intakeLimit.value) );
     intakeStopTrigger.onTrue(
-      new ConditionalCommand(
-        new StopIntakingSequence(feeder, intake, robotState, log),
-        new WaitCommand(0.01), 
-        () -> robotState.getState() == State.INTAKE_TO_FEEDER)      
-      );
+      new StopIntakingSequence(feeder, intake, robotState, log)
+    );
   }
 
   /**
@@ -183,25 +183,57 @@ public class RobotContainer {
     Trigger xbPOVLeft = xboxController.povLeft();
     Trigger xbPOVDown = xboxController.povDown();
 
+    // Prep for overhead speaker shot
+    xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
-    xbLB.onTrue(new SetShooterWrist(WristAngle.overheadShotAngle, shooter, wrist, robotState, log));
-
+    // Intake a piece
     xbRT.onTrue(new IntakePiece(intake, feeder, wrist, robotState, log));
+
+    // Reverse the intake
     xbLT.onTrue(new IntakeSetPercent(-.3, -.3, intake, log));
 
-    xbY.onTrue(
+    // Prep for at-speaker shot
+    xbA.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
+    
+    // Prep for podium speaker shot
+    xbB.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromPodium, 
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
+    
+    // Prep for mid-stage speaker shot
+    xbY.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
+
+    // Store wrist
+    xbX.onTrue(
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-        new SetSpeakerMode(true, robotState, log)
+        new SpeakerModeSet(true, robotState, log)
       )  
       ); //Store Wrist
     
-    xbB.onTrue(new SetShooterWrist(WristAngle.trapSpeakerAngle, shooter, wrist, robotState, log));
-    
-    xbA.onTrue(new SetShooterWrist(WristAngle.speakerAngle, shooter, wrist, robotState, log));
-    
-    xbX.onTrue(new WristSetAngle(WristAngle.ampShot, wrist, log)); // Make a score amp sequence and use that sequence to instead of set angle
-   
+    // Prep for pit shot when back button is pressed
+    xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
+      ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, shooter, wrist, intake, feeder, robotState, log));
+    // Shoot in slow speed pit shot when released
+    xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, 
+      shooter, feeder, robotState, log) );
+
+    // Prep for amp shot
+    xbPOVRight.onTrue( new ParallelCommandGroup(
+        new IntakeStop(intake, log),
+        new WristSetAngle(WristAngle.ampShot, wrist, log),
+        new SpeakerModeSet(false, robotState, log),
+        new RobotStateSetIdle(robotState, feeder, log)
+    ) );  
+
+    // Stop all motors
+    xbStart.onTrue(new ParallelCommandGroup(
+        new IntakeStop(intake, log),
+        new ShooterFeederStop(shooter, feeder, log),
+        new RobotStateSetIdle(robotState, feeder, log)      
+    ) );
     
   }
 
@@ -217,10 +249,13 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    left[1].onTrue(new DriveResetPose(driveTrain, log));
+    // Reset pose
+    left[1].onTrue(new DriveResetPose( 0, false, driveTrain, log));
+
+    // Shoot the note
     left[2].onTrue(new ConditionalCommand(
         new ConditionalCommand(
-          new ShootPiece(shooter, feeder, robotState, log),
+          new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
           new ShootPieceAmp(feeder, robotState, log),
           () -> robotState.isSpeakerMode()
         ),
@@ -315,6 +350,13 @@ public class RobotContainer {
    * Method called once every scheduler cycle when robot is disabled.
    */
   public void disabledPeriodic() {
+    // Set robot state
+    if (feeder.isPiecePresent()) {
+      robotState.setState(State.IDLE_WITH_PIECE);
+    } else {
+      robotState.setState(State.IDLE_NO_PIECE);
+    }
+
     // Check for CAN bus error.  This is to prevent the issue that caused us to be eliminated in 2020!
     if (driveTrain.canBusError()) {
       RobotPreferences.recordStickyFaults("CAN Bus", log);
@@ -359,7 +401,12 @@ public class RobotContainer {
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
 
-    
+    // Set robot state
+    if (feeder.isPiecePresent()) {
+      robotState.setState(State.IDLE_WITH_PIECE);
+    } else {
+      robotState.setState(State.IDLE_NO_PIECE);
+    }
   }
 
   /**

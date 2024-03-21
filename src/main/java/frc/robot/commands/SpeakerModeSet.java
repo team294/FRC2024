@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 
-public class SetSpeakerMode extends InstantCommand {
+public class SpeakerModeSet extends InstantCommand {
   boolean speakerMode;
   BCRRobotState robotState;
   FileLog log;
@@ -20,7 +20,7 @@ public class SetSpeakerMode extends InstantCommand {
    * @param robotState
    * @param log
    */
-  public SetSpeakerMode(boolean speakerMode, BCRRobotState robotState, FileLog log) {
+  public SpeakerModeSet(boolean speakerMode, BCRRobotState robotState, FileLog log) {
     this.speakerMode = speakerMode;
     this.log = log;
   }
