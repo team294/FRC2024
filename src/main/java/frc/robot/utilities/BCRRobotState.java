@@ -8,10 +8,9 @@ package frc.robot.utilities;
 public class BCRRobotState {
     /** The enum that keeps track of all possible states for the robot */
     public static enum State {
-        IDLE_NO_PIECE,           // Not holding a piece
-        IDLE_WITH_PIECE,         // Have piece, not shooting
-        INTAKING,                // Intake running
-        SHOOTING                 // Robot is in the process of shooting a piece
+        IDLE,
+        INTAKING,
+        SHOOTING
     }
 
     // The current State of the robot
@@ -20,9 +19,9 @@ public class BCRRobotState {
     //True if in speaker mode, false if in amp mode
     private boolean speakerMode = true; 
 
-    /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE */
+    /** Creates a new BCRRobotState with the default State value of IDLE */
     public BCRRobotState() {
-        setState(State.IDLE_NO_PIECE);
+        setState(State.IDLE);
     }
 
     /**

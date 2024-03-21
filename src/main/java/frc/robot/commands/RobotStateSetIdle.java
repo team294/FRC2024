@@ -22,10 +22,7 @@ public class RobotStateSetIdle extends SequentialCommandGroup {
    */
   public RobotStateSetIdle(BCRRobotState robotState, Feeder feeder, FileLog log) {
     addCommands(
-      new ConditionalCommand(
-        new RobotStateSet(BCRRobotState.State.IDLE_WITH_PIECE, robotState, log), 
-        new RobotStateSet(BCRRobotState.State.IDLE_NO_PIECE, robotState, log),
-        feeder::isPiecePresent)
+      new RobotStateSet(BCRRobotState.State.IDLE, robotState, log)
     );
   }
 }

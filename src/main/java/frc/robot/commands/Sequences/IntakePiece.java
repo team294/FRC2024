@@ -44,7 +44,7 @@ public class IntakePiece extends SequentialCommandGroup {
           new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
         ),
         new WaitCommand(0),
-        () -> (robotState.getState() == BCRRobotState.State.IDLE_NO_PIECE)
+        () -> (!feeder.isPiecePresent())
       )
     );
   }

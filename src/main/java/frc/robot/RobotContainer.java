@@ -45,7 +45,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("A1");
+  private final FileLog log = new FileLog("A2");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
@@ -273,7 +273,7 @@ public class RobotContainer {
           () -> robotState.isSpeakerMode()
         ),
         new WaitCommand(0),
-        () -> robotState.getState() == State.IDLE_WITH_PIECE
+        () -> feeder.isPiecePresent()
       )
     );
 
@@ -364,11 +364,7 @@ public class RobotContainer {
    */
   public void disabledPeriodic() {
     // Set robot state
-    if (feeder.isPiecePresent()) {
-      robotState.setState(State.IDLE_WITH_PIECE);
-    } else {
-      robotState.setState(State.IDLE_NO_PIECE);
-    }
+    robotState.setState(State.IDLE);
 
     // Check for CAN bus error.  This is to prevent the issue that caused us to be eliminated in 2020!
     if (driveTrain.canBusError()) {
@@ -415,11 +411,7 @@ public class RobotContainer {
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
 
     // Set robot state
-    if (feeder.isPiecePresent()) {
-      robotState.setState(State.IDLE_WITH_PIECE);
-    } else {
-      robotState.setState(State.IDLE_NO_PIECE);
-    }
+    robotState.setState(State.IDLE);
   }
 
   /**
