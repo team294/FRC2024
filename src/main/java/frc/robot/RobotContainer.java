@@ -61,7 +61,7 @@ public class RobotContainer {
   private final BCRRobotState robotState = new BCRRobotState();
   
   // Is a subsystem, but requires a utility
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", driveTrain, robotState, allianceSelection, log);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", robotState, log);
 
 
   // Define controllers
@@ -139,9 +139,6 @@ public class RobotContainer {
     SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log));
 
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
-
-    // LED commands
-    SmartDashboard.putData("CANdle Set Color Uniform", new CANdleSetColorUniform(led, log));
 
     // Sequences
     SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));

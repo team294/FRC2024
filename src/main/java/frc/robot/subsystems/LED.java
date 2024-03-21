@@ -28,14 +28,11 @@ import frc.robot.utilities.RobotPreferences;
 public class LED extends SubsystemBase {
   private final FileLog log;
   private final CANdle candle;
-  private final DriveTrain driveTrain;
-  private final AllianceSelection allianceSelection;
   private String subsystemName;
   private BCRRobotState robotState;
   private BCRRobotState.State currentState;
   private boolean stickyFault;
   private boolean shouldClear;
-  private double degreesFromSpeaker;
   private double accuracyDisplayThreshold;
   private int accuracy;
 
@@ -51,14 +48,12 @@ public class LED extends SubsystemBase {
    * @param subsystemName
    * @param log
    */
-  public LED(int CANPort, String subsystemName, DriveTrain driveTrain, BCRRobotState robotState, AllianceSelection allianceSelection, FileLog log) {
+  public LED(int CANPort, String subsystemName, BCRRobotState robotState, FileLog log) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
-    this.driveTrain = driveTrain;
     this.robotState = robotState;
-    this.allianceSelection = allianceSelection;
     this.currentState = BCRRobotState.State.IDLE_NO_PIECE;
     this.stickyFault = false;
     this.shouldClear = false;
