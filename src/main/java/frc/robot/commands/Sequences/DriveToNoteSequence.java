@@ -10,6 +10,7 @@ import frc.robot.commands.DriveToNote;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 
@@ -18,12 +19,12 @@ import frc.robot.utilities.FileLog;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveToNoteSequence extends SequentialCommandGroup {
   /** Creates a new DriveToNoteSequence. */
-  public DriveToNoteSequence(Intake intake, Feeder feeder, DriveTrain drivetrain, BCRRobotState robotState, FileLog log) {
+  public DriveToNoteSequence(Intake intake, Feeder feeder, Wrist wrist, DriveTrain drivetrain, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ParallelCommandGroup(
-        new IntakePiece(intake, feeder, robotState, log),
+        new IntakePiece(intake, feeder, wrist, robotState, log),
         new DriveToNote(feeder, drivetrain, log)
       )
     );
