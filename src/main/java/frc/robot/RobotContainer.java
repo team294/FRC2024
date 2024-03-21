@@ -46,7 +46,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("J1");
+  private final FileLog log = new FileLog("A1");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
@@ -224,7 +224,7 @@ public class RobotContainer {
       );
     
     // Prep for pit shot when back button is pressed
-    xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
+    xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.lowerLimit, 
       ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, shooter, wrist, intake, feeder, robotState, log));
     // Shoot in slow speed pit shot when released
     xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, 
