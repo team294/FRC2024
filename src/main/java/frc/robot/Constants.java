@@ -79,6 +79,8 @@ public final class Constants {
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
       public static final int DIOWristRevThroughBoreEncoder = 1;
+      public static final int DIOWristLowerLimit1 = 2;
+      public static final int DIOWristLowerLimit2 = 3;
       public static final int DIOIntakePieceSensor = 9;
     }
 
@@ -118,12 +120,12 @@ public final class Constants {
       // Max speed is used to keep each motor from maxing out, which preserves ratio between motors 
       // and ensures that the robot travels in the requested direction.  So, use min value of all 4 motors,
       // and further derate (initial test by 5%) to account for some battery droop under heavy loads.
-      // Max speed measured values x/x/2024:  All 4 motors are between 4.6 an 4.7 meters/sec.  So use 4.5 as a conservative value
-      public static final double kMaxSpeedMetersPerSecond = 4.5;          // CALIBRATED
+      // Max speed measured values 3/18/2024:  All 4 motors are 4.17, 4.08, 4.2, 4.09 meters/sec.  So use 4.0 as a conservative value
+      public static final double kMaxSpeedMetersPerSecond = 3.7;          // A3:  Reduced from 4.0 to 3.7.  CALIBRATED
       public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;
       public static final double kNominalSpeedMetersPerSecond = 0.5*kMaxSpeedMetersPerSecond;
-      // Max acceleration measured x/x/2024 (with full robot weight):  Average ~11 m/sec^2.  Keep value at 10.0 for now.
-      public static final double kMaxAccelerationMetersPerSecondSquare = 10; // TODO NOT CALIBRATED.  Max = 30 m/s^2 (not full robot weight)
+      // Max acceleration measured 3/18/2024 (with full robot weight):  7.6 - 8.4 m/sec^2.  Keep value at 7.5.
+      public static final double kMaxAccelerationMetersPerSecondSquare = 7.5; // CALIBRATED
       public static final double kFullAccelerationMetersPerSecondSquare = 0.9 * kMaxAccelerationMetersPerSecondSquare;
       public static final double kNominalAccelerationMetersPerSecondSquare = 3.5; // TODO value from last year
       public static final double kMaxTurningRadiansPerSecond = 11.0;  // TODO NOT CALIBRATED
@@ -145,7 +147,7 @@ public final class Constants {
 
 
       public static final double kADrive = 0.0;
-      public static final double kADriveToPose = 0.050;  // formerly 0.060  CALIBRATED.  In % output per meters per second squared.
+      public static final double kADriveToPose = 0.100;  // formerly 0.050, updated to 0.100 for A3  TODO NOT CALIBRATED.  In % output per meters per second squared.
       public static final double kSDrive = 0.0080; // init cal done.  formerly 0.0255, CALIBRATED.  In % output.
     }
 
@@ -212,7 +214,9 @@ public final class Constants {
 
       public static final double velocityErrorTolerance = 100;
       public static final double shooterPercent = 0.25;
-      public static final double shooterVelocity = 2500;
+      public static final double shooterVelocityTop = 4000;
+      public static final double shooterVelocityBottom = 4400;
+      public static final double shooterVelocityPit = 500;
     }
 
     public static final class FeederConstants {
@@ -229,6 +233,7 @@ public final class Constants {
       public static final double kA = 0.0;
 
       public static final double feederPercent = 0.2;
+      public static final double feederAmpShot = -0.3;
     }
 
     public static final class TrajectoryConstants {
@@ -286,29 +291,31 @@ public final class Constants {
 
     public static final class WristConstants {
       public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.  Encoder counts per revolution of FalconFX motor pinion gear
-      public static final double kWristGearRatio = (75.0 / 1.0);   // From CAD, should be 75:1.  Gear reduction ratio between motor pinion and gear driving the wrist (planetary and chain gears)
+      public static final double kWristGearRatio = (5.0*5.0*3.0 * 48.0 / 22.0);   // From CAD, should be 5*5*3 * 48:22.  Gear reduction ratio between motor pinion and gear driving the wrist (planetary and chain gears)
       public static final double kWristDegreesPerRotation =  360.0 / kEncoderCPR / kWristGearRatio;      // CALIBRATED (fudge factor was 0.9726 last year)
 
-      public static final double kRevEncoderGearRatio = (3.0 / 1.0);   // From CAD, should be 3:1.  Gear reduction ratio between Rev Thru-Bore encoder and gear driving the wrist (chain/gears)
+      public static final double kRevEncoderGearRatio = (48.0 / 22.0);   // From CAD, should be 48:22.  Gear reduction ratio between Rev Thru-Bore encoder and gear driving the wrist (chain/gears)
       
       public static final double voltageCompSaturation = 12.0;
-      public static final double maxUncalibratedPercentOutput = 0.1;     // CALIBRATED
+      public static final double maxUncalibratedPercentOutput = 0.15;     // CALIBRATED
       public static final double maxPercentOutput = 0.4;          // CALIBRATED
+
+      public static final double climbPercentOutput = -0.2;
 
       // Update the REV through bore encoder offset angle in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // 5.0 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // -130 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
 
-      public static final double kP = 0.3;   // 0.3 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
+      public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
       public static final double kD = 0.0; 
-      public static final double kG = 0.14;   // 0.14 CALIBRATED.  Feed foward voltage to add to hold arm horizontal (0 deg)
-      public static final double kS = 0.077;   // 0.077 CALIBRATED
-      public static final double kV = 0.114;   // 0.114 CALIBRATED
+      public static final double kG = 0.174;   // 0.174 CALIBRATED.  Feed foward voltage to add to hold arm horizontal (0 deg)
+      public static final double kS = 0.0367;  // 0.0367 CALIBRATED
+      public static final double kV = 0.1171;  // 0.1171 CALIBRATED
 
-      public static final double MMCruiseVelocity = 40.0;   // 40.0 Calibrated.  Max trapezoid velocity in motor rps.
+      public static final double MMCruiseVelocity = 90.0;   // 90.0 Calibrated.  Arm can reach ~95.  Max trapezoid velocity in motor rps.
       public static final double MMAcceleration = MMCruiseVelocity/0.35;    // Calibrated.  Accel in 0.35 sec.  Max trapezoid acceleration in motor rot/sec^2.  MMVel/MMAccel = (# seconds to full velocity)
       public static final double MMJerk = MMAcceleration/0.05;  // Calibrated.  Jerk in 0.05 sec.  Max trapezoid jerk in motor rot/sec^3.  MMAccel/MMJerk = (# seconds to full accel)
 
@@ -332,8 +339,17 @@ public final class Constants {
       // 0 degrees = horizontal (in front of robot) relative to wrist center of gravity
       // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
       public enum WristAngle {
-          lowerLimit(-3.0),      // CALIBRATED
-          upperLimit(65.0);       // CALIBRATED
+          lowerLimit(-83.0),      // CALIBRATED
+          intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
+          speakerShotFromSpeaker(-44),  // A4: changed from -41 to -44 deg
+          speakerShotFromPodium(-70),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
+          speakerShotFromMidStage(-79),
+          farShotAngle(-83),
+          overheadShotAngle(55),      // 135" field edge to front of bumper
+          climbStop(-55.0),
+          ampShot(50.0),
+          climbStart(65.0),
+          upperLimit(90.0);       // CALIBRATED
 
           @SuppressWarnings({"MemberName", "PMD.SingularField"})
           public final double value;
@@ -344,7 +360,7 @@ public final class Constants {
     public static final class IntakeConstants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
 
-      public static final double intakePercent = 0.6;
-      public static final double centeringPercent = 0.3; // Need to calibrate, using talon instead of neo
+      public static final double intakePercent = 0.7;       // 0.7
+      public static final double centeringPercent = 0.4;    // 0.4
     }
 }
