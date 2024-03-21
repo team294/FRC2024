@@ -388,15 +388,17 @@ public class Wrist extends SubsystemBase implements Loggable{
   /**
    * Calibrates the REV through bore encoder, so that 0 should be with the CG of the wrist horizontal 
    * facing away from the robot, and -90 deg is with the CG of the wrist resting downward.
+   * <p> <b> NOTE!!!! </b> Only call this method when the wrist is in/near the down position!!!!
    * @param offsetDegrees Desired encoder zero angle, in absolute magnet position reading
    */
   public void calibrateRevEncoderDegrees(double offsetDegrees) {
     revEncoderZero = -offsetDegrees;
     
-    // Avoid wrap point on Rev encoder      // TODO where is the wrap point?  What is truly safe?
-    if (getRevEncoderDegrees() < WristAngle.lowerLimit.value - 5.0) {
-      revEncoderZero -= 360.0/kRevEncoderGearRatio;
-    }
+    // Avoid wrap point on Rev encoder.
+    // Assume that the wrist is in/near the down position.  Then the Rev encoder should be between
+    // 0 and 1 (rotation units).  If the encoder has wrapped, then adjust the encoder zero point
+    // by the number of integer encoder rotations.
+    revEncoderZero += 360.0/kRevEncoderGearRatio * Math.floor( revEncoder.get() );
 
     log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "encoderZero", revEncoderZero, 
         "raw encoder", revEncoder.get()*360.0/kRevEncoderGearRatio, "encoder degrees", getRevEncoderDegrees());
