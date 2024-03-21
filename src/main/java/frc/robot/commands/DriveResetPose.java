@@ -68,7 +68,7 @@ public class DriveResetPose extends Command {
   }
 
   /**
-	 * Resets the pose, gyro, and encoders on the drive train.
+	 * Resets the pose and gyro (not the encoders) on the drive train.
    * Reset the angle but keep the current position (use the current measured position as the new position).
    * <p> Note:  This command can run while the robot is disabled.
    * @param curAngleinDegrees Robot angle on the field, in degrees (0 = facing away from our drivestation)
