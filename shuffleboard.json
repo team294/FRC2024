@@ -840,6 +840,13 @@
                   "_title": "Drive Turn Calibration",
                   "_glyph": 148,
                   "_showGlyph": false
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Drive 6m +X",
+                  "_title": "Drive 6m +X",
+                  "_glyph": 148,
+                  "_showGlyph": false
                 }
               ]
             }

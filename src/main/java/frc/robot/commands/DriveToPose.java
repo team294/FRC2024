@@ -87,7 +87,7 @@ public class DriveToPose extends Command {
   /**
    * Drives the robot to the desired pose in field coordinates.
    * Stops the robot at the end of the command, unless the command is interrupted.
-   * @param goalPose target pose in field coordinates.  Pose components include
+   * @param goalPoseSupplier A function that supplies the target pose in field coordinates.  Pose components include
    *    <p> Robot X location in the field, in meters (0 = field edge in front of driver station, +=away from our drivestation)
    *    <p> Robot Y location in the field, in meters (0 = right edge of field when standing in driver station, +=left when looking from our drivestation)
    *    <p> Robot angle on the field (0 = facing away from our drivestation, + to the left, - to the right)
@@ -95,22 +95,32 @@ public class DriveToPose extends Command {
    * @param maxAccelMetersPerSecondSquare max acceleration/deceleration, in meters per second squared
    * @param maxPositionErrorMeters tolerance for end position in meters
    * @param maxThetaErrorDegrees tolerance for end theta in degrees
+   * @param closedLoopSwerve true = use velocity control feedback+feedforward on swerve motors (normal), false = use feed-forward only on swerve motors (test mode)
+   * @param usePositionFeedback true = use position feedback to keep robot movement accuracy (normal), false = turn off postion feedback (test mode)
    * @param driveTrain DriveTrain subsystem
    * @param log file for logging
    */
-  public DriveToPose(Pose2d goalPose, double maxVelMetersPerSecond, double maxAccelMetersPerSecondSquare, double maxPositionErrorMeters, double maxThetaErrorDegrees, DriveTrain driveTrain, FileLog log) {
+  public DriveToPose(Supplier<Pose2d> goalPoseSupplier, double maxVelMetersPerSecond, double maxAccelMetersPerSecondSquare, 
+      double maxPositionErrorMeters, double maxThetaErrorDegrees, 
+      boolean closedLoopSwerve, boolean usePositionFeedback,
+      DriveTrain driveTrain, FileLog log) {
     this.driveTrain = driveTrain;
     this.log = log;
-    this.goalPose = goalPose;
     this.maxPositionErrorMeters = maxPositionErrorMeters;
     this.maxThetaErrorDegrees = maxThetaErrorDegrees;
-    goalMode = GoalMode.pose;
+    goalSupplier = goalPoseSupplier;
+    goalMode = GoalMode.poseSupplier;
+    this.openLoopSwerve = !closedLoopSwerve;
     trapProfileConstraints = new TrapezoidProfileBCR.Constraints(
       MathUtil.clamp(maxVelMetersPerSecond, -SwerveConstants.kFullSpeedMetersPerSecond, SwerveConstants.kFullSpeedMetersPerSecond), 
       MathUtil.clamp(maxAccelMetersPerSecondSquare, -SwerveConstants.kFullAccelerationMetersPerSecondSquare, SwerveConstants.kFullAccelerationMetersPerSecondSquare)
     );
 
     constructorCommonCode();
+
+    // contoller object is created in constructorCommonCode(), so setting the controller enabled/disabled has to 
+    // occur afterwards.
+    controller.setEnabled(usePositionFeedback);
   }
 
   /**

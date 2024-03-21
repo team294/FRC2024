@@ -20,13 +20,14 @@ import frc.robot.utilities.FileLog;
 public class IntakePiece extends SequentialCommandGroup {
 
   /**
-   * Turns on the intake and feeder motors, and sets the robot state
-   * to INTAKE_TO_FEEDER.
+   * Moves the wrist down, then turns on the intake and feeder motors, and sets the robot state
+   * to INTAKE_TO_FEEDER (but only if we don't have a piece).
    * <p><b>Note:</b> This sequence does not stop intaking!  This requires a 
    * trigger to turn off intaking when a piece gets to the feeder, or the
    * driver can manually turn off intaking.
    * @param intake
    * @param feeder
+   * @param wrist
    * @param robotState
    * @param log
    */
@@ -37,12 +38,13 @@ public class IntakePiece extends SequentialCommandGroup {
     addCommands(
       new ConditionalCommand(
         new SequentialCommandGroup(
+          new WristSetAngle(WristAngle.lowerLimit, wrist, log),
           new RobotStateSet(BCRRobotState.State.INTAKE_TO_FEEDER, robotState, log),
           new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
           new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
         ),
         new WaitCommand(0),
-        () -> (robotState.getState() == BCRRobotState.State.IDLE_NO_PIECE && wrist.getWristAngle() < WristAngle.intakeLimit.value)
+        () -> (robotState.getState() == BCRRobotState.State.IDLE_NO_PIECE)
       )
     );
   }
