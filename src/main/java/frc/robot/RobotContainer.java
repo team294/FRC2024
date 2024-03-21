@@ -45,7 +45,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("A2");
+  private final FileLog log = new FileLog("A5");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
@@ -306,6 +306,11 @@ public class RobotContainer {
     }
 
     // top row UP then DOWN, from LEFT to RIGHT
+    coP[1].onTrue(new WristSetAngle(WristAngle.climbStart, wrist, log));
+    coP[3].onTrue(new SequentialCommandGroup(
+      new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
+      new WristSetAngle(WristAngle.climbStop, wrist, log)
+    ));
   }
 
 
