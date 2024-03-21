@@ -6,28 +6,25 @@ package frc.robot.commands.Sequences;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.*;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Feeder;
-import frc.robot.utilities.FileLog;
+import frc.robot.subsystems.Intake;
 import frc.robot.utilities.BCRRobotState;
+import frc.robot.utilities.FileLog;
 
-public class StopIntakeFeederShooter extends ParallelCommandGroup {
-
+public class StopIntakingSequence extends ParallelCommandGroup {
+  
   /**
-   * Stops the intake, feeder, and shooter motors.
-   * Resets the robot state to either IDLE_WITH_PIECE or IDLE_NO_PIECE,
+   * Stops the intaking sequence and sets the robot state to either IDLE_WITH_PIECE or IDLE_NO_PIECE,
    * using the feeder sensor to decide if it has a piece.
-   * @param intake
-   * @param shooter
-   * @param feeder
+   * @param feeder Feeder subsystem
+   * @param intake Intake subsystem
    * @param robotState Object with current robot state
    * @param log
    */
-  public StopIntakeFeederShooter(Intake intake, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public StopIntakingSequence(Feeder feeder, Intake intake, BCRRobotState robotState, FileLog log) {
     addCommands(
-      new IntakeStop(intake, log),
-      new ShooterFeederStop(shooter, feeder, log),
+      new IntakeSetPercent(0, 0, intake, log),
+      new FeederSetPercent(0, feeder, log),
       new RobotStateSetIdle(robotState, feeder, log)
     );
   }

@@ -11,7 +11,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
 
 public class ShooterSetVelocity extends Command {
-  private double velocity = 0.0;
+  private double velocityTop = 0.0, velocityBottom = 0.0;
   private final FileLog log;
   private final Shooter shooter;
   private final VelocityType type;
@@ -26,14 +26,34 @@ public class ShooterSetVelocity extends Command {
 
   /**
    * Sets the shooter wheel velocity (rpm) for top and bottom shooter motors.
-   * @param velocity wheel velocity, in rpm  (+ = shoot forward, - = backwards)
+   * @param velocity wheel velocity for top and bottom, in rpm  (+ = shoot forward, - = backwards)
    * @param type ShooterSetVelocity.VelocityType = immediatelyEnd, runForever, or waitForVelocity
    * @param shooter shooter subsystem
    * @param log
    */
   public ShooterSetVelocity(double velocity, VelocityType type, Shooter shooter, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.velocity = velocity;
+    this.velocityTop = velocity;
+    this.velocityBottom = velocity;
+    this.type = type;
+    this.log = log;
+    this.shooter = shooter;
+    this.fromShuffleboard = false;
+    addRequirements(shooter);
+  }
+
+  /**
+   * Sets the shooter wheel velocity (rpm) for top and bottom shooter motors.
+   * @param velocityTop top wheel velocity, in rpm  (+ = shoot forward, - = backwards)
+   * @param velocityBottom bottom wheel velocity, in rpm  (+ = shoot forward, - = backwards)
+   * @param type ShooterSetVelocity.VelocityType = immediatelyEnd, runForever, or waitForVelocity
+   * @param shooter shooter subsystem
+   * @param log
+   */
+  public ShooterSetVelocity(double velocityTop, double velocityBottom, VelocityType type, Shooter shooter, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.velocityTop = velocityTop;
+    this.velocityBottom = velocityBottom;
     this.type = type;
     this.log = log;
     this.shooter = shooter;
@@ -49,7 +69,8 @@ public class ShooterSetVelocity extends Command {
    */
   public ShooterSetVelocity(VelocityType type, Shooter shooter, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.velocity = 0.0;
+    this.velocityTop = 0.0;
+    this.velocityBottom = 0.0;
     this.type = type;
     this.log = log;
     this.shooter = shooter;
@@ -69,11 +90,12 @@ public class ShooterSetVelocity extends Command {
     }
 
     if (fromShuffleboard) {
-      velocity = SmartDashboard.getNumber("Shooter velocity", 0.0);
+      velocityTop = SmartDashboard.getNumber("Shooter velocity", 0.0);
+      velocityBottom = velocityTop*1.1;
     }
-    shooter.setShooterVelocity(velocity);
+    shooter.setShooterVelocity(velocityTop, velocityBottom);
     log.writeLog(false, "ShooterSetVelocity", "Initialize", 
-      "Velocity", velocity, "Velocity Type", type.toString());
+      "Velocity", velocityTop, "Velocity Type", type.toString());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -96,7 +118,7 @@ public class ShooterSetVelocity extends Command {
       case runForever:
         return false;
       case waitForVelocity:
-        if(Math.abs(shooter.getTopShooterVelocity() - velocity) < ShooterConstants.velocityErrorTolerance){
+        if(Math.abs(shooter.getTopShooterVelocity() - velocityTop) < ShooterConstants.velocityErrorTolerance){
           counter++;
         }else{
           counter = 0;

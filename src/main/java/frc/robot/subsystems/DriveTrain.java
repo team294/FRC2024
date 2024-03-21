@@ -9,6 +9,8 @@ import com.ctre.phoenix6.StatusSignal;
 // import com.ctre.phoenix6.configs.Pigeon2Configurator;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,6 +19,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -62,6 +66,9 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   private final StatusSignal<Boolean> pigeonFault = pigeon.getFault_Hardware();
   private double yawZero = 0.0;
   private double pitchZero = 0.0;
+  private final Matrix<N3, N1> closeMatrix = new Matrix<>(Nat.N3(), Nat.N1(), new double[] {.9,.9,.9});
+  private final Matrix<N3, N1> farMatrix = new Matrix<>(Nat.N3(), Nat.N1(), new double[] {2,2,2});
+
 
   // variables to help calculate angular velocity for turnGyro
   // private double prevAng; // last recorded gyro angle
@@ -298,10 +305,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    */
   public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop) {
 
-    
-
+    // Desaturate wheel speeds to a little below max speed.  It takes a while to accelerate to
+    // max speed, so reducing the max will help movement accuracy.
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredStates, SwerveConstants.kMaxSpeedMetersPerSecond);
+        desiredStates, SwerveConstants.kFullSpeedMetersPerSecond);
 
     // Convert states to chassisspeeds
     ChassisSpeeds chassisSpeeds = kDriveKinematics.toChassisSpeeds(desiredStates);
@@ -548,15 +555,19 @@ public class DriveTrain extends SubsystemBase implements Loggable {
         if (camPose.estimatedPose.getX() < 3) {
           poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
 
+          poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, closeMatrix);
           //field.getObject("Vision").setPose(camPose.estimatedPose.toPose2d());
-          SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
-          SmartDashboard.putNumber("Vision Y", camPose.estimatedPose.toPose2d().getY());
-          SmartDashboard.putNumber("Vision rot", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
-          
-          SmartDashboard.putNumber("Odo X", poseEstimator.getEstimatedPosition().getX());
-          SmartDashboard.putNumber("Odo Y", poseEstimator.getEstimatedPosition().getY());
-          SmartDashboard.putNumber("Odo rot", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
        }
+       else if (camPose.estimatedPose.getX() < 6) {
+          poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, farMatrix);
+       }
+        SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
+        SmartDashboard.putNumber("Vision Y", camPose.estimatedPose.toPose2d().getY());
+        SmartDashboard.putNumber("Vision rot", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
+          
+        SmartDashboard.putNumber("Odo X", poseEstimator.getEstimatedPosition().getX());
+        SmartDashboard.putNumber("Odo Y", poseEstimator.getEstimatedPosition().getY());
+        SmartDashboard.putNumber("Odo rot", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
       }
 
     }
