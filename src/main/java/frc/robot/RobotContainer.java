@@ -302,6 +302,9 @@ public class RobotContainer {
       coP[i] = new JoystickButton(coPanel, i);
     }
 
+    coP[1].onTrue(new ClimbStart(wrist, log));
+    coP[3].onTrue(new ClimbEnd(wrist, log));
+
     // top row UP then DOWN, from LEFT to RIGHT
   }
 
