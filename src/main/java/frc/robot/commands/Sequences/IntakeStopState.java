@@ -32,7 +32,7 @@ public class IntakeStopState extends SequentialCommandGroup {
           new RobotStateSetIdle(robotState, feeder, log)
         ),
         new FileLogWrite(false, false, "Intake Stop State", "Not in intake to feeder state", log), 
-        () -> robotState.getState() == State.INTAKE_TO_FEEDER)
+        () -> robotState.getState() == State.INTAKING)
       
     );
   }
