@@ -16,7 +16,6 @@ import frc.robot.utilities.FileLog;
 public class WristSetAngle extends Command {
 
   private double angle;
-  private double maxPercent = 1.3;
   private final Wrist wrist;
   private final FileLog log;
   private final boolean fromShuffleboard;
@@ -26,38 +25,8 @@ public class WristSetAngle extends Command {
    * <p> This command does nothing and immediately returns if the wrist is not calibrated.
    * @param angle target angle in degrees.  (0 = horizontal in front of robot, + = up, - = down)
    */
-  public WristSetAngle(double angle, double maxPercent, Wrist wrist, FileLog log) {
-    this.angle = angle;
-    this.maxPercent = maxPercent;
-    this.wrist = wrist;
-    this.log = log;
-    fromShuffleboard = false;
-
-    addRequirements(wrist);
-  }
-
-  /**
-   * Moves wrist to target angle.  Command ends when wrist is within 5 degrees of the target position.
-   * <p> This command does nothing and immediately returns if the wrist is not calibrated.
-   * @param angle target angle in degrees.  (0 = horizontal in front of robot, + = up, - = down)
-   */
   public WristSetAngle(double angle, Wrist wrist, FileLog log) {
     this.angle = angle;
-    this.wrist = wrist;
-    this.log = log;
-    fromShuffleboard = false;
-
-    addRequirements(wrist);
-  }
-
-   /**
-   * Moves wrist to target angle.  Command ends when wrist is within 5 degrees of the target position.
-   * <p> This command does nothing and immediately returns if the wrist is not calibrated.
-   * @param angle target angle in degrees.  (0 = horizontal in front of robot, + = up, - = down)
-   */
-  public WristSetAngle(WristAngle pos, double maxPercent, Wrist wrist, FileLog log) {
-    angle = pos.value;
-    this.maxPercent = maxPercent;
     this.wrist = wrist;
     this.log = log;
     fromShuffleboard = false;
@@ -100,7 +69,7 @@ public class WristSetAngle extends Command {
     if(fromShuffleboard){
       angle = SmartDashboard.getNumber("Wrist Angle to set", 0);
     }
-    wrist.setWristAngleWithPercent(angle, maxPercent);
+    wrist.setWristAngle(angle);
     log.writeLog(false, "WristSetAngle", "Initialize", "Target", angle);
   }
 

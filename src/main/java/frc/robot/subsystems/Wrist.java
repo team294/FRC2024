@@ -238,12 +238,6 @@ public class Wrist extends SubsystemBase implements Loggable{
     }
   }
 
-  public void setWristAngleWithPercent(double angle, double percent) {
-    wristMotor1Config.Voltage.PeakForwardVoltage = percent * voltageCompSaturation;
-    wristMotor1Config.Voltage.PeakReverseVoltage = -percent * voltageCompSaturation;
-    setWristAngle(angle);
-  }
-
   /**
 	 * Returns the angle that wrist is trying to move to in degrees.
 	 * If the wrist is not calibrated, then returns wrist lowerLimit,
