@@ -39,12 +39,12 @@ public class IntakePiece extends SequentialCommandGroup {
       new ConditionalCommand(
         new SequentialCommandGroup(
           new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-          new RobotStateSet(BCRRobotState.State.INTAKE_TO_FEEDER, robotState, log),
+          new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log),
           new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
           new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
         ),
         new WaitCommand(0),
-        () -> (robotState.getState() == BCRRobotState.State.IDLE_NO_PIECE)
+        () -> (!feeder.isPiecePresent())
       )
     );
   }

@@ -29,6 +29,7 @@ public class ShootPieceAmp extends SequentialCommandGroup {
       new FeederSetPercent(FeederConstants.feederAmpShot, feeder, log),
       new WaitCommand(3).until(() -> !feeder.isPiecePresent()),
       new WaitCommand(1),
+      new FeederSetPercent(0.0, feeder, log),
       new RobotStateSetIdle(robotState, feeder, log)
       
     );
