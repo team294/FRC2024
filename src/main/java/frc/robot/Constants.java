@@ -341,7 +341,7 @@ public final class Constants {
       public enum WristAngle {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
-          speakerShotFromSpeaker(-41),
+          speakerShotFromSpeaker(-44),  // A4: changed from -41 to -44 deg
           speakerShotFromPodium(-70),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
           speakerShotFromMidStage(-79),
           farShotAngle(-83),
