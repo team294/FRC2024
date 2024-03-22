@@ -13,7 +13,6 @@ import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.*;
 import frc.robot.commands.Sequences.IntakePieceAuto;
 import frc.robot.commands.Sequences.SetShooterWristSpeaker;
@@ -60,8 +59,8 @@ public class AmpTwoPieceShoot extends SequentialCommandGroup {
       ),
       new ParallelCommandGroup(
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartBlue.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNearToAmpStartRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNearToAmpStartBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         ),
         new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
