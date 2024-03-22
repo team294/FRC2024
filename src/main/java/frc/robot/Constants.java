@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.utilities.TrapezoidProfileBCR;
 
 /**
@@ -75,6 +76,8 @@ public final class Constants {
 
       public static final int CANWrist1 = 19;
       public static final int CANWrist2 = 20;
+
+      public static final int CANdle1 = 21;
 
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
@@ -366,4 +369,53 @@ public final class Constants {
       public static final double intakePercent = 0.7;       // 0.7
       public static final double centeringPercent = 0.4;    // 0.4
     }
+
+    /** Colors for the LEDs based on different robot states (see BCRRobotState) */
+    public enum BCRColor {
+      IDLE(255, 255, 255), // White             (nothing running)
+      INTAKING(0, 0, 255), // Blue       (intake running)
+      SHOOTING(0, 255, 0);       // Green       (shooter running)
+
+      public final int r, g, b;
+      BCRColor(int r, int g, int b) {
+          this.r = r;
+          this.g = g;
+          this.b = b;
+      }
+  }
+
+    public static final class LEDConstants {
+      public static final class Patterns {
+          // Static Patterns
+          public static final Color[] blueOrangeStatic = {Color.kBlue, Color.kOrange};
+          // Animated Patterns
+          public static final Color[][] blueOrangeMovingAnim = {{Color.kBlue, Color.kOrange},{Color.kOrange,Color.kBlue}};
+          public static final Color[][] rainbowArray = {
+              {Color.kRed, Color.kOrangeRed, Color.kOrange, Color.kRed, Color.kOrangeRed, Color.kOrange},
+              {Color.kGreen, Color.kGreenYellow, Color.kLime, Color.kGreen, Color.kGreenYellow, Color.kLime},
+              {Color.kBlue, Color.kAliceBlue, Color.kAquamarine, Color.kBlue, Color.kAliceBlue, Color.kAquamarine}
+          };
+          // Utilities
+          public static final Color[] noPatternStatic = {};
+          public static final Color[][] noPatternAnimation = {{}};
+          public static final Color[] clearPatternStatic = {Color.kBlack};
+      }
+
+      public enum LEDSegmentRange {
+          CANdleTop(0, 4),   // top row of CANdle  (bottom on robot, upside down)
+          CANdleBottom(4, 4),  // bottom row of CANdle  (top on robot, upside down)
+          CANdleFull(0,8),
+          Strip1(8, 68),  // 1st strip only
+          Full(0, 68);  // CANdle + 1st strip  (update values if second strip is ever added)
+
+          public final int index, count;
+          LEDSegmentRange(int index, int count) {
+              this.index = index;
+              this.count = count;
+          }
+      }
+
+      // public static final double NumLEDs = 68;
+  }
+
 }

@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -62,6 +61,10 @@ public class RobotContainer {
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
   private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
   private final BCRRobotState robotState = new BCRRobotState();
+  
+  // Is a subsystem, but requires a utility
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", robotState, log, feeder);
+
 
   // Define controllers
   // private final Joystick xboxController = new Joystick(OIConstants.usbXboxController); //assuming usbxboxcontroller is int
@@ -155,6 +158,7 @@ public class RobotContainer {
     SmartDashboard.putData("Source Center Three Piece Shoot", new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
 
 
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
   }
 
   /**
@@ -370,7 +374,7 @@ public class RobotContainer {
     // Check for CAN bus error.  This is to prevent the issue that caused us to be eliminated in 2020!
     if (driveTrain.canBusError()) {
       RobotPreferences.recordStickyFaults("CAN Bus", log);
-    }  //    TODO May want to flash this to the driver with some obvious signal!
+    }
     // boolean error = true;  
     // if (error == false) {
     //   if(!patternTeamMoving.isScheduled()) patternTeamMoving.schedule();

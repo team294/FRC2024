@@ -16,9 +16,9 @@ public class RobotStateSet extends InstantCommand {
   /**
    * Immediately sets the Robot State object to the given state.
    * This will update wherever the object is used.
-   * @param newState
-   * @param robotState
-   * @param log
+   * @param newState State to set (ex: IDLE)
+   * @param robotState robotState object
+   * @param log log
    */
   public RobotStateSet(BCRRobotState.State newState, BCRRobotState robotState, FileLog log) {
     this.newState = newState;
@@ -33,3 +33,4 @@ public class RobotStateSet extends InstantCommand {
     log.writeLog(true, "RobotStateSet", newState.toString());
   }
 }
+  
