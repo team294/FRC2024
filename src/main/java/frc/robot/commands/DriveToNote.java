@@ -18,11 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.Constants.VisionConstants.JeVoisConstants;
 import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.JeVoisCamera;
 import frc.robot.subsystems.NotePhotonCameraWrapper;
 import frc.robot.utilities.*;
 

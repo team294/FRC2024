@@ -122,8 +122,6 @@ public final class Constants {
       public static final double kWheelDiameterMeters = 0.1003 * 1.001; // 1.001 adjustment CALIBRATED.  Colson wheel = nominal 4" diameter, actual 3.95" = 0.1003m.  80% bot calibrated = 0.1013m.
       public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
-      public static final double kDriveEncoderMetersPerRotation = (kWheelDiameterMeters * Math.PI) / kDriveGearRatio;
-      public static final double kTurningEncoderDegreesPerRotation = 360.0/ kTurningGearRatio;
       
       // Robot calibration for feed-forward and max speeds
       public static final double voltageCompSaturation = 12.0;
@@ -191,29 +189,7 @@ public final class Constants {
       public static final double maxAccelerationRateWithElevatorUp = 1.5;           // m/s^2
       public static final double maxRotationRateWithElevatorUp = 0.8;     // rad/sec
 
-      public static final double kPJoystickThetaController = 3; // Theta kp value for joystick in rad/sec
-    
-      // Drivetrain DrivingMotorPID
-      public static final class DrivingMotorPID {
-        public static final double kP = 6e-5;     // TODO check.  6e-5?
-        public static final double kI = 0;
-        public static final double kD = 0; 
-        public static final double kIz = 0; 
-        public static final double kFF = 0.000015;  // TODO check.  0.000015?
-        public static final double kMaxOutput = 1; 
-        public static final double kMinOutput = -1;
-      }
-
-      // Drivetrain TurningMotorPID
-      public static final class TurningMotorPID {
-          public static final double kP = 0.3;       // TODO check.  0.3?
-          public static final double kI = 1e-4;     // TODO check.   1e-4?
-          public static final double kD = 1.0;        // TODO check.   Was 1?
-          public static final double kIz = 0;
-          public static final double kFF = 0;
-          public static final double kMaxOutput = 1;
-          public static final double kMinOutput = -1;
-      } 
+      public static final double kPJoystickThetaController = 3; // Theta kp value for joystick in rad/sec    
     }
 
     public static final class ShooterConstants {
@@ -344,15 +320,6 @@ public final class Constants {
         public static final double pitchSetpoint = -13;
         public static final double yawSetpoint = 0;
       }
-
-
-        // JeVois
-        public static class JeVoisConstants { 
-          public static final int BAUD_RATE = 115200;
-          public static final int width = 352;
-          public static final int height = 288;
-          public static final int fps = 30;
-        }
     }
 
     public static final class WristConstants {
