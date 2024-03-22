@@ -13,6 +13,7 @@ import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
+import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.Sequences.IntakePieceAuto;
@@ -45,8 +46,14 @@ public class CenterTwoPieceShoot extends SequentialCommandGroup {
         new IntakePieceAuto(intake, feeder, robotState, log),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log), 
+          new SequentialCommandGroup(
+            new DriveResetPose(1.3, 3.2, 0, false, driveTrain, log),
+            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log)
+          ),
+          new SequentialCommandGroup(
+            new DriveResetPose(1.3, 5, 0, false, driveTrain, log),
+            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log) 
+          ),
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
