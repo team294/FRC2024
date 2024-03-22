@@ -399,8 +399,8 @@ public final class Constants {
       }
 
       public enum LEDSegmentRange {
-          CANdleTop(0, 4),   // top row of CANdle
-          CANdleBottom(4, 4),  // bottom row of CANdle
+          CANdleTop(0, 4),   // top row of CANdle  (bottom on robot, upside down)
+          CANdleBottom(4, 4),  // bottom row of CANdle  (top on robot, upside down)
           CANdleFull(0,8),
           Strip1(8, 68),  // 1st strip only
           Full(0, 68);  // CANdle + 1st strip  (update values if second strip is ever added)

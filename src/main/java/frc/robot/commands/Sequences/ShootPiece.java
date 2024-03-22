@@ -9,9 +9,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.LED;
 import frc.robot.utilities.FileLog;
 import frc.robot.commands.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
@@ -27,7 +29,7 @@ public class ShootPiece extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public ShootPiece(double velocityTop, double velocityBottom, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public ShootPiece(double velocityTop, double velocityBottom, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -37,7 +39,8 @@ public class ShootPiece extends SequentialCommandGroup {
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
       new WaitCommand(1),
       new ShooterFeederStop(shooter, feeder, log),
-      new RobotStateSetIdle(robotState, feeder, log)
+      new RobotStateSetIdle(robotState, feeder, log),
+      new updateStateLEDs(led, log, segment)
     );
   }
 }

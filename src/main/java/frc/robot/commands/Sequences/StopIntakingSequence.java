@@ -5,11 +5,13 @@
 package frc.robot.commands.Sequences;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
+import frc.robot.subsystems.LED;
 
 public class StopIntakingSequence extends ParallelCommandGroup {
   
@@ -20,11 +22,12 @@ public class StopIntakingSequence extends ParallelCommandGroup {
    * @param robotState Object with current robot state
    * @param log
    */
-  public StopIntakingSequence(Feeder feeder, Intake intake, BCRRobotState robotState, FileLog log) {
+  public StopIntakingSequence(Feeder feeder, Intake intake, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
     addCommands(
       new IntakeSetPercent(0, 0, intake, log),
       new FeederSetPercent(0, feeder, log),
-      new RobotStateSetIdle(robotState, feeder, log)
+      new RobotStateSetIdle(robotState, feeder, log),
+      new updateStateLEDs(led, log, segment)
     );
   }
 }

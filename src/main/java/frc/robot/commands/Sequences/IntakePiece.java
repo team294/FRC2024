@@ -8,10 +8,12 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.subsystems.Feeder;
@@ -31,7 +33,7 @@ public class IntakePiece extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public IntakePiece(Intake intake, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
+  public IntakePiece(Intake intake, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
@@ -45,7 +47,8 @@ public class IntakePiece extends SequentialCommandGroup {
         ),
         new WaitCommand(0),
         () -> (!feeder.isPiecePresent())
-      )
+      ),
+      new updateStateLEDs(led, log, segment)
     );
   }
 }

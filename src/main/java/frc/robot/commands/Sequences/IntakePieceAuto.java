@@ -7,9 +7,11 @@ package frc.robot.commands.Sequences;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.FileLog;
@@ -27,7 +29,7 @@ public class IntakePieceAuto extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public IntakePieceAuto(Intake intake, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public IntakePieceAuto(Intake intake, Feeder feeder, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
@@ -38,7 +40,8 @@ public class IntakePieceAuto extends SequentialCommandGroup {
       new WaitCommand(10).until(() -> feeder.isPiecePresent()),
       new IntakeSetPercent(0, 0, intake, log),
       new FeederSetPercent(0, feeder, log),
-      new RobotStateSetIdle(robotState, feeder, log)
+      new RobotStateSetIdle(robotState, feeder, log),
+      new updateStateLEDs(led, log, segment)
       );
   }
 }

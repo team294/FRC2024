@@ -5,8 +5,10 @@
 package frc.robot.commands.Sequences;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.FileLog;
@@ -23,11 +25,12 @@ public class StopIntakeFeederShooter extends ParallelCommandGroup {
    * @param robotState Object with current robot state
    * @param log log
    */
-  public StopIntakeFeederShooter(Intake intake, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public StopIntakeFeederShooter(Intake intake, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
     addCommands(
       new IntakeStop(intake, log),
       new ShooterFeederStop(shooter, feeder, log),
-      new RobotStateSetIdle(robotState, feeder, log)
+      new RobotStateSetIdle(robotState, feeder, log),
+      new updateStateLEDs(led, log, segment)
     );
   }
 }

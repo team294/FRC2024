@@ -7,12 +7,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.StopType;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.Autos.*;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 
 
@@ -68,7 +70,7 @@ public class AutoSelection {
 	 * @return the command to run
 	 */
 
-	public Command getAutoCommand(Intake intake, Shooter shooter, Feeder feeder, DriveTrain driveTrain, TrajectoryCache trajectoryCache, BCRRobotState robotState, FileLog log) {
+	public Command getAutoCommand(Intake intake, Shooter shooter, Feeder feeder, DriveTrain driveTrain, TrajectoryCache trajectoryCache, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
 		Command autonomousCommand = null;
 
 		// Get parameters from Shuffleboard
@@ -91,22 +93,22 @@ public class AutoSelection {
 		}
 		else if(autoPlan == CenterTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Two Piece Shoot");
-			autonomousCommand = new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, segment);
 		}
 
 		else if(autoPlan == SourceTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Source Two Piece Shoot");
-			autonomousCommand = new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, segment);
 		}
 
 		else if(autoPlan == AmpTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Amp Two Piece Shoot");
-			autonomousCommand = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, segment);
 		}
 
 		else if(autoPlan == AmpThreePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Amp Three Piece Shoot");
-			autonomousCommand = new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, segment);
 		}
 
         else if (autonomousCommand == null) {
