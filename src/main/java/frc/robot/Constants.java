@@ -399,10 +399,11 @@ public final class Constants {
       }
 
       public enum LEDSegmentRange {
-          CANdleTop(0, 3),   // top row of CANdle
-          CANdleBottom(4, 7),  // bottom row of CANdle
-          Strip1(8, 67),  // 1st strip only
-          Full(0, 67);  // CANdle + 1st strip  (update values if second strip is ever added)
+          CANdleTop(0, 4),   // top row of CANdle
+          CANdleBottom(4, 4),  // bottom row of CANdle
+          CANdleFull(0,8),
+          Strip1(8, 68),  // 1st strip only
+          Full(0, 68);  // CANdle + 1st strip  (update values if second strip is ever added)
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {

@@ -68,20 +68,27 @@ public class LED extends SubsystemBase {
       LEDConstants.LEDSegmentRange.CANdleBottom.count,
       LEDConstants.Patterns.noPatternAnimation
     );
+     LEDSegment CANdleFull = new LEDSegment(
+      LEDConstants.LEDSegmentRange.CANdleFull.index,
+      LEDConstants.LEDSegmentRange.CANdleFull.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
     // LEDSegment Strip1 = new LEDSegment(      // strip not currently on robot
     //   LEDConstants.LEDSegmentRange.Strip1.index,
     //   LEDConstants.LEDSegmentRange.Strip1.count,
     //   LEDConstants.Patterns.noPatternAnimation
     // );
-    LEDSegment Full = new LEDSegment(
-      LEDConstants.LEDSegmentRange.Full.index,
-      LEDConstants.LEDSegmentRange.Full.count,
-      LEDConstants.Patterns.noPatternAnimation
-    );
+    // LEDSegment Full = new LEDSegment(
+    //   LEDConstants.LEDSegmentRange.Full.index,
+    //   LEDConstants.LEDSegmentRange.Full.count,
+    //   LEDConstants.Patterns.noPatternAnimation
+    // );
+    
     segments.put(LEDSegmentRange.CANdleTop, CANdleTop);
     segments.put(LEDSegmentRange.CANdleBottom, CANdleBottom);
     // segments.put(LEDSegmentRange.Strip1, Strip1);  // strip not currently on robot
-    segments.put(LEDSegmentRange.Full, Full);
+    // segments.put(LEDSegmentRange.Full, Full);
+    segments.put(LEDSegmentRange.CANdleFull, CANdleFull);
   }
 
   /** Get the subsystem's name
