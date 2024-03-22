@@ -5,6 +5,7 @@
 package frc.robot.commands.Sequences;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
@@ -37,13 +38,21 @@ public class WristLowerSafe extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ConditionalCommand(
-        new SequentialCommandGroup(
-          new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log),   // Set to INTAKING so that the piece sensor will stop Feeding when a piece is loaded
-          new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
-          new WristSetAngle(angle, wrist, log),
-          new WaitCommand(1),
-          new FeederSetPercent(0, feeder, log),
-          new RobotStateSet(BCRRobotState.State.IDLE, robotState, log)
+        new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
+            new WaitCommand(4).until(()->feeder.isPiecePresent()),
+            new ConditionalCommand(
+              new SequentialCommandGroup(   // Back off piece slightly from shooter wheels
+                new FeederSetPercent(FeederConstants.feederBackPiecePercent, feeder, log),
+                new WaitCommand(FeederConstants.feederBackPieceTime),
+                new FeederSetPercent(0.0, feeder, log)
+              ),
+              new FeederSetPercent(0, feeder, log),
+              ()->feeder.isPiecePresent()
+            )
+          ),
+          new WristSetAngle(angle, wrist, log)
         ),
         new WristSetAngle(angle, wrist, log),
         () -> (!feeder.isPiecePresent() && angle.value <= WristAngle.clearBellyPanMinAngle.value)

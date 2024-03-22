@@ -234,6 +234,8 @@ public final class Constants {
 
       public static final double feederPercent = 0.2;
       public static final double feederAmpShot = -0.3;
+      public static final double feederBackPiecePercent = -0.05;   // Speed to back off note slightly after intaking
+      public static final double feederBackPieceTime = 0.1;  // Time (in seconds) to back off note slightly after intaking
     }
 
     public static final class TrajectoryConstants {
