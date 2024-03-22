@@ -278,7 +278,8 @@ public class RobotContainer {
 
     right[1].whileTrue(new ParallelCommandGroup(
       new SetAimLock(driveTrain, true, log),
-      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log)
+      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
     )); //TODO implement this once vision is brought in
     right[1].onFalse(
       new SetAimLock(driveTrain, false, log)
