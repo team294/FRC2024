@@ -29,6 +29,7 @@ public class LED extends SubsystemBase {
   private String subsystemName;
   private BCRRobotState robotState;
   private BCRRobotState.State currentState;
+  private Feeder feeder;
   private boolean stickyFault;
   private boolean shouldClear;
   private double accuracyDisplayThreshold;
@@ -46,13 +47,14 @@ public class LED extends SubsystemBase {
    * @param subsystemName
    * @param log
    */
-  public LED(int CANPort, String subsystemName, BCRRobotState robotState, FileLog log) {
+  public LED(int CANPort, String subsystemName, BCRRobotState robotState, FileLog log, Feeder feeder) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
     this.robotState = robotState;
     this.currentState = BCRRobotState.State.IDLE;
+    this.feeder = feeder;
     this.stickyFault = false;
     this.shouldClear = false;
     this.accuracyDisplayThreshold = 35;
@@ -252,7 +254,12 @@ public class LED extends SubsystemBase {
     // Set LEDs to match the state, as defined in Constants.BCRColor
     switch (currentState) {
     case IDLE:
-      setLEDs(BCRColor.IDLE, segment.index, segment.count);
+      if (feeder.isPiecePresent()) {
+        setLEDs(255, 30, 0, segment.index, segment.count);
+      }
+      else {
+        setLEDs(BCRColor.IDLE, segment.index, segment.count);
+      }
       break;
     case INTAKING:
       setLEDs(BCRColor.INTAKING, segment.index, segment.count);
