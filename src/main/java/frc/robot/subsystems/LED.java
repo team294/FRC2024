@@ -290,7 +290,7 @@ public class LED extends SubsystemBase {
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
       if(segment.getEdgeColor() != Color.kBlack && segment.getEdgeColor() != null){
-        setPattern(segments.get(segmentKey).getCurrentFrame(), segment.getEdgeColor(), 2, segmentKey);
+        setPattern(segments.get(segmentKey).getCurrentFrame(), segment.getEdgeColor(), 1, segmentKey);
       } else {
         setPattern(segments.get(segmentKey).getCurrentFrame(), segmentKey);
       }
