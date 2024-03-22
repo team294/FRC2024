@@ -21,7 +21,7 @@ import frc.robot.commands.ShooterSetVelocity.VelocityType;
 public class ShootPiece extends SequentialCommandGroup {
 
   /**
-   * Shoots a piece using fixed shooter percent speed.
+   * Shoots a piece using fixed shooter velocity.
    * @param velocityTop top shooter wheel velocity, in rpm  (+ = shoot forward, - = backwards)
    * @param velocityBottom bottom shooter wheel velocity, in rpm  (+ = shoot forward, - = backwards)
    * @param shooter
@@ -43,4 +43,16 @@ public class ShootPiece extends SequentialCommandGroup {
       new updateStateLEDs(led, log, segment)
     );
   }
+
+  /**
+   * Shoots a piece using standard shooter velocities.
+   * @param shooter
+   * @param feeder
+   * @param robotState
+   * @param log
+   */
+  public ShootPiece(Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+    this(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log);
+  }
+
 }

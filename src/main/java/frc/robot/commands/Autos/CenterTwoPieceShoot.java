@@ -13,14 +13,20 @@ import frc.robot.Constants.CoordType;
 import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
+import frc.robot.Constants.WristConstants.WristAngle;
+import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
+import frc.robot.commands.ShooterSetPercent;
+import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.Sequences.IntakePieceAuto;
+import frc.robot.commands.Sequences.SetShooterWristSpeaker;
 import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
@@ -32,19 +38,36 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class CenterTwoPieceShoot extends SequentialCommandGroup {
   /** Creates a new CenterTwoPieceShoot. */
-  public CenterTwoPieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log, LED led, LEDSegmentRange segment) {
+  public CenterTwoPieceShoot(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log, LED led, LEDSegmentRange segment) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log, led, segment),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, segment),
+      new ShooterSetPercent(-0.02, shooter, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log, led, segment),
+        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log), 
+          new SequentialCommandGroup(
+            new DriveResetPose(1.3, 2.663, 0, false, driveTrain, log),
+            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log)
+          ),
+          new SequentialCommandGroup(
+            new DriveResetPose(1.3, 5.57, 0, false, driveTrain, log),
+            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log) 
+          ),
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
+      new ConditionalCommand(
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartRed.value], driveTrain, log), 
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartBlue.value], driveTrain, log), 
+        () -> alliance.getAlliance() == Alliance.Red
+      ),
+      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log, led, segment),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, segment)
     );
   }

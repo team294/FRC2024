@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -46,7 +48,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("A5");
+  private final FileLog log = new FileLog("A7");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
@@ -135,7 +137,7 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
     
-    SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
+    // SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
     SmartDashboard.putData("Source Start to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log));
     SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log));
 
@@ -149,9 +151,13 @@ public class RobotContainer {
     // Autos
     SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
     SmartDashboard.putData("Amp Two Piece Shoot", new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
-    SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
+    SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
     SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
     SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
+
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
+    SmartDashboard.putData("Source Center Three Piece Shoot", new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
+
 
     SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
     SmartDashboard.putData("Source Center Three Piece Shoot", new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
@@ -220,10 +226,9 @@ public class RobotContainer {
     // Store wrist, does not turn on intake
     xbX.onTrue(
       new ParallelCommandGroup(
-        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
+        new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
         new SpeakerModeSet(true, robotState, log)
-      )  
-      );
+      ));
     
     // Prep for pit shot when back button is pressed
     xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.lowerLimit, 
@@ -265,15 +270,12 @@ public class RobotContainer {
     left[1].onTrue(new DriveResetPose( 0, false, driveTrain, log));
 
     // Shoot the note
-    left[2].onTrue(new ConditionalCommand(
+    left[2].onTrue(
         new ConditionalCommand(
           new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, LEDSegmentRange.CANdleFull),
           new ShootPieceAmp(feeder, robotState, log, led, LEDSegmentRange.CANdleFull),
           () -> robotState.isSpeakerMode()
-        ),
-        new WaitCommand(0),
-        () -> feeder.isPiecePresent()
-      )
+        )
     );
 
     // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
@@ -310,6 +312,7 @@ public class RobotContainer {
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
       new WristSetAngle(WristAngle.climbStop, wrist, log)
     ));
+
   }
 
 
@@ -319,7 +322,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelection.getAutoCommand(intake, shooter, feeder, driveTrain, trajectoryCache, robotState, log, led, LEDSegmentRange.CANdleFull);
+    return autoSelection.getAutoCommand(intake, wrist, shooter, feeder, driveTrain, trajectoryCache, robotState, log, led, LEDSegmentRange.CANdleFull);
   }
 
 
