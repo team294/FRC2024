@@ -154,7 +154,7 @@ public final class Constants {
 
 
       public static final double kADrive = 0.0;
-      public static final double kADriveToPose = 0.100;  // formerly 0.050, updated to 0.100 for A3  TODO NOT CALIBRATED.  In % output per meters per second squared.
+      public static final double kADriveToPose = 0.100;  // Updated to 0.100 for A3, looks good.  CALIBRATED.  In % output per meters per second squared.
       public static final double kSDrive = 0.0080; // init cal done.  formerly 0.0255, CALIBRATED.  In % output.
     }
 
@@ -407,7 +407,7 @@ public final class Constants {
           speakerShotFromMidStage(-79),
           farShotAngle(-83),
           overheadShotAngle(55),      // 135" field edge to front of bumper
-          climbStop(-55.0),
+          climbStop(-45.0),
           ampShot(50.0),
           climbStart(65.0),
           upperLimit(90.0);       // CALIBRATED

@@ -7,6 +7,7 @@ package frc.robot.commands.Autos;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
@@ -28,12 +29,11 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class SourceThreePieceShoot extends CenterTwoPieceShoot {
+public class SourceThreePieceShoot extends SequentialCommandGroup {
   /** Creates a new CenterSourceThreePieceShoot. */
   public SourceThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    super(intake, shooter, driveTrain, feeder, robotState, cache, alliance, log);
     addCommands(
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
