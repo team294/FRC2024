@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -46,7 +48,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("A6");
+  private final FileLog log = new FileLog("A7");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
@@ -218,10 +220,9 @@ public class RobotContainer {
     // Store wrist, does not turn on intake
     xbX.onTrue(
       new ParallelCommandGroup(
-        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
+        new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
         new SpeakerModeSet(true, robotState, log)
-      )  
-      );
+      ));
     
     // Prep for pit shot when back button is pressed
     xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.lowerLimit, 
@@ -263,15 +264,12 @@ public class RobotContainer {
     left[1].onTrue(new DriveResetPose( 0, false, driveTrain, log));
 
     // Shoot the note
-    left[2].onTrue(new ConditionalCommand(
+    left[2].onTrue(
         new ConditionalCommand(
           new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
           new ShootPieceAmp(feeder, robotState, log),
           () -> robotState.isSpeakerMode()
-        ),
-        new WaitCommand(0),
-        () -> feeder.isPiecePresent()
-      )
+        )
     );
 
     // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
@@ -308,6 +306,7 @@ public class RobotContainer {
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
       new WristSetAngle(WristAngle.climbStop, wrist, log)
     ));
+
   }
 
 

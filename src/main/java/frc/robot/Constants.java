@@ -234,6 +234,8 @@ public final class Constants {
 
       public static final double feederPercent = 0.2;
       public static final double feederAmpShot = -0.3;
+      public static final double feederBackPiecePercent = -0.05;   // Speed to back off note slightly after intaking
+      public static final double feederBackPieceTime = 0.1;  // Time (in seconds) to back off note slightly after intaking
     }
 
     public static final class TrajectoryConstants {
@@ -348,6 +350,7 @@ public final class Constants {
           overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-45.0),
           ampShot(50.0),
+          clearBellyPanMinAngle(-65),
           climbStart(65.0),
           upperLimit(90.0);       // CALIBRATED
 
