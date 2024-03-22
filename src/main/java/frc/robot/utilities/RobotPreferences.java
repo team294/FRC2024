@@ -133,6 +133,14 @@ public class RobotPreferences {
     }
 
     /**
+     * Returns true if there is currently a sticky fault
+     * @return true = sticky fault, false = no faults
+     */
+    public static boolean isStickyFaultActive() {
+        return problemExists;
+    }
+
+    /**
      * Verifies that RobotPreferences is not empty (reset all preferences by accident)
      * @return true = preferences exist on robot
      */

@@ -31,7 +31,6 @@ public class ShootPieceAmp extends SequentialCommandGroup {
       new WaitCommand(1),
       new FeederSetPercent(0.0, feeder, log),
       new RobotStateSetIdle(robotState, feeder, log)
-      
     );
   }
 }

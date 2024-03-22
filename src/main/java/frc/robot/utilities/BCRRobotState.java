@@ -13,13 +13,13 @@ public class BCRRobotState {
         SHOOTING
     }
 
-    /** The current State of the robot */
+    // The current State of the robot
     private State state;
 
     //True if in speaker mode, false if in amp mode
     private boolean speakerMode = true; 
 
-    /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE */
+    /** Creates a new BCRRobotState with the default State value of IDLE */
     public BCRRobotState() {
         setState(State.IDLE);
     }
