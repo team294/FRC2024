@@ -274,7 +274,10 @@ public class RobotContainer {
       )
     );
 
-    // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
+    right[1].onTrue(new ParallelCommandGroup(
+      new SetAimLock(driveTrain, true, log),
+      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log)
+    )); //TODO implement this once vision is brought in
     // right[2] //Turn to face amp
     
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));

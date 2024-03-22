@@ -102,6 +102,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     logRotationKey = log.allocateLogRotation();     // Get log rotation for this subsystem
     this.camera = new PhotonCameraWrapper(allianceSelection, log, logRotationKey);
     this.noteCamera = new NotePhotonCameraWrapper(log, logRotationKey);
+    cameraInit();
 
     // create swerve modules
     swerveFrontLeft = new SwerveModule("FL",
@@ -468,6 +469,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   @Override
   public void periodic() {
+    
     // This method will be called once per scheduler run
     
     // save current angle and time for calculating angVel
@@ -550,15 +552,17 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
       if (result.isPresent()) {
         EstimatedRobotPose camPose = result.get();
+
+        PhotonTrackedTarget bestTarget = camera.getLatestResult();
         // only updates odometry if close enough
-        // TODO change how it decides if it's too far CHANGE
-        if (camPose.estimatedPose.getX() < 3) {
+        // TODO check this
+        if (bestTarget.getBestCameraToTarget().getX() < 3) {
           poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
 
-          poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, closeMatrix);
+          // poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, closeMatrix);
           //field.getObject("Vision").setPose(camPose.estimatedPose.toPose2d());
        }
-       else if (camPose.estimatedPose.getX() < 6) {
+       else if (bestTarget.getBestCameraToTarget().getX() < 7) {
           poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, farMatrix);
        }
         SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
