@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
@@ -23,6 +24,7 @@ import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.AllianceSelection;
@@ -36,17 +38,17 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class CenterThreePieceShoot extends SequentialCommandGroup {
   /** Creates a new SourceCenterThreePieceShoot. */
-  public CenterThreePieceShoot(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public CenterThreePieceShoot(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log, LED led, LEDSegmentRange segment) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log, led, segment),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, segment),
       new ShooterSetPercent(-0.02, shooter, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-        new IntakePieceAuto(intake, feeder, robotState, log),
+        new IntakePieceAuto(intake, feeder, robotState, log, led, segment),
         new ConditionalCommand(
           new SequentialCommandGroup(
             new DriveResetPose(1.3, 2.663, 0, false, driveTrain, log),
@@ -67,13 +69,13 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         ),
         new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
+          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log, led, segment)
       ),
-      new ShootPiece(shooter, feeder, robotState, log),
+      new ShootPiece(shooter, feeder, robotState, log, led, segment),
       new ShooterSetPercent(-0.02, shooter, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-        new IntakePieceAuto(intake, feeder, robotState, log),
+        new IntakePieceAuto(intake, feeder, robotState, log, led, segment),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log), 
@@ -87,9 +89,9 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         ),
         new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
+          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log, led, segment)
       ),
-      new ShootPiece(shooter, feeder, robotState, log),
+      new ShootPiece(shooter, feeder, robotState, log, led, segment),
       new ShooterSetPercent(-0.02, shooter, log),
       new WristSetAngle(WristAngle.lowerLimit, wrist, log)
     );

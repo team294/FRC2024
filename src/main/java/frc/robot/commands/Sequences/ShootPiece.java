@@ -51,8 +51,8 @@ public class ShootPiece extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public ShootPiece(Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
-    this(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log);
+  public ShootPiece(Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
+    this(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, segment);
   }
 
 }
