@@ -9,15 +9,12 @@ import java.nio.channels.FileLock;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
-import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.commands.FeederSetPercent;
 import frc.robot.commands.RobotStateSet;
 import frc.robot.commands.RobotStateSetIdle;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.LED;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
-import frc.robot.utilities.LEDSegment;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
