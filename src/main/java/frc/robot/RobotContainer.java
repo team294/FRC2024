@@ -155,12 +155,6 @@ public class RobotContainer {
 
     SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
     SmartDashboard.putData("Source Center Three Piece Shoot", new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
-
-    SmartDashboard.putData("Set State SHOOTING", new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log));
-    SmartDashboard.putData("Set State IDLE", new RobotStateSet(BCRRobotState.State.IDLE, robotState, log));
-    SmartDashboard.putData("Set State INTAKING", new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log));
-    SmartDashboard.putData("CANdle Test", new CANdleTest(led, log));
-
   }
 
   /**
