@@ -7,7 +7,6 @@ package frc.robot.commands.Sequences;
 import javax.swing.GroupLayout.SequentialGroup;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
@@ -16,7 +15,6 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
-import frc.robot.subsystems.LED;
 
 public class StopIntakingSequence extends ParallelCommandGroup {
   
