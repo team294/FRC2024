@@ -112,7 +112,7 @@ public class AutoSelection {
 
 		else if(autoPlan == CenterTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Two Piece Shoot");
-			autonomousCommand = new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == SourceTwoPieceShoot){
