@@ -81,7 +81,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
         )
       ),
       new ParallelCommandGroup(
-      new ConditionalCommand(
+        new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
