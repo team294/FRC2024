@@ -23,21 +23,32 @@ import frc.robot.utilities.FileLog;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class WristStowSafe extends SequentialCommandGroup {
-  /** Creates a new WristStowSafe. */
-  public WristStowSafe(Intake intake, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
+public class WristLowerSafe extends SequentialCommandGroup {
+  /**
+   * 
+   * @param angle target angle to move wrist to WristAngle (see Constants)
+   * @param intake
+   * @param feeder
+   * @param wrist
+   * @param robotState
+   * @param log
+   */
+  public WristLowerSafe(WristAngle angle, Intake intake, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ConditionalCommand(
         new SequentialCommandGroup(
           new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log),
-          new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
+          new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
+          new WristSetAngle(angle, wrist, log),
+          new WaitCommand(1),
+          new FeederSetPercent(0, feeder, log),
+          new RobotStateSet(BCRRobotState.State.IDLE, robotState, log)
         ),
-        new WaitCommand(0),
-        () -> (!feeder.isPiecePresent())
-      ),
-      new WristSetAngle(WristAngle.lowerLimit, wrist, log)
+        new WristSetAngle(angle, wrist, log),
+        () -> (!feeder.isPiecePresent() && angle.value <= WristAngle.clearBellyPanMinAngle.value)
+      )
     );
   }
 }

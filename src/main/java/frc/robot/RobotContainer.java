@@ -220,7 +220,7 @@ public class RobotContainer {
     // Store wrist, does not turn on intake
     xbX.onTrue(
       new ParallelCommandGroup(
-        new WristStowSafe(intake, feeder, wrist, robotState, log),
+        new WristLowerSafe(WristAngle.lowerLimit, intake, feeder, wrist, robotState, log),
         new SpeakerModeSet(true, robotState, log)
       ));
     
