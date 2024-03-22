@@ -39,7 +39,7 @@ public class WristLowerSafe extends SequentialCommandGroup {
     addCommands(
       new ConditionalCommand(
         new SequentialCommandGroup(
-          new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log),
+          new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log),   // Set to INTAKING so that the piece sensor will stop Feeding when a piece is loaded
           new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
           new WristSetAngle(angle, wrist, log),
           new WaitCommand(1),
