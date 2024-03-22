@@ -23,7 +23,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 15;
+    private static int trajectoryCount = 19;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
@@ -41,8 +41,11 @@ public class TrajectoryCache {
         driveCloseFarToFarCenterRed(11),
         driveCloseFarToFarCenterBlue(12),
         driveSourceFarToSourceCenterFarRed(13),
-        driveSourceFarToSourceCenterFarBlue(14);
-
+        driveSourceFarToSourceCenterFarBlue(14),
+        driveToAmpCloseNoteToCenterRed(15),
+        driveToAmpCloseNoteToCenterBlue(16),
+        driveAmpNoteToFarNoteToCloseNoteCenterRed(17),
+        driveAmpNoteToFarNoteToCloseNoteCenterBlue(18);
 
 
         @SuppressWarnings({"MemberName", "PMD.SingularField"})
@@ -151,7 +154,26 @@ public class TrajectoryCache {
             List.of(), 
             new Pose2d(3.0, 7, new Rotation2d(0))
             ));
+        
+        cache[TrajectoryType.driveToAmpCloseNoteToCenterRed.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(-33)), 
+            new Rotation2d(Math.toRadians(-33)), 
+            calcTrajectory("Drive To Amp Close Note To Center Red", .8, .4, false, 
+            new Pose2d(3.0, 1.2, new Rotation2d(Math.toRadians(0))), 
+            List.of(), 
+            new Pose2d(8.3, 5.8, new Rotation2d(0))
+            ));
 
+        cache[TrajectoryType.driveToAmpCloseNoteToCenterBlue.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(33)), 
+            new Rotation2d(Math.toRadians(33)), 
+            calcTrajectory("Drive To Amp Close Note To Center Blue", .8, .4, false, 
+            new Pose2d(3.0, 7.0, new Rotation2d(Math.toRadians(0))), 
+            List.of(), 
+            new Pose2d(8.3, 2.4, new Rotation2d(0))
+            ));
+
+        
         
         cache[TrajectoryType.driveAmpNoteToFarNoteRed.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(-33)), 
@@ -162,6 +184,41 @@ public class TrajectoryCache {
             new Pose2d(8.2, 0.75, new Rotation2d(0))
             ));
         
+        cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(33)), 
+            new Rotation2d(0), 
+            calcTrajectory("Drive Amp Note To Far Note Blue", .8, .4, false,
+            new Pose2d(3.0, 7, new Rotation2d(Math.toRadians(30))), 
+            List.of(), 
+            new Pose2d(8.2, 7.45, new Rotation2d(0))
+            ));
+
+        cache[TrajectoryType.driveAmpNoteToFarNoteToCloseNoteCenterRed.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(-33)), 
+            new Rotation2d(0), 
+            calcTrajectory("Drive Amp Note To Far Note Red", .8, .4, false,
+            new Pose2d(8.2, 0.75, new Rotation2d(Math.toRadians(-30))), 
+            List.of(), 
+            new Pose2d(8.3, 5.8, new Rotation2d(0))
+            ));
+        
+        cache[TrajectoryType.driveAmpNoteToFarNoteToCloseNoteCenterBlue.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(33)), 
+            new Rotation2d(0), 
+            calcTrajectory("Drive Amp Note To Far Note Blue", .8, .4, false,
+            new Pose2d(8.2, 7.45, new Rotation2d(Math.toRadians(30))), 
+            List.of(), 
+            new Pose2d(8.3, 2.4, new Rotation2d(0))
+            ));
+        
+        cache[TrajectoryType.driveAmpNoteToFarNoteRed.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(-33)), 
+            new Rotation2d(0), 
+            calcTrajectory("Drive Amp Note To Far Note Red", .8, .4, false,
+            new Pose2d(3.0, 1.2, new Rotation2d(Math.toRadians(-30))), 
+            List.of(), 
+            new Pose2d(8.2, 0.75, new Rotation2d(0))
+            ));
         cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(33)), 
             new Rotation2d(0), 
