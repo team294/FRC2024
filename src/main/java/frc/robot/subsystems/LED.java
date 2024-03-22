@@ -9,11 +9,8 @@ import java.util.HashMap;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.Constants.BCRColor;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LEDConstants.*;
@@ -71,14 +68,20 @@ public class LED extends SubsystemBase {
       LEDConstants.LEDSegmentRange.CANdleBottom.count,
       LEDConstants.Patterns.noPatternAnimation
     );
-    LEDSegment strip1 = new LEDSegment(
-      LEDConstants.LEDSegmentRange.Strip1.index,
-      LEDConstants.LEDSegmentRange.Strip1.count,
+    // LEDSegment Strip1 = new LEDSegment(      // strip not currently on robot
+    //   LEDConstants.LEDSegmentRange.Strip1.index,
+    //   LEDConstants.LEDSegmentRange.Strip1.count,
+    //   LEDConstants.Patterns.noPatternAnimation
+    // );
+    LEDSegment Full = new LEDSegment(
+      LEDConstants.LEDSegmentRange.Full.index,
+      LEDConstants.LEDSegmentRange.Full.count,
       LEDConstants.Patterns.noPatternAnimation
     );
     segments.put(LEDSegmentRange.CANdleTop, CANdleTop);
     segments.put(LEDSegmentRange.CANdleBottom, CANdleBottom);
-    segments.put(LEDSegmentRange.Strip1, strip1);
+    // segments.put(LEDSegmentRange.Strip1, Strip1);  // strip not currently on robot
+    segments.put(LEDSegmentRange.Full, Full);
   }
 
   /** Get the subsystem's name
