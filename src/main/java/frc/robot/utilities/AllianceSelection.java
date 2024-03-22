@@ -75,10 +75,6 @@ public class AllianceSelection {
         return alliance;
     }
 
-    public double getSpeakerYPos() {
-        return (alliance == Alliance.Red) ? FieldConstants.yPosSpeakerRed : FieldConstants.yPosSpeakerBlue;
-    }
-
     /**
      * Runs once per scheduler cycle
      */

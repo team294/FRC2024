@@ -13,8 +13,7 @@ import frc.robot.utilities.BCRRobotState;
 public class RobotStateSetIdle extends SequentialCommandGroup {
 
   /**
-   * Sets the robot state to either IDLE_WITH_PIECE or IDLE_NO_PIECE,
-   * using the feeder sensor to decide if it has a piece.
+   * Sets the robot state to IDLE
    * <p> Note that this command does <b>not</b> require the feeder subsystem.
    * @param robotState
    * @param feeder
