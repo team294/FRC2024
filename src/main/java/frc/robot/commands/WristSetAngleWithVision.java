@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
@@ -24,7 +26,6 @@ public class WristSetAngleWithVision extends Command {
   private final DriveTrain driveTrain;
   private final Wrist wrist;
   private final FileLog log;
-  private final boolean fromShuffleboard;
 
   /**
    * Moves wrist to target angle.  Command ends when wrist is within 5 degrees of the target position.
@@ -36,7 +37,8 @@ public class WristSetAngleWithVision extends Command {
     this.allianceSelection = allianceSelection;
     this.driveTrain = drivetrain;
     this.log = log;
-    fromShuffleboard = false;
+
+    SmartDashboard.putNumber("Wrist Vision Constant Offset", 0);
 
     addRequirements(wrist);
   }
@@ -48,28 +50,26 @@ public class WristSetAngleWithVision extends Command {
     if (n == 0) return 0;
 
     double x = driveTrain.getPose().getX();
-    double y = (driveTrain.getPose().getY()-allianceSelection.getSpeakerYPos());
+    double y = (driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos());
     // distance from speaker
     double dist = Math.sqrt(x*x+y*y);
 
-    double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot+RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(getAngleFromDistance(n-1));
+    double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot+RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n-1)));
 
-    return Math.atan((FieldConstants.heightOfSpeaker-heightOfShooter)/dist);
-  }
+    return Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker-heightOfShooter)/dist))-90-10;
+  } 
 
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
-    angle = getAngleFromDistance(2);
-    wrist.setWristAngle(angle);
     log.writeLog(false, "WristSetAngleWithVision", "Initialize", "Target", angle);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
-    angle = getAngleFromDistance(2);
-    wrist.setWristAngle(angle);
+    angle = getAngleFromDistance(3);
+    wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
     wrist.updateWristLog(false);
   }
 
@@ -82,6 +82,6 @@ public class WristSetAngleWithVision extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   public boolean isFinished() {
-    return !wrist.isEncoderCalibrated() || Math.abs(wrist.getWristAngle() - wrist.getCurrentWristTarget()) < 5.0; // tolerance of 5 degrees
+    return !wrist.isEncoderCalibrated();
   }
 }

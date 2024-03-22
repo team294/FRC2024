@@ -21,7 +21,6 @@ public class SetAimLock extends Command {
     this.state = state;
     this.log = log;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(driveTrain);
   }
 
   // Called when the command is initially scheduled.

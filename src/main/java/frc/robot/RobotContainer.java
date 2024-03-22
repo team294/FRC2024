@@ -278,15 +278,19 @@ public class RobotContainer {
       new SetAimLock(driveTrain, true, log),
       new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log)
     )); //TODO implement this once vision is brought in
+    right[1].onFalse(
+      new SetAimLock(driveTrain, false, log)
+    ); //TODO implement this once vision is brought in
+
     // right[2] //Turn to face amp
     
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
-    //right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
+    // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
     
      
   }
 
-  /** 
+  /**
    * Define Copanel button mappings.
    *  
    *  1  3  5  8
