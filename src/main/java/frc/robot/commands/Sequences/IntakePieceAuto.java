@@ -37,7 +37,9 @@ public class IntakePieceAuto extends SequentialCommandGroup {
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
       new WaitCommand(10).until(() -> feeder.isPiecePresent()),
       new IntakeSetPercent(0, 0, intake, log),
-      new FeederSetPercent(0, feeder, log),
+      new FeederSetPercent(-0.05, feeder, log),
+      new WaitCommand(0.1),
+      new FeederSetPercent(0.0, feeder, log),      
       new RobotStateSetIdle(robotState, feeder, log)
       );
   }
