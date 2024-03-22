@@ -13,7 +13,6 @@ import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.commands.FeederSetPercent;
 import frc.robot.commands.RobotStateSet;
 import frc.robot.commands.RobotStateSetIdle;
-import frc.robot.commands.updateStateLEDs;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.LED;
 import frc.robot.utilities.BCRRobotState;
@@ -25,7 +24,7 @@ import frc.robot.utilities.LEDSegment;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootPieceAmp extends SequentialCommandGroup {
   /** Creates a new ShootPieceAmp. */
-  public ShootPieceAmp(Feeder feeder, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
+  public ShootPieceAmp(Feeder feeder, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -34,8 +33,7 @@ public class ShootPieceAmp extends SequentialCommandGroup {
       new WaitCommand(3).until(() -> !feeder.isPiecePresent()),
       new WaitCommand(1),
       new FeederSetPercent(0.0, feeder, log),
-      new RobotStateSetIdle(robotState, feeder, log),
-      new updateStateLEDs(led, log, segment)
+      new RobotStateSetIdle(robotState, feeder, log)
     );
   }
 }

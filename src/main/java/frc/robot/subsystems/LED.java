@@ -310,5 +310,6 @@ public class LED extends SubsystemBase {
         updateStateLEDs(segmentKey);
       }
     }
+    updateStateLEDs(LEDSegmentRange.CANdleFull);
   }
 }

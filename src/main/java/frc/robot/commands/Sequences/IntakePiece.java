@@ -33,7 +33,7 @@ public class IntakePiece extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public IntakePiece(Intake intake, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
+  public IntakePiece(Intake intake, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
@@ -47,8 +47,7 @@ public class IntakePiece extends SequentialCommandGroup {
         ),
         new WaitCommand(0),
         () -> (!feeder.isPiecePresent())
-      ),
-      new updateStateLEDs(led, log, segment)
+      )
     );
   }
 }

@@ -27,7 +27,7 @@ public class StopIntakingSequence extends ParallelCommandGroup {
    * @param robotState Object with current robot state
    * @param log
    */
-  public StopIntakingSequence(Feeder feeder, Intake intake, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
+  public StopIntakingSequence(Feeder feeder, Intake intake, BCRRobotState robotState, FileLog log) {
     addCommands(
       new IntakeSetPercent(0, 0, intake, log),
       new SequentialCommandGroup(
@@ -35,8 +35,7 @@ public class StopIntakingSequence extends ParallelCommandGroup {
         new WaitCommand(FeederConstants.feederBackPieceTime),
         new FeederSetPercent(0.0, feeder, log)
       ),
-      new RobotStateSetIdle(robotState, feeder, log),
-      new updateStateLEDs(led, log, segment)
+      new RobotStateSetIdle(robotState, feeder, log)
     );
   }
 }

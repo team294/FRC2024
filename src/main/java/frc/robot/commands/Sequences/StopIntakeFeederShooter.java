@@ -25,12 +25,11 @@ public class StopIntakeFeederShooter extends ParallelCommandGroup {
    * @param robotState Object with current robot state
    * @param log log
    */
-  public StopIntakeFeederShooter(Intake intake, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
+  public StopIntakeFeederShooter(Intake intake, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
     addCommands(
       new IntakeStop(intake, log),
       new ShooterFeederStop(shooter, feeder, log),
-      new RobotStateSetIdle(robotState, feeder, log),
-      new updateStateLEDs(led, log, segment)
+      new RobotStateSetIdle(robotState, feeder, log)
     );
   }
 }

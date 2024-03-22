@@ -29,7 +29,7 @@ public class IntakePieceAuto extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public IntakePieceAuto(Intake intake, Feeder feeder, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
+  public IntakePieceAuto(Intake intake, Feeder feeder, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
@@ -42,8 +42,7 @@ public class IntakePieceAuto extends SequentialCommandGroup {
       new FeederSetPercent(-0.05, feeder, log),
       new WaitCommand(0.1),
       new FeederSetPercent(0.0, feeder, log),      
-      new RobotStateSetIdle(robotState, feeder, log),
-      new updateStateLEDs(led, log, segment)
+      new RobotStateSetIdle(robotState, feeder, log)
       );
   }
 }

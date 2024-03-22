@@ -144,22 +144,22 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log, led, LEDSegmentRange.CANdleFull));
-    SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, LEDSegmentRange.CANdleFull));
-    SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log, led, LEDSegmentRange.CANdleFull));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log));
+    SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
 
     // Autos
-    SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
-    SmartDashboard.putData("Amp Two Piece Shoot", new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
-    SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
-    SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
-    SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
+    SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Amp Two Piece Shoot", new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
 
-    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
-    SmartDashboard.putData("Source Center Three Piece Shoot", new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Center Three Piece Shoot", new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
 
 
-    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log, led, LEDSegmentRange.CANdleFull));
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
   }
 
   /**
@@ -173,7 +173,7 @@ public class RobotContainer {
       robotState.getState() == State.INTAKING &&
       (feeder.isPiecePresent() ||  wrist.getWristAngle() > WristAngle.intakeLimit.value) );
     intakeStopTrigger.onTrue(
-      new StopIntakingSequence(feeder, intake, robotState, log, led, LEDSegmentRange.CANdleFull)
+      new StopIntakingSequence(feeder, intake, robotState, log)
     );
   }
 
@@ -202,25 +202,25 @@ public class RobotContainer {
 
     // Prep for overhead speaker shot
     xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
-      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log, led, LEDSegmentRange.CANdleFull));
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Move wrist down and then intake a piece
-    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, robotState, log, led, LEDSegmentRange.CANdleFull));
+    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, robotState, log));
 
     // Reverse the intake
     xbLT.onTrue(new IntakeSetPercent(-.3, -.3, intake, log));
 
     // Prep for at-speaker shot
     xbA.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log, led, LEDSegmentRange.CANdleFull));
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
     
     // Prep for podium speaker shot
     xbB.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromPodium, 
-      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log, led, LEDSegmentRange.CANdleFull));
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
     
     // Prep for mid-stage speaker shot
     xbY.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
-      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log, led, LEDSegmentRange.CANdleFull));
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Store wrist, does not turn on intake
     xbX.onTrue(
@@ -231,10 +231,10 @@ public class RobotContainer {
     
     // Prep for pit shot when back button is pressed
     xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.lowerLimit, 
-      ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, shooter, wrist, intake, feeder, robotState, log, led, LEDSegmentRange.CANdleFull));
+      ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, shooter, wrist, intake, feeder, robotState, log));
     // Shoot in slow speed pit shot when released
     xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, 
-      shooter, feeder, robotState, log, led, LEDSegmentRange.CANdleFull) );
+      shooter, feeder, robotState, log) );
 
     // Prep for amp shot
     xbPOVRight.onTrue( new ParallelCommandGroup(
@@ -271,8 +271,8 @@ public class RobotContainer {
     // Shoot the note
     left[2].onTrue(
         new ConditionalCommand(
-          new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, LEDSegmentRange.CANdleFull),
-          new ShootPieceAmp(feeder, robotState, log, led, LEDSegmentRange.CANdleFull),
+          new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+          new ShootPieceAmp(feeder, robotState, log),
           () -> robotState.isSpeakerMode()
         )
     );
@@ -321,7 +321,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelection.getAutoCommand(intake, wrist, shooter, feeder, driveTrain, trajectoryCache, robotState, log, led, LEDSegmentRange.CANdleFull);
+    return autoSelection.getAutoCommand(intake, wrist, shooter, feeder, driveTrain, trajectoryCache, robotState, log);
   }
 
 

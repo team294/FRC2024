@@ -33,29 +33,29 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class SourceThreePieceShoot extends SequentialCommandGroup {
   /** Creates a new CenterSourceThreePieceShoot. */
-  public SourceThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log, LED led, LEDSegmentRange segment) {
+  public SourceThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, segment),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
-        new IntakePieceAuto(intake, feeder, robotState, log, led, segment),
+        new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, segment),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
-        new IntakePieceAuto(intake, feeder, robotState, log, led, segment),
+        new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNoteToFarNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNoteToFarNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, segment)
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log)
     );
   }
 }

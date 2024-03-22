@@ -29,7 +29,7 @@ public class ShootPiece extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public ShootPiece(double velocityTop, double velocityBottom, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
+  public ShootPiece(double velocityTop, double velocityBottom, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -39,8 +39,7 @@ public class ShootPiece extends SequentialCommandGroup {
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
       new WaitCommand(1),
       new ShooterFeederStop(shooter, feeder, log),
-      new RobotStateSetIdle(robotState, feeder, log),
-      new updateStateLEDs(led, log, segment)
+      new RobotStateSetIdle(robotState, feeder, log)
     );
   }
 
@@ -51,8 +50,8 @@ public class ShootPiece extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public ShootPiece(Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, LED led, LEDSegmentRange segment) {
-    this(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led, segment);
+  public ShootPiece(Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+    this(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log);
   }
 
 }

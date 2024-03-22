@@ -30,13 +30,13 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class CenterFourPieceShoot extends SequentialCommandGroup {
   /** Creates a new CenterFourPieceShoot. */
-  public CenterFourPieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log, LED led, LEDSegmentRange segment) {
+  public CenterFourPieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ShootPiece(shooter, feeder, robotState, log, led, segment),
+      new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
-        new IntakePieceAuto(intake, feeder, robotState, log, led, segment),
+        new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterAmpNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterAmpNoteBlue.value], driveTrain, log), 
@@ -48,9 +48,9 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
       ),
-      new ShootPiece(shooter, feeder, robotState, log, led, segment),
+      new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
-        new IntakePieceAuto(intake, feeder, robotState, log, led, segment),
+        new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log), 
@@ -62,9 +62,9 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
       ),
-      new ShootPiece(shooter, feeder, robotState, log, led, segment),
+      new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
-        new IntakePieceAuto(intake, feeder, robotState, log, led, segment),
+        new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterToNearSourceRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterToNearSourceBlue.value], driveTrain, log), 
@@ -76,7 +76,7 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceNearToCenterStartBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
       ),
-      new ShootPiece(shooter, feeder, robotState, log, led, segment)
+      new ShootPiece(shooter, feeder, robotState, log)
     );
   }
 }
