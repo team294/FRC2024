@@ -27,13 +27,12 @@ public class WristLowerSafe extends SequentialCommandGroup {
   /**
    * 
    * @param angle target angle to move wrist to WristAngle (see Constants)
-   * @param intake
    * @param feeder
    * @param wrist
    * @param robotState
    * @param log
    */
-  public WristLowerSafe(WristAngle angle, Intake intake, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
+  public WristLowerSafe(WristAngle angle, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
