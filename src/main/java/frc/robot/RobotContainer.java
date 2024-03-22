@@ -264,15 +264,12 @@ public class RobotContainer {
     left[1].onTrue(new DriveResetPose( 0, false, driveTrain, log));
 
     // Shoot the note
-    left[2].onTrue(new ConditionalCommand(
+    left[2].onTrue(
         new ConditionalCommand(
           new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
           new ShootPieceAmp(feeder, robotState, log),
           () -> robotState.isSpeakerMode()
-        ),
-        new WaitCommand(0),
-        () -> feeder.isPiecePresent()
-      )
+        )
     );
 
     // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
