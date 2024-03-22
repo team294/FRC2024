@@ -102,6 +102,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     logRotationKey = log.allocateLogRotation();     // Get log rotation for this subsystem
     this.camera = new PhotonCameraWrapper(allianceSelection, log, logRotationKey);
     this.noteCamera = new NotePhotonCameraWrapper(log, logRotationKey);
+    
+    // enable cameras
     cameraInit();
 
     // create swerve modules
@@ -589,6 +591,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   public void cameraInit() {
     camera.init();
     noteCamera.init();
+  }
+
+  public NotePhotonCameraWrapper getNoteCamera() {
+    return noteCamera;
   }
 
   public PhotonTrackedTarget getBestTarget() {

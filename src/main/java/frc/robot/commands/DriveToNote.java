@@ -77,15 +77,18 @@ public class DriveToNote extends Command {
   @Override
   public void execute() {
     // curTime = System.currentTimeMillis() / 1000.0;
+    
+    if (!driveTrain.getNoteCamera().hasInit()) return;
 
     PhotonPipelineResult latestResult = driveTrain.getLatestResult();
     if (!latestResult.hasTargets()) {
       if(log.isMyLogRotation(logRotationKey)) {
         log.writeLog(false, "DriveToNote", "No targets captured");
       }
-        return;
+      return;
     }
 
+    
     PhotonTrackedTarget bestTarget = latestResult.getBestTarget();
     
 
@@ -130,6 +133,6 @@ public class DriveToNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return feeder.isPiecePresent();
+    return !driveTrain.getNoteCamera().hasInit() || feeder.isPiecePresent();
   }
 }
