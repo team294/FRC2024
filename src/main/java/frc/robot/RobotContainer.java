@@ -274,7 +274,7 @@ public class RobotContainer {
       )
     );
 
-    right[1].onTrue(new ParallelCommandGroup(
+    right[1].whileTrue(new ParallelCommandGroup(
       new SetAimLock(driveTrain, true, log),
       new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log)
     )); //TODO implement this once vision is brought in
