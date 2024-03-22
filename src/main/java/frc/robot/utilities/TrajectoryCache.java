@@ -23,7 +23,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 23;
+    private static int trajectoryCount = 25;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
@@ -49,7 +49,9 @@ public class TrajectoryCache {
         driveCenterToNearSourceRed(19),
         driveCenterToNearSourceBlue(20),
         driveFromSourceNearToCenterStartRed(21),
-        driveFromSourceNearToCenterStartBlue(22);
+        driveFromSourceNearToCenterStartBlue(22),
+        driveFromSourceNearToSourceStartRed(23),
+        driveFromSourceNearToSourceStartBlue(24);
 
 
 
@@ -112,7 +114,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(33)), 
             new Rotation2d(Math.toRadians(33)), 
             calcTrajectory("Source Start to Close Note Red", .4, .4, false, 
-            new Pose2d(1.3, 4.1, new Rotation2d(Math.toRadians(0))), 
+            new Pose2d(1.1, 4.1, new Rotation2d(Math.toRadians(0))), 
             List.of(), 
             new Pose2d(2.7, 4.1, new Rotation2d(0))
             ));
@@ -121,7 +123,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(-33)), 
             new Rotation2d(Math.toRadians(-33)), 
             calcTrajectory("Source Start to Close Note Blue", .4, .4, false, 
-            new Pose2d(1.3, 4.1, new Rotation2d(Math.toRadians(0))), 
+            new Pose2d(1.1, 4.1, new Rotation2d(Math.toRadians(0))), 
             List.of(), 
             new Pose2d(2.7, 4.1, new Rotation2d(0))
             ));
@@ -305,6 +307,24 @@ public class TrajectoryCache {
             new Pose2d(2.7, 4.1, new Rotation2d(Math.toRadians(147))), 
             List.of(), 
             new Pose2d(1.3, 5.57, new Rotation2d(Math.toRadians(147)))
+            ));
+
+        cache[TrajectoryType.driveToSourceCloseNoteRed.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(33)), 
+            new Rotation2d(Math.toRadians(33)), 
+            calcTrajectory("Source Start to Close Note Red", .4, .4, false, 
+            new Pose2d(2.7, 4.1, new Rotation2d(Math.toRadians(180))), 
+            List.of(), 
+            new Pose2d(1.1, 4.1, new Rotation2d(Math.toRadians(180)))
+            ));
+
+        cache[TrajectoryType.driveToSourceCloseNoteBlue.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(-33)), 
+            new Rotation2d(Math.toRadians(-33)), 
+            calcTrajectory("Source Start to Close Note Blue", .4, .4, false, 
+            new Pose2d(2.7, 4.1, new Rotation2d(Math.toRadians(180))), 
+            List.of(), 
+            new Pose2d(1.1, 4.1, new Rotation2d(Math.toRadians(180)))
             ));
 
         
