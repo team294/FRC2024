@@ -116,8 +116,8 @@ public class PhotonCameraWrapper extends SubsystemBase {
      *
      * @return The best target of the pipeline result.
      */
-  PhotonTrackedTarget getLatestResult() {
-    return photonCamera.getLatestResult().getBestTarget();
+  PhotonPipelineResult getLatestResult() {
+    return photonCamera.getLatestResult();
   }
 
   /**
