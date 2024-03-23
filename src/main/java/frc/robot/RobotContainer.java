@@ -222,12 +222,13 @@ public class RobotContainer {
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Prep for Far Shot
-    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
+    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
+      ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
+
+      
       new ParallelCommandGroup(
         new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
         new SpeakerModeSet(false, robotState, log)
-
-
       );
     
     // Prep for pit shot when back button is pressed
@@ -273,8 +274,7 @@ public class RobotContainer {
     // Shoot the note
     left[2].onTrue(
         new ConditionalCommand(
-          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, feeder, robotState, log)
-          ,
+          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, feeder, robotState, log),
           new ConditionalCommand(
             new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
             new ShootPieceAmp(feeder, robotState, log),
