@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BCRColor;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.LEDConstants.*;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
@@ -26,13 +27,13 @@ public class LED extends SubsystemBase {
   private String subsystemName;
   private BCRRobotState robotState;
   private BCRRobotState.State currentState;
+  private Shooter shooter;
   private Feeder feeder;
-  private boolean stickyFault;
   private boolean shouldClear;
-  private double accuracyDisplayThreshold;
-  private int accuracy;
+  // private double accuracyDisplayThreshold;
+  // private int accuracy;
 
-  private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
+  // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
 
   // LED Segments
   //private LEDSegment CANdle;
@@ -44,18 +45,18 @@ public class LED extends SubsystemBase {
    * @param subsystemName
    * @param log
    */
-  public LED(int CANPort, String subsystemName, BCRRobotState robotState, FileLog log, Feeder feeder) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
     this.robotState = robotState;
     this.currentState = BCRRobotState.State.IDLE;
+    this.shooter = shooter;
     this.feeder = feeder;
-    this.stickyFault = false;
     this.shouldClear = false;
-    this.accuracyDisplayThreshold = 35;
-    this.accuracy = 0;
+    // this.accuracyDisplayThreshold = 35;
+    // this.accuracy = 0;
 
     // Create the LED segments
     LEDSegment CANdleTop = new LEDSegment(
@@ -101,6 +102,7 @@ public class LED extends SubsystemBase {
   /** Clear all LEDs */
   public void clearLEDs() {
     setLEDs(0, 0, 0);
+    log.writeLog(false, "LED", "Clear LEDs");
   }
 
   /**
@@ -109,6 +111,7 @@ public class LED extends SubsystemBase {
    */
   public void clearLEDs(LEDSegmentRange segment) {
     setLEDs(0, 0, 0, segment);
+    log.writeLog(false, "LED", "Clear LEDs");
   }
   
   /**
@@ -119,6 +122,7 @@ public class LED extends SubsystemBase {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       setAnimation(LEDConstants.Patterns.noPatternAnimation, segmentKey, false);
     }
+    log.writeLog(false, "LED", "Clear Animation");
   }
   
   /**
@@ -127,6 +131,7 @@ public class LED extends SubsystemBase {
    */
   public void animate(Animation anim) {
     candle.animate(anim);
+    log.writeLog(false, "LED", "Animate");
   }
 
   /**
@@ -137,6 +142,7 @@ public class LED extends SubsystemBase {
   public void setColor(Color color, LEDSegmentRange segment) {
     Color[] pattern = {color};
     setPattern(pattern, segment);
+    log.writeLog(false, "LED", "Set Color");
   }
 
   /**
@@ -150,6 +156,7 @@ public class LED extends SubsystemBase {
       if (indexPattern >= pattern.length) indexPattern = 0;
       setLEDs(pattern[indexPattern], segment.index + indexLED);
     }
+    log.writeLog(false, "LED", "Set Pattern");
   }
 
   public void setPattern(Color[] pattern, Color edgeColor, int edgeWidth, LEDSegmentRange segment) {
@@ -162,6 +169,7 @@ public class LED extends SubsystemBase {
       if (indexPattern >= pattern.length) indexPattern = 0;
       setLEDs(pattern[indexPattern], segment.index + indexLED);
     }
+    log.writeLog(false, "LED", "Set Pattern");
   }
 
   /**
@@ -178,6 +186,7 @@ public class LED extends SubsystemBase {
       segments.get(LEDSegmentRange.CANdleTop).setAnimation(animation, loop);
       segments.get(LEDSegmentRange.CANdleBottom).setAnimation(animation, loop);
     }
+    log.writeLog(false, "LED", "Set Animation");
   }
 
   /**
@@ -188,6 +197,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b) {
     candle.setLEDs(r, g, b);
+    log.writeLog(false, "LED", "Set LEDs");
   }
 
   /**
@@ -196,6 +206,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(Color color) {
     setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255));
+    log.writeLog(false, "LED", "Set LEDs");
   }
 
   /**
@@ -208,6 +219,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b, int index, int count) {
     candle.setLEDs(r, g, b, 0, index, count);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using color and index values
@@ -216,6 +228,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(Color color, int index) {
     candle.setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255), 0, index, 1);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using color, index, and count values
@@ -225,6 +238,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(Color color, int index, int count) {
     candle.setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255), 0, index, count);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using RGB and segment values
@@ -235,6 +249,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b, LEDSegmentRange segment) {
     candle.setLEDs(r, g, b, 0, segment.index, segment.count);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using BCR color enum (ex: IDLE)
@@ -242,6 +257,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(BCRColor color) {
     candle.setLEDs(color.r, color.g, color.b);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   
   /**
@@ -252,6 +268,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(BCRColor color, int index, int count) {
     candle.setLEDs(color.r, color.g, color.b, 0, index, count);
+    log.writeLog(false, "LED", "Set LEDs");
   }
 
   /**
@@ -265,7 +282,11 @@ public class LED extends SubsystemBase {
     switch (currentState) {
     case IDLE:
       if (feeder.isPiecePresent()) {
-        setLEDs(255, 30, 0, segment.index, segment.count);
+        if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance){
+          setLEDs(150, 0, 255);
+        } else {
+          setLEDs(255, 30, 0, segment.index, segment.count);
+        }
       }
       else {
         setLEDs(BCRColor.IDLE, segment.index, segment.count);
@@ -278,6 +299,7 @@ public class LED extends SubsystemBase {
       setLEDs(BCRColor.SHOOTING, segment.index, segment.count);
       break;
     }
+    log.writeLog(false, "LED", "Update State LEDs", "State", currentState);
   }
 
 

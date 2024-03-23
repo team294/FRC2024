@@ -63,7 +63,7 @@ public class RobotContainer {
   private final BCRRobotState robotState = new BCRRobotState();
   
   // Is a subsystem, but requires a utility
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", robotState, log, feeder);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, log);
 
 
   // Define controllers
@@ -222,13 +222,16 @@ public class RobotContainer {
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Prep for Far Shot
-    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
+    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
+      ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
+
+    // Store wrist, does not turn on intake
+    xbX.onTrue(
       new ParallelCommandGroup(
         new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
-        new SpeakerModeSet(false, robotState, log)
-
-
-      );
+        new SpeakerModeSet(true, robotState, log),
+        new FarShotSet(false, robotState, log)
+      ));
     
     // Prep for pit shot when back button is pressed
     xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.lowerLimit, 
@@ -273,8 +276,7 @@ public class RobotContainer {
     // Shoot the note
     left[2].onTrue(
         new ConditionalCommand(
-          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, feeder, robotState, log)
-          ,
+          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, feeder, robotState, log),
           new ConditionalCommand(
             new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
             new ShootPieceAmp(feeder, robotState, log),
