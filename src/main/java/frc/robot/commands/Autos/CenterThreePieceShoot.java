@@ -37,13 +37,13 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class CenterThreePieceShoot extends SequentialCommandGroup {
   /** Creates a new SourceCenterThreePieceShoot. */
-  public CenterThreePieceShoot(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log, LED led) {
+  public CenterThreePieceShoot(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
@@ -70,7 +70,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
         new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
           ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
       ),
-      new ShootPiece(shooter, feeder, robotState, log, led),
+      new ShootPiece(shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
@@ -90,7 +90,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
         new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
           ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
       ),
-      new ShootPiece(shooter, feeder, robotState, log, led),
+      new ShootPiece(shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
       new WristSetAngle(WristAngle.lowerLimit, wrist, log)
     );

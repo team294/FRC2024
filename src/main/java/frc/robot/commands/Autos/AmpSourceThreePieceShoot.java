@@ -31,12 +31,12 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AmpSourceThreePieceShoot extends AmpTwoPieceShoot {
   /** Creates a new AmpSourceThreePieceShoot. */
-  public AmpSourceThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log, LED led) {
+  public AmpSourceThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    super(intake, shooter, driveTrain, feeder, robotState, cache, alliance, log, led);
+    super(intake, shooter, driveTrain, feeder, robotState, cache, alliance, log);
     addCommands(
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
@@ -45,7 +45,7 @@ public class AmpSourceThreePieceShoot extends AmpTwoPieceShoot {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
@@ -54,7 +54,7 @@ public class AmpSourceThreePieceShoot extends AmpTwoPieceShoot {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led)
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log)
     );
   }
 }
