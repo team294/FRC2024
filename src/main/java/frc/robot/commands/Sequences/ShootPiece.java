@@ -5,6 +5,7 @@
 package frc.robot.commands.Sequences;
 
 import edu.wpi.first.units.Velocity;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
@@ -12,6 +13,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.LED;
 import frc.robot.utilities.FileLog;
 import frc.robot.commands.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
@@ -27,14 +29,17 @@ public class ShootPiece extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public ShootPiece(double velocityTop, double velocityBottom, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public ShootPiece(double velocityTop, double velocityBottom, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, LED led) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       // new ShooterSetVelocity(ShooterConstants.shooterVelocity, VelocityType.waitForVelocity, shooter, log),
       new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log),
       new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5),
-      new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
+      new ParallelDeadlineGroup(
+        new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
+        new CANdleTeamFlash(led, log)
+      ),
       new WaitCommand(1),
       new ShooterFeederStop(shooter, feeder, log),
       new RobotStateSetIdle(robotState, feeder, log)
@@ -48,8 +53,8 @@ public class ShootPiece extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public ShootPiece(Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
-    this(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log);
+  public ShootPiece(Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, LED led) {
+    this(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log, led);
   }
 
 }
