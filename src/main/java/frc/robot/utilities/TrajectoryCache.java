@@ -114,21 +114,21 @@ public class TrajectoryCache {
             ));
 
         cache[TrajectoryType.driveToSourceCloseNoteRed.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(30)), 
+            new Rotation2d(Math.toRadians(54)), 
             new Rotation2d(0), 
             calcTrajectory("Source Start to Close Note Red", .4, .4, false, 
             new Pose2d(1.1, 3.463, new Rotation2d(Math.toRadians(10))), 
             List.of(), 
-            new Pose2d(2.8, 3.563, new Rotation2d(0))
+            new Pose2d(2.8, 3.963, new Rotation2d(0))
             ));
 
         cache[TrajectoryType.driveToSourceCloseNoteBlue.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(-30)), 
+            new Rotation2d(Math.toRadians(-54)), 
             new Rotation2d(0), 
             calcTrajectory("Source Start to Close Note Blue", .4, .4, false, 
             new Pose2d(1.3, 4.6, new Rotation2d(Math.toRadians(-10))), 
             List.of(), 
-            new Pose2d(2.8, 4.5, new Rotation2d(0))
+            new Pose2d(2.8, 4.1, new Rotation2d(0))
             ));
 
         cache[TrajectoryType.driveToCenterCloseNoteRed.value] = new TrajectoryFacing(new Rotation2d(0), 
@@ -330,20 +330,20 @@ public class TrajectoryCache {
 
         cache[TrajectoryType.driveFromSourceNoteToSourceStartRed.value] = new TrajectoryFacing(
             new Rotation2d(0), 
-            new Rotation2d(Math.toRadians(30)), 
+            new Rotation2d(Math.toRadians(54)), 
             calcTrajectory("Source Note to Source Start Red", .8, .4, false, 
-            new Pose2d(2.8, 3.563, new Rotation2d(Math.toRadians(180))),
+            new Pose2d(2.8, 3.963, new Rotation2d(Math.toRadians(180))),
             List.of(), 
             new Pose2d(1.1, 3.463, new Rotation2d(Math.toRadians(-170)))
             ));
 
         cache[TrajectoryType.driveFromSourceNoteToSourceStartBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
-            new Rotation2d(Math.toRadians(-30)), 
+            new Rotation2d(Math.toRadians(-54)), 
             calcTrajectory("Source Start to Source Startte Blue", .8, .4, false, 
-            new Pose2d(2.8, 4.6, new Rotation2d(Math.toRadians(180))), 
+            new Pose2d(2.8, 4.1, new Rotation2d(Math.toRadians(180))), 
             List.of(), 
-            new Pose2d(1.1, 4.5, new Rotation2d(Math.toRadians(170)))
+            new Pose2d(1.1, 4.6, new Rotation2d(Math.toRadians(170)))
             ));
         
     }

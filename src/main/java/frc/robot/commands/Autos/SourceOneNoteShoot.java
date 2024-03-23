@@ -45,12 +45,12 @@ public class SourceOneNoteShoot extends SequentialCommandGroup {
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(1.1, 3.463, 40, false, driveTrain, log),
-            new DriveToPose(new Pose2d(7, 7, new Rotation2d(0)), driveTrain, log)
+            new DriveResetPose(1.1, 3.463, 54, false, driveTrain, log),
+            new DriveToPose(new Pose2d(7, 7.9, new Rotation2d(0)), driveTrain, log)
           ),
           new SequentialCommandGroup(
-            new DriveResetPose(1.1, 4.6, -40, false, driveTrain, log),
-            new DriveToPose(new Pose2d(7, 1.2, new Rotation2d(0)), driveTrain, log)
+            new DriveResetPose(1.1, 4.6, -54, false, driveTrain, log),
+            new DriveToPose(new Pose2d(7, 0.3, new Rotation2d(0)), driveTrain, log)
           ),
           () -> alliance.getAlliance() == Alliance.Red
         )

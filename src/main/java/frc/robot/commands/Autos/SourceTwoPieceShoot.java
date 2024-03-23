@@ -52,12 +52,12 @@ public class SourceTwoPieceShoot extends SequentialCommandGroup {
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(1.1, 3.463, 40, false, driveTrain, log),
+            new DriveResetPose(1.1, 3.463, 54, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log)
           )
           , 
           new SequentialCommandGroup(
-            new DriveResetPose(1.1, 4.6, -40, false, driveTrain, log),
+            new DriveResetPose(1.1, 4.6, -54, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteBlue.value], driveTrain, log)
           ), 
           () -> alliance.getAlliance() == Alliance.Red
@@ -77,8 +77,8 @@ public class SourceTwoPieceShoot extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new ConditionalCommand(
-            new DriveToPose(new Pose2d(7, 7, new Rotation2d(0)), driveTrain, log),
-            new DriveToPose(new Pose2d(7, 1.2, new Rotation2d(0)), driveTrain, log),
+            new DriveToPose(new Pose2d(7, 7.9, new Rotation2d(0)), driveTrain, log),
+            new DriveToPose(new Pose2d(7, 0.3, new Rotation2d(0)), driveTrain, log),
           () -> alliance.getAlliance() == Alliance.Red
         )
       )
