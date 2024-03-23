@@ -47,7 +47,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("A7");
+  private final FileLog log = new FileLog("A8");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
@@ -221,12 +221,14 @@ public class RobotContainer {
     xbY.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
-    // Store wrist, does not turn on intake
-    xbX.onTrue(
+    // Prep for Far Shot
+    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
       new ParallelCommandGroup(
         new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
-        new SpeakerModeSet(true, robotState, log)
-      ));
+        new SpeakerModeSet(false, robotState, log)
+
+
+      );
     
     // Prep for pit shot when back button is pressed
     xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.lowerLimit, 
@@ -240,6 +242,7 @@ public class RobotContainer {
         new IntakeStop(intake, log),
         new WristSetAngle(WristAngle.ampShot, wrist, log),
         new SpeakerModeSet(false, robotState, log),
+        new FarShotSet(false, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
     ) );  
 
@@ -270,10 +273,16 @@ public class RobotContainer {
     // Shoot the note
     left[2].onTrue(
         new ConditionalCommand(
-          new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
-          new ShootPieceAmp(feeder, robotState, log),
-          () -> robotState.isSpeakerMode()
+          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, feeder, robotState, log)
+          ,
+          new ConditionalCommand(
+            new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+            new ShootPieceAmp(feeder, robotState, log),
+            () -> robotState.isSpeakerMode()
+          ),
+          () -> robotState.isFarShotMode()
         )
+        
     );
 
     right[1].whileTrue(new ParallelCommandGroup(

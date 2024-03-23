@@ -311,7 +311,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     // Desaturate wheel speeds to a little below max speed.  It takes a while to accelerate to
     // max speed, so reducing the max will help movement accuracy.
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredStates, SwerveConstants.kFullSpeedMetersPerSecond);
+        desiredStates, SwerveConstants.kMaxSpeedMetersPerSecond);
 
     // Convert states to chassisspeeds
     ChassisSpeeds chassisSpeeds = kDriveKinematics.toChassisSpeeds(desiredStates);
@@ -538,6 +538,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       "Odometry Theta", pose.getRotation().getDegrees(),
       "Drive X Velocity", robotSpeeds.vxMetersPerSecond, 
       "Drive Y Velocity", robotSpeeds.vyMetersPerSecond,
+      "Bus voltage", swerveFrontLeft.getDriveBusVoltage(),
       swerveFrontLeft.getLogString(),
       swerveFrontRight.getLogString(),
       swerveBackLeft.getLogString(),

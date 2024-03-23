@@ -16,8 +16,11 @@ public class BCRRobotState {
     // The current State of the robot
     private State state;
 
-    //True if in speaker mode, false if in amp mode
+    //True if in speaker mode , false if in amp mode
     private boolean speakerMode = true; 
+
+    //True if in far shoot mode, false to revert to speaker mode boolean
+    private boolean farShotMode = false;
 
     /** Creates a new BCRRobotState with the default State value of IDLE */
     public BCRRobotState() {
@@ -44,6 +47,10 @@ public class BCRRobotState {
     public boolean isSpeakerMode(){
         return speakerMode;
     }
+    
+    public boolean isFarShotMode(){
+        return farShotMode;
+    }
 
     /**
      * Set if the robot is in speaker mode or amp mode
@@ -51,6 +58,10 @@ public class BCRRobotState {
      */
     public void setSpeakerMode(boolean speakerMode){
         this.speakerMode = speakerMode;
+    }
+
+    public void setFarShotMode(boolean farShootMode){
+        this.farShotMode = farShootMode;
     }
 
     /**
