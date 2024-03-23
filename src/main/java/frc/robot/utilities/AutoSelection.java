@@ -38,6 +38,7 @@ public class AutoSelection {
 	public static final int AmpThreePieceShoot = 6;
 	public static final int CenterSourceThreePieceShoot = 7;
 	public static final int CenterFourPieceShoot = 8;
+	public static final int SourceOnePieceShoot = 9;
 
 
 
@@ -62,6 +63,7 @@ public class AutoSelection {
 		// autoChooser.addOption("AmpThreePieceShoot", AmpThreePieceShoot);
 		// autoChooser.addOption("OnePieceShoot", shootOne);
 		autoChooser.addOption("CenterThreePieceShootAmp", CenterSourceThreePieceShoot);
+		autoChooser.addOption("SourceOnePieceShoot", SourceOnePieceShoot);
 		// autoChooser.addOption("CenterFourPieceNearNoteAuto", CenterFourPieceShoot);
 		
 
@@ -138,6 +140,11 @@ public class AutoSelection {
 		else if(autoPlan == CenterFourPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Four Piece Shoot");
 			autonomousCommand = new CenterFourPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == SourceOnePieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Source One Piece Shoot");
+			autonomousCommand = new SourceOneNoteShoot(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
 		}
 
         else if (autonomousCommand == null) {
