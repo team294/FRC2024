@@ -68,9 +68,9 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         ),
         new SequentialCommandGroup(
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-          new IntakeStopState(feeder, intake, robotState, log)
+          new IntakeStopState(feeder, intake, robotState, log),
+          new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+            ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
         )
       ),
       new ShootPiece(shooter, feeder, robotState, log),
@@ -92,9 +92,9 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         ),
         new SequentialCommandGroup(
+          new IntakeStopState(feeder, intake, robotState, log),
           new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-          new IntakeStopState(feeder, intake, robotState, log)
+          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
         )
       ),
       new ShootPiece(shooter, feeder, robotState, log),
