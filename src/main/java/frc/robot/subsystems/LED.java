@@ -102,6 +102,7 @@ public class LED extends SubsystemBase {
   /** Clear all LEDs */
   public void clearLEDs() {
     setLEDs(0, 0, 0);
+    log.writeLog(false, "LED", "Clear LEDs");
   }
 
   /**
@@ -110,6 +111,7 @@ public class LED extends SubsystemBase {
    */
   public void clearLEDs(LEDSegmentRange segment) {
     setLEDs(0, 0, 0, segment);
+    log.writeLog(false, "LED", "Clear LEDs");
   }
   
   /**
@@ -120,6 +122,7 @@ public class LED extends SubsystemBase {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       setAnimation(LEDConstants.Patterns.noPatternAnimation, segmentKey, false);
     }
+    log.writeLog(false, "LED", "Clear Animation");
   }
   
   /**
@@ -128,6 +131,7 @@ public class LED extends SubsystemBase {
    */
   public void animate(Animation anim) {
     candle.animate(anim);
+    log.writeLog(false, "LED", "Animate");
   }
 
   /**
@@ -138,6 +142,7 @@ public class LED extends SubsystemBase {
   public void setColor(Color color, LEDSegmentRange segment) {
     Color[] pattern = {color};
     setPattern(pattern, segment);
+    log.writeLog(false, "LED", "Set Color");
   }
 
   /**
@@ -151,6 +156,7 @@ public class LED extends SubsystemBase {
       if (indexPattern >= pattern.length) indexPattern = 0;
       setLEDs(pattern[indexPattern], segment.index + indexLED);
     }
+    log.writeLog(false, "LED", "Set Pattern");
   }
 
   public void setPattern(Color[] pattern, Color edgeColor, int edgeWidth, LEDSegmentRange segment) {
@@ -163,6 +169,7 @@ public class LED extends SubsystemBase {
       if (indexPattern >= pattern.length) indexPattern = 0;
       setLEDs(pattern[indexPattern], segment.index + indexLED);
     }
+    log.writeLog(false, "LED", "Set Pattern");
   }
 
   /**
@@ -179,6 +186,7 @@ public class LED extends SubsystemBase {
       segments.get(LEDSegmentRange.CANdleTop).setAnimation(animation, loop);
       segments.get(LEDSegmentRange.CANdleBottom).setAnimation(animation, loop);
     }
+    log.writeLog(false, "LED", "Set Animation");
   }
 
   /**
@@ -189,6 +197,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b) {
     candle.setLEDs(r, g, b);
+    log.writeLog(false, "LED", "Set LEDs");
   }
 
   /**
@@ -197,6 +206,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(Color color) {
     setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255));
+    log.writeLog(false, "LED", "Set LEDs");
   }
 
   /**
@@ -209,6 +219,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b, int index, int count) {
     candle.setLEDs(r, g, b, 0, index, count);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using color and index values
@@ -217,6 +228,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(Color color, int index) {
     candle.setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255), 0, index, 1);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using color, index, and count values
@@ -226,6 +238,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(Color color, int index, int count) {
     candle.setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255), 0, index, count);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using RGB and segment values
@@ -236,6 +249,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b, LEDSegmentRange segment) {
     candle.setLEDs(r, g, b, 0, segment.index, segment.count);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using BCR color enum (ex: IDLE)
@@ -243,6 +257,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(BCRColor color) {
     candle.setLEDs(color.r, color.g, color.b);
+    log.writeLog(false, "LED", "Set LEDs");
   }
   
   /**
@@ -253,6 +268,7 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(BCRColor color, int index, int count) {
     candle.setLEDs(color.r, color.g, color.b, 0, index, count);
+    log.writeLog(false, "LED", "Set LEDs");
   }
 
   /**
@@ -283,6 +299,7 @@ public class LED extends SubsystemBase {
       setLEDs(BCRColor.SHOOTING, segment.index, segment.count);
       break;
     }
+    log.writeLog(false, "LED", "Update State LEDs");
   }
 
 
