@@ -92,7 +92,12 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
       ),
       new ShootPiece(shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
-      new WristSetAngle(WristAngle.lowerLimit, wrist, log)
+      new WristSetAngle(WristAngle.lowerLimit, wrist, log),
+      new ConditionalCommand(
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterStartToEndCenterAutoRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterStartToEndCenterAutoBlue.value], driveTrain, log), 
+          () -> alliance.getAlliance() == Alliance.Red
+      )
     );
   }
 }

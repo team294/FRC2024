@@ -124,8 +124,8 @@ public final class Constants {
       // and ensures that the robot travels in the requested direction.  So, use min value of all 4 motors,
       // and further derate (initial test by 5%) to account for some battery droop under heavy loads.
       // Max speed measured values 3/18/2024:  All 4 motors are 4.17, 4.08, 4.2, 4.09 meters/sec.  So use 4.0 as a conservative value
-      public static final double kMaxSpeedMetersPerSecond = 4.0;          // A7:  Increased from 3.7 back to 4.0.  CALIBRATED
-      public static final double kFullSpeedMetersPerSecond = 0.90*kMaxSpeedMetersPerSecond;  // A7:  Reduced from 0.95 to 0.90 due to MaxSpeed increase
+      public static final double kMaxSpeedMetersPerSecond = 4.5;          // A8:  Increased from 4.0 to 4.5.  CALIBRATED
+      public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;  // A8:  Increased back to 0.95
       public static final double kNominalSpeedMetersPerSecond = 0.5*kMaxSpeedMetersPerSecond;
       // Max acceleration measured 3/18/2024 (with full robot weight):  7.6 - 8.4 m/sec^2.  Keep value at 7.5.
       public static final double kMaxAccelerationMetersPerSecondSquare = 7.5; // CALIBRATED
@@ -220,6 +220,8 @@ public final class Constants {
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
       public static final double shooterVelocityPit = 500;
+      public static final double shooterVelocityFarTop =2000;
+      public static final double shooterVelocityFarBottom = 2000;
     }
 
     public static final class FeederConstants {
@@ -311,7 +313,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // -130 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // A8: Updated to -121 deg from -130 deg (tightened wrist chain)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
