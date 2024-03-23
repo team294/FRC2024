@@ -315,7 +315,7 @@ public class TrajectoryCache {
             calcTrajectory("Center Start to near note Red", .8, .4, false, 
             new Pose2d(1.3, 2.663, new Rotation2d(Math.toRadians(-17))), 
             List.of(), 
-            new Pose2d(7, 1.7, new Rotation2d(Math.toRadians(-17)))
+            new Pose2d(7, 1.22, new Rotation2d(Math.toRadians(-17)))
             ));
 
         cache[TrajectoryType.driveFromCenterStartToEndCenterAutoBlue.value] = new TrajectoryFacing(new Rotation2d(0), 
@@ -323,7 +323,7 @@ public class TrajectoryCache {
             calcTrajectory("Center Start to near note Blue", .8, .4, false, 
             new Pose2d(1.3, 5.57, new Rotation2d(Math.toRadians(17))), 
             List.of(), 
-            new Pose2d(7, 6.5, new Rotation2d(Math.toRadians(17)))
+            new Pose2d(7, 7.08, new Rotation2d(Math.toRadians(17)))
             ));
 
         
