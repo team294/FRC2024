@@ -62,14 +62,16 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),
       new ParallelCommandGroup(
-        new IntakeStopState(feeder, intake, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         ),
+        new SequentialCommandGroup(
         new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
+          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+          new IntakeStopState(feeder, intake, robotState, log)
+        )
       ),
       new ShootPiece(shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
@@ -82,15 +84,18 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),
+      new IntakeStopState(feeder, intake, robotState, log),
       new ParallelCommandGroup(
-        new IntakeStopState(feeder, intake, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         ),
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
+        new SequentialCommandGroup(
+          new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+          new IntakeStopState(feeder, intake, robotState, log)
+        )
       ),
       new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
