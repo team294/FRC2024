@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.utilities.TrapezoidProfileBCR;
 
 /**
@@ -76,6 +77,8 @@ public final class Constants {
       public static final int CANWrist1 = 19;
       public static final int CANWrist2 = 20;
 
+      public static final int CANdle1 = 21;
+
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
       public static final int DIOWristRevThroughBoreEncoder = 1;
@@ -121,8 +124,8 @@ public final class Constants {
       // and ensures that the robot travels in the requested direction.  So, use min value of all 4 motors,
       // and further derate (initial test by 5%) to account for some battery droop under heavy loads.
       // Max speed measured values 3/18/2024:  All 4 motors are 4.17, 4.08, 4.2, 4.09 meters/sec.  So use 4.0 as a conservative value
-      public static final double kMaxSpeedMetersPerSecond = 3.7;          // A3:  Reduced from 4.0 to 3.7.  CALIBRATED
-      public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;
+      public static final double kMaxSpeedMetersPerSecond = 4.5;          // A8:  Increased from 4.0 to 4.5.  CALIBRATED
+      public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;  // A8:  Increased back to 0.95
       public static final double kNominalSpeedMetersPerSecond = 0.5*kMaxSpeedMetersPerSecond;
       // Max acceleration measured 3/18/2024 (with full robot weight):  7.6 - 8.4 m/sec^2.  Keep value at 7.5.
       public static final double kMaxAccelerationMetersPerSecondSquare = 7.5; // CALIBRATED
@@ -147,7 +150,7 @@ public final class Constants {
 
 
       public static final double kADrive = 0.0;
-      public static final double kADriveToPose = 0.100;  // formerly 0.050, updated to 0.100 for A3  TODO NOT CALIBRATED.  In % output per meters per second squared.
+      public static final double kADriveToPose = 0.100;  // Updated to 0.100 for A3, looks good.  CALIBRATED.  In % output per meters per second squared.
       public static final double kSDrive = 0.0080; // init cal done.  formerly 0.0255, CALIBRATED.  In % output.
     }
 
@@ -217,6 +220,8 @@ public final class Constants {
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
       public static final double shooterVelocityPit = 500;
+      public static final double shooterVelocityFarTop =2000;
+      public static final double shooterVelocityFarBottom = 2000;
     }
 
     public static final class FeederConstants {
@@ -234,6 +239,8 @@ public final class Constants {
 
       public static final double feederPercent = 0.2;
       public static final double feederAmpShot = -0.3;
+      public static final double feederBackPiecePercent = -0.05;   // Speed to back off note slightly after intaking
+      public static final double feederBackPieceTime = 0.1;  // Time (in seconds) to back off note slightly after intaking
     }
 
     public static final class TrajectoryConstants {
@@ -341,13 +348,14 @@ public final class Constants {
       public enum WristAngle {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
-          speakerShotFromSpeaker(-44),  // A4: changed from -41 to -44 deg
+          speakerShotFromSpeaker(-42),  // A5: changed to -42 deg
           speakerShotFromPodium(-70),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
           speakerShotFromMidStage(-79),
           farShotAngle(-83),
           overheadShotAngle(55),      // 135" field edge to front of bumper
-          climbStop(-55.0),
+          climbStop(-45.0),
           ampShot(50.0),
+          clearBellyPanMinAngle(-65),
           climbStart(65.0),
           upperLimit(90.0);       // CALIBRATED
 
@@ -363,4 +371,53 @@ public final class Constants {
       public static final double intakePercent = 0.7;       // 0.7
       public static final double centeringPercent = 0.4;    // 0.4
     }
+
+    /** Colors for the LEDs based on different robot states (see BCRRobotState) */
+    public enum BCRColor {
+      IDLE(255, 255, 255), // White             (nothing running)
+      INTAKING(0, 0, 255), // Blue       (intake running)
+      SHOOTING(0, 255, 0);       // Green       (shooter running)
+
+      public final int r, g, b;
+      BCRColor(int r, int g, int b) {
+          this.r = r;
+          this.g = g;
+          this.b = b;
+      }
+  }
+
+    public static final class LEDConstants {
+      public static final class Patterns {
+          // Static Patterns
+          public static final Color[] blueOrangeStatic = {Color.kBlue, Color.kOrange};
+          // Animated Patterns
+          public static final Color[][] blueOrangeMovingAnim = {{Color.kBlue, Color.kOrange},{Color.kOrange,Color.kBlue}};
+          public static final Color[][] rainbowArray = {
+              {Color.kRed, Color.kOrangeRed, Color.kOrange, Color.kRed, Color.kOrangeRed, Color.kOrange},
+              {Color.kGreen, Color.kGreenYellow, Color.kLime, Color.kGreen, Color.kGreenYellow, Color.kLime},
+              {Color.kBlue, Color.kAliceBlue, Color.kAquamarine, Color.kBlue, Color.kAliceBlue, Color.kAquamarine}
+          };
+          // Utilities
+          public static final Color[] noPatternStatic = {};
+          public static final Color[][] noPatternAnimation = {{}};
+          public static final Color[] clearPatternStatic = {Color.kBlack};
+      }
+
+      public enum LEDSegmentRange {
+          CANdleTop(0, 4),   // top row of CANdle  (bottom on robot, upside down)
+          CANdleBottom(4, 4),  // bottom row of CANdle  (top on robot, upside down)
+          CANdleFull(0,8),
+          Strip1(8, 68),  // 1st strip only
+          Full(0, 68);  // CANdle + 1st strip  (update values if second strip is ever added)
+
+          public final int index, count;
+          LEDSegmentRange(int index, int count) {
+              this.index = index;
+              this.count = count;
+          }
+      }
+
+      // public static final double NumLEDs = 68;
+  }
+
 }

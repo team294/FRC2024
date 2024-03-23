@@ -12,7 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import frc.robot.Constants;
+
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 
@@ -111,32 +111,15 @@ public class TrajectoryCache {
             List.of(), 
             new Pose2d(2.7, 4.1, new Rotation2d(0))
             ));
-
-        cache[TrajectoryType.driveToSourceCloseNoteBlue.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(-33)), 
-            new Rotation2d(Math.toRadians(-33)), 
-            calcTrajectory("Drive To Source Close Note Blue", .4, .4, false, 
-            new Pose2d(1.5, 4.1, new Rotation2d(Math.toRadians(0))), 
-            List.of(), 
-            new Pose2d(2.7, 4.1, new Rotation2d(0))
-            ));
-
-        cache[TrajectoryType.driveToCenterCloseNoteRed.value] = new TrajectoryFacing(new Rotation2d(0), 
-            new Rotation2d(0), 
-            calcTrajectory("Drive To Center Close Note Red", .4, .4, false, 
-            new Pose2d(1.5, 3.2, new Rotation2d(0)), 
-            List.of(), 
-            new Pose2d(3.1, 3.2, new Rotation2d(0))
-            ));
-
+            
         cache[TrajectoryType.driveToCenterCloseNoteBlue.value] = new TrajectoryFacing(new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Drive To Center Close Note Blue", .4, .4, false, 
             new Pose2d(1.5, 5, new Rotation2d(0)), 
             List.of(), 
-            new Pose2d(3.1, 5, new Rotation2d(0))
+            new Pose2d(3.1, 5.57, new Rotation2d(0))
             ));
-
+        
         cache[TrajectoryType.driveToAmpCloseNoteRed.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(-33)), 
             new Rotation2d(Math.toRadians(-33)), 

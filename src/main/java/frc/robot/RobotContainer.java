@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -15,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -46,7 +47,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("A4");
+  private final FileLog log = new FileLog("A8");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
@@ -60,6 +61,10 @@ public class RobotContainer {
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
   private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
   private final BCRRobotState robotState = new BCRRobotState();
+  
+  // Is a subsystem, but requires a utility
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", robotState, log, feeder);
+
 
   // Define controllers
   // private final Joystick xboxController = new Joystick(OIConstants.usbXboxController); //assuming usbxboxcontroller is int
@@ -131,7 +136,7 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
     
-    SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
+    // SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
     SmartDashboard.putData("Source Start to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log));
     SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log));
 
@@ -147,12 +152,13 @@ public class RobotContainer {
     SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Amp Four Piece Shoot", new AmpFourPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+   // SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Source Center Three Piece Shoot", new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    //SmartDashboard.putData("Source Center Three Piece Shoot", new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
 
 
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
   }
 
   /**
@@ -215,12 +221,13 @@ public class RobotContainer {
     xbY.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
-    // Store wrist, does not turn on intake
-    xbX.onTrue(
+    // Prep for Far Shot
+    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
       new ParallelCommandGroup(
-        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-        new SpeakerModeSet(true, robotState, log)
-      )  
+        new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
+        new SpeakerModeSet(false, robotState, log)
+
+
       );
     
     // Prep for pit shot when back button is pressed
@@ -235,6 +242,7 @@ public class RobotContainer {
         new IntakeStop(intake, log),
         new WristSetAngle(WristAngle.ampShot, wrist, log),
         new SpeakerModeSet(false, robotState, log),
+        new FarShotSet(false, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
     ) );  
 
@@ -263,15 +271,18 @@ public class RobotContainer {
     left[1].onTrue(new DriveResetPose( 0, false, driveTrain, log));
 
     // Shoot the note
-    left[2].onTrue(new ConditionalCommand(
+    left[2].onTrue(
         new ConditionalCommand(
-          new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
-          new ShootPieceAmp(feeder, robotState, log),
-          () -> robotState.isSpeakerMode()
-        ),
-        new WaitCommand(0),
-        () -> feeder.isPiecePresent()
-      )
+          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, feeder, robotState, log)
+          ,
+          new ConditionalCommand(
+            new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+            new ShootPieceAmp(feeder, robotState, log),
+            () -> robotState.isSpeakerMode()
+          ),
+          () -> robotState.isFarShotMode()
+        )
+        
     );
 
     // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
@@ -303,6 +314,12 @@ public class RobotContainer {
     }
 
     // top row UP then DOWN, from LEFT to RIGHT
+    coP[1].onTrue(new WristSetAngle(WristAngle.climbStart, wrist, log));
+    coP[3].onTrue(new SequentialCommandGroup(
+      new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
+      new WristSetAngle(WristAngle.climbStop, wrist, log)
+    ));
+
   }
 
 
@@ -366,7 +383,7 @@ public class RobotContainer {
     // Check for CAN bus error.  This is to prevent the issue that caused us to be eliminated in 2020!
     if (driveTrain.canBusError()) {
       RobotPreferences.recordStickyFaults("CAN Bus", log);
-    }  //    TODO May want to flash this to the driver with some obvious signal!
+    }
     // boolean error = true;  
     // if (error == false) {
     //   if(!patternTeamMoving.isScheduled()) patternTeamMoving.schedule();
