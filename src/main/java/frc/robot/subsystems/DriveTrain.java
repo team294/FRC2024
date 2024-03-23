@@ -518,6 +518,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       "Odometry Theta", pose.getRotation().getDegrees(),
       "Drive X Velocity", robotSpeeds.vxMetersPerSecond, 
       "Drive Y Velocity", robotSpeeds.vyMetersPerSecond,
+      "Bus voltage", swerveFrontLeft.getDriveBusVoltage(),
       swerveFrontLeft.getLogString(),
       swerveFrontRight.getLogString(),
       swerveBackLeft.getLogString(),
