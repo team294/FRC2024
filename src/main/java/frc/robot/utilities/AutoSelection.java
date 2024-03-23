@@ -58,7 +58,7 @@ public class AutoSelection {
 		// auto selections
 		autoChooser.setDefaultOption("None", NONE);
 		autoChooser.addOption("CenterTwoPieceShoot", CenterTwoPieceShoot);
-		autoChooser.addOption("SourceTwoPieceShoot", SourceTwoPieceShoot);
+		// autoChooser.addOption("SourceTwoPieceShoot", SourceTwoPieceShoot);
 		// autoChooser.addOption("AmpTwoPieceShoot", AmpTwoPieceShoot);
 		// autoChooser.addOption("AmpThreePieceShoot", AmpThreePieceShoot);
 		// autoChooser.addOption("OnePieceShoot", shootOne);
