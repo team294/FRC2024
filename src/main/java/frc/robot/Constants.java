@@ -220,6 +220,8 @@ public final class Constants {
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
       public static final double shooterVelocityPit = 500;
+      public static final double shooterVelocityFarTop =2000;
+      public static final double shooterVelocityFarBottom = 2000;
     }
 
     public static final class FeederConstants {
