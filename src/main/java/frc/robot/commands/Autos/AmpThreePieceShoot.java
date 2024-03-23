@@ -48,11 +48,11 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(1.5, 1.2, 0, false, driveTrain, log),
+            new DriveResetPose(0.6, 1.0, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteRed.value], driveTrain, log)
           ),
           new SequentialCommandGroup(
-            new DriveResetPose(1.5, 7.0, 0, false, driveTrain, log),
+            new DriveResetPose(0.6, 6.8, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteBlue.value], driveTrain, log)
           ),
           () -> alliance.getAlliance() == Alliance.Red
@@ -64,7 +64,7 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
         () -> alliance.getAlliance() == Alliance.Red
       ),
 
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
@@ -76,19 +76,7 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
-      ),
-    new ConditionalCommand(
-      new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteToCloseNoteCenterRed.value], driveTrain, log), 
-      new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteToCloseNoteCenterBlue.value], driveTrain, log), 
-      () -> alliance.getAlliance() == Alliance.Red
-      ),
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
-      new ShooterSetPercent(-0.02, shooter, log),
-      new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-
-      new DriveResetPose(8.3, 4.1, 0,false, driveTrain, log)
+      )
     );
   
   }
