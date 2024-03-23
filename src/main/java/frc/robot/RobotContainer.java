@@ -225,7 +225,9 @@ public class RobotContainer {
     xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
       new ParallelCommandGroup(
         new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
-        new SpeakerModeSet(true, robotState, log)
+        new SpeakerModeSet(false, robotState, log)
+
+
       );
     
     // Prep for pit shot when back button is pressed
@@ -240,6 +242,7 @@ public class RobotContainer {
         new IntakeStop(intake, log),
         new WristSetAngle(WristAngle.ampShot, wrist, log),
         new SpeakerModeSet(false, robotState, log),
+        new FarShotSet(false, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
     ) );  
 
@@ -277,7 +280,7 @@ public class RobotContainer {
             new ShootPieceAmp(feeder, robotState, log),
             () -> robotState.isSpeakerMode()
           ),
-          () -> robotState.isFarShootMode()
+          () -> robotState.isFarShotMode()
         )
         
     );

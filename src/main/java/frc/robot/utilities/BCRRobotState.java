@@ -48,7 +48,7 @@ public class BCRRobotState {
         return speakerMode;
     }
     
-    public boolean isFarShootMode(){
+    public boolean isFarShotMode(){
         return farShotMode;
     }
 
