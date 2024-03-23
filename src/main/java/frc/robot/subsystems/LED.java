@@ -299,7 +299,7 @@ public class LED extends SubsystemBase {
       setLEDs(BCRColor.SHOOTING, segment.index, segment.count);
       break;
     }
-    log.writeLog(false, "LED", "Update State LEDs");
+    log.writeLog(false, "LED", "Update State LEDs", "State", currentState);
   }
 
 
