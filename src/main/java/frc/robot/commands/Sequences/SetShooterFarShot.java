@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.SpeakerModeSet;
+import frc.robot.commands.FarShotSet;
 import frc.robot.commands.IntakeStop;
 import frc.robot.commands.RobotStateSetIdle;
 import frc.robot.commands.ShooterSetVelocity;
@@ -22,7 +23,7 @@ import frc.robot.utilities.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class SetShooterWristSpeaker extends SequentialCommandGroup {
+public class SetShooterFarShot extends SequentialCommandGroup {
 
   /**
    * Sets Shooter and Wrist to prime for a speaker shot.  Also stops the intake and sets the robot state.
@@ -36,7 +37,7 @@ public class SetShooterWristSpeaker extends SequentialCommandGroup {
    * @param robotState
    * @param log
    */
-  public SetShooterWristSpeaker(WristAngle angle, double velocityTop, double velocityBottom, 
+  public SetShooterFarShot(WristAngle angle, double velocityTop, double velocityBottom, 
     Shooter shooter, Wrist wrist, Intake intake, Feeder feeder, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
@@ -45,9 +46,10 @@ public class SetShooterWristSpeaker extends SequentialCommandGroup {
           new IntakeStop(intake, log),
           new WristSetAngle(angle, wrist, log),
           new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log),
-          new SpeakerModeSet(true, robotState, log),
+          new FarShotSet(true, robotState, log),
           new RobotStateSetIdle(robotState, feeder, log)
         )
       );
   }
 }
+
