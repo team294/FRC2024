@@ -49,11 +49,11 @@ public class CenterTwoPieceShoot extends SequentialCommandGroup {
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(1.3, 2.663, 0, false, driveTrain, log),
+            new DriveResetPose(1.3, 2.763, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log)
           ),
           new SequentialCommandGroup(
-            new DriveResetPose(1.3, 5.57, 0, false, driveTrain, log),
+            new DriveResetPose(1.3, 5.47, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log) 
           ),
           () -> alliance.getAlliance() == Alliance.Red
