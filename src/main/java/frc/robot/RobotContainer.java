@@ -225,11 +225,13 @@ public class RobotContainer {
     xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
       ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
 
-      
+    // Store wrist, does not turn on intake
+    xbX.onTrue(
       new ParallelCommandGroup(
         new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
-        new SpeakerModeSet(false, robotState, log)
-      );
+        new SpeakerModeSet(true, robotState, log),
+        new FarShotSet(false, robotState, log)
+      ));
     
     // Prep for pit shot when back button is pressed
     xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.lowerLimit, 
