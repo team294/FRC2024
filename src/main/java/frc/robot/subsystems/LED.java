@@ -29,12 +29,11 @@ public class LED extends SubsystemBase {
   private BCRRobotState.State currentState;
   private Shooter shooter;
   private Feeder feeder;
-  private boolean stickyFault;
   private boolean shouldClear;
-  private double accuracyDisplayThreshold;
-  private int accuracy;
+  // private double accuracyDisplayThreshold;
+  // private int accuracy;
 
-  private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
+  // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
 
   // LED Segments
   //private LEDSegment CANdle;
@@ -55,10 +54,9 @@ public class LED extends SubsystemBase {
     this.currentState = BCRRobotState.State.IDLE;
     this.shooter = shooter;
     this.feeder = feeder;
-    this.stickyFault = false;
     this.shouldClear = false;
-    this.accuracyDisplayThreshold = 35;
-    this.accuracy = 0;
+    // this.accuracyDisplayThreshold = 35;
+    // this.accuracy = 0;
 
     // Create the LED segments
     LEDSegment CANdleTop = new LEDSegment(
