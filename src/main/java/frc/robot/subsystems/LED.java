@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BCRColor;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.LEDConstants.*;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
@@ -26,6 +27,7 @@ public class LED extends SubsystemBase {
   private String subsystemName;
   private BCRRobotState robotState;
   private BCRRobotState.State currentState;
+  private Shooter shooter;
   private Feeder feeder;
   private boolean stickyFault;
   private boolean shouldClear;
@@ -44,13 +46,14 @@ public class LED extends SubsystemBase {
    * @param subsystemName
    * @param log
    */
-  public LED(int CANPort, String subsystemName, BCRRobotState robotState, FileLog log, Feeder feeder) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
     this.robotState = robotState;
     this.currentState = BCRRobotState.State.IDLE;
+    this.shooter = shooter;
     this.feeder = feeder;
     this.stickyFault = false;
     this.shouldClear = false;
@@ -265,7 +268,11 @@ public class LED extends SubsystemBase {
     switch (currentState) {
     case IDLE:
       if (feeder.isPiecePresent()) {
-        setLEDs(255, 30, 0, segment.index, segment.count);
+        if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance){
+          setLEDs(150, 0, 255);
+        } else {
+          setLEDs(255, 30, 0, segment.index, segment.count);
+        }
       }
       else {
         setLEDs(BCRColor.IDLE, segment.index, segment.count);
