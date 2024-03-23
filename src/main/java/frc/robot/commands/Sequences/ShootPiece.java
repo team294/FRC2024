@@ -35,7 +35,7 @@ public class ShootPiece extends SequentialCommandGroup {
       new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log),
       new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5),
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
-      new WaitCommand(1),
+      new WaitCommand(.5),
       new ShooterFeederStop(shooter, feeder, log),
       new RobotStateSetIdle(robotState, feeder, log)
     );
