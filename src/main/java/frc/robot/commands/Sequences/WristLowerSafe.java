@@ -9,14 +9,10 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.FeederSetPercent;
-import frc.robot.commands.IntakeSetPercent;
-import frc.robot.commands.RobotStateSet;
 import frc.robot.commands.WristSetAngle;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
@@ -26,14 +22,14 @@ import frc.robot.utilities.FileLog;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class WristLowerSafe extends SequentialCommandGroup {
   /**
-   * 
+   * Safely lowers wrist
    * @param angle target angle to move wrist to WristAngle (see Constants)
-   * @param feeder
-   * @param wrist
-   * @param robotState
-   * @param log
+   * @param feeder feeder
+   * @param wrist wrist
+   * @param robotState state
+   * @param log log
    */
-  public WristLowerSafe(WristAngle angle, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
+  public WristLowerSafe(WristAngle angle, Feeder feeder, Wrist wrist, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
