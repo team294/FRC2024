@@ -23,7 +23,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 27;
+    private static int trajectoryCount = 29;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
@@ -53,7 +53,11 @@ public class TrajectoryCache {
         driveFromCenterStartToEndCenterAutoRed(23),
         driveFromCenterStartToEndCenterAutoBlue(24),
         driveFromSourceNoteToSourceStartRed(25),
-        driveFromSourceNoteToSourceStartBlue(26);
+        driveFromSourceNoteToSourceStartBlue(26),
+        driveFromCenterAmpToShootPosRed(27),
+        driveFromCenterAmpToShootPosBlue(28);
+
+
 
 
 
@@ -148,40 +152,40 @@ public class TrajectoryCache {
             ));
         
         cache[TrajectoryType.driveToAmpCloseNoteRed.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(-33)), 
-            new Rotation2d(Math.toRadians(-33)), 
+            new Rotation2d(Math.toRadians(-60)), 
+            new Rotation2d(Math.toRadians(-23)), 
             calcTrajectory("Amp Start to Close Note Red", .8, .4, false, 
-            new Pose2d(1.3, 1.2, new Rotation2d(Math.toRadians(0))), 
+            new Pose2d(1.1, 1.6, new Rotation2d(Math.toRadians(0))), 
             List.of(), 
-            new Pose2d(3.0, 1.2, new Rotation2d(0))
+            new Pose2d(3.0, 1.4, new Rotation2d(0))
             ));
 
         cache[TrajectoryType.driveToAmpCloseNoteBlue.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(33)), 
-            new Rotation2d(Math.toRadians(33)), 
+            new Rotation2d(Math.toRadians(60)), 
+            new Rotation2d(Math.toRadians(23)), 
             calcTrajectory("Amp Start to Close Note Blue", .8, .4, false, 
-            new Pose2d(1.3, 7, new Rotation2d(Math.toRadians(0))), 
+            new Pose2d(1.1, 6.6, new Rotation2d(Math.toRadians(0))), 
             List.of(), 
-            new Pose2d(3.0, 7, new Rotation2d(0))
+            new Pose2d(3.0, 6.8, new Rotation2d(0))
             ));
 
         
         cache[TrajectoryType.driveAmpNoteToFarNoteRed.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(-33)), 
+            new Rotation2d(Math.toRadians(-23)), 
             new Rotation2d(0), 
             calcTrajectory("Drive Center To Far Note Red", .8, .4, false,
-            new Pose2d(3.0, 1.2, new Rotation2d(Math.toRadians(-30))), 
+            new Pose2d(3.0, 1.4, new Rotation2d(Math.toRadians(0))), 
             List.of(), 
-            new Pose2d(8.2, 0.75, new Rotation2d(0))
+            new Pose2d(8.2, 1.2, new Rotation2d(0))
             ));
         
         cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(33)), 
+            new Rotation2d(Math.toRadians(23)), 
             new Rotation2d(0), 
             calcTrajectory("Drive Center To Far Note Red", .8, .4, false,
-            new Pose2d(3.0, 7, new Rotation2d(Math.toRadians(30))), 
+            new Pose2d(3.0, 6.8, new Rotation2d(Math.toRadians(0))), 
             List.of(), 
-            new Pose2d(8.2, 7.45, new Rotation2d(0))
+            new Pose2d(8.2, 7.0, new Rotation2d(0))
             ));
 
         cache[TrajectoryType.driveSourceNoteToFarNoteRed.value] = new TrajectoryFacing(
@@ -344,6 +348,24 @@ public class TrajectoryCache {
             new Pose2d(2.8, 4.1, new Rotation2d(Math.toRadians(180))), 
             List.of(), 
             new Pose2d(1.1, 4.6, new Rotation2d(Math.toRadians(170)))
+            ));
+
+        cache[TrajectoryType.driveFromCenterAmpToShootPosRed.value] = new TrajectoryFacing(
+            new Rotation2d(), 
+            new Rotation2d(Math.toRadians(-23)), 
+            calcTrajectory("Drive Center To Far Note Red", .8, .4, false,
+            new Pose2d(8.2, 1.2, new Rotation2d(0)), 
+            List.of(), 
+            new Pose2d(3.0, 1.4, new Rotation2d(0))
+            ));
+        
+        cache[TrajectoryType.driveFromCenterAmpToShootPosBlue.value] = new TrajectoryFacing(
+            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(23)), 
+            calcTrajectory("Drive Center To Far Note Red", .8, .4, false,
+            new Pose2d(8.2, 7.0, new Rotation2d(0)), 
+            List.of(), 
+            new Pose2d(3, 6.8, new Rotation2d(0))
             ));
         
     }

@@ -48,20 +48,15 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(0.6, 1.0, 0, false, driveTrain, log),
+            new DriveResetPose(1.1, 1.0, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteRed.value], driveTrain, log)
           ),
           new SequentialCommandGroup(
-            new DriveResetPose(0.6, 6.8, 0, false, driveTrain, log),
+            new DriveResetPose(1.1, 6.8, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteBlue.value], driveTrain, log)
           ),
           () -> alliance.getAlliance() == Alliance.Red
         )
-      ),
-      new ConditionalCommand(
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteToCenterRed.value], driveTrain, log), 
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteToCenterBlue.value], driveTrain, log), 
-        () -> alliance.getAlliance() == Alliance.Red
       ),
 
       new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
@@ -76,6 +71,15 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
+      ),
+      new ParallelCommandGroup(
+        new ConditionalCommand(
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterAmpToShootPosRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterAmpToShootPosBlue.value], driveTrain, log), 
+          () -> alliance.getAlliance() == Alliance.Red
+        ),
+        new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
       )
     );
   

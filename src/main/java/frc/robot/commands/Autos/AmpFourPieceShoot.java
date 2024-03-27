@@ -51,14 +51,15 @@ public class AmpFourPieceShoot extends SequentialCommandGroup {
         )
       ),
       new ShootPiece(shooter, feeder, robotState, log),
-      new ParallelCommandGroup(
-        new IntakePieceAuto(intake, feeder, robotState, log),
-        new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCloseFarToFarCenterRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCloseFarToFarCenterRed.value], driveTrain, log), 
-          () -> alliance.getAlliance() == Alliance.Red
-        )
       ),
+      // new ParallelCommandGroup(
+      //   new IntakePieceAuto(intake, feeder, robotState, log),
+      //   new ConditionalCommand(
+      //     new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCloseFarToFarCenterRed.value], driveTrain, log), 
+      //     new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCloseFarToFarCenterRed.value], driveTrain, log), 
+      //     () -> alliance.getAlliance() == Alliance.Red
+      //   )
+      // ),
       new ShootPiece(shooter, feeder, robotState, log)
     );
   }
