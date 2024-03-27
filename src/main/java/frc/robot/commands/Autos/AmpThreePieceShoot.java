@@ -48,18 +48,17 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(1.1, 1.0, 0, false, driveTrain, log),
+            new DriveResetPose(1.1, 1.6, -60, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteRed.value], driveTrain, log)
           ),
           new SequentialCommandGroup(
-            new DriveResetPose(1.1, 6.8, 0, false, driveTrain, log),
+            new DriveResetPose(1.1, 6.6, 60, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteBlue.value], driveTrain, log)
           ),
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
+      new SetShooterWristSpeaker(WristAngle.ampNoteAutoShot, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
@@ -78,9 +77,10 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterAmpToShootPosBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         ),
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+        new SetShooterWristSpeaker(WristAngle.ampNoteAutoShot, 
           ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
-      )
+      ),
+      new ShootPiece(shooter, feeder, robotState, log)
     );
   
   }
