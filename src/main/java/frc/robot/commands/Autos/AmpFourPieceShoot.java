@@ -51,7 +51,6 @@ public class AmpFourPieceShoot extends SequentialCommandGroup {
         )
       ),
       new ShootPiece(shooter, feeder, robotState, log),
-      ),
       // new ParallelCommandGroup(
       //   new IntakePieceAuto(intake, feeder, robotState, log),
       //   new ConditionalCommand(
