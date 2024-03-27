@@ -313,7 +313,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // -130 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // A8: Updated to -121 deg from -130 deg (tightened wrist chain)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 

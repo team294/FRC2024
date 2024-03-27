@@ -208,6 +208,14 @@ public class Shooter extends SubsystemBase implements Loggable {
     return getBottomShooterVelocity() - setpointRPMBottom;
   }
 
+  /**
+   * Returns whether velocity control is on
+   * @return true if velocity control is on. false if motor stopped or motor under percent control
+   */
+  public boolean isVelocityControlOn(){
+    return velocityControlOn;
+  }
+
   // *** Motor sensors
 
   /**

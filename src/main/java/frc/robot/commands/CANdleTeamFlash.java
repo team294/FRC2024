@@ -60,10 +60,10 @@ public class CANdleTeamFlash extends Command {
   public void execute() {
     if(executionsPerChange > 1){
         if (t > 8) {
-            led.setLEDs(255,30,0);
+            led.setLEDs(0,0,255);
         }
         else {
-            led.setLEDs(0,255,255);
+            led.setLEDs(255,30,0);
         }
         t += 1;
         if (t > 16) {
