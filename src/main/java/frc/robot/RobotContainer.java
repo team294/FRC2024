@@ -135,7 +135,6 @@ public class RobotContainer {
     SmartDashboard.putData("Drive to origin and keep going", new DriveToPose(
       new Pose2d(0.0, 0.0, new Rotation2d(0.0)), 
       1.0, SwerveConstants.kNominalSpeedMetersPerSecond, SwerveConstants.kNominalAccelerationMetersPerSecondSquare, 
-      TrajectoryConstants.maxPositionErrorMeters, TrajectoryConstants.maxThetaErrorDegrees, 
       driveTrain, log) );
 
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));

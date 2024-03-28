@@ -86,8 +86,9 @@ public class DriveToPose extends Command {
   }
 
   /**
-   * Drives the robot to the desired pose in field coordinates.
-   * At the end of the command, the robot will continue driving forward at maxVelMetersPerSecond in the direction of travel.
+   * Drives the robot to the desired pose in field coordinates.  The target pose is only approximate, since the robot
+   * is still traveling at the end of the motion profile.
+   * <p> At the end of the command, the robot will continue driving forward at maxVelMetersPerSecond in the direction of travel.
    * @param goalPose target pose in field coordinates.  Pose components include
    *    <p> Robot X location in the field, in meters (0 = field edge in front of driver station, +=away from our drivestation)
    *    <p> Robot Y location in the field, in meters (0 = right edge of field when standing in driver station, +=left when looking from our drivestation)
@@ -95,19 +96,14 @@ public class DriveToPose extends Command {
    * @param finalVelMetersPerSecond target velocity at end of profile (in direction of travel), in meters per second
    * @param maxVelMetersPerSecond max velocity to drive, in meters per second
    * @param maxAccelMetersPerSecondSquare max acceleration/deceleration, in meters per second squared
-   * @param maxPositionErrorMeters tolerance for end position in meters
-   * @param maxThetaErrorDegrees tolerance for end theta in degrees
    * @param driveTrain DriveTrain subsystem
    * @param log file for logging
    */
   public DriveToPose(Pose2d goalPose, double finalVelMetersPerSecond, 
       double maxVelMetersPerSecond, double maxAccelMetersPerSecondSquare, 
-      double maxPositionErrorMeters, double maxThetaErrorDegrees, 
       DriveTrain driveTrain, FileLog log) {
     this.driveTrain = driveTrain;
     this.log = log;
-    this.maxPositionErrorMeters = maxPositionErrorMeters;
-    this.maxThetaErrorDegrees = maxThetaErrorDegrees;
     this.goalPose = goalPose;
     goalMode = GoalMode.pose;
     finalVelocity = MathUtil.clamp(Math.abs(finalVelMetersPerSecond), 0.0, maxVelMetersPerSecond);
@@ -412,8 +408,18 @@ public class DriveToPose extends Command {
   public void end(boolean interrupted) {
     timer.stop();
 
-    if (!interrupted && finalVelocity <= 0.01) {
-      driveTrain.stopMotors();
+    // If the command is interrupted, then let the robot continue to travel at the current speed
+    if (!interrupted) {
+      if (finalVelocity < 0.001) {
+        driveTrain.stopMotors();
+      } else {
+        ChassisSpeeds targetChassisSpeeds = new ChassisSpeeds(
+          finalVelocity*goalDirection.getX(), 
+          finalVelocity*goalDirection.getY(), 0.0);
+        
+        var targetModuleStates = kinematics.toSwerveModuleStates(targetChassisSpeeds);
+        driveTrain.setModuleStates(targetModuleStates, openLoopSwerve);
+      }
     }
 
     log.writeLog(false, "DriveToPose", "End", "Interrupted", interrupted); 
@@ -423,7 +429,10 @@ public class DriveToPose extends Command {
   @Override
   public boolean isFinished() {
 
-    var timeout = timer.hasElapsed(profile.totalTime()+3.0);
+    // Stop if we have run more than 3 seconds past the end of the profile,
+    // or if we are at the end of the profile and we have a non-zero final velocity.
+    var timeout = timer.hasElapsed(profile.totalTime()+3.0) ||
+                  (timer.hasElapsed(profile.totalTime()) && finalVelocity >= 0.001);
     if (timeout) {
       log.writeLog(false, "DriveToPose", "timeout"); 
     }
