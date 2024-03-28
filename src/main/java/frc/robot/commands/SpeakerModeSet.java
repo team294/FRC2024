@@ -8,20 +8,20 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 
-public class RobotStateSet extends InstantCommand {
+public class SpeakerModeSet extends InstantCommand {
+  boolean speakerMode;
   BCRRobotState robotState;
-  BCRRobotState.State newState;
   FileLog log;
 
   /**
-   * Immediately sets the Robot State object to the given state.
+   * Immediately sets the shooter's mode to the given mode.
    * This will update wherever the object is used.
-   * @param newState State to set (ex: IDLE)
-   * @param robotState robotState object
-   * @param log log
+   * @param speakerMode true = speaker mode, false = amp mode
+   * @param robotState
+   * @param log
    */
-  public RobotStateSet(BCRRobotState.State newState, BCRRobotState robotState, FileLog log) {
-    this.newState = newState;
+  public SpeakerModeSet(boolean speakerMode, BCRRobotState robotState, FileLog log) {
+    this.speakerMode = speakerMode;
     this.robotState = robotState;
     this.log = log;
   }
@@ -29,8 +29,7 @@ public class RobotStateSet extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    robotState.setState(newState);
-    log.writeLog(true, "RobotStateSet", newState.toString());
+    robotState.setSpeakerMode(speakerMode);
+    log.writeLog(true, "SetSpeakerMode", "SpeakerMode", speakerMode);
   }
 }
-  
