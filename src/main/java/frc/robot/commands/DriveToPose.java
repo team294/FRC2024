@@ -86,9 +86,12 @@ public class DriveToPose extends Command {
   }
 
   /**
-   * Drives the robot to the desired pose in field coordinates.  The target pose is only approximate, since the robot
-   * is still traveling at the end of the motion profile.
-   * <p> At the end of the command, the robot will continue driving forward at maxVelMetersPerSecond in the direction of travel.
+   * Drives the robot to the desired pose in field coordinates.  At the end of the command, the robot will continue 
+   * driving forward at maxVelMetersPerSecond in the direction of travel.
+   * <p> Notes: The target pose is only approximate, since the robot
+   * is still traveling at the end of the motion profile.  The command ends when the robot is approximately at the target
+   * pose <i>location</i> only; note that if the distance of travel is short, then the robot may not reach the target
+   * <i>angle</i> before the command ends.
    * @param goalPose target pose in field coordinates.  Pose components include
    *    <p> Robot X location in the field, in meters (0 = field edge in front of driver station, +=away from our drivestation)
    *    <p> Robot Y location in the field, in meters (0 = right edge of field when standing in driver station, +=left when looking from our drivestation)
