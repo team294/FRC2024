@@ -25,7 +25,7 @@ public class DriveToNoteSequence extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ShooterSetPercent(-0.02, shooter, log),
+      new ShooterSetPercent(-0.08, shooter, log),
       new ParallelCommandGroup(
         new IntakePiece(intake, feeder, wrist, robotState, log),
         new DriveToNote(feeder, drivetrain, log)
