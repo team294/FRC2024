@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -13,14 +14,23 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.TrajectoryConstants;
+import frc.robot.Constants.WristConstants;
+import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.*;
 import frc.robot.commands.Autos.*;
 import frc.robot.commands.Sequences.*;
@@ -37,7 +47,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("J1");
+  private final FileLog log = new FileLog("A8");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
@@ -51,6 +61,10 @@ public class RobotContainer {
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
   private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
   private final BCRRobotState robotState = new BCRRobotState();
+  
+  // Is a subsystem, but requires a utility
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, log);
+
 
   // Define controllers
   // private final Joystick xboxController = new Joystick(OIConstants.usbXboxController); //assuming usbxboxcontroller is int
@@ -113,31 +127,38 @@ public class RobotContainer {
     // Drive base commands
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
     SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
+    SmartDashboard.putData("Drive 6m +X", new DriveToPose(
+      () -> driveTrain.getPose().plus(new Transform2d(6.0, 0.0, new Rotation2d(0.0))), 
+      SwerveConstants.kNominalSpeedMetersPerSecond, SwerveConstants.kNominalAccelerationMetersPerSecondSquare, 
+      TrajectoryConstants.maxPositionErrorMeters, TrajectoryConstants.maxThetaErrorDegrees, 
+      false, false, driveTrain, log) );
+
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
     
-    SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
+    // SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
     SmartDashboard.putData("Source Start to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log));
     SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log));
 
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, robotState, log));
-    SmartDashboard.putData("Shoot Piece", new ShootPiece(shooter, feeder, robotState, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log));
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
 
     // Autos
+    SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Amp Two Piece Shoot", new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Amp Four Piece Shoot", new AmpFourPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Source Center Three Piece Shoot", new SourceCenterThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Center Three Piece Shoot", new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
 
 
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
   }
 
   /**
@@ -147,13 +168,12 @@ public class RobotContainer {
     // Trigger to turn off intaking when a piece is detected in the feeder.
     // Note that this trigger will only turn off intaking if the robot is
     // currently in the INTAKE_TO_FEEDER state; otherwise, it does nothing.
-    Trigger intakeStopTrigger = new Trigger(()-> feeder.isPiecePresent() && DriverStation.isTeleopEnabled());
+    Trigger intakeStopTrigger = new Trigger(()-> DriverStation.isTeleopEnabled() && 
+      robotState.getState() == State.INTAKING &&
+      (feeder.isPiecePresent() ||  wrist.getWristAngle() > WristAngle.intakeLimit.value) );
     intakeStopTrigger.onTrue(
-      new ConditionalCommand(
-        new StopIntakingSequence(feeder, intake, robotState, log),
-        new WaitCommand(0.01), 
-        () -> robotState.getState() == State.INTAKE_TO_FEEDER)      
-      );
+      new StopIntakingSequence(feeder, intake, robotState, log)
+    );
   }
 
   /**
@@ -178,7 +198,63 @@ public class RobotContainer {
     Trigger xbPOVRight = xboxController.povRight();
     Trigger xbPOVLeft = xboxController.povLeft();
     Trigger xbPOVDown = xboxController.povDown();
-   
+
+    // Prep for overhead speaker shot
+    xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
+
+    // Move wrist down and then intake a piece
+    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, robotState, log));
+
+    // Reverse the intake
+    xbLT.onTrue(new IntakeSetPercent(-.3, -.3, intake, log));
+
+    // Prep for at-speaker shot
+    xbA.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
+    
+    // Prep for podium speaker shot
+    xbB.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromPodium, 
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
+    
+    // Prep for mid-stage speaker shot
+    xbY.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
+      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
+
+    // Prep for Far Shot
+    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
+      ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
+
+    // Store wrist, does not turn on intake
+    xbX.onTrue(
+      new ParallelCommandGroup(
+        new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
+        new SpeakerModeSet(true, robotState, log),
+        new FarShotSet(false, robotState, log)
+      ));
+    
+    // Prep for pit shot when back button is pressed
+    xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.lowerLimit, 
+      ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, shooter, wrist, intake, feeder, robotState, log));
+    // Shoot in slow speed pit shot when released
+    xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, 
+      shooter, feeder, robotState, log) );
+
+    // Prep for amp shot
+    xbPOVRight.onTrue( new ParallelCommandGroup(
+        new IntakeStop(intake, log),
+        new WristSetAngle(WristAngle.ampShot, wrist, log),
+        new SpeakerModeSet(false, robotState, log),
+        new FarShotSet(false, robotState, log),
+        new RobotStateSetIdle(robotState, feeder, log)
+    ) );  
+
+    // Stop all motors
+    xbStart.onTrue(new ParallelCommandGroup(
+        new IntakeStop(intake, log),
+        new ShooterFeederStop(shooter, feeder, log),
+        new RobotStateSetIdle(robotState, feeder, log)      
+    ) );
     
   }
 
@@ -194,12 +270,29 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    left[1].onTrue(new IntakeSetPercent(IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake, log));
+    // Reset pose
+    left[1].onTrue(new DriveResetPose( 0, false, driveTrain, log));
 
-    left[2].onTrue(new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
+    // Shoot the note
+    left[2].onTrue(
+        new ConditionalCommand(
+          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, feeder, robotState, log),
+          new ConditionalCommand(
+            new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+            new ShootPieceAmp(feeder, robotState, log),
+            () -> robotState.isSpeakerMode()
+          ),
+          () -> robotState.isFarShotMode()
+        )
+        
+    );
 
-    right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
-    right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
+    // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
+    // right[2] //Turn to face amp
+    
+    // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
+    //right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
+    
      
   }
 
@@ -223,6 +316,12 @@ public class RobotContainer {
     }
 
     // top row UP then DOWN, from LEFT to RIGHT
+    coP[1].onTrue(new WristSetAngle(WristAngle.climbStart, wrist, log));
+    coP[3].onTrue(new SequentialCommandGroup(
+      new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
+      new WristSetAngle(WristAngle.climbStop, wrist, log)
+    ));
+
   }
 
 
@@ -232,7 +331,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelection.getAutoCommand(intake, shooter, feeder, driveTrain, trajectoryCache, robotState, log);
+    return autoSelection.getAutoCommand(intake, wrist, shooter, feeder, driveTrain, trajectoryCache, robotState, log);
   }
 
 
@@ -280,10 +379,13 @@ public class RobotContainer {
    * Method called once every scheduler cycle when robot is disabled.
    */
   public void disabledPeriodic() {
+    // Set robot state
+    robotState.setState(State.IDLE);
+
     // Check for CAN bus error.  This is to prevent the issue that caused us to be eliminated in 2020!
     if (driveTrain.canBusError()) {
       RobotPreferences.recordStickyFaults("CAN Bus", log);
-    }  //    TODO May want to flash this to the driver with some obvious signal!
+    }
     // boolean error = true;  
     // if (error == false) {
     //   if(!patternTeamMoving.isScheduled()) patternTeamMoving.schedule();
@@ -324,7 +426,8 @@ public class RobotContainer {
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
 
-    
+    // Set robot state
+    robotState.setState(State.IDLE);
   }
 
   /**

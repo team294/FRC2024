@@ -840,6 +840,13 @@
                   "_title": "Drive Turn Calibration",
                   "_glyph": 148,
                   "_showGlyph": false
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Drive 6m +X",
+                  "_title": "Drive 6m +X",
+                  "_glyph": 148,
+                  "_showGlyph": false
                 }
               ]
             }
@@ -889,6 +896,15 @@
                   "Colors/Color when false": "#8B0000FF"
                 },
                 {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Wrist lower limit",
+                  "_title": "Wrist lower limit",
+                  "_glyph": 148,
+                  "_showGlyph": false,
+                  "Colors/Color when true": "#0000FFFF",
+                  "Colors/Color when false": "#000000FF"
+                },
+                {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Wrist output1",
                   "_title": "Wrist output1",
@@ -913,6 +929,13 @@
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Wrist enc2 raw",
                   "_title": "Wrist enc2 raw",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Wrist Rev raw",
+                  "_title": "Wrist Rev raw",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
@@ -1339,9 +1362,9 @@
     }
   ],
   "windowGeometry": {
-    "x": 1.0,
-    "y": 1.0,
-    "width": 1918.0,
-    "height": 1030.0
+    "x": -8.0,
+    "y": -8.0,
+    "width": 1936.0,
+    "height": 1048.0
   }
 }
