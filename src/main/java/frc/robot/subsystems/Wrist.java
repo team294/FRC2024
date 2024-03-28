@@ -309,6 +309,18 @@ public class Wrist extends SubsystemBase implements Loggable{
   }
 
   /**
+   * Adjust the current degrees of the wrist by a small amount
+   * @param deltaDegrees the number of degrees to move up/down
+   */
+  public void nudgeWristAngle(double deltaDegrees) {
+    // TODO: ensure the wrist is not currently moving
+    // TODO: max nudge amounts/limits?
+    // Adjust by recalibrating with a modified degrees, then set to the new angle
+    calibrateWristEnc(getWristEncoderDegrees() + deltaDegrees);
+    setWristAngle(getWristAngle()); // TODO: is setting desired behavior?
+  }
+
+  /**
    * Converts the wrist position in degrees to rotations.  Assumes that the encoder is calibrated.
    * @param degrees wrist position in degrees
    * @return wrist position in rotations

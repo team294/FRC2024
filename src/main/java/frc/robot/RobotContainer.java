@@ -321,7 +321,9 @@ public class RobotContainer {
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
       new WristSetAngle(WristAngle.climbStop, wrist, log)
     ));
-
+    // Nudge angle up or down
+    coP[5].onTrue(new WristNudgeAngle(4, wrist, log)); // TODO: decide on degree amounts, check direction
+    coP[6].onTrue(new WristNudgeAngle(-4, wrist, log));
   }
 
 
