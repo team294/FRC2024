@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.FieldConstants;
 
 /** Class to manage alliance selection and eject ball color */
 public class AllianceSelection {
@@ -74,7 +73,6 @@ public class AllianceSelection {
     public Alliance getAlliance() {
         return alliance;
     }
-
 
     /**
      * Runs once per scheduler cycle

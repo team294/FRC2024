@@ -170,7 +170,7 @@ public class Feeder extends SubsystemBase implements Loggable{
    * @return true if piece is in feeder
    */
   public boolean isPiecePresent(){
-    return pieceSensor.get();
+    return !pieceSensor.get();
   }
 
 

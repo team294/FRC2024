@@ -27,18 +27,28 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class SourceTwoPieceShoot extends SequentialCommandGroup {
-  /** Creates a new SourceTwoPieceShoot. */
-  public SourceTwoPieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+public class SourceCenterThreePieceShoot extends SourceTwoPieceShoot {
+  /** Creates a new SourceCenterThreePieceShoot. */
+  public SourceCenterThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    super(intake, shooter, driveTrain, feeder, robotState, cache, alliance, log);
     addCommands(
-      new ShootPiece(shooter, feeder, robotState, log),
+       new ShootPiece(shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteBlue.value], driveTrain, log), 
+          () -> alliance.getAlliance() == Alliance.Red
+        )
+      ),
+      new ShootPiece(shooter, feeder, robotState, log),
+      new ParallelCommandGroup(
+        new IntakePieceAuto(intake, feeder, robotState, log),
+        new ConditionalCommand(
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),

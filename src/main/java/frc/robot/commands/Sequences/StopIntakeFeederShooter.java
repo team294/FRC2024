@@ -16,12 +16,13 @@ public class StopIntakeFeederShooter extends ParallelCommandGroup {
 
   /**
    * Stops the intake, feeder, and shooter motors.
-   * Resets the robot state to IDLE
-   * @param intake intake object
-   * @param shooter shooter object
-   * @param feeder feeder object
+   * Resets the robot state to either IDLE_WITH_PIECE or IDLE_NO_PIECE,
+   * using the feeder sensor to decide if it has a piece.
+   * @param intake
+   * @param shooter
+   * @param feeder
    * @param robotState Object with current robot state
-   * @param log log
+   * @param log
    */
   public StopIntakeFeederShooter(Intake intake, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
     addCommands(

@@ -4,12 +4,7 @@
 
 package frc.robot.commands.Sequences;
 
-import javax.swing.GroupLayout.SequentialGroup;
-
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.FeederConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -19,7 +14,8 @@ import frc.robot.utilities.FileLog;
 public class StopIntakingSequence extends ParallelCommandGroup {
   
   /**
-   * Stops the intaking sequence and sets the robot state to IDLE
+   * Stops the intaking sequence and sets the robot state to either IDLE_WITH_PIECE or IDLE_NO_PIECE,
+   * using the feeder sensor to decide if it has a piece.
    * @param feeder Feeder subsystem
    * @param intake Intake subsystem
    * @param robotState Object with current robot state
@@ -28,11 +24,7 @@ public class StopIntakingSequence extends ParallelCommandGroup {
   public StopIntakingSequence(Feeder feeder, Intake intake, BCRRobotState robotState, FileLog log) {
     addCommands(
       new IntakeSetPercent(0, 0, intake, log),
-      new SequentialCommandGroup(
-        new FeederSetPercent(FeederConstants.feederBackPiecePercent, feeder, log),
-        new WaitCommand(FeederConstants.feederBackPieceTime),
-        new FeederSetPercent(0.0, feeder, log)
-      ),
+      new FeederSetPercent(0, feeder, log),
       new RobotStateSetIdle(robotState, feeder, log)
     );
   }

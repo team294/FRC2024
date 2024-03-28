@@ -8,23 +8,18 @@ package frc.robot.utilities;
 public class BCRRobotState {
     /** The enum that keeps track of all possible states for the robot */
     public static enum State {
-        IDLE,
-        INTAKING,
+        IDLE_NO_PIECE,
+        IDLE_WITH_PIECE,
+        INTAKE_TO_FEEDER,
         SHOOTING
     }
 
-    // The current State of the robot
+    /** The current State of the robot */
     private State state;
 
-    //True if in speaker mode , false if in amp mode
-    private boolean speakerMode = true; 
-
-    //True if in far shoot mode, false to revert to speaker mode boolean
-    private boolean farShotMode = false;
-
-    /** Creates a new BCRRobotState with the default State value of IDLE */
+    /** Creates a new BCRRobotState with the default State value of IDLE_NO_PIECE */
     public BCRRobotState() {
-        setState(State.IDLE);
+        setState(State.IDLE_NO_PIECE);
     }
 
     /**
@@ -38,30 +33,6 @@ public class BCRRobotState {
     /** Gets the current State of the robot */
     public State getState() {
         return state;
-    }
-
-    /**
-     * returns if shooter/wrist are in speaker mode or amp mode
-     * @return true = speaker mode, false = amp mode
-     */
-    public boolean isSpeakerMode(){
-        return speakerMode;
-    }
-    
-    public boolean isFarShotMode(){
-        return farShotMode;
-    }
-
-    /**
-     * Set if the robot is in speaker mode or amp mode
-     * @param speakerMode true = speaker mode, false = amp mode
-     */
-    public void setSpeakerMode(boolean speakerMode){
-        this.speakerMode = speakerMode;
-    }
-
-    public void setFarShotMode(boolean farShootMode){
-        this.farShotMode = farShootMode;
     }
 
     /**

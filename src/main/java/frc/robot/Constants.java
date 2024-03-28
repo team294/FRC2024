@@ -12,7 +12,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.utilities.TrapezoidProfileBCR;
 
 /**
@@ -77,13 +76,9 @@ public final class Constants {
       public static final int CANWrist1 = 19;
       public static final int CANWrist2 = 20;
 
-      public static final int CANdle1 = 21;
-
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
       public static final int DIOWristRevThroughBoreEncoder = 1;
-      public static final int DIOWristLowerLimit1 = 2;
-      public static final int DIOWristLowerLimit2 = 3;
       public static final int DIOIntakePieceSensor = 9;
     }
 
@@ -123,12 +118,12 @@ public final class Constants {
       // Max speed is used to keep each motor from maxing out, which preserves ratio between motors 
       // and ensures that the robot travels in the requested direction.  So, use min value of all 4 motors,
       // and further derate (initial test by 5%) to account for some battery droop under heavy loads.
-      // Max speed measured values 3/18/2024:  All 4 motors are 4.17, 4.08, 4.2, 4.09 meters/sec.  So use 4.0 as a conservative value
-      public static final double kMaxSpeedMetersPerSecond = 4.5;          // A8:  Increased from 4.0 to 4.5.  CALIBRATED
-      public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;  // A8:  Increased back to 0.95
+      // Max speed measured values x/x/2024:  All 4 motors are between 4.6 an 4.7 meters/sec.  So use 4.5 as a conservative value
+      public static final double kMaxSpeedMetersPerSecond = 4.5;          // CALIBRATED
+      public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;
       public static final double kNominalSpeedMetersPerSecond = 0.5*kMaxSpeedMetersPerSecond;
-      // Max acceleration measured 3/18/2024 (with full robot weight):  7.6 - 8.4 m/sec^2.  Keep value at 7.5.
-      public static final double kMaxAccelerationMetersPerSecondSquare = 7.5; // CALIBRATED
+      // Max acceleration measured x/x/2024 (with full robot weight):  Average ~11 m/sec^2.  Keep value at 10.0 for now.
+      public static final double kMaxAccelerationMetersPerSecondSquare = 10; // TODO NOT CALIBRATED.  Max = 30 m/s^2 (not full robot weight)
       public static final double kFullAccelerationMetersPerSecondSquare = 0.9 * kMaxAccelerationMetersPerSecondSquare;
       public static final double kNominalAccelerationMetersPerSecondSquare = 3.5; // TODO value from last year
       public static final double kMaxTurningRadiansPerSecond = 11.0;  // TODO NOT CALIBRATED
@@ -150,7 +145,7 @@ public final class Constants {
 
 
       public static final double kADrive = 0.0;
-      public static final double kADriveToPose = 0.100;  // Updated to 0.100 for A3, looks good.  CALIBRATED.  In % output per meters per second squared.
+      public static final double kADriveToPose = 0.050;  // formerly 0.060  CALIBRATED.  In % output per meters per second squared.
       public static final double kSDrive = 0.0080; // init cal done.  formerly 0.0255, CALIBRATED.  In % output.
     }
 
@@ -190,22 +185,22 @@ public final class Constants {
     public static final class ShooterConstants {
       public static final double compensationVoltage = 12.0;
       public static final double ticksPerRevolution = 1.0;
-      public static final double shooterGearRatio = 24.0/18.0;  // From CAD, shooter belt from motor to wheels = 24:18.  Turn ratio from motor pinion to shooter wheels.
+      public static final double shooterGearRatio = 1.0;  //(44.0/20.0) * (24.0/18.0);   // From CAD, shooter gears from motor to wheels = 44:20 then 24:18.  Turn ratio from motor pinion to shooter wheels.
 
       // PIDSVA for Top Shooter motor
-      public static final double ShooterTopkP = 0.5;          // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rps)
+      public static final double ShooterTopkP = 0.5;          // TODO calibrate.  kP = (desired-output-volts) / (error-in-encoder-rps)
       public static final double ShooterTopkI = 0.00;         // kI = (desired-output-volts) / (error-in-encoder-rps * s)
       public static final double ShooterTopkD = 0.0;          // kD = (desired-output-volts) / (error-in-encoder-rps/s)
-      public static final double ShooterTopkS = 0.139;        // kS = (desired-output-volts)
-      public static final double ShooterTopkV = 0.1112;       // kV = (desired-output-volts) / (target-velocity-in-encoder-rps)
+      public static final double ShooterTopkS = 0.061256;     // kS = (desired-output-volts)
+      public static final double ShooterTopkV = 0.118681;     // kV = (desired-output-volts) / (target-velocity-in-encoder-rps)
       public static final double ShooterTopkA = 0.0;          // kA = (desired-output-volts) / (target-accel-in-encoder-rot/sec^2)
       
       //PIDSVA for Bottom Shooter motor
-      public static final double ShooterBottomkP = 0.5;       // 0.5
+      public static final double ShooterBottomkP = 0.5;
       public static final double ShooterBottomkI = 0.00;
       public static final double ShooterBottomkD = 0.0;
-      public static final double ShooterBottomkS = 0.145;     // V; old: 0.004, new: 0.125
-      public static final double ShooterBottomkV = 0.1140;    // V * s / dist; old: 0.000155, new: 0.129166,
+      public static final double ShooterBottomkS = 0.061256;  // V; old: 0.004, new: 0.125
+      public static final double ShooterBottomkV = 0.118681;  // V * s / dist; old: 0.000155, new: 0.129166,
       public static final double ShooterBottomkA = 0.0;
 
       /*
@@ -217,17 +212,13 @@ public final class Constants {
 
       public static final double velocityErrorTolerance = 100;
       public static final double shooterPercent = 0.25;
-      public static final double shooterVelocityTop = 4000;
-      public static final double shooterVelocityBottom = 4400;
-      public static final double shooterVelocityPit = 500;
-      public static final double shooterVelocityFarTop =2000;
-      public static final double shooterVelocityFarBottom = 2000;
+      public static final double shooterVelocity = 2500;
     }
 
     public static final class FeederConstants {
       public static final double compensationVoltage = 12.0;
       public static final double ticksPerRevolution = 1.0;
-      public static final double feederGearRatio = 12.0/36.0;    // From CAD, feeder gears from motor to wheels = 12:36 then 1:1.  Turn ratio from motor pinion to feeder wheels.
+      public static final double feederGearRatio = 1.0; //(14.0/28.0) * (16.0/32.0);   // From CAD, feeder gears from motor to wheels = 14:28 then 16:32.  Turn ratio from motor pinion to feeder wheels.
       
       //PIDSVA for Feeder
       public static final double kP = 0.5;
@@ -238,9 +229,6 @@ public final class Constants {
       public static final double kA = 0.0;
 
       public static final double feederPercent = 0.2;
-      public static final double feederAmpShot = -0.3;
-      public static final double feederBackPiecePercent = -0.05;   // Speed to back off note slightly after intaking
-      public static final double feederBackPieceTime = 0.1;  // Time (in seconds) to back off note slightly after intaking
     }
 
     public static final class TrajectoryConstants {
@@ -298,33 +286,25 @@ public final class Constants {
 
     public static final class WristConstants {
       public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.  Encoder counts per revolution of FalconFX motor pinion gear
-      public static final double kWristGearRatio = (5.0*5.0*3.0 * 48.0 / 22.0);   // From CAD, should be 5*5*3 * 48:22.  Gear reduction ratio between motor pinion and gear driving the wrist (planetary and chain gears)
+      public static final double kWristGearRatio = (75.0 / 1.0);   // From CAD, should be 75:1.  Gear reduction ratio between motor pinion and gear driving the wrist (planetary and chain gears)
       public static final double kWristDegreesPerRotation =  360.0 / kEncoderCPR / kWristGearRatio;      // CALIBRATED (fudge factor was 0.9726 last year)
 
-      public static final double kRevEncoderGearRatio = (48.0 / 22.0);   // From CAD, should be 48:22.  Gear reduction ratio between Rev Thru-Bore encoder and gear driving the wrist (chain/gears)
+      public static final double kRevEncoderGearRatio = (3.0 / 1.0);   // From CAD, should be 3:1.  Gear reduction ratio between Rev Thru-Bore encoder and gear driving the wrist (chain/gears)
       
       public static final double voltageCompSaturation = 12.0;
-      public static final double maxUncalibratedPercentOutput = 0.15;     // CALIBRATED
+      public static final double maxUncalibratedPercentOutput = 0.1;     // CALIBRATED
       public static final double maxPercentOutput = 0.4;          // CALIBRATED
-
-      public static final double climbPercentOutput = -0.2;
 
       // Update the REV through bore encoder offset angle in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // A8: Updated to -121 deg from -130 deg (tightened wrist chain)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // 5.0 deg (was 69.0 deg before changing wrist chain)  CALIBRATED
 
-      public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
+      public static final double kP = 0.5;   // Calc 0.72 from 2023 TODO CALIBRATE. kP value (0.03).  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
       public static final double kD = 0.0; 
-      public static final double kG = 0.174;   // 0.174 CALIBRATED.  Feed foward voltage to add to hold arm horizontal (0 deg)
-      public static final double kS = 0.0367;  // 0.0367 CALIBRATED
-      public static final double kV = 0.1171;  // 0.1171 CALIBRATED
-
-      public static final double MMCruiseVelocity = 90.0;   // 90.0 Calibrated.  Arm can reach ~95.  Max trapezoid velocity in motor rps.
-      public static final double MMAcceleration = MMCruiseVelocity/0.35;    // Calibrated.  Accel in 0.35 sec.  Max trapezoid acceleration in motor rot/sec^2.  MMVel/MMAccel = (# seconds to full velocity)
-      public static final double MMJerk = MMAcceleration/0.05;  // Calibrated.  Jerk in 0.05 sec.  Max trapezoid jerk in motor rot/sec^3.  MMAccel/MMJerk = (# seconds to full accel)
+      public static final double kG = 0.0;   // 0.1 initially, TODO CALIBRATE.  2023 was 0.03.  Feed foward percent-out to add to hold arm horizontal (0 deg)
 
       // Wrist regions
       public enum WristRegion {
@@ -346,19 +326,8 @@ public final class Constants {
       // 0 degrees = horizontal (in front of robot) relative to wrist center of gravity
       // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
       public enum WristAngle {
-          lowerLimit(-83.0),      // CALIBRATED
-          intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
-          speakerShotFromSpeaker(-42),  // A5: changed to -42 deg
-          speakerShotFromPodium(-70),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
-          speakerShotFromMidStage(-79),
-          farShotAngle(-83),
-          ampNoteAutoShot(-67),
-          overheadShotAngle(55),      // 135" field edge to front of bumper
-          climbStop(-45.0),
-          ampShot(50.0),
-          clearBellyPanMinAngle(-65),
-          climbStart(65.0),
-          upperLimit(90.0);       // CALIBRATED
+          lowerLimit(-3.0),      // CALIBRATED
+          upperLimit(65.0);       // CALIBRATED
 
           @SuppressWarnings({"MemberName", "PMD.SingularField"})
           public final double value;
@@ -369,56 +338,7 @@ public final class Constants {
     public static final class IntakeConstants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
 
-      public static final double intakePercent = 0.7;       // 0.7
-      public static final double centeringPercent = 0.4;    // 0.4
+      public static final double intakePercent = 0.6;
+      public static final double centeringPercent = 0.3; // Need to calibrate, using talon instead of neo
     }
-
-    /** Colors for the LEDs based on different robot states (see BCRRobotState) */
-    public enum BCRColor {
-      IDLE(255, 255, 255), // White             (nothing running)
-      INTAKING(0, 0, 255), // Blue       (intake running)
-      SHOOTING(0, 255, 0);       // Green       (shooter running)
-
-      public final int r, g, b;
-      BCRColor(int r, int g, int b) {
-          this.r = r;
-          this.g = g;
-          this.b = b;
-      }
-  }
-
-    public static final class LEDConstants {
-      public static final class Patterns {
-          // Static Patterns
-          public static final Color[] blueOrangeStatic = {Color.kBlue, Color.kOrange};
-          // Animated Patterns
-          public static final Color[][] blueOrangeMovingAnim = {{Color.kBlue, Color.kOrange},{Color.kOrange,Color.kBlue}};
-          public static final Color[][] rainbowArray = {
-              {Color.kRed, Color.kOrangeRed, Color.kOrange, Color.kRed, Color.kOrangeRed, Color.kOrange},
-              {Color.kGreen, Color.kGreenYellow, Color.kLime, Color.kGreen, Color.kGreenYellow, Color.kLime},
-              {Color.kBlue, Color.kAliceBlue, Color.kAquamarine, Color.kBlue, Color.kAliceBlue, Color.kAquamarine}
-          };
-          // Utilities
-          public static final Color[] noPatternStatic = {};
-          public static final Color[][] noPatternAnimation = {{}};
-          public static final Color[] clearPatternStatic = {Color.kBlack};
-      }
-
-      public enum LEDSegmentRange {
-          CANdleTop(0, 4),   // top row of CANdle  (bottom on robot, upside down)
-          CANdleBottom(4, 4),  // bottom row of CANdle  (top on robot, upside down)
-          CANdleFull(0,8),
-          Strip1(8, 68),  // 1st strip only
-          Full(0, 68);  // CANdle + 1st strip  (update values if second strip is ever added)
-
-          public final int index, count;
-          LEDSegmentRange(int index, int count) {
-              this.index = index;
-              this.count = count;
-          }
-      }
-
-      // public static final double NumLEDs = 68;
-  }
-
 }

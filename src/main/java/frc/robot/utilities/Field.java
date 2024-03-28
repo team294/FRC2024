@@ -101,16 +101,4 @@ public class Field {
     public Alliance getAlliance() {
         return alliance.getAlliance();
     }
-
-    /**
-     * Need to check if april tag values match april tag on or to the side of the speaker
-     * @return Speaker Pose2d Value
-     */
-    public Pose2d getSpeakerPose2d(){
-        if(getAlliance() == Alliance.Blue){
-            return getAprilTag(4).pose.toPose2d();
-        } else {
-            return getAprilTag(12).pose.toPose2d();
-        }
-    }
 }
