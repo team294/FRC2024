@@ -55,7 +55,7 @@ public class DriveToPose extends Command {
   private Pose2d initialPose, goalPose;     // Starting and destination robot pose (location and rotation) on the field
   private Translation2d initialTranslation;     // Starting robot translation on the field
   private Translation2d goalDirection;          // Unit vector pointing from initial pose to goal pose = direction of travel
-  private double finalVelocity;            // Target velocity at end of travel, in direction of travel (must not be negative)
+  private double finalVelocity = 0.0;            // Target velocity at end of travel, in direction of travel (must not be negative).  Default = 0.0 (stop at end).
   private TrapezoidProfileBCR profile;      // Relative linear distance/speeds from initial pose to goal pose 
 
   private Translation2d curRobotTranslation;    // Current robot translation relative to initialTranslation
@@ -80,7 +80,6 @@ public class DriveToPose extends Command {
     this.log = log;
     this.goalPose = goalPose;
     goalMode = GoalMode.pose;
-    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
 
     constructorCommonCode();
@@ -146,7 +145,6 @@ public class DriveToPose extends Command {
     this.maxThetaErrorDegrees = maxThetaErrorDegrees;
     goalSupplier = goalPoseSupplier;
     goalMode = GoalMode.poseSupplier;
-    finalVelocity = 0.0;
     this.openLoopSwerve = !closedLoopSwerve;
     trapProfileConstraints = new TrapezoidProfileBCR.Constraints(
       MathUtil.clamp(maxVelMetersPerSecond, -SwerveConstants.kFullSpeedMetersPerSecond, SwerveConstants.kFullSpeedMetersPerSecond), 
@@ -175,7 +173,6 @@ public class DriveToPose extends Command {
     this.log = log;
     goalSupplier = goalPoseSupplier;
     goalMode = GoalMode.poseSupplier;
-    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
 
     constructorCommonCode();
@@ -201,7 +198,6 @@ public class DriveToPose extends Command {
     this.maxThetaErrorDegrees = maxThetaErrorDegrees;
     goalSupplier = goalPoseSupplier;
     goalMode = GoalMode.poseSupplier;
-    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
 
     constructorCommonCode();
@@ -225,7 +221,6 @@ public class DriveToPose extends Command {
     } else {
       goalMode = GoalMode.angleAbsolute;
     }
-    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
 
     constructorCommonCode();
@@ -241,7 +236,6 @@ public class DriveToPose extends Command {
     this.driveTrain = driveTrain;
     this.log = log;
     goalMode = GoalMode.shuffleboard;
-    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
 
     constructorCommonCode();
