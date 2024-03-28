@@ -19,7 +19,7 @@ import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.FileLog;
 
-public class WristSetAngleWithVision extends Command {
+public class WristOverHeadSetAngleWithVision extends Command {
 
   private double angle;
   private final AllianceSelection allianceSelection;
@@ -32,7 +32,7 @@ public class WristSetAngleWithVision extends Command {
    * <p> This command does nothing and immediately returns if the wrist is not calibrated.
    * @param angle target angle in degrees.  (0 = horizontal in front of robot, + = up, - = down)
    */
-  public WristSetAngleWithVision(Wrist wrist, AllianceSelection allianceSelection, DriveTrain drivetrain, FileLog log) {
+  public WristOverHeadSetAngleWithVision(Wrist wrist, AllianceSelection allianceSelection, DriveTrain drivetrain, FileLog log) {
     this.wrist = wrist;
     this.allianceSelection = allianceSelection;
     this.driveTrain = drivetrain;
@@ -51,12 +51,12 @@ public class WristSetAngleWithVision extends Command {
 
     double x = driveTrain.getPose().getX();
     double y = (driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos());
-    // distance from speaker - minus arm distance from robot center
-    double dist = Math.sqrt(x*x+y*y) - RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(Units.degreesToRadians(getAngleFromDistance(n-1)));
-
+    // distance from speaker (robot distance + arm distance from center of robot)
+    double dist = Math.sqrt(x*x+y*y) + RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(Units.degreesToRadians(getAngleFromDistance(n-1)));
+    // height of shooter: height of robot + height of arm
     double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot+RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n-1)));
 
-    return Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker-heightOfShooter)/dist)) - 90;
+    return Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker-heightOfShooter)/dist));
   } 
 
   // Called just before this Command runs the first time
