@@ -54,7 +54,8 @@ public class DriveToPose extends Command {
   private Rotation2d rotation;              // Rotation for goalPose
   private Pose2d initialPose, goalPose;     // Starting and destination robot pose (location and rotation) on the field
   private Translation2d initialTranslation;     // Starting robot translation on the field
-  private Translation2d goalDirection;          // Unit vector pointing from initial pose to goal pose = direction of travel0
+  private Translation2d goalDirection;          // Unit vector pointing from initial pose to goal pose = direction of travel
+  private double finalVelocity;            // Target velocity at end of travel, in direction of travel (must not be negative)
   private TrapezoidProfileBCR profile;      // Relative linear distance/speeds from initial pose to goal pose 
 
   private Translation2d curRobotTranslation;    // Current robot translation relative to initialTranslation
@@ -79,7 +80,42 @@ public class DriveToPose extends Command {
     this.log = log;
     this.goalPose = goalPose;
     goalMode = GoalMode.pose;
+    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
+
+    constructorCommonCode();
+  }
+
+  /**
+   * Drives the robot to the desired pose in field coordinates.
+   * At the end of the command, the robot will continue driving forward at maxVelMetersPerSecond in the direction of travel.
+   * @param goalPose target pose in field coordinates.  Pose components include
+   *    <p> Robot X location in the field, in meters (0 = field edge in front of driver station, +=away from our drivestation)
+   *    <p> Robot Y location in the field, in meters (0 = right edge of field when standing in driver station, +=left when looking from our drivestation)
+   *    <p> Robot angle on the field (0 = facing away from our drivestation, + to the left, - to the right)
+   * @param finalVelMetersPerSecond target velocity at end of profile (in direction of travel), in meters per second
+   * @param maxVelMetersPerSecond max velocity to drive, in meters per second
+   * @param maxAccelMetersPerSecondSquare max acceleration/deceleration, in meters per second squared
+   * @param maxPositionErrorMeters tolerance for end position in meters
+   * @param maxThetaErrorDegrees tolerance for end theta in degrees
+   * @param driveTrain DriveTrain subsystem
+   * @param log file for logging
+   */
+  public DriveToPose(Pose2d goalPose, double finalVelMetersPerSecond, 
+      double maxVelMetersPerSecond, double maxAccelMetersPerSecondSquare, 
+      double maxPositionErrorMeters, double maxThetaErrorDegrees, 
+      DriveTrain driveTrain, FileLog log) {
+    this.driveTrain = driveTrain;
+    this.log = log;
+    this.maxPositionErrorMeters = maxPositionErrorMeters;
+    this.maxThetaErrorDegrees = maxThetaErrorDegrees;
+    this.goalPose = goalPose;
+    goalMode = GoalMode.pose;
+    finalVelocity = MathUtil.clamp(Math.abs(finalVelMetersPerSecond), 0.0, maxVelMetersPerSecond);
+    trapProfileConstraints = new TrapezoidProfileBCR.Constraints(
+      MathUtil.clamp(maxVelMetersPerSecond, -SwerveConstants.kFullSpeedMetersPerSecond, SwerveConstants.kFullSpeedMetersPerSecond), 
+      MathUtil.clamp(maxAccelMetersPerSecondSquare, -SwerveConstants.kFullAccelerationMetersPerSecondSquare, SwerveConstants.kFullAccelerationMetersPerSecondSquare)
+    );
 
     constructorCommonCode();
   }
@@ -110,6 +146,7 @@ public class DriveToPose extends Command {
     this.maxThetaErrorDegrees = maxThetaErrorDegrees;
     goalSupplier = goalPoseSupplier;
     goalMode = GoalMode.poseSupplier;
+    finalVelocity = 0.0;
     this.openLoopSwerve = !closedLoopSwerve;
     trapProfileConstraints = new TrapezoidProfileBCR.Constraints(
       MathUtil.clamp(maxVelMetersPerSecond, -SwerveConstants.kFullSpeedMetersPerSecond, SwerveConstants.kFullSpeedMetersPerSecond), 
@@ -138,6 +175,7 @@ public class DriveToPose extends Command {
     this.log = log;
     goalSupplier = goalPoseSupplier;
     goalMode = GoalMode.poseSupplier;
+    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
 
     constructorCommonCode();
@@ -163,6 +201,7 @@ public class DriveToPose extends Command {
     this.maxThetaErrorDegrees = maxThetaErrorDegrees;
     goalSupplier = goalPoseSupplier;
     goalMode = GoalMode.poseSupplier;
+    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
 
     constructorCommonCode();
@@ -186,6 +225,7 @@ public class DriveToPose extends Command {
     } else {
       goalMode = GoalMode.angleAbsolute;
     }
+    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
 
     constructorCommonCode();
@@ -201,6 +241,7 @@ public class DriveToPose extends Command {
     this.driveTrain = driveTrain;
     this.log = log;
     goalMode = GoalMode.shuffleboard;
+    finalVelocity = 0.0;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
 
     constructorCommonCode();
@@ -298,7 +339,7 @@ public class DriveToPose extends Command {
       case angleRelative:  // relative angle, keep robot position
         goalPose = driveTrain.getPose().plus(new Transform2d(new Translation2d(), rotation));
         break;
-  }
+    }
 
     // Calculate the direction and distance of travel
     Translation2d trapezoidPath = goalPose.getTranslation().minus(initialTranslation);
@@ -311,7 +352,7 @@ public class DriveToPose extends Command {
 
     // Create the profile.  The profile is linear distance (along goalDirection) relative to the initial pose
     TrapezoidProfileBCR.State initialState = new TrapezoidProfileBCR.State(0, initialVelocity);
-    TrapezoidProfileBCR.State goalState = new TrapezoidProfileBCR.State(goalDistance, 0);
+    TrapezoidProfileBCR.State goalState = new TrapezoidProfileBCR.State(goalDistance, finalVelocity);
     profile = new TrapezoidProfileBCR(trapProfileConstraints, goalState, initialState);
 
     log.writeLog(false, "DriveToPose", "Initialize", 
@@ -377,7 +418,7 @@ public class DriveToPose extends Command {
   public void end(boolean interrupted) {
     timer.stop();
 
-    if (!interrupted) {
+    if (!interrupted && finalVelocity <= 0.01) {
       driveTrain.stopMotors();
     }
 
