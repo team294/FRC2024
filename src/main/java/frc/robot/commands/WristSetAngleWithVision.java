@@ -69,7 +69,7 @@ public class WristSetAngleWithVision extends Command {
   @Override
   public void execute() {
     angle = getAngleFromDistance(3);
-    wrist.setWristAngle(angle - 9 + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
+    wrist.setWristAngle(angle - 3 + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
     wrist.updateWristLog(false);
   }
 

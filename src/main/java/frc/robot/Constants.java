@@ -319,7 +319,7 @@ public final class Constants {
 
 
         public static final String noteCameraName = "NoteCamera";
-        public static final double pitchSetpoint = -13;
+        public static final double pitchSetpoint = -18;
         public static final double yawSetpoint = 0;
       }
     }

@@ -34,6 +34,7 @@ public class DriveToNote extends Command {
   private final PIDController leftRateController;
   private final PIDController turnRateController;
   private final FileLog log;
+  private int toleranceCount;
   private int logRotationKey;
   
   private double fwdVelocity, leftVelocity, turnRate;
@@ -50,7 +51,7 @@ public class DriveToNote extends Command {
     this.feeder = feeder;
     this.driveTrain = driveTrain;
     this.log = log;
-    fwdRateController = new PIDController(0.1, 0.0, 0);
+    fwdRateController = new PIDController(0.13, 0.065, 0);
     leftRateController = new PIDController(0.0, 0, 0);
     turnRateController = new PIDController(0.15, 0, 0);
     fwdRateController.setSetpoint(PhotonVisionConstants.pitchSetpoint); // setpoint is the bottom of the screen
@@ -67,6 +68,8 @@ public class DriveToNote extends Command {
   public void initialize() {
     driveTrain.setDriveModeCoast(false);
     
+    toleranceCount = 0;
+
     // lastFwdPercent = 0;
     // lastTime = System.currentTimeMillis() / 1000.0;
   }
@@ -83,10 +86,14 @@ public class DriveToNote extends Command {
       if(log.isMyLogRotation(logRotationKey)) {
         log.writeLog(false, "DriveToNote", "No targets captured");
       }
+      toleranceCount++;
+      // stop if can't see piece
+      // driveTrain.drive(0, 0, 0, false, false);
       return;
     }
 
-    
+
+    toleranceCount = 0;
     PhotonTrackedTarget bestTarget = latestResult.getBestTarget();
     
 
@@ -131,6 +138,7 @@ public class DriveToNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !driveTrain.getNoteCamera().hasInit() || feeder.isPiecePresent();
+    return !driveTrain.getNoteCamera().hasInit() || feeder.isPiecePresent() 
+      || toleranceCount > 4;
   }
 }
