@@ -109,12 +109,12 @@ public class DriveWithJoysticksAdvance extends Command {
         if(firstCorrecting){
           firstCorrecting = false;
           driveTrain.enableFastLogging(false);
-          goalAngle = aimLock ? Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX()): driveTrain.getPose().getRotation().getRadians();
+          goalAngle = aimLock ? Math.PI + Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX()): driveTrain.getPose().getRotation().getRadians();
           goalAngle = MathUtil.angleModulus(goalAngle);
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
         if(aimLock){
-          goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
+          goalAngle = Math.PI + Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
           SmartDashboard.putNumber("Goal Angle", goalAngle);
         }
       // When the right button on the right joystick is pressed then the robot turns pi radians(180 degrees)
