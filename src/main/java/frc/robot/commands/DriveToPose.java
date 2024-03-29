@@ -54,7 +54,8 @@ public class DriveToPose extends Command {
   private Rotation2d rotation;              // Rotation for goalPose
   private Pose2d initialPose, goalPose;     // Starting and destination robot pose (location and rotation) on the field
   private Translation2d initialTranslation;     // Starting robot translation on the field
-  private Translation2d goalDirection;          // Unit vector pointing from initial pose to goal pose = direction of travel0
+  private Translation2d goalDirection;          // Unit vector pointing from initial pose to goal pose = direction of travel
+  private double finalVelocity = 0.0;            // Target velocity at end of travel, in direction of travel (must not be negative).  Default = 0.0 (stop at end).
   private TrapezoidProfileBCR profile;      // Relative linear distance/speeds from initial pose to goal pose 
 
   private Translation2d curRobotTranslation;    // Current robot translation relative to initialTranslation
@@ -80,6 +81,39 @@ public class DriveToPose extends Command {
     this.goalPose = goalPose;
     goalMode = GoalMode.pose;
     trapProfileConstraints = TrajectoryConstants.kDriveProfileConstraints;
+
+    constructorCommonCode();
+  }
+
+  /**
+   * Drives the robot to the desired pose in field coordinates.  At the end of the command, the robot will continue 
+   * driving forward at maxVelMetersPerSecond in the direction of travel.
+   * <p> Notes: The target pose is only approximate, since the robot
+   * is still traveling at the end of the motion profile.  The command ends when the robot is approximately at the target
+   * pose <i>location</i> only; note that if the distance of travel is short, then the robot may not reach the target
+   * <i>angle</i> before the command ends.
+   * @param goalPose target pose in field coordinates.  Pose components include
+   *    <p> Robot X location in the field, in meters (0 = field edge in front of driver station, +=away from our drivestation)
+   *    <p> Robot Y location in the field, in meters (0 = right edge of field when standing in driver station, +=left when looking from our drivestation)
+   *    <p> Robot angle on the field (0 = facing away from our drivestation, + to the left, - to the right)
+   * @param finalVelMetersPerSecond target velocity at end of profile (in direction of travel), in meters per second
+   * @param maxVelMetersPerSecond max velocity to drive, in meters per second
+   * @param maxAccelMetersPerSecondSquare max acceleration/deceleration, in meters per second squared
+   * @param driveTrain DriveTrain subsystem
+   * @param log file for logging
+   */
+  public DriveToPose(Pose2d goalPose, double finalVelMetersPerSecond, 
+      double maxVelMetersPerSecond, double maxAccelMetersPerSecondSquare, 
+      DriveTrain driveTrain, FileLog log) {
+    this.driveTrain = driveTrain;
+    this.log = log;
+    this.goalPose = goalPose;
+    goalMode = GoalMode.pose;
+    finalVelocity = MathUtil.clamp(Math.abs(finalVelMetersPerSecond), 0.0, maxVelMetersPerSecond);
+    trapProfileConstraints = new TrapezoidProfileBCR.Constraints(
+      MathUtil.clamp(maxVelMetersPerSecond, -SwerveConstants.kFullSpeedMetersPerSecond, SwerveConstants.kFullSpeedMetersPerSecond), 
+      MathUtil.clamp(maxAccelMetersPerSecondSquare, -SwerveConstants.kFullAccelerationMetersPerSecondSquare, SwerveConstants.kFullAccelerationMetersPerSecondSquare)
+    );
 
     constructorCommonCode();
   }
@@ -298,7 +332,7 @@ public class DriveToPose extends Command {
       case angleRelative:  // relative angle, keep robot position
         goalPose = driveTrain.getPose().plus(new Transform2d(new Translation2d(), rotation));
         break;
-  }
+    }
 
     // Calculate the direction and distance of travel
     Translation2d trapezoidPath = goalPose.getTranslation().minus(initialTranslation);
@@ -311,7 +345,7 @@ public class DriveToPose extends Command {
 
     // Create the profile.  The profile is linear distance (along goalDirection) relative to the initial pose
     TrapezoidProfileBCR.State initialState = new TrapezoidProfileBCR.State(0, initialVelocity);
-    TrapezoidProfileBCR.State goalState = new TrapezoidProfileBCR.State(goalDistance, 0);
+    TrapezoidProfileBCR.State goalState = new TrapezoidProfileBCR.State(goalDistance, finalVelocity);
     profile = new TrapezoidProfileBCR(trapProfileConstraints, goalState, initialState);
 
     log.writeLog(false, "DriveToPose", "Initialize", 
@@ -377,8 +411,18 @@ public class DriveToPose extends Command {
   public void end(boolean interrupted) {
     timer.stop();
 
+    // If the command is interrupted, then let the robot continue to travel at the current speed
     if (!interrupted) {
-      driveTrain.stopMotors();
+      if (finalVelocity < 0.001) {
+        driveTrain.stopMotors();
+      } else {
+        ChassisSpeeds targetChassisSpeeds = new ChassisSpeeds(
+          finalVelocity*goalDirection.getX(), 
+          finalVelocity*goalDirection.getY(), 0.0);
+        
+        var targetModuleStates = kinematics.toSwerveModuleStates(targetChassisSpeeds);
+        driveTrain.setModuleStates(targetModuleStates, openLoopSwerve);
+      }
     }
 
     log.writeLog(false, "DriveToPose", "End", "Interrupted", interrupted); 
@@ -388,7 +432,10 @@ public class DriveToPose extends Command {
   @Override
   public boolean isFinished() {
 
-    var timeout = timer.hasElapsed(profile.totalTime()+3.0);
+    // Stop if we have run more than 3 seconds past the end of the profile,
+    // or if we are at the end of the profile and we have a non-zero final velocity.
+    var timeout = timer.hasElapsed(profile.totalTime()+3.0) ||
+                  (timer.hasElapsed(profile.totalTime()) && finalVelocity >= 0.001);
     if (timeout) {
       log.writeLog(false, "DriveToPose", "timeout"); 
     }
