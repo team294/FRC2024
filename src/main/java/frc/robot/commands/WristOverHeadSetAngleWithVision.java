@@ -54,9 +54,9 @@ public class WristOverHeadSetAngleWithVision extends Command {
     // distance from speaker (robot distance + arm distance from center of robot)
     double dist = Math.sqrt(x*x+y*y) + RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(Units.degreesToRadians(getAngleFromDistance(n-1)));
     // height of shooter: height of robot + height of arm
-    double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot+RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n-1)));
+    double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot + RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n-1)));
 
-    return 90 - (Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker-heightOfShooter)/dist))) - 10;
+    return 90 - (Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker-heightOfShooter)/dist)));
   } 
 
   // Called just before this Command runs the first time
@@ -69,7 +69,7 @@ public class WristOverHeadSetAngleWithVision extends Command {
   @Override
   public void execute() {
     angle = getAngleFromDistance(3);
-    wrist.setWristAngle(angle - 3 + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
+    wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
     wrist.updateWristLog(false);
   }
 
