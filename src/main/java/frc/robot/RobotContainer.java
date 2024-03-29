@@ -141,6 +141,7 @@ public class RobotContainer {
     SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log));
 
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
+    SmartDashboard.putData("Over Head with Vision", new WristOverHeadSetAngleWithVision(wrist, allianceSelection, driveTrain, log));
 
     // Sequences
     SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));
