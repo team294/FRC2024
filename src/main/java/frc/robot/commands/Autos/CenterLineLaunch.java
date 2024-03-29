@@ -4,21 +4,21 @@
 
 package frc.robot.commands.Autos;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.CoordType;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveResetPose;
+import frc.robot.commands.DriveToPose;
 import frc.robot.commands.DriveTrajectory;
-import frc.robot.commands.ShooterSetPercent;
+import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.Sequences.IntakePieceAuto;
-import frc.robot.commands.Sequences.SetShooterFarShot;
-import frc.robot.commands.Sequences.SetShooterWristSpeaker;
-import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -39,39 +39,23 @@ public class CenterLineLaunch extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
-      new ShooterSetPercent(-0.02, shooter, log),
+      new DriveResetPose(0.5, 6.4, 0.0, true, driveTrain, log),
+      new DriveToPose(new Pose2d(0.5, 6.4, new Rotation2d(0.0)), 2.0, SwerveConstants.kNominalSpeedMetersPerSecond, SwerveConstants.kNominalAccelerationMetersPerSecondSquare, driveTrain, log),
+       new ParallelCommandGroup(
+        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
+        new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(1.3, 2.663, 0, false, driveTrain, log),
-            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNoteToFarNoteRed.value], driveTrain, log)
-          ),
+            new DriveToPose(new Pose2d(8.3, 0.9, new Rotation2d(0.0)), 2.0, SwerveConstants.kNominalSpeedMetersPerSecond, SwerveConstants.kNominalAccelerationMetersPerSecondSquare, driveTrain, log)
+          )
+          , 
           new SequentialCommandGroup(
             new DriveResetPose(1.3, 5.57, 0, false, driveTrain, log),
-            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNoteToFarNoteBlue.value], driveTrain, log) 
-          ),
+            new DriveToPose(new Pose2d(8.3, 6.1, new Rotation2d(0.0)), 2.0, SwerveConstants.kNominalSpeedMetersPerSecond, SwerveConstants.kNominalAccelerationMetersPerSecondSquare, driveTrain, log)          ), 
           () -> alliance.getAlliance() == Alliance.Red
-        ),
-          new ParallelCommandGroup(
-             new IntakePieceAuto(intake, feeder, robotState, log),
-             new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 0, 0, shooter, wrist, intake, feeder, robotState, log),
-             new ShootPiece(shooter, feeder, robotState, log),
-             
-
-
-
-
-             
-
-
-          )
-
-
-        
-
-
-    );
+        )
+      )
+      
+      );
   }
 }
