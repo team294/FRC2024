@@ -323,8 +323,8 @@ public class RobotContainer {
       new WristSetAngle(WristAngle.climbStop, wrist, log)
     ));
     // Nudge angle up or down
-    coP[5].onTrue(new WristNudgeAngle(4, wrist, log)); // TODO: decide on degree amounts, check direction
-    coP[6].onTrue(new WristNudgeAngle(-4, wrist, log));
+    coP[5].onTrue(new WristNudgeAngle(4, wrist, log)); // Nudge down
+    coP[6].onTrue(new WristNudgeAngle(-4, wrist, log)); // Nudge up
   }
 
 
