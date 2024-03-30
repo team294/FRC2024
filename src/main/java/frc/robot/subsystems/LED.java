@@ -9,8 +9,11 @@ import java.util.HashMap;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.BCRColor;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -30,6 +33,7 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private boolean shouldClear;
+  private Timer timer;
   // private double accuracyDisplayThreshold;
   // private int accuracy;
 
@@ -40,12 +44,7 @@ public class LED extends SubsystemBase {
   //private LEDSegment strip1;
   private HashMap<LEDSegmentRange, LEDSegment> segments;
 
-  /**
-   * Creates the CANdle LED subsystem.
-   * @param subsystemName
-   * @param log
-   */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, Timer timer) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
@@ -57,6 +56,7 @@ public class LED extends SubsystemBase {
     this.shouldClear = false;
     // this.accuracyDisplayThreshold = 35;
     // this.accuracy = 0;
+    this.timer = timer;
 
     // Create the LED segments
     LEDSegment CANdleTop = new LEDSegment(
@@ -82,6 +82,11 @@ public class LED extends SubsystemBase {
     LEDSegment Strip2 = new LEDSegment(
       LEDConstants.LEDSegmentRange.Strip2.index,
       LEDConstants.LEDSegmentRange.Strip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment Strip1and2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.Strip1and2.index,
+      LEDConstants.LEDSegmentRange.Strip1and2.count,
       LEDConstants.Patterns.noPatternAnimation
     );
     LEDSegment Full = new LEDSegment(
@@ -196,6 +201,192 @@ public class LED extends SubsystemBase {
     segments.put(LEDSegmentRange.CANdleFull, CANdleFull);
     segments.put(LEDSegmentRange.Strip1, Strip1);
     segments.put(LEDSegmentRange.Strip2, Strip2);
+    segments.put(LEDSegmentRange.Strip1and2, Strip1and2);
+    segments.put(LEDSegmentRange.Full, Full);
+    segments.put(LEDSegmentRange.FirstTenthStrip1, FirstTenthStrip1);
+    segments.put(LEDSegmentRange.FirstTenthStrip2, FirstTenthStrip2);
+    segments.put(LEDSegmentRange.SecondTenthStrip1, SecondTenthStrip1);
+    segments.put(LEDSegmentRange.SecondTenthStrip2, SecondTenthStrip2);
+    segments.put(LEDSegmentRange.ThirdTenthStrip1, ThirdTenthStrip1);
+    segments.put(LEDSegmentRange.ThirdTenthStrip2, ThirdTenthStrip2);
+    segments.put(LEDSegmentRange.FourthTenthStrip1, FourthTenthStrip1);
+    segments.put(LEDSegmentRange.FourthTenthStrip2, FourthTenthStrip2);
+    segments.put(LEDSegmentRange.FifthTenthStrip1, FifthTenthStrip1);
+    segments.put(LEDSegmentRange.FifthTenthStrip2, FifthTenthStrip2);
+    segments.put(LEDSegmentRange.SixthTenthStrip1, SixthTenthStrip1);
+    segments.put(LEDSegmentRange.SixthTenthStrip2, SixthTenthStrip2);
+    segments.put(LEDSegmentRange.SeventhTenthStrip1, SeventhTenthStrip1);
+    segments.put(LEDSegmentRange.SeventhTenthStrip2, SeventhTenthStrip2);
+    segments.put(LEDSegmentRange.EighthTenthStrip1, EighthTenthStrip1);
+    segments.put(LEDSegmentRange.EighthTenthStrip2, EighthTenthStrip2);
+    segments.put(LEDSegmentRange.NinthTenthStrip1, NinthTenthStrip1);
+    segments.put(LEDSegmentRange.NinthTenthStrip2, NinthTenthStrip2);
+    segments.put(LEDSegmentRange.TenthTenthStrip1, TenthTenthStrip1);
+    segments.put(LEDSegmentRange.TenthTenthStrip2, TenthTenthStrip2);
+  }
+
+  /**
+   * Creates the CANdle LED subsystem.
+   * @param subsystemName
+   * @param log
+   */
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+    this.log = log;
+    this.subsystemName = subsystemName;
+    this.candle = new CANdle(CANPort, "");
+    this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
+    this.robotState = robotState;
+    this.currentState = BCRRobotState.State.IDLE;
+    this.shooter = shooter;
+    this.feeder = feeder;
+    this.shouldClear = false;
+    // this.accuracyDisplayThreshold = 35;
+    // this.accuracy = 0;
+
+    // Create the LED segments
+    LEDSegment CANdleTop = new LEDSegment(
+      LEDConstants.LEDSegmentRange.CANdleTop.index,
+      LEDConstants.LEDSegmentRange.CANdleTop.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment CANdleBottom = new LEDSegment(
+      LEDConstants.LEDSegmentRange.CANdleBottom.index,
+      LEDConstants.LEDSegmentRange.CANdleBottom.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+     LEDSegment CANdleFull = new LEDSegment(
+      LEDConstants.LEDSegmentRange.CANdleFull.index,
+      LEDConstants.LEDSegmentRange.CANdleFull.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment Strip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.Strip1.index,
+      LEDConstants.LEDSegmentRange.Strip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment Strip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.Strip2.index,
+      LEDConstants.LEDSegmentRange.Strip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment Strip1and2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.Strip1and2.index,
+      LEDConstants.LEDSegmentRange.Strip1and2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment Full = new LEDSegment(
+      LEDConstants.LEDSegmentRange.Full.index,
+      LEDConstants.LEDSegmentRange.Full.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment FirstTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.FirstTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.FirstTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment FirstTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.FirstTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.FirstTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment SecondTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.SecondTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.SecondTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment SecondTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.SecondTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.SecondTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment ThirdTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.ThirdTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.ThirdTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment ThirdTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.ThirdTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.ThirdTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment FourthTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.FourthTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.FourthTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment FourthTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.FourthTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.FourthTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment FifthTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.FifthTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.FifthTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment FifthTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.FifthTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.FifthTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment SixthTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.SixthTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.SixthTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment SixthTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.SixthTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.SixthTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment SeventhTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.SeventhTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.SeventhTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment SeventhTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.SeventhTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.SeventhTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment EighthTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.EighthTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.EighthTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment EighthTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.EighthTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.EighthTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment NinthTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.NinthTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.NinthTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment NinthTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.NinthTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.NinthTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment TenthTenthStrip1 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.TenthTenthStrip1.index,
+      LEDConstants.LEDSegmentRange.TenthTenthStrip1.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment TenthTenthStrip2 = new LEDSegment(
+      LEDConstants.LEDSegmentRange.TenthTenthStrip2.index,
+      LEDConstants.LEDSegmentRange.TenthTenthStrip2.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    
+    
+    segments.put(LEDSegmentRange.CANdleTop, CANdleTop);
+    segments.put(LEDSegmentRange.CANdleBottom, CANdleBottom);
+    segments.put(LEDSegmentRange.CANdleFull, CANdleFull);
+    segments.put(LEDSegmentRange.Strip1, Strip1);
+    segments.put(LEDSegmentRange.Strip2, Strip2);
+    segments.put(LEDSegmentRange.Strip1and2, Strip1and2);
     segments.put(LEDSegmentRange.Full, Full);
     segments.put(LEDSegmentRange.FirstTenthStrip1, FirstTenthStrip1);
     segments.put(LEDSegmentRange.FirstTenthStrip2, FirstTenthStrip2);
@@ -308,7 +499,7 @@ public class LED extends SubsystemBase {
   public void setAnimation(Color[][] animation, LEDSegmentRange segment, boolean loop) {
     if (segments.containsKey(segment)) {
       segments.get(segment).setAnimation(animation, loop);
-    } else if (segment == LEDSegmentRange.Full) {
+    } else if (segment == LEDSegmentRange.Strip1) {
       // Special case
       segments.get(LEDSegmentRange.CANdleTop).setAnimation(animation, loop);
       segments.get(LEDSegmentRange.CANdleBottom).setAnimation(animation, loop);
@@ -443,8 +634,8 @@ public class LED extends SubsystemBase {
     // }
 
     // Every scheduler run, update the animations for all segments
-    if(RobotPreferences.isStickyFaultActive()) segments.get(LEDSegmentRange.CANdleBottom).setEdgeColor(Color.kRed);
-    else segments.get(LEDSegmentRange.CANdleBottom).setEdgeColor(Color.kBlack);
+    if(RobotPreferences.isStickyFaultActive()) segments.get(LEDSegmentRange.CANdleFull).setEdgeColor(Color.kRed);
+    else segments.get(LEDSegmentRange.CANdleFull).setEdgeColor(Color.kBlack);
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
@@ -459,6 +650,149 @@ public class LED extends SubsystemBase {
         updateStateLEDs(segmentKey);
       }
     }
-    updateStateLEDs(LEDSegmentRange.CANdleFull);
+    updateStateLEDs(LEDSegmentRange.Full);
+    if (timer.hasElapsed(125)) { // 2m 5s from start of teleop: 10 seconds left
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      new WaitCommand(1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      new WaitCommand(1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip2);
+      new WaitCommand(1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip2);
+      new WaitCommand(1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip2);
+      new WaitCommand(1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip2);
+      new WaitCommand(1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip2);
+      new WaitCommand(1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.EighthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.EighthTenthStrip2);
+      new WaitCommand(1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.EighthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.EighthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.NinthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.NinthTenthStrip2);
+      new WaitCommand(1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.EighthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.EighthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.NinthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.NinthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.TenthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.TenthTenthStrip2);
+      new WaitCommand(.5);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SecondTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.ThirdTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FourthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.FifthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SixthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.SeventhTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.EighthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.EighthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.NinthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.NinthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.TenthTenthStrip1);
+      setLEDs(255, 0, 0, LEDSegmentRange.TenthTenthStrip2);
+      setLEDs(255, 0, 0, LEDSegmentRange.CANdleFull);
+    }
   }
 }
