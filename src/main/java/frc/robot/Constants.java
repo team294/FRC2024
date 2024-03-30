@@ -406,9 +406,30 @@ public final class Constants {
       public enum LEDSegmentRange {
           CANdleTop(0, 4),   // top row of CANdle  (bottom on robot, upside down)
           CANdleBottom(4, 4),  // bottom row of CANdle  (top on robot, upside down)
-          CANdleFull(0,8),
-          Strip1(8, 68),  // 1st strip only
-          Full(0, 68);  // CANdle + 1st strip  (update values if second strip is ever added)
+          CANdleFull(0,8), // whole CANdle
+          Strip1(8, 60),  // 1st strip only
+          Strip2(68, 60), // 2nd strip only
+          Full(0, 128),  // CANdle + both strips
+          FirstTenthStrip1(67, 6),
+          FirstTenthStrip2(68, 6),
+          SecondTenthStrip1(61, 6),
+          SecondTenthStrip2(74, 6),
+          ThirdTenthStrip1(55, 6),
+          ThirdTenthStrip2(80, 6),
+          FourthTenthStrip1(49, 6),
+          FourthTenthStrip2(86, 6),
+          FifthTenthStrip1(41, 6),
+          FifthTenthStrip2(92, 6),
+          SixthTenthStrip1(37, 6),
+          SixthTenthStrip2(98, 6),
+          SeventhTenthStrip1(31, 6),
+          SeventhTenthStrip2(104, 6),
+          EighthTenthStrip1(25, 6),
+          EighthTenthStrip2(110, 6),
+          NinthTenthStrip1(19, 6),
+          NinthTenthStrip2(116, 6),
+          TenthTenthStrip1(13, 6),
+          TenthTenthStrip2(122, 6);
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
