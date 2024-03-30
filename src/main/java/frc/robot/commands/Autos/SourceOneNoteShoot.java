@@ -14,7 +14,6 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveToPose;
-import frc.robot.commands.ShooterSetPercent;
 import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.Sequences.SetShooterWristSpeaker;
 import frc.robot.commands.Sequences.ShootPiece;
