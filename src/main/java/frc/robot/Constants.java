@@ -387,9 +387,12 @@ public final class Constants {
   }
 
     public static final class LEDConstants {
+      public static final double accuracyDisplayThreshold = 15; //TODO Decide what the threshold should be
+
       public static final class Patterns {
           // Static Patterns
           public static final Color[] blueOrangeStatic = {Color.kBlue, Color.kOrange};
+          public static final Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed, Color.kRed, Color.kRed, Color.kRed};
           // Animated Patterns
           public static final Color[][] blueOrangeMovingAnim = {{Color.kBlue, Color.kOrange},{Color.kOrange,Color.kBlue}};
           public static final Color[][] rainbowArray = {

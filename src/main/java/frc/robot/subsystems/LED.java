@@ -30,8 +30,8 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private boolean shouldClear;
-  // private double accuracyDisplayThreshold;
-  // private int accuracy;
+  private int degreesFromSpeaker;
+  private int accuracy;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
 
@@ -306,14 +306,14 @@ public class LED extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // if(degreesFromSpeaker <= accuracyDisplayThreshold){
-    //   accuracy = (int)((accuracyDisplayPattern.length/2)*(1-((degreesFromSpeaker-1)/accuracyDisplayThreshold)));
-    //   if (accuracy > (accuracyDisplayPattern.length/2)) {
-    //     setColor(Color.kGreen, LEDSegmentRange.Strip1);
-    //   } else {
-    //     setPattern(accuracyDisplayPattern, Color.kGreen, accuracy, LEDSegmentRange.Strip1);
-    //   }
-    // }
+    if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
+      accuracy = (int)((LEDConstants.Patterns.accuracyDisplayPattern.length/2)*(1-((degreesFromSpeaker-1)/LEDConstants.accuracyDisplayThreshold)));
+      if (accuracy > (LEDConstants.Patterns.accuracyDisplayPattern.length/2)) {
+        setColor(Color.kGreen, LEDSegmentRange.Strip1);
+      } else {
+        setPattern(LEDConstants.Patterns.accuracyDisplayPattern, Color.kGreen, accuracy, LEDSegmentRange.Strip1);
+      }
+    }
 
     // Every scheduler run, update the animations for all segments
     if(RobotPreferences.isStickyFaultActive()) segments.get(LEDSegmentRange.CANdleBottom).setEdgeColor(Color.kRed);
