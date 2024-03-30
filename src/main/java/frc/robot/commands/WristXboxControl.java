@@ -40,7 +40,7 @@ public class WristXboxControl extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double wristPct = xboxController.getRightY();
+    double wristPct = -xboxController.getRightY();
     if (Math.abs(wristPct)<OIConstants.manualWristDeadband) wristPct=0;
     wristPct *= WristConstants.maxPercentOutput;
 
