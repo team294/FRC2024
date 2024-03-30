@@ -139,7 +139,7 @@ public class AutoSelection {
 		
 		else if(autoPlan == CenterFourPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Four Piece Shoot");
-			autonomousCommand = new CenterFourPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new CenterFourPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == SourceOnePieceShoot){

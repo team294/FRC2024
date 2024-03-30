@@ -23,7 +23,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 27;
+    private static int trajectoryCount = 33;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
@@ -53,8 +53,13 @@ public class TrajectoryCache {
         driveFromCenterStartToEndCenterAutoRed(23),
         driveFromCenterStartToEndCenterAutoBlue(24),
         driveFromSourceNoteToSourceStartRed(25),
-        driveFromSourceNoteToSourceStartBlue(26);
-
+        driveFromSourceNoteToSourceStartBlue(26),
+        driveCenterStartToSourceNearRed(27),
+        driveCenterStartToSourceNearBlue(28),
+        driveFromSourceNoteToCenterNoteRed(29),
+        driveFromSourceNoteToCenterNoteBlue(30),
+        driveFromCenterNoteToAmpNoteRed(31),
+        driveFromCenterNoteToAmpNoteBlue(32);
 
 
 
@@ -340,10 +345,64 @@ public class TrajectoryCache {
         cache[TrajectoryType.driveFromSourceNoteToSourceStartBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(Math.toRadians(-54)), 
-            calcTrajectory("Source Start to Source Startte Blue", .8, .4, false, 
+            calcTrajectory("Source Note to Source Start Blue", .8, .4, false, 
             new Pose2d(2.8, 4.1, new Rotation2d(Math.toRadians(180))), 
             List.of(), 
             new Pose2d(1.1, 4.6, new Rotation2d(Math.toRadians(170)))
+            ));
+        
+        cache[TrajectoryType.driveCenterStartToSourceNearRed.value] = new TrajectoryFacing(
+            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(23)), 
+            calcTrajectory("Center Start to Source note Red", .4, .4, false, 
+            new Pose2d(0.4, 2.65, new Rotation2d(Math.toRadians(23))), 
+            List.of(), 
+            new Pose2d(2.0, 3.95, new Rotation2d(Math.toRadians(23)))
+            ));
+        
+        cache[TrajectoryType.driveCenterStartToSourceNearBlue.value] = new TrajectoryFacing(
+            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(-23)), 
+            calcTrajectory("Center Start to Source note Blue", .4, .4, false, 
+            new Pose2d(0.4, 5.55, new Rotation2d(Math.toRadians(-23))), 
+            List.of(), 
+            new Pose2d(2.0, 4.25, new Rotation2d(Math.toRadians(-23)))
+            ));
+
+        cache[TrajectoryType.driveFromSourceNoteToCenterNoteRed.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(23)), 
+            new Rotation2d(0), 
+            calcTrajectory("Source Note to Center note Red", .4, .4, false, 
+            new Pose2d(2.0, 3.95, new Rotation2d(Math.toRadians(-160))),
+            List.of(new Translation2d(2, 2.8)), 
+            new Pose2d(2.2, 2.65, new Rotation2d(0))
+            ));
+
+        cache[TrajectoryType.driveFromSourceNoteToCenterNoteBlue.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(-23)), 
+            new Rotation2d(0), 
+            calcTrajectory("Source Note to Center note Blue", .4, .4, false, 
+            new Pose2d(2.0, 4.25, new Rotation2d(Math.toRadians(160))),
+            List.of(new Translation2d(2, 5.4)), 
+            new Pose2d(2.2, 5.55, new Rotation2d(0))
+            ));
+
+        cache[TrajectoryType.driveFromCenterNoteToAmpNoteRed.value] = new TrajectoryFacing(
+            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(-23)), 
+            calcTrajectory("Center Note to Amp note Red", .4, .4, false, 
+            new Pose2d(2.2, 2.65, new Rotation2d(Math.toRadians(-160))),
+            List.of(new Translation2d(0.8, 1.4)), 
+            new Pose2d(2.2, 1.25, new Rotation2d(Math.toRadians(0)))
+            ));
+        
+        cache[TrajectoryType.driveFromCenterNoteToAmpNoteBlue.value] = new TrajectoryFacing(
+            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(-23)), 
+            calcTrajectory("Center Note  to Amp note Blue", .4, .4, false, 
+            new Pose2d(2.2, 5.55, new Rotation2d(Math.toRadians(160))),
+            List.of(new Translation2d(0.8, 6.8)), 
+            new Pose2d(2.2, 6.95, new Rotation2d(Math.toRadians(0)))
             ));
         
     }
