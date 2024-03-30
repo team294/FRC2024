@@ -38,6 +38,7 @@ public class AutoSelection {
 	public static final int AmpThreePieceShoot = 6;
 	public static final int CenterSourceThreePieceShoot = 7;
 	public static final int CenterFourPieceShoot = 8;
+	public static final int SourceOnePieceShoot = 9;
 
 
 
@@ -57,11 +58,12 @@ public class AutoSelection {
 		// auto selections
 		autoChooser.setDefaultOption("None", NONE);
 		autoChooser.addOption("CenterTwoPieceShoot", CenterTwoPieceShoot);
-		// autoChooser.addOption("SourceTwoPieceShoot", SourceTwoPieceShoot);
+		autoChooser.addOption("SourceTwoPieceShoot", SourceTwoPieceShoot);
 		// autoChooser.addOption("AmpTwoPieceShoot", AmpTwoPieceShoot);
 		// autoChooser.addOption("AmpThreePieceShoot", AmpThreePieceShoot);
 		// autoChooser.addOption("OnePieceShoot", shootOne);
 		autoChooser.addOption("CenterThreePieceShootAmp", CenterSourceThreePieceShoot);
+		autoChooser.addOption("SourceOnePieceShoot", SourceOnePieceShoot);
 		// autoChooser.addOption("CenterFourPieceNearNoteAuto", CenterFourPieceShoot);
 		
 
@@ -117,7 +119,7 @@ public class AutoSelection {
 
 		else if(autoPlan == SourceTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Source Two Piece Shoot");
-			autonomousCommand = new SourceTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new SourceTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == AmpTwoPieceShoot){
@@ -138,6 +140,11 @@ public class AutoSelection {
 		else if(autoPlan == CenterFourPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Four Piece Shoot");
 			autonomousCommand = new CenterFourPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == SourceOnePieceShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Source One Piece Shoot");
+			autonomousCommand = new SourceOneNoteShoot(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
 		}
 
         else if (autonomousCommand == null) {
