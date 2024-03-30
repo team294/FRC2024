@@ -14,7 +14,6 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveToPose;
-import frc.robot.commands.ShooterSetPercent;
 import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.Sequences.SetShooterWristSpeaker;
 import frc.robot.commands.Sequences.ShootPiece;
@@ -26,7 +25,6 @@ import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
-import frc.robot.utilities.TrajectoryCache;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -39,8 +37,7 @@ public class SourceOneNoteShoot extends SequentialCommandGroup {
     addCommands(
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
-      new ShooterSetPercent(-0.02, shooter, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new ConditionalCommand(

@@ -217,6 +217,7 @@ public final class Constants {
 
       public static final double velocityErrorTolerance = 100;
       public static final double shooterPercent = 0.25;
+      public static final double shooterPercentStopQuickly = -0.02;       // Shooter speed to quickly ramp down shooter motor
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
       public static final double shooterVelocityPit = 500;
@@ -352,6 +353,9 @@ public final class Constants {
           speakerShotFromPodium(-70),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
           speakerShotFromMidStage(-79),
           farShotAngle(-83),
+          sourceCloseNoteShot(-65),
+          centerCloseNoteShot(-62),
+          ampCloseNoteShot(-67),
           overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-45.0),
           ampShot(50.0),
