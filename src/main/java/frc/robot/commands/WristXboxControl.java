@@ -34,20 +34,17 @@ public class WristXboxControl extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    log.writeLog(false, "ElevatorWristXboxControl", "Initialize");
+    log.writeLog(false, "WristXboxControl", "Initialize");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double wristPct = xboxController.getRightX();
+    double wristPct = xboxController.getRightY();
     if (Math.abs(wristPct)<OIConstants.manualWristDeadband) wristPct=0;
     wristPct *= WristConstants.maxPercentOutput;
 
-    log.writeLog(false, "ElevatorWristXboxControl", "Execute", "Right Xbox", wristPct);
-
-    // Only run one element at a time (elevator or wrist)
-    // Run whichever is being set to a higher value
+    log.writeLog(false, "WristXboxControl", "Execute", "Right Xbox", wristPct);
 
     wrist.setWristMotorPercentOutput(wristPct);
   }
@@ -56,6 +53,8 @@ public class WristXboxControl extends Command {
   @Override
   public void end(boolean interrupted) {
     wrist.stopWrist();
+
+    log.writeLog(false, "WristXboxControl", "End");
   }
 
   // Returns true when the command should end.
