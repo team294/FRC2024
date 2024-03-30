@@ -4,13 +4,9 @@
 
 package frc.robot.commands.Sequences;
 
-import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.SpeakerModeSet;
 import frc.robot.commands.FarShotSet;
 import frc.robot.commands.IntakeStop;
 import frc.robot.commands.RobotStateSetIdle;
