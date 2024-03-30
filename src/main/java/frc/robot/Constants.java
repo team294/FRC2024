@@ -410,26 +410,26 @@ public final class Constants {
           Strip1(8, 60),  // 1st strip only
           Strip2(68, 60), // 2nd strip only
           Full(0, 128),  // CANdle + both strips
-          FirstTenthStrip1(67, 6),
-          FirstTenthStrip2(68, 6),
-          SecondTenthStrip1(61, 6),
-          SecondTenthStrip2(74, 6),
-          ThirdTenthStrip1(55, 6),
-          ThirdTenthStrip2(80, 6),
-          FourthTenthStrip1(49, 6),
-          FourthTenthStrip2(86, 6),
-          FifthTenthStrip1(41, 6),
-          FifthTenthStrip2(92, 6),
-          SixthTenthStrip1(37, 6),
-          SixthTenthStrip2(98, 6),
-          SeventhTenthStrip1(31, 6),
-          SeventhTenthStrip2(104, 6),
-          EighthTenthStrip1(25, 6),
-          EighthTenthStrip2(110, 6),
-          NinthTenthStrip1(19, 6),
-          NinthTenthStrip2(116, 6),
-          TenthTenthStrip1(13, 6),
-          TenthTenthStrip2(122, 6);
+          FirstTenthStrip1(62, 6), // last (10th) 6 on first strip
+          FirstTenthStrip2(68, 6), // 1st 6 on second strip
+          SecondTenthStrip1(56, 6), // ninth to last 6 on first strip
+          SecondTenthStrip2(74, 6), // 2nd 6 on second strip
+          ThirdTenthStrip1(50, 6), // eighth 6 on first strip
+          ThirdTenthStrip2(80, 6), // 3rd 6 on second strip
+          FourthTenthStrip1(44, 6), // seventh 6 on first strip
+          FourthTenthStrip2(86, 6), // 4th 6 on first strip
+          FifthTenthStrip1(38, 6), // sixth 6 on first strip
+          FifthTenthStrip2(92, 6), // 5th 6 on first strip
+          SixthTenthStrip1(32, 6), // fifth 6 on first strip
+          SixthTenthStrip2(98, 6), // 6th 6 on first strip
+          SeventhTenthStrip1(26, 6), // fourth 6 on first strip
+          SeventhTenthStrip2(104, 6), // 7th last 6 on first strip
+          EighthTenthStrip1(20, 6), // third 6 on first strip
+          EighthTenthStrip2(110, 6), // 8th 6 on first strip
+          NinthTenthStrip1(14, 6), // second 6 on first strip
+          NinthTenthStrip2(116, 6), // 9th 6 on first strip
+          TenthTenthStrip1(8, 6), // first 6 on first strip
+          TenthTenthStrip2(122, 6); // last (10th) 6 on second strip
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
@@ -437,8 +437,5 @@ public final class Constants {
               this.count = count;
           }
       }
-
-      // public static final double NumLEDs = 68;
   }
-
 }
