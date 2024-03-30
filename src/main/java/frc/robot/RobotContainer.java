@@ -431,6 +431,8 @@ public class RobotContainer {
 
     // Set robot state
     robotState.setState(State.IDLE);
+    // Starts timer @ zero seconds
+    timer.reset();
   }
 
   /**
