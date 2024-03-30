@@ -305,9 +305,9 @@ public final class Constants {
       
       public static final double voltageCompSaturation = 12.0;
       public static final double maxUncalibratedPercentOutput = 0.15;     // CALIBRATED
-      public static final double maxPercentOutput = 0.4;          // CALIBRATED
+      public static final double maxPercentOutput = 0.5;          // CALIBRATED
 
-      public static final double climbPercentOutput = -0.4;
+      public static final double climbPercentOutput = -0.5;
 
       // Update the REV through bore encoder offset angle in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
