@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.HashMap;
 
+import com.ctre.phoenix.CANifier.LEDChannel;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
@@ -31,7 +32,7 @@ public class LED extends SubsystemBase {
   private Feeder feeder;
   private boolean shouldClear;
   private int degreesFromSpeaker;
-  private int accuracy;
+  private int numAccuracyLEDs;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
 
@@ -307,11 +308,11 @@ public class LED extends SubsystemBase {
   public void periodic() {
 
     if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
-      accuracy = (int)((LEDConstants.Patterns.accuracyDisplayPattern.length/2)*(1-((degreesFromSpeaker-1)/LEDConstants.accuracyDisplayThreshold)));
-      if (accuracy > (LEDConstants.Patterns.accuracyDisplayPattern.length/2)) {
+      numAccuracyLEDs = (int)(((int)(LEDSegmentRange.Strip1.count/2))*(1-((degreesFromSpeaker-1)/LEDConstants.accuracyDisplayThreshold)));
+      if (numAccuracyLEDs > (LEDSegmentRange.Strip1.count/2)) {
         setColor(Color.kGreen, LEDSegmentRange.Strip1);
       } else {
-        setPattern(LEDConstants.Patterns.accuracyDisplayPattern, Color.kGreen, accuracy, LEDSegmentRange.Strip1);
+        setPattern(LEDConstants.Patterns.accuracyDisplayPattern, Color.kGreen, numAccuracyLEDs, LEDSegmentRange.Strip1);
       }
     }
 
