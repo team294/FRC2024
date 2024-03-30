@@ -217,6 +217,7 @@ public final class Constants {
 
       public static final double velocityErrorTolerance = 100;
       public static final double shooterPercent = 0.25;
+      public static final double shooterPercentStopQuickly = -0.02;       // Shooter speed to quickly ramp down shooter motor
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
       public static final double shooterVelocityPit = 500;

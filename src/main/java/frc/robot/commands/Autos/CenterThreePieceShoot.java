@@ -41,8 +41,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
     addCommands(
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
-      new ShooterSetPercent(-0.02, shooter, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log),
@@ -68,8 +67,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
         new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
           ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
       ),
-      new ShootPiece(shooter, feeder, robotState, log),
-      new ShooterSetPercent(-0.02, shooter, log),
+      new ShootPiece(false, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log),
@@ -88,8 +86,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
         new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
           ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
       ),
-      new ShootPiece(shooter, feeder, robotState, log),
-      new ShooterSetPercent(-0.02, shooter, log),
+      new ShootPiece(false, shooter, feeder, robotState, log),
       new WristSetAngle(WristAngle.lowerLimit, wrist, log),
       new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterStartToEndCenterAutoRed.value], driveTrain, log), 

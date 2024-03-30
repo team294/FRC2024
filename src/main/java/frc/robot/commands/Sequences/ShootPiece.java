@@ -21,12 +21,13 @@ public class ShootPiece extends SequentialCommandGroup {
    * Shoots a piece using fixed shooter velocity.
    * @param velocityTop top shooter wheel velocity, in rpm  (+ = shoot forward, - = backwards)
    * @param velocityBottom bottom shooter wheel velocity, in rpm  (+ = shoot forward, - = backwards)
+   * @param waitForSpinDown true = wait for shooter motors to stop before returning.  False = return immediately after shooting, with shooter motors set to slow reverse speed.
    * @param shooter
    * @param feeder
    * @param robotState
    * @param log
    */
-  public ShootPiece(double velocityTop, double velocityBottom, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public ShootPiece(double velocityTop, double velocityBottom, boolean waitForSpinDown, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -34,21 +35,31 @@ public class ShootPiece extends SequentialCommandGroup {
       new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log),
       new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5),
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
-      new WaitCommand(.5),
-      new ShooterFeederStop(shooter, feeder, log),
+      new WaitCommand(.4).until(()-> !feeder.isPiecePresent()),
+      new WaitCommand(.1),
+      new ShooterSetPercent(ShooterConstants.shooterPercentStopQuickly, shooter, log),
+      new FeederSetPercent(0, feeder, log),
       new RobotStateSetIdle(robotState, feeder, log)
     );
+
+    if (waitForSpinDown) {
+      addCommands(
+        new WaitCommand(0.5),
+        new ShooterFeederStop(shooter, feeder, log)
+      );
+    }
   }
 
   /**
    * Shoots a piece using standard shooter velocities.
+   * @param waitForSpinDown true = wait for shooter motors to stop before returning.  False = return immediately after shooting, with shooter motors set to slow reverse speed.
    * @param shooter
    * @param feeder
    * @param robotState
    * @param log
    */
-  public ShootPiece(Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
-    this(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log);
+  public ShootPiece(boolean waitForSpinDown, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+    this(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, waitForSpinDown, shooter, feeder, robotState, log);
   }
 
 }
