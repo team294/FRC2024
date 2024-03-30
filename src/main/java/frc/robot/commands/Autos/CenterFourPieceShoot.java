@@ -59,7 +59,7 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      new SetShooterWristSpeaker(WristAngle.sourceCloseNoteShot, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
@@ -72,7 +72,7 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      new SetShooterWristSpeaker(WristAngle.centerCloseNoteShot, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
@@ -85,7 +85,7 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      new SetShooterWristSpeaker(WristAngle.ampCloseNoteShot, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),

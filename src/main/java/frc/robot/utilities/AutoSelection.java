@@ -64,7 +64,7 @@ public class AutoSelection {
 		// autoChooser.addOption("OnePieceShoot", shootOne);
 		autoChooser.addOption("CenterThreePieceShootAmp", CenterSourceThreePieceShoot);
 		autoChooser.addOption("SourceOnePieceShoot", SourceOnePieceShoot);
-		// autoChooser.addOption("CenterFourPieceNearNoteAuto", CenterFourPieceShoot);
+		autoChooser.addOption("CenterFourPieceNearNoteAuto", CenterFourPieceShoot);
 		
 
 	
