@@ -305,7 +305,7 @@ public final class Constants {
       
       public static final double voltageCompSaturation = 12.0;
       public static final double maxUncalibratedPercentOutput = 0.15;     // CALIBRATED
-      public static final double maxPercentOutput = 0.5;          // CALIBRATED
+      public static final double maxPercentOutput = 0.4;          // CALIBRATED
 
       public static final double climbPercentOutput = -0.5;
 
