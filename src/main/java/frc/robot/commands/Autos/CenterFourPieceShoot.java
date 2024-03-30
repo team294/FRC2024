@@ -48,12 +48,12 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(1.3, 2.663, 0, false, driveTrain, log),
+            new DriveResetPose(0.4, 2.65, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterStartToSourceNearRed.value], driveTrain, log)
           )
           , 
           new SequentialCommandGroup(
-            new DriveResetPose(1.3, 5.57, 0, false, driveTrain, log),
+            new DriveResetPose(0.4, 5.55, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterStartToSourceNearBlue.value], driveTrain, log)
           ), 
           () -> alliance.getAlliance() == Alliance.Red
