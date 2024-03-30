@@ -352,9 +352,9 @@ public final class Constants {
           speakerShotFromPodium(-70),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
           speakerShotFromMidStage(-79),
           farShotAngle(-83),
-          sourceCloseNoteShot(-61),
-          centerCloseNoteShot(-59),
-          ampCloseNoteShot(-64),
+          sourceCloseNoteShot(-60),
+          centerCloseNoteShot(-56),
+          ampCloseNoteShot(-62),
           overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-45.0),
           ampShot(50.0),
