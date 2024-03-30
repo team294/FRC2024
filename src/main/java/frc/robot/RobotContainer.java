@@ -123,6 +123,7 @@ public class RobotContainer {
     SmartDashboard.putData("Wrist Set Angle", new WristSetAngle(wrist, log));
     SmartDashboard.putData("Wrist Calibration", new WristCalibrationRamp(0.01, 0.4, wrist, log));
     SmartDashboard.putData("Wrist Stop", new WristSetPercentOutput(0.0, wrist, log));
+    SmartDashboard.putData("Wrist Nudge Angle", new WristNudgeAngle(wrist, log));
   
     // Drive base commands
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
@@ -323,7 +324,9 @@ public class RobotContainer {
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
       new WristSetAngle(WristAngle.climbStop, wrist, log)
     ));
-
+    // Nudge angle up or down
+    coP[5].onTrue(new WristNudgeAngle(2, wrist, log)); // Nudge down
+    coP[6].onTrue(new WristNudgeAngle(-2, wrist, log)); // Nudge up
   }
 
 
