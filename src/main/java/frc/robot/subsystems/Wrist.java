@@ -309,7 +309,7 @@ public class Wrist extends SubsystemBase implements Loggable{
   }
 
   /**
-   * Adjust the current degrees of the wrist by a small amount
+   * Adjust the current calibration degrees of the wrist by a small amount
    * @param deltaDegrees the number of degrees to move up/down
    */
   public void nudgeWristAngle(double deltaDegrees) {

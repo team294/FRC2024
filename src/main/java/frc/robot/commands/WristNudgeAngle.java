@@ -19,7 +19,7 @@ public class WristNudgeAngle extends InstantCommand {
   private boolean fromShuffleboard;
 
   /**
-   * Adjust the current degrees of the wrist by a small amount
+   * Adjust the current calibration degrees of the wrist by a small amount
    * @param deltaDegrees the number of degrees to move up/down
    * @param wrist
    * @param log
@@ -34,7 +34,7 @@ public class WristNudgeAngle extends InstantCommand {
   }
 
   /**
-   * Adjust the current degrees of the wrist by a small amount (from SmartDashboard)
+   * Adjust the current calibration degrees of the wrist by a small amount (from SmartDashboard)
    * @param deltaDegrees the number of degrees to move up/down (Wrist Nudge Delta Degrees from SmartDashboard)
    * @param wrist
    * @param log
