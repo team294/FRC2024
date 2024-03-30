@@ -14,16 +14,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
-import frc.robot.Constants.FeederConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
@@ -230,7 +226,7 @@ public class RobotContainer {
     // Store wrist, does not turn on intake
     xbX.onTrue(
       new ParallelCommandGroup(
-        new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
+        new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, log),
         new SpeakerModeSet(true, robotState, log),
         new FarShotSet(false, robotState, log)
       ));
