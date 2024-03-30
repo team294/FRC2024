@@ -4,8 +4,6 @@
 
 package frc.robot.commands.Sequences;
 
-import edu.wpi.first.units.Velocity;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
