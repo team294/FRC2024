@@ -109,7 +109,7 @@ public class AutoSelection {
 
 		else if(autoPlan == shootOne){
 			log.writeLogEcho(true, "AutoSelect", "run One Piece Shoot");
-			autonomousCommand = new ShootPiece(shooter, feeder, robotState, log);
+			autonomousCommand = new ShootPiece(true, shooter, feeder, robotState, log);
 		}
 
 		else if(autoPlan == CenterTwoPieceShoot){
