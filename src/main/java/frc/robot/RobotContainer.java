@@ -198,6 +198,7 @@ public class RobotContainer {
     Trigger xbPOVRight = xboxController.povRight();
     Trigger xbPOVLeft = xboxController.povLeft();
     Trigger xbPOVDown = xboxController.povDown();
+    Trigger xbRJoystickTrigger = xboxController.rightStick();
 
     // Prep for overhead speaker shot
     xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
@@ -256,6 +257,7 @@ public class RobotContainer {
         new RobotStateSetIdle(robotState, feeder, log)      
     ) );
     
+    xbRJoystickTrigger.whileTrue(new WristXboxControl(xboxController, wrist, log));     
   }
 
   /**
