@@ -398,7 +398,7 @@ public class TrajectoryCache {
         
         cache[TrajectoryType.driveFromCenterNoteToAmpNoteBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
-            new Rotation2d(Math.toRadians(-23)), 
+            new Rotation2d(Math.toRadians(23)), 
             calcTrajectory("Center Note  to Amp note Blue", .4, .4, false, 
             new Pose2d(2.2, 5.55, new Rotation2d(Math.toRadians(160))),
             List.of(new Translation2d(0.8, 6.8)), 
