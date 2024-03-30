@@ -76,7 +76,6 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
-      new WristSetAngle(WristAngle.lowerLimit, wrist, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log),
