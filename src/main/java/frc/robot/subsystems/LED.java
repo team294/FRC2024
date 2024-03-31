@@ -90,6 +90,21 @@ public class LED extends SubsystemBase {
       LEDConstants.LEDSegmentRange.StripRight.count,
       LEDConstants.Patterns.noPatternAnimation
     );
+    LEDSegment StripHorizontal = new LEDSegment(
+      LEDConstants.LEDSegmentRange.StripHorizontal.index,
+      LEDConstants.LEDSegmentRange.StripHorizontal.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment StripVerticals = new LEDSegment(
+      LEDConstants.LEDSegmentRange.StripVerticals.index,
+      LEDConstants.LEDSegmentRange.StripVerticals.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
+    LEDSegment AllStripsNoCANdle = new LEDSegment(
+      LEDConstants.LEDSegmentRange.AllStripsNoCANdle.index,
+      LEDConstants.LEDSegmentRange.AllStripsNoCANdle.count,
+      LEDConstants.Patterns.noPatternAnimation
+    );
     LEDSegment Full = new LEDSegment(
       LEDConstants.LEDSegmentRange.Full.index,
       LEDConstants.LEDSegmentRange.Full.count,
@@ -202,6 +217,9 @@ public class LED extends SubsystemBase {
     segments.put(LEDSegmentRange.CANdleFull, CANdleFull);
     segments.put(LEDSegmentRange.StripLeft, StripLeft);
     segments.put(LEDSegmentRange.StripRight, StripRight);
+    segments.put(LEDSegmentRange.StripHorizontal, StripHorizontal);
+    segments.put(LEDSegmentRange.StripVerticals, StripVerticals);
+    segments.put(LEDSegmentRange.AllStripsNoCANdle, AllStripsNoCANdle);
     segments.put(LEDSegmentRange.Full, Full);
     segments.put(LEDSegmentRange.FirstTenthStrip1, FirstTenthStrip1);
     segments.put(LEDSegmentRange.FirstTenthStrip2, FirstTenthStrip2);
@@ -473,8 +491,8 @@ public class LED extends SubsystemBase {
       }
     }
     updateStateLEDs(LEDSegmentRange.Full);
-
-    if (timer.hasElapsed(125)) { // 2m 5s from start of teleop: 10 seconds left
+ // CHANGE BACK TO 125 AFTER TEST
+    if (timer.hasElapsed(20)) { // 2m 5s from start of teleop: 10 seconds left
       setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
       setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
       new WaitCommand(1);
