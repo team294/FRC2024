@@ -289,8 +289,138 @@ public class LED extends SubsystemBase {
     if(RobotPreferences.isStickyFaultActive()) {
       setAnimation(Color.kRed, LEDSegmentRange.CANdleFull);
     }
+    updateStateLEDs(LEDSegmentRange.Full);
 
-
-      DisplayLEDs();
+    if (timer.hasElapsed(34)) { // TODO: add 1 to all of these after testing
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.NinthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.NinthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.TenthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.TenthTenthStrip2);
+    }
+    else if (timer.hasElapsed(33)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.NinthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.NinthTenthStrip2);
+    }
+    else if (timer.hasElapsed(32)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip2);
+    }
+    else if (timer.hasElapsed(31)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip2);
+    }
+    else if (timer.hasElapsed(30)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+    }
+    else if (timer.hasElapsed(29)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+    }
+    else if (timer.hasElapsed(28)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+    }
+    else if (timer.hasElapsed(27)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+    }
+    else if (timer.hasElapsed(26)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+    }
+    else if (timer.hasElapsed(25)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+    }
+     DisplayLEDs();
   }
 }
