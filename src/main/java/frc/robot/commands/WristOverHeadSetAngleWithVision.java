@@ -53,11 +53,11 @@ public class WristOverHeadSetAngleWithVision extends Command {
     double y = (driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos());
     // distance from speaker (robot distance + arm distance from center of robot)
     double distOff = RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter * Math.cos(Units.degreesToRadians(getAngleFromDistance(n - 1)));
-    double dist = Math.sqrt(x * x + y * y) + distOff;
+    double dist = Math.sqrt(x * x + y * y); 
     // height of shooter: height of robot + height of arm
     double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot + RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n - 1)));
 
-    return 90 - (Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker - heightOfShooter) / dist)));
+    return 90 - (Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker - heightOfShooter) /(dist + distOff))));
   } 
 
   // Called just before this Command runs the first time
@@ -69,9 +69,12 @@ public class WristOverHeadSetAngleWithVision extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
-    angle = getAngleFromDistance(3);
-    wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
-    wrist.updateWristLog(false);
+    try {
+      angle = getAngleFromDistance(3);
+      wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
+      wrist.updateWristLog(false);
+    } catch (ArithmeticException e) {
+      return;
   }
 
   // Called once after isFinished returns true
