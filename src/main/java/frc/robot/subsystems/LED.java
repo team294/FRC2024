@@ -36,7 +36,7 @@ public class LED extends SubsystemBase {
   private Feeder feeder;
   private boolean shouldClear;
   private int degreesFromSpeaker;
-  private int numAccuracyLEDs;
+  private int halfAccuracyLEDs;
   private Timer timer;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
@@ -302,10 +302,10 @@ public class LED extends SubsystemBase {
 
     if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
       LEDSegmentRange horizontalSegment = LEDSegmentRange.StripHorizontal;
-      numAccuracyLEDs = (horizontalSegment.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
+      halfAccuracyLEDs = ((int)horizontalSegment.count/2)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
       Color[] accuracyArray = new Color[horizontalSegment.count];
       for(int index = 0; index < horizontalSegment.count; index++){
-        if(index < (numAccuracyLEDs/2) || index >= (horizontalSegment.count-(numAccuracyLEDs/2))){accuracyArray[index] = Color.kGreen;}
+        if(index < halfAccuracyLEDs || index >= (horizontalSegment.count-halfAccuracyLEDs)){accuracyArray[index] = Color.kGreen;}
         else{accuracyArray[index] = Color.kRed;}
       }
       segments.get(horizontalSegment).setAnimation(accuracyArray);
