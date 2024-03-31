@@ -380,7 +380,7 @@ public final class Constants {
     public enum BCRColor {
       IDLE(255, 255, 255), // White             (nothing running)
       INTAKING(0, 0, 255), // Blue       (intake running)
-      SHOOTING(0, 255, 0);       // Green       (shooter running)
+      SHOOTING(0, 255, 0); // Green       (shooter running)
 
       public final int r, g, b;
       BCRColor(int r, int g, int b) {
@@ -408,10 +408,9 @@ public final class Constants {
       }
 
       public enum LEDSegmentRange {
-          CANdleTop(0, 4),   // top row of CANdle  (bottom on robot, upside down)
-          CANdleBottom(4, 4),  // bottom row of CANdle  (top on robot, upside down)
-          CANdleFull(0,8),
-          Strip1(8, 68),  // 1st strip only
+          CANdle(0,8),
+          StripLeft(64, 60), // Left vertical strip
+          StripRight(124, 60), // Left vertical strip
           Full(0, 68);  // CANdle + 1st strip  (update values if second strip is ever added)
 
           public final int index, count;
