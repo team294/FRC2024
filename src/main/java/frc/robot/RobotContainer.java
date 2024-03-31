@@ -303,7 +303,7 @@ public class RobotContainer {
     
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
     // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
-    right[2].whileTrue(new DriveToNoteSequence(intake, shooter, feeder, wrist, driveTrain, robotState, log));
+    // right[2].whileTrue(new DriveToNoteSequence(intake, shooter, feeder, wrist, driveTrain, robotState, log));
     
      
   }

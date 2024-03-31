@@ -70,9 +70,13 @@ public class WristSetAngleWithVision extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
-    angle = getAngleFromDistance(3);
-    wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
-    wrist.updateWristLog(false);
+    try {
+      angle = getAngleFromDistance(3);
+      wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
+      wrist.updateWristLog(false);
+    } catch (ArithmeticException e) {
+      return;
+    }
   }
 
   // Called once after isFinished returns true
