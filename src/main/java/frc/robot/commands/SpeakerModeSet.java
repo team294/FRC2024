@@ -14,9 +14,9 @@ public class SpeakerModeSet extends InstantCommand {
   FileLog log;
 
   /**
-   * Immediately sets the shooter's mode to the given mode.
+   * Immediately records the shooter's mode to the given mode.
    * This will update wherever the object is used.
-   * @param speakerMode true = speaker mode, false = amp mode
+   * @param speakerMode true = mode to score in speaker, false = mode to score in amp
    * @param robotState
    * @param log
    */
