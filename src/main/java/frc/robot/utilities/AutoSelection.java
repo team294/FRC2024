@@ -1,14 +1,8 @@
 package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.CoordType;
@@ -111,7 +105,7 @@ public class AutoSelection {
 
 		else if(autoPlan == shootOne){
 			log.writeLogEcho(true, "AutoSelect", "run One Piece Shoot");
-			autonomousCommand = new ShootPiece(shooter, feeder, robotState, log);
+			autonomousCommand = new ShootPiece(true, shooter, feeder, robotState, log);
 		}
 
 		else if(autoPlan == CenterTwoPieceShoot){
@@ -141,7 +135,7 @@ public class AutoSelection {
 		
 		else if(autoPlan == CenterFourPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Four Piece Shoot");
-			autonomousCommand = new CenterFourPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new CenterFourPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == SourceShootOnePiece){

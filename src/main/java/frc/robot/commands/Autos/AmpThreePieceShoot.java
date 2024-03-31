@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
@@ -41,7 +40,7 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
     addCommands(
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, runsWhenDisabled(), shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log),
@@ -51,7 +50,7 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, runsWhenDisabled(), shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
@@ -64,7 +63,7 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
       ),
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
           ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, runsWhenDisabled(), shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
       new WristSetAngle(WristAngle.lowerLimit, wrist, log)
     );
