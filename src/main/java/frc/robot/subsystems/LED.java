@@ -157,6 +157,12 @@ public class LED extends SubsystemBase {
     segments.get(segment).setAnimation(color);
     log.writeLog(false, "LED", "Set Animation");
   }
+  
+  public void setAnimation(BCRColor color, LEDSegmentRange segment) {
+    Color _color = new Color(color.r, color.g, color.b);
+    segments.get(segment).setAnimation(_color);
+    log.writeLog(false, "LED", "Set Animation");
+  }
 
   /**
    * Sets LEDs using only R, G, and B
@@ -276,18 +282,18 @@ public class LED extends SubsystemBase {
           }
           setAnimation(segmentPattern, segment, true);
         } else {
-          setLEDs(255, 30, 0, segment.index, segment.count);
+          setAnimation(Color.kOrange, segment);
         }
       }
       else {
-        setLEDs(BCRColor.IDLE, segment.index, segment.count);
+        setAnimation(BCRColor.IDLE, segment);
       }
       break;
     case INTAKING:
-      setLEDs(BCRColor.INTAKING, segment.index, segment.count);
+      setAnimation(BCRColor.INTAKING, segment);
       break;
     case SHOOTING:
-      setLEDs(BCRColor.SHOOTING, segment.index, segment.count);
+      setAnimation(BCRColor.SHOOTING, segment);
       break;
     }
     log.writeLog(false, "LED", "Update State LEDs", "State", currentState);
