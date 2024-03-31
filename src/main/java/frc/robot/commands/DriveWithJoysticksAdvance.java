@@ -109,13 +109,15 @@ public class DriveWithJoysticksAdvance extends Command {
         if(firstCorrecting){
           firstCorrecting = false;
           driveTrain.enableFastLogging(false);
-          goalAngle = aimLock ? Math.PI + Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX()): driveTrain.getPose().getRotation().getRadians();
+          goalAngle = driveTrain.getPose().getRotation().getRadians();
           goalAngle = MathUtil.angleModulus(goalAngle);
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
         if(aimLock){
-          goalAngle = Math.PI + Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
+          goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
+          goalAngle = MathUtil.angleModulus(goalAngle);
           SmartDashboard.putNumber("Goal Angle", goalAngle);
+          turnRateController.reset(goalAngle);
         }
       // When the right button on the right joystick is pressed then the robot turns pi radians(180 degrees)
       // This button works but it is currently used for other commands
@@ -139,13 +141,16 @@ public class DriveWithJoysticksAdvance extends Command {
       else{
         nextTurnRate = 0;
       }
-        if(log.isMyLogRotation(logRotationKey)) {
-          log.writeLog(false, "DriveWithJoystickAdvance", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", nextTurnRate, "Goal Angle", goalAngle);
-        }
-      
-        driveTrain.drive(fwdVelocity, leftVelocity, nextTurnRate, true, false);
+      if(log.isMyLogRotation(logRotationKey)) {
+        log.writeLog(false, "DriveWithJoystickAdvance", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", nextTurnRate, "Goal Angle", goalAngle);
+      }
+    
+      if(aimLock){ 
+        nextTurnRate *= 2.5;
+      }
+      driveTrain.drive(fwdVelocity, leftVelocity, nextTurnRate, true, false);
 
-        //firstInDeadband = false;
+      //firstInDeadband = false;
       }else{
         driveTrain.drive(fwdVelocity, leftVelocity, turnRate, true, false);
         
@@ -158,6 +163,7 @@ public class DriveWithJoysticksAdvance extends Command {
         log.writeLog(false, "DriveWithJoystickAdvance", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", turnRate);
       }
 
+      
       driveTrain.drive(fwdVelocity, leftVelocity, turnRate, true, false);
       
       firstInDeadband = true;

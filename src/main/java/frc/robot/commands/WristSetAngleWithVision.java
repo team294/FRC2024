@@ -51,8 +51,10 @@ public class WristSetAngleWithVision extends Command {
 
     double x = driveTrain.getPose().getX();
     double y = (driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos());
-    // distance from speaker - minus arm distance from center of robot
-    double dist = Math.sqrt(x*x+y*y) - RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(Units.degreesToRadians(getAngleFromDistance(n-1)));
+    // distance from center of robot to shooter
+    double distOff = RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(Units.degreesToRadians(getAngleFromDistance(n-1)));
+    // distance from speaker
+    double dist = Math.sqrt(x*x+y*y) - distOff;
 
     double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot+RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n-1)));
 
@@ -69,7 +71,7 @@ public class WristSetAngleWithVision extends Command {
   @Override
   public void execute() {
     angle = getAngleFromDistance(3);
-    wrist.setWristAngle(angle - 3 + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
+    wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
     wrist.updateWristLog(false);
   }
 
