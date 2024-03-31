@@ -285,12 +285,11 @@ public class LED extends SubsystemBase {
   @Override
   public void periodic() {
     updateStateLEDs(LEDSegmentRange.Full);
-
     if(RobotPreferences.isStickyFaultActive()) {
       setAnimation(Color.kRed, LEDSegmentRange.CANdleFull);
     }
-    updateStateLEDs(LEDSegmentRange.Full);
-
+    System.out.println(timer.hasElapsed(5));
+    System.out.println(timer.get());
     if (timer.hasElapsed(34)) { // TODO: add 1 to all of these after testing
       setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
       setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
@@ -312,6 +311,7 @@ public class LED extends SubsystemBase {
       setAnimation(Color.kRed, LEDSegmentRange.NinthTenthStrip2);
       setAnimation(Color.kRed, LEDSegmentRange.TenthTenthStrip1);
       setAnimation(Color.kRed, LEDSegmentRange.TenthTenthStrip2);
+      timer.stop();
     }
     else if (timer.hasElapsed(33)) {
       setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
