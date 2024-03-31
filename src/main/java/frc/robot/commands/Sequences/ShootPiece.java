@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Sequences;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -34,14 +35,27 @@ public class ShootPiece extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      // Make sure that shooter is at speed and wrist is at target angle (if it is calibrated)
       new ParallelCommandGroup(
         new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log),
         new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log),
         new WaitUntilCommand( () -> !wrist.isEncoderCalibrated() || (Math.abs(wrist.getCurrentWristTarget() - wrist.getWristAngle()) < WristConstants.wristShootTolerance) )
       ).withTimeout(1.5),
+
+      // Shoot
       new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
-      new WaitUntilCommand(()-> !feeder.isPiecePresent()).withTimeout(.4),
-      new WaitCommand(.1),
+      new ConditionalCommand(
+        // If we have a piece, then shoot 0.1 sec after the piece leaves the feeder sensor
+        new SequentialCommandGroup(
+          new WaitUntilCommand(()-> !feeder.isPiecePresent()).withTimeout(.4),
+          new WaitCommand(.1)
+        ),
+        // If we don't have a piece (or the piece sensor is broken), then shoot for 0.5 sec
+        new WaitCommand(0.5),
+        () -> feeder.isPiecePresent()
+      ),
+
+      // After shot, reverse shooter and turn off feeder 
       new ParallelCommandGroup(
         new ShooterSetPercent(ShooterConstants.shooterPercentStopQuickly, shooter, log),
         new FeederSetPercent(0, feeder, log),
@@ -49,6 +63,7 @@ public class ShootPiece extends SequentialCommandGroup {
       )
     );
 
+    // If we are waiting for spin down, then turn off feeder after 0.5 sec
     if (waitForSpinDown) {
       addCommands(
         new WaitCommand(0.5),
