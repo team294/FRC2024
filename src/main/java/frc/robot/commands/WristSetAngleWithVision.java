@@ -54,11 +54,11 @@ public class WristSetAngleWithVision extends Command {
     // distance from center of robot to shooter
     double distOff = RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(Units.degreesToRadians(getAngleFromDistance(n-1)));
     // distance from speaker
-    double dist = Math.sqrt(x*x+y*y) - distOff;
+    double dist = Math.sqrt(x*x+y*y);
 
     double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot+RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n-1)));
-
-    return Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker-heightOfShooter)/dist)) - 90 - 10;
+    
+    return Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker-heightOfShooter)/(dist - distOff))) - 90 - 10 + ((n == 3) ? (3.79204*dist - 12.7572) : 0);
   } 
 
   // Called just before this Command runs the first time
