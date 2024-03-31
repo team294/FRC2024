@@ -253,7 +253,7 @@ public class RobotContainer {
         new RobotStateSetIdle(robotState, feeder, log)      
     ) );
     
-    xbRJoystickTrigger.whileTrue(new WristXboxControl(xboxController, wrist, log));     
+    xbRJoystickTrigger.whileTrue(new WristXboxControl(xboxController, wrist, intake, feeder, log));     
   }
 
   /**
