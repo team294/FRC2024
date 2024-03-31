@@ -114,7 +114,7 @@ public final class Constants {
       public static final double kEncoderCPR = 1.0;                // CALIBRATED = 1.0.  Encoder counts per revolution of motor pinion gear
       public static final double kDriveGearRatio = (5.903 / 1.0);      // 2024=Modified L2.  CALIBRATED.   Mk4i = 8.14:1 (L1-std gears), 6.75:1 (L2-fast gears), 5.903 (modified L2 16-tooth gear).  
       public static final double kTurningGearRatio = (150.0/7.0 / 1.0); // CALIBRATED = 150.0/7.0.  Mk4i = 150/7 : 1
-      public static final double kWheelDiameterMeters = 0.1003 * 1.001; // 1.001 adjustment CALIBRATED.  Colson wheel = nominal 4" diameter, actual 3.95" = 0.1003m.  80% bot calibrated = 0.1013m.
+      public static final double kWheelDiameterMeters = 0.1003 * 1.025; // B1:  1.025 adjustment CALIBRATED.  Colson wheel = nominal 4" diameter, actual 3.95" = 0.1003m.  80% bot calibrated = 0.1013m.
       public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
 
@@ -314,7 +314,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // A8: Updated to -121 deg from -130 deg (tightened wrist chain)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // B1: Updated to -162 deg from -141 deg (tightened wrist chain)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
@@ -326,6 +326,8 @@ public final class Constants {
       public static final double MMCruiseVelocity = 90.0;   // 90.0 Calibrated.  Arm can reach ~95.  Max trapezoid velocity in motor rps.
       public static final double MMAcceleration = MMCruiseVelocity/0.35;    // Calibrated.  Accel in 0.35 sec.  Max trapezoid acceleration in motor rot/sec^2.  MMVel/MMAccel = (# seconds to full velocity)
       public static final double MMJerk = MMAcceleration/0.05;  // Calibrated.  Jerk in 0.05 sec.  Max trapezoid jerk in motor rot/sec^3.  MMAccel/MMJerk = (# seconds to full accel)
+
+      public static final double wristShootTolerance = 2.0;   // Only shoot if wrist is within this many degrees of the target angle
 
       // Wrist regions
       public enum WristRegion {
