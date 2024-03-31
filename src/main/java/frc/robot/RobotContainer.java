@@ -140,7 +140,7 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
     SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, robotState, log));
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
 
@@ -202,7 +202,7 @@ public class RobotContainer {
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Move wrist down and then intake a piece
-    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, robotState, log));
+    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
 
     // Reverse the intake
     xbLT.onTrue(new IntakeSetPercent(-.3, -.3, intake, log));

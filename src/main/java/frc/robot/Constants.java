@@ -223,6 +223,9 @@ public final class Constants {
       public static final double shooterVelocityPit = 500;
       public static final double shooterVelocityFarTop =2000;
       public static final double shooterVelocityFarBottom = 2000;
+
+      // Time for the shooter to ramp down at shooterPercentStopQuickly before stopping
+      public static final double shooterSpinDownSeconds = 0.5;
     }
 
     public static final class FeederConstants {

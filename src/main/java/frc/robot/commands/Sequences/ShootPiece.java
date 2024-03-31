@@ -44,7 +44,7 @@ public class ShootPiece extends SequentialCommandGroup {
 
     if (waitForSpinDown) {
       addCommands(
-        new WaitCommand(0.5),
+        new WaitCommand(ShooterConstants.shooterSpinDownSeconds),
         new ShooterFeederStop(shooter, feeder, log)
       );
     }
