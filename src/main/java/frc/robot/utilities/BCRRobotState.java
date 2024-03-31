@@ -16,10 +16,10 @@ public class BCRRobotState {
     // The current State of the robot
     private State state;
 
-    //True if in speaker mode , false if in amp mode
+    //True if in mode to score in speaker, false if in mode to score in amp
     private boolean speakerMode = true; 
 
-    //True if in far shoot mode, false to revert to speaker mode boolean
+    //True if in far shot mode, false to revert to speaker mode boolean
     private boolean farShotMode = false;
 
     /** Creates a new BCRRobotState with the default State value of IDLE */
@@ -41,27 +41,35 @@ public class BCRRobotState {
     }
 
     /**
-     * returns if shooter/wrist are in speaker mode or amp mode
+     * returns if shooter/wrist are in mode to score in speaker or in mode to score in amp
      * @return true = speaker mode, false = amp mode
      */
     public boolean isSpeakerMode(){
         return speakerMode;
     }
     
+    /**
+     * returns if shooter is in mode for a Far shot (lobbing note towards alliance partner)
+     * @return true = far shot, false = normal speaker shot
+     */
     public boolean isFarShotMode(){
         return farShotMode;
     }
 
     /**
-     * Set if the robot is in speaker mode or amp mode
+     * Set if in mode to score in speaker or in mode to score in amp
      * @param speakerMode true = speaker mode, false = amp mode
      */
     public void setSpeakerMode(boolean speakerMode){
         this.speakerMode = speakerMode;
     }
 
-    public void setFarShotMode(boolean farShootMode){
-        this.farShotMode = farShootMode;
+    /**
+     * Set if in mode for a Far shot (lobbing note towards alliance partner)
+     * @param farShotMode true = far shot, false = normal speaker shot
+     */
+    public void setFarShotMode(boolean farShotMode){
+        this.farShotMode = farShotMode;
     }
 
     /**

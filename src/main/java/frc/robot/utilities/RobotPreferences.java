@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.WristConstants;
 
-import static frc.robot.Constants.*;
-
 /**
  * This class handles all stored robot preferences
  */
