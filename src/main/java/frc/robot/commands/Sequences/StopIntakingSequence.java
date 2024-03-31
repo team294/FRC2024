@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -29,7 +30,10 @@ public class StopIntakingSequence extends ParallelCommandGroup {
       new SequentialCommandGroup(
         new FeederSetPercent(FeederConstants.feederBackPiecePercent, feeder, log),
         new WaitCommand(FeederConstants.feederBackPieceTime),
-        new FeederSetPercent(0.0, feeder, log)
+        new FeederSetPercent(0.0, feeder, log),
+        new IntakeSetPercent(-IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake, log),
+        new WaitCommand(0.250),
+        new IntakeSetPercent(0.0, 0.0, intake, log)
       ),
       new RobotStateSetIdle(robotState, feeder, log)
     );

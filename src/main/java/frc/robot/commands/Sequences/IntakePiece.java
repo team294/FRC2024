@@ -41,10 +41,7 @@ public class IntakePiece extends SequentialCommandGroup {
           new WristSetAngle(WristAngle.lowerLimit, wrist, log),
           new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log),
           new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
-          new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
-          new IntakeSetPercent(-IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake, log),
-          new WaitCommand(0.250),
-          new IntakeSetPercent(0.0, 0.0, intake, log)
+          new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
         ),
         new WaitCommand(0),
         () -> (!feeder.isPiecePresent())
