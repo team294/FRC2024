@@ -61,7 +61,7 @@ public class RobotContainer {
   private final Timer timer = new Timer();
   
   // Is a subsystem, but requires a utility
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, log);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, log, timer);
 
 
   // Define controllers

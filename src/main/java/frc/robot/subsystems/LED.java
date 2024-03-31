@@ -479,10 +479,7 @@ public class LED extends SubsystemBase {
       }
     }
     updateStateLEDs(LEDSegmentRange.Full);
-    if (timer.hasElapsed(125)) {
-      setPattern()
-    }
-    
+
     if (timer.hasElapsed(125)) { // 2m 5s from start of teleop: 10 seconds left
       setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
       setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
