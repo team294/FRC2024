@@ -275,9 +275,12 @@ public class RobotContainer {
     // Shoot the note
     left[2].onTrue(
         new ConditionalCommand(
+          // Far shot lobbing note towards alliance partner
           new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, true, shooter, feeder, robotState, log),
           new ConditionalCommand(
+            // Shoot in speaeker
             new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, robotState, log),
+            // Shoot in amp
             new ShootPieceAmp(feeder, robotState, log),
             () -> robotState.isSpeakerMode()
           ),
