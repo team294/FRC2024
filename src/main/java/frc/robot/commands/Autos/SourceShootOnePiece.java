@@ -36,7 +36,7 @@ public class SourceShootOnePiece extends SequentialCommandGroup {
         new SetShooterWristSpeaker(WristAngle.speakerShotFromAmpSideClockwise, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         () -> alliance.getAlliance() == Alliance.Red
       ),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, runsWhenDisabled(), shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log)
     );
   }
