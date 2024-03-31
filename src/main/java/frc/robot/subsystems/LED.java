@@ -305,10 +305,10 @@ public class LED extends SubsystemBase {
       numAccuracyLEDs = (horizontalSegment.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
       Color[] accuracyArray = new Color[horizontalSegment.count];
       for(int index = 0; index < horizontalSegment.count; index++){
-        if(index < numAccuracyLEDs){accuracyArray[index] = Color.kGreen;}
+        if(index < (numAccuracyLEDs/2) || index >= (horizontalSegment.count-(numAccuracyLEDs/2))){accuracyArray[index] = Color.kGreen;}
         else{accuracyArray[index] = Color.kRed;}
       }
-      segments.get(horizontalSegment).setAnimation(accuracyArray, shouldClear);
+      segments.get(horizontalSegment).setAnimation(accuracyArray);
     }
 
     DisplayLEDs();

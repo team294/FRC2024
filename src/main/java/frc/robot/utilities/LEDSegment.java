@@ -49,7 +49,7 @@ public class LEDSegment {
      * Set/reset the pattern of the segment
      * @param pattern the pattern to display
      */
-    public void setAnimation(Color[] pattern, boolean loop) {
+    public void setAnimation(Color[] pattern) {
         Color[][] animation = {pattern};
         setAnimation(animation, true);
     }
