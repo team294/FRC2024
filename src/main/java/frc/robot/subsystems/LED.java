@@ -38,16 +38,17 @@ public class LED extends SubsystemBase {
   // private int accuracy;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
-
-  // LED Segments
-  //private LEDSegment CANdle;
-  //private LEDSegment strip1;
   private HashMap<LEDSegmentRange, LEDSegment> segments;
 
   /**
    * Creates the CANdle LED subsystem.
+   * @param CANPort
    * @param subsystemName
+   * @param shooter
+   * @param feeder
+   * @param robotState
    * @param log
+   * @param timer
    */
   public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, Timer timer) {
     this.log = log;
@@ -273,7 +274,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Set the pattern and resizes it to fit the LED strip
+   * Sets the pattern and resizes it to fit the LED strip
    * @param color the color to use
    * @param segment the segment to use
    */
@@ -284,7 +285,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Set the pattern and resizes it to fit the LED strip
+   * Sets the pattern and resizes it to fit the LED strip
    * @param pattern the pattern to use
    * @param segment the segment to use
    */
@@ -297,11 +298,18 @@ public class LED extends SubsystemBase {
     log.writeLog(false, "LED", "Set Pattern");
   }
 
+  /**
+   * Sets the pattern using edgeColor and edgeWidth
+   * @param pattern the pattern to use
+   * @param edgeColor color for the edge
+   * @param edgeWidth width of edge
+   * @param segment segment to use
+   */
   public void setPattern(Color[] pattern, Color edgeColor, int edgeWidth, LEDSegmentRange segment) {
-    if (pattern.length < (edgeWidth*2)+1) return;
+    if (pattern.length < (edgeWidth * 2) + 1) return;
 
     setLEDs(edgeColor, segment.index, edgeWidth);
-    setLEDs(edgeColor, segment.count + segment.index-edgeWidth, edgeWidth);
+    setLEDs(edgeColor, segment.count + segment.index - edgeWidth, edgeWidth);
     
     for (int indexLED = edgeWidth, indexPattern = 0; indexLED < segment.count-edgeWidth; indexLED++, indexPattern++) {
       if (indexPattern >= pattern.length) indexPattern = 0;
@@ -311,7 +319,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Sets the animation for a given certain led segment
+   * Sets the animation for a given led segment
    * @param animation animation to display
    * @param segment segment to play animation on
    * @param loop whether the animation repeats
@@ -471,6 +479,10 @@ public class LED extends SubsystemBase {
       }
     }
     updateStateLEDs(LEDSegmentRange.Full);
+    if (timer.hasElapsed(125)) {
+      setPattern()
+    }
+    
     if (timer.hasElapsed(125)) { // 2m 5s from start of teleop: 10 seconds left
       setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip1);
       setLEDs(255, 0, 0, LEDSegmentRange.FirstTenthStrip2);
