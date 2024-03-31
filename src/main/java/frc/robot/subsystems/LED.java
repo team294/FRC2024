@@ -146,7 +146,7 @@ public class LED extends SubsystemBase {
     log.writeLog(false, "LED", "Set Animation");
   }
 
-  public void setAnimation(Color[] pattern, LEDSegmentRange segment, boolean loop) {\
+  public void setAnimation(Color[] pattern, LEDSegmentRange segment, boolean loop) {
     Color[][] anim = {pattern};
     segments.get(segment).setAnimation(anim, loop);
     log.writeLog(false, "LED", "Set Animation");
@@ -251,14 +251,29 @@ public class LED extends SubsystemBase {
     case IDLE:
       if (feeder.isPiecePresent()) {
         if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance
-        && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight)){
+        && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight)) {
+          setAnimation(Color.kGreen, segment);
+        } else if (shooter.getTopShooterTargetRPM() > 0 && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight))  {
+          Double percent = shooter.getTopShooterVelocity() / shooter.getTopShooterTargetRPM();
+          Color[] segmentPattern = new Color[segment.count];
           if (segment == LEDSegmentRange.StripLeft) {
-            Color[] segmentPattern = new Color[segment.count];
-            
-            setAnimation(segmentPattern, segment, true);
+            for (int i = 0; i < segment.count; i++) {
+              if (i >= (1.0 - percent) * segment.count) {
+                segmentPattern[i] = Color.kPurple;
+              } else {
+                segmentPattern[i] = Color.kOrange;
+              }
+            }
           } else if (segment == LEDSegmentRange.StripRight) {
-
+            for (int i = 0; i < segment.count; i++) {
+              if (i <= percent * segment.count) {
+                segmentPattern[i] = Color.kPurple;
+              } else {
+                segmentPattern[i] = Color.kOrange;
+              }
+            }
           }
+          setAnimation(segmentPattern, segment, true);
         } else {
           setLEDs(255, 30, 0, segment.index, segment.count);
         }
