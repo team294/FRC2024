@@ -66,6 +66,9 @@ public class SwerveModule {
 	private final StatusSignal<Double> turningEncoderPosition;			// Encoder position, in pinion rotations
 	private final StatusSignal<Double> turningEncoderVelocity;			// Encoder Velocity, in pinion rotations/second
 
+  // Variables to track motor information
+  private boolean isInCoastMode;                // Current Neutral Mode setting for the drive and turning motors:  true = coast mode, false = brake mode
+
   // CANCoder objects
   private final CANcoder turningCanCoder;
   private final CANcoderConfigurator turningCanCoderConfigurator;
@@ -217,6 +220,9 @@ public class SwerveModule {
    * <p> <b>Note</b> that this procedure includes multiple blocking calls and will delay robot code.
    */
   public void configSwerveModule() {
+    // Save setting for Neutral mode
+    isInCoastMode = (driveMotorConfig.MotorOutput.NeutralMode == NeutralModeValue.Coast);
+
  		// Apply configuration to the drive motor.
 		// This is a blocking call and will wait up to 50ms-70ms for the config to apply.
 		driveMotorConfigurator.apply(driveMotorConfig);
@@ -248,11 +254,16 @@ public class SwerveModule {
   }
 
   /**
-   * Sets the swerve module in coast or brake mode.
-   * <p> <b>Note</b> that this procedure includes multiple blocking calls and will delay robot code.
+   * Sets the swerve module to coast or brake mode.
+   * <p> <b>Note</b> that this procedure includes multiple blocking calls and will delay robot code by ~60ms if the mode is changed.
+   * However, if setCoast is the same as the current setting, then nothing is sent to the swerve modules and there will not
+   * be a delay.
    * @param setCoast true = coast mode, false = brake mode
    */
   public void setMotorModeCoast(boolean setCoast) {
+    // Do nothing if swerve module is already in the requested mode.
+    if (setCoast == isInCoastMode) return;
+
     if (setCoast) {
       driveMotor.setNeutralMode(NeutralModeValue.Coast);
       turningMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -260,6 +271,7 @@ public class SwerveModule {
       driveMotor.setNeutralMode(NeutralModeValue.Brake);
       turningMotor.setNeutralMode(NeutralModeValue.Brake);
     }
+    isInCoastMode = setCoast;
   }
 
   // ********** Main swerve module control methods
