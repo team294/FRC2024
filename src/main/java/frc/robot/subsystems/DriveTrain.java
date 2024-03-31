@@ -70,6 +70,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   // variable to store vision camera
   private PhotonCameraWrapper camera;
+  private AllianceSelection allianceSelection;
 
   // Odometry class for tracking robot pose
   private final SwerveDrivePoseEstimator poseEstimator; 
@@ -87,6 +88,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     this.log = log; // save reference to the fileLog
     logRotationKey = log.allocateLogRotation();     // Get log rotation for this subsystem
     this.camera = new PhotonCameraWrapper(allianceSelection, log, logRotationKey);
+    this.allianceSelection = allianceSelection;
 
     // create swerve modules
     swerveFrontLeft = new SwerveModule("FL",
@@ -204,6 +206,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   public double getAngularVelocity () {
     // return angularVelocity;
     return -pigeon.getRate();     // TODO check if this is accurate!  If so, then delete the commented-out code to calc angularVelocity in periodic, constructor, etc
+  }
+
+  public double getSpeakerAngleFromRobot() {
+    return Math.atan((getPose().getY() - allianceSelection.getSpeakerYPos())/getPose().getX());
   }
 
   /**
