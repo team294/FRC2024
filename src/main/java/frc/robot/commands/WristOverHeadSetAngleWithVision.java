@@ -57,7 +57,7 @@ public class WristOverHeadSetAngleWithVision extends Command {
     // height of shooter: height of robot + height of arm
     double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot + RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n - 1)));
 
-    return 90 - (Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker - heightOfShooter) /(dist + distOff))));
+    return 90 - (Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker - heightOfShooter) /(dist + distOff))))+ ((n == 3) ? (3.98406*dist - 28.1998) : 0);
   } 
 
   // Called just before this Command runs the first time
@@ -75,6 +75,7 @@ public class WristOverHeadSetAngleWithVision extends Command {
       wrist.updateWristLog(false);
     } catch (ArithmeticException e) {
       return;
+    }
   }
 
   // Called once after isFinished returns true
