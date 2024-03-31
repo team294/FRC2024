@@ -94,7 +94,7 @@ public class Intake extends SubsystemBase implements Loggable {
     
     // Configure the intake motor
     intakeConfig = new TalonFXConfiguration();			// Factory default configuration
-    intakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;		// Don't invert motor
+    intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;		// B1:  Intake re-design between AZ East and Aerospace valley:  invert motor
 		intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // Hold piece if we stop the motor
     intakeConfig.Voltage.PeakForwardVoltage = IntakeConstants.compensationVoltage;
     intakeConfig.Voltage.PeakReverseVoltage = -IntakeConstants.compensationVoltage;
