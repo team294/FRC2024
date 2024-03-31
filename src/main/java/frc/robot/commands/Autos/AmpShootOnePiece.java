@@ -35,16 +35,12 @@ public class AmpShootOnePiece extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      // new ConditionalCommand(
-      //   new DriveResetPose(0.2, 1.2, -60, true, driveTrain, log),
-      //   new DriveResetPose(0.2, 7.0, 60, true, driveTrain, log),
-      //   () -> alliance.getAlliance() == Alliance.Red
-      // ),
-      // new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      // new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
-      // new ShooterSetPercent(-0.02, shooter, log)
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+     // new ConditionalCommand(
+      //  new DriveResetPose(0.2, 1.2, -60, true, driveTrain, log), 
+      //  new DriveResetPose(0.2, 7.0, 60, true, driveTrain, log), 
+      //  () -> alliance.getAlliance() == Alliance.Red
+     // ),
+      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log)
     );
