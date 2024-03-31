@@ -52,12 +52,12 @@ public class IntakePiece extends SequentialCommandGroup {
               new ShooterSetPercent(ShooterConstants.shooterPercentStopQuickly, shooter, log),
               new WaitCommand(ShooterConstants.shooterSpinDownSeconds),
               new ShooterSetPercent(0.0, shooter, log) // Stop the shooter, not the feeder
-            ),
-            new WaitCommand(0),
-            () -> (shooter.getBottomShooterVelocity() > 200.0) // TODO: what velocity is considered too fast
-          ).handleInterrupt(() -> { shooter.stopMotors(); })
+            ).handleInterrupt(() -> { shooter.stopMotors(); }),
+            new FileLogWrite(false, false, "IntakePiece", "Shooter already stopped", log),
+            () -> (shooter.getBottomShooterVelocity() > 200.0)
+          )
         ),
-        new WaitCommand(0),
+        new FileLogWrite(false, false, "IntakePiece", "Already has piece", log),
         () -> (!feeder.isPiecePresent())
       )
     );
