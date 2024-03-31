@@ -10,8 +10,11 @@ import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.fasterxml.jackson.core.io.SegmentedStringWriter;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.BCRColor;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -31,19 +34,24 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private boolean shouldClear;
+  private Timer timer;
   // private double accuracyDisplayThreshold;
   // private int accuracy;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
-
   private HashMap<LEDSegmentRange, LEDSegment> segments;
 
   /**
    * Creates the CANdle LED subsystem.
+   * @param CANPort
    * @param subsystemName
+   * @param shooter
+   * @param feeder
+   * @param robotState
    * @param log
+   * @param timer
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, Timer timer) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
@@ -55,6 +63,7 @@ public class LED extends SubsystemBase {
     this.shouldClear = false;
     // this.accuracyDisplayThreshold = 35;
     // this.accuracy = 0;
+    this.timer = timer;
 
     // Create the LED segments
     for (LEDSegmentRange segment : LEDSegmentRange.values()) {
@@ -105,7 +114,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Set the pattern and resizes it to fit the LED strip
+   * Sets the pattern and resizes it to fit the LED strip
    * @param color the color to use
    * @param segment the segment to use
    */
@@ -116,7 +125,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Set the pattern and resizes it to fit the LED strip
+   * Sets the pattern and resizes it to fit the LED strip
    * @param pattern the pattern to use
    * @param segment the segment to use
    */
@@ -130,7 +139,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Sets the animation for a given certain led segment
+   * Sets the animation for a given led segment
    * @param animation animation to display
    * @param segment segment to play animation on
    * @param loop whether the animation repeats
@@ -278,7 +287,7 @@ public class LED extends SubsystemBase {
     updateStateLEDs(LEDSegmentRange.Full);
 
     if(RobotPreferences.isStickyFaultActive()) {
-      setAnimation(Color.kRed, LEDSegmentRange.CANdle);
+      setAnimation(Color.kRed, LEDSegmentRange.CANdleFull);
     }
 
 
