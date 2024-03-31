@@ -301,14 +301,14 @@ public class LED extends SubsystemBase {
     // }
 
     if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
-      numAccuracyLEDs = (LEDSegmentRange.StripVerticals.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
-      Color[] accuracyArray = new Color[LEDSegmentRange.StripVerticals.count];
-      for(int index = 0; index < LEDSegmentRange.StripVerticals.count; index++){
+      LEDSegmentRange horizontalSegment = LEDSegmentRange.StripHorizontal;
+      numAccuracyLEDs = (horizontalSegment.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
+      Color[] accuracyArray = new Color[horizontalSegment.count];
+      for(int index = 0; index < horizontalSegment.count; index++){
         if(index < numAccuracyLEDs){accuracyArray[index] = Color.kGreen;}
         else{accuracyArray[index] = Color.kRed;}
       }
-
-      segments.get(LEDSegmentRange.StripVerticals).setAnimation(accuracyArray, shouldClear);
+      segments.get(horizontalSegment).setAnimation(accuracyArray, shouldClear);
     }
 
     DisplayLEDs();
