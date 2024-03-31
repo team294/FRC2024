@@ -8,13 +8,10 @@ import java.util.HashMap;
 
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
-import com.fasterxml.jackson.core.io.SegmentedStringWriter;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.BCRColor;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -148,6 +145,12 @@ public class LED extends SubsystemBase {
     segments.get(segment).setAnimation(animation, loop);
     log.writeLog(false, "LED", "Set Animation");
   }
+
+  public void setAnimation(Color[] pattern, LEDSegmentRange segment, boolean loop) {\
+    Color[][] anim = {pattern};
+    segments.get(segment).setAnimation(anim, loop);
+    log.writeLog(false, "LED", "Set Animation");
+  }
   
   public void setAnimation(Color color, LEDSegmentRange segment) {
     segments.get(segment).setAnimation(color);
@@ -249,7 +252,13 @@ public class LED extends SubsystemBase {
       if (feeder.isPiecePresent()) {
         if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance
         && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight)){
-          // TODO Purple Fill to green
+          if (segment == LEDSegmentRange.StripLeft) {
+            Color[] segmentPattern = new Color[segment.count];
+            
+            setAnimation(segmentPattern, segment, true);
+          } else if (segment == LEDSegmentRange.StripRight) {
+
+          }
         } else {
           setLEDs(255, 30, 0, segment.index, segment.count);
         }
@@ -272,10 +281,10 @@ public class LED extends SubsystemBase {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
-      setPattern(segments.get(segmentKey).getCurrentFrame(), segmentKey);
+      setPattern(segment.getCurrentFrame(), segmentKey);
       
       // Move to the next frame
-      shouldClear = segments.get(segmentKey).advanceFrame();
+      shouldClear = segment.advanceFrame();
       if (shouldClear) {
         updateStateLEDs(segmentKey);
       }
@@ -291,6 +300,6 @@ public class LED extends SubsystemBase {
     }
 
 
-      DisplayLEDs();
+    DisplayLEDs();
   }
 }
