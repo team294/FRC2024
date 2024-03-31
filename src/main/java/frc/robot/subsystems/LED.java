@@ -38,8 +38,6 @@ public class LED extends SubsystemBase {
   private int degreesFromSpeaker;
   private int numAccuracyLEDs;
   private Timer timer;
-  // private double accuracyDisplayThreshold;
-  // private int accuracy;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
   private HashMap<LEDSegmentRange, LEDSegment> segments;
@@ -271,32 +269,7 @@ public class LED extends SubsystemBase {
     log.writeLog(false, "LED", "Update State LEDs", "State", currentState);
   }
 
-
-  @Override
-  public void periodic() {
-
-    // if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
-    //   numAccuracyLEDs = (int)(((int)(LEDSegmentRange.Strip1.count/2))*(1-((degreesFromSpeaker-1)/LEDConstants.accuracyDisplayThreshold)));
-    //   if (numAccuracyLEDs > (LEDSegmentRange.Strip1.count/2)) {
-    //     setColor(Color.kGreen, LEDSegmentRange.Strip1);
-    //   } else {
-    //     setPattern(LEDConstants.Patterns.accuracyDisplayPattern, Color.kGreen, numAccuracyLEDs, LEDSegmentRange.Strip1);
-    //   }
-    // }
-
-    if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
-      numAccuracyLEDs = (LEDSegmentRange.Strip1.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
-      Color[] accuracyArray = new Color[LEDSegmentRange.Strip1.count];
-      for(int index = 0; index < LEDSegmentRange.Strip1.count; index++){
-        if(index < numAccuracyLEDs){accuracyArray[index] = Color.kGreen;}
-        else{accuracyArray[index] = Color.kRed;}
-      }
-      setPattern(accuracyArray, LEDSegmentRange.Strip1);
-    }
-
-    // Every scheduler run, update the animations for all segments
-    if(RobotPreferences.isStickyFaultActive()) segments.get(LEDSegmentRange.CANdleBottom).setEdgeColor(Color.kRed);
-    else segments.get(LEDSegmentRange.CANdleBottom).setEdgeColor(Color.kBlack);
+  private void DisplayLEDs() {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
@@ -315,10 +288,29 @@ public class LED extends SubsystemBase {
     updateStateLEDs(LEDSegmentRange.Full);
 
     if(RobotPreferences.isStickyFaultActive()) {
-      setAnimation(Color.kRed, LEDSegmentRange.CANdleFull);
+      segments.get(LEDSegmentRange.CANdleFull).setAnimation(Color.kRed);
     }
 
+    // if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
+    //   numAccuracyLEDs = (int)(((int)(LEDSegmentRange.Strip1.count/2))*(1-((degreesFromSpeaker-1)/LEDConstants.accuracyDisplayThreshold)));
+    //   if (numAccuracyLEDs > (LEDSegmentRange.Strip1.count/2)) {
+    //     setColor(Color.kGreen, LEDSegmentRange.Strip1);
+    //   } else {
+    //     setPattern(LEDConstants.Patterns.accuracyDisplayPattern, Color.kGreen, numAccuracyLEDs, LEDSegmentRange.Strip1);
+    //   }
+    // }
 
-      DisplayLEDs();
+    if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
+      numAccuracyLEDs = (LEDSegmentRange.StripVerticals.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
+      Color[] accuracyArray = new Color[LEDSegmentRange.StripVerticals.count];
+      for(int index = 0; index < LEDSegmentRange.StripVerticals.count; index++){
+        if(index < numAccuracyLEDs){accuracyArray[index] = Color.kGreen;}
+        else{accuracyArray[index] = Color.kRed;}
+      }
+
+      segments.get(LEDSegmentRange.StripVerticals).setAnimation(accuracyArray, shouldClear);
+    }
+
+    DisplayLEDs();
   }
 }
