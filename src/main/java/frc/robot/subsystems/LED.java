@@ -80,19 +80,14 @@ public class LED extends SubsystemBase {
       LEDConstants.LEDSegmentRange.CANdleFull.count,
       LEDConstants.Patterns.noPatternAnimation
     );
-    LEDSegment Strip1 = new LEDSegment(
-      LEDConstants.LEDSegmentRange.Strip1.index,
-      LEDConstants.LEDSegmentRange.Strip1.count,
+    LEDSegment StripLeft = new LEDSegment(
+      LEDConstants.LEDSegmentRange.StripLeft.index,
+      LEDConstants.LEDSegmentRange.StripLeft.count,
       LEDConstants.Patterns.noPatternAnimation
     );
-    LEDSegment Strip2 = new LEDSegment(
-      LEDConstants.LEDSegmentRange.Strip2.index,
-      LEDConstants.LEDSegmentRange.Strip2.count,
-      LEDConstants.Patterns.noPatternAnimation
-    );
-    LEDSegment Strip1and2 = new LEDSegment(
-      LEDConstants.LEDSegmentRange.Strip1and2.index,
-      LEDConstants.LEDSegmentRange.Strip1and2.count,
+    LEDSegment StripRight = new LEDSegment(
+      LEDConstants.LEDSegmentRange.StripRight.index,
+      LEDConstants.LEDSegmentRange.StripRight.count,
       LEDConstants.Patterns.noPatternAnimation
     );
     LEDSegment Full = new LEDSegment(
@@ -205,9 +200,8 @@ public class LED extends SubsystemBase {
     segments.put(LEDSegmentRange.CANdleTop, CANdleTop);
     segments.put(LEDSegmentRange.CANdleBottom, CANdleBottom);
     segments.put(LEDSegmentRange.CANdleFull, CANdleFull);
-    segments.put(LEDSegmentRange.Strip1, Strip1);
-    segments.put(LEDSegmentRange.Strip2, Strip2);
-    segments.put(LEDSegmentRange.Strip1and2, Strip1and2);
+    segments.put(LEDSegmentRange.StripLeft, StripLeft);
+    segments.put(LEDSegmentRange.StripRight, StripRight);
     segments.put(LEDSegmentRange.Full, Full);
     segments.put(LEDSegmentRange.FirstTenthStrip1, FirstTenthStrip1);
     segments.put(LEDSegmentRange.FirstTenthStrip2, FirstTenthStrip2);
@@ -327,7 +321,7 @@ public class LED extends SubsystemBase {
   public void setAnimation(Color[][] animation, LEDSegmentRange segment, boolean loop) {
     if (segments.containsKey(segment)) {
       segments.get(segment).setAnimation(animation, loop);
-    } else if (segment == LEDSegmentRange.Strip1) {
+    } else if (segment == LEDSegmentRange.StripLeft) {
       // Special case
       segments.get(LEDSegmentRange.CANdleTop).setAnimation(animation, loop);
       segments.get(LEDSegmentRange.CANdleBottom).setAnimation(animation, loop);

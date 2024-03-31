@@ -408,33 +408,35 @@ public final class Constants {
       }
 
       public enum LEDSegmentRange {
-          CANdleTop(4, 4),  // top row of CANdle
-          CANdleBottom(0, 4),   // bottom row of CANdle
-          CANdleFull(0,8), // whole CANdle
-          Strip1(8, 60),  // 1st strip only
-          Strip2(68, 60), // 2nd strip only
-          Strip1and2(8, 120), // 1st and 2nd strip but not CANdle
-          Full(0, 128),  // CANdle + both strips
-          FirstTenthStrip1(62, 6), // last (10th) 6 on first strip
-          FirstTenthStrip2(68, 6), // 1st 6 on second strip
-          SecondTenthStrip1(56, 6), // ninth to last 6 on first strip
-          SecondTenthStrip2(74, 6), // 2nd 6 on second strip
-          ThirdTenthStrip1(50, 6), // eighth 6 on first strip
-          ThirdTenthStrip2(80, 6), // 3rd 6 on second strip
-          FourthTenthStrip1(44, 6), // seventh 6 on first strip
-          FourthTenthStrip2(86, 6), // 4th 6 on first strip
-          FifthTenthStrip1(38, 6), // sixth 6 on first strip
-          FifthTenthStrip2(92, 6), // 5th 6 on first strip
-          SixthTenthStrip1(32, 6), // fifth 6 on first strip
-          SixthTenthStrip2(98, 6), // 6th 6 on first strip
-          SeventhTenthStrip1(26, 6), // fourth 6 on first strip
-          SeventhTenthStrip2(104, 6), // 7th last 6 on first strip
-          EighthTenthStrip1(20, 6), // third 6 on first strip
-          EighthTenthStrip2(110, 6), // 8th 6 on first strip
-          NinthTenthStrip1(14, 6), // second 6 on first strip
-          NinthTenthStrip2(116, 6), // 9th 6 on first strip
-          TenthTenthStrip1(8, 6), // first 6 on first strip
-          TenthTenthStrip2(122, 6); // last (10th) 6 on second strip
+          CANdleTop(4, 4),  // Top row of CANdle
+          CANdleBottom(0, 4),   // Bottom row of CANdle
+          CANdleFull(0,8), // Whole CANdle
+          StripLeft(64, 60),  // Left strip only
+          StripRight(124, 60), // Right strip only
+          StripHorizontal(8, 56), // Horizontal strip only
+          StripVerticals(64, 120), // Both vertical strips
+          AllStripsNoCANdle(8, 176), // All strips and not CANdle
+          Full(0, 184),  // CANdle + all strips
+          FirstTenthStrip1(118, 6), // last (10th) 6 on first strip
+          FirstTenthStrip2(124, 6), // 1st 6 on second strip
+          SecondTenthStrip1(112, 6), // ninth to last 6 on first strip
+          SecondTenthStrip2(130, 6), // 2nd 6 on second strip
+          ThirdTenthStrip1(106, 6), // eighth 6 on first strip
+          ThirdTenthStrip2(136, 6), // 3rd 6 on second strip
+          FourthTenthStrip1(100, 6), // seventh 6 on first strip
+          FourthTenthStrip2(142, 6), // 4th 6 on first strip
+          FifthTenthStrip1(94, 6), // sixth 6 on first strip
+          FifthTenthStrip2(148, 6), // 5th 6 on first strip
+          SixthTenthStrip1(88, 6), // fifth 6 on first strip
+          SixthTenthStrip2(154, 6), // 6th 6 on first strip
+          SeventhTenthStrip1(82, 6), // fourth 6 on first strip
+          SeventhTenthStrip2(160, 6), // 7th last 6 on first strip
+          EighthTenthStrip1(76, 6), // third 6 on first strip
+          EighthTenthStrip2(166, 6), // 8th 6 on first strip
+          NinthTenthStrip1(70, 6), // second 6 on first strip
+          NinthTenthStrip2(172, 6), // 9th 6 on first strip
+          TenthTenthStrip1(64, 6), // first 6 on first strip
+          TenthTenthStrip2(178, 6); // last (10th) 6 on second strip
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
