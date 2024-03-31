@@ -52,7 +52,8 @@ public class WristOverHeadSetAngleWithVision extends Command {
     double x = driveTrain.getPose().getX();
     double y = (driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos());
     // distance from speaker (robot distance + arm distance from center of robot)
-    double dist = Math.sqrt(x * x + y * y) + RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter * Math.cos(Units.degreesToRadians(getAngleFromDistance(n - 1)));
+    double distOff = RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter * Math.cos(Units.degreesToRadians(getAngleFromDistance(n - 1)));
+    double dist = Math.sqrt(x * x + y * y) + distOff;
     // height of shooter: height of robot + height of arm
     double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot + RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n - 1)));
 
