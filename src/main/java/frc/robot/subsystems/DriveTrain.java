@@ -212,6 +212,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     return Math.atan((getPose().getY() - allianceSelection.getSpeakerYPos())/getPose().getX());
   }
 
+  public double getAngleErrorToSpeaker(){
+    return Math.abs(getGyroRotation()-getSpeakerAngleFromRobot());
+  }
+
   /**
    * @return angular velocity from motor velocity readings (NOT from gyro)
    * Positive is turning left, negative is turning right.

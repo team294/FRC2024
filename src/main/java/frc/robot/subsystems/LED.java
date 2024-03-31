@@ -32,10 +32,11 @@ public class LED extends SubsystemBase {
   private String subsystemName;
   private BCRRobotState robotState;
   private BCRRobotState.State currentState;
+  private DriveTrain driveTrain;
   private Shooter shooter;
   private Feeder feeder;
   private boolean shouldClear;
-  private int degreesFromSpeaker;
+  private double degreesFromSpeaker;
   private int halfAccuracyLEDs;
   private Timer timer;
 
@@ -52,13 +53,14 @@ public class LED extends SubsystemBase {
    * @param log
    * @param timer
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, Timer timer) {
+  public LED(int CANPort, String subsystemName, DriveTrain driveTrain, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, Timer timer) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
     this.robotState = robotState;
     this.currentState = BCRRobotState.State.IDLE;
+    this.driveTrain = driveTrain;
     this.shooter = shooter;
     this.feeder = feeder;
     this.shouldClear = false;
@@ -299,7 +301,8 @@ public class LED extends SubsystemBase {
     //     setPattern(LEDConstants.Patterns.accuracyDisplayPattern, Color.kGreen, numAccuracyLEDs, LEDSegmentRange.Strip1);
     //   }
     // }
-
+    
+    degreesFromSpeaker = driveTrain.getAngleErrorToSpeaker();
     if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
       LEDSegmentRange horizontalSegment = LEDSegmentRange.StripHorizontal;
       halfAccuracyLEDs = ((int)horizontalSegment.count/2)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
