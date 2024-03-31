@@ -307,13 +307,23 @@ public class LED extends SubsystemBase {
   @Override
   public void periodic() {
 
+    // if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
+    //   numAccuracyLEDs = (int)(((int)(LEDSegmentRange.Strip1.count/2))*(1-((degreesFromSpeaker-1)/LEDConstants.accuracyDisplayThreshold)));
+    //   if (numAccuracyLEDs > (LEDSegmentRange.Strip1.count/2)) {
+    //     setColor(Color.kGreen, LEDSegmentRange.Strip1);
+    //   } else {
+    //     setPattern(LEDConstants.Patterns.accuracyDisplayPattern, Color.kGreen, numAccuracyLEDs, LEDSegmentRange.Strip1);
+    //   }
+    // }
+
     if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
-      numAccuracyLEDs = (int)(((int)(LEDSegmentRange.Strip1.count/2))*(1-((degreesFromSpeaker-1)/LEDConstants.accuracyDisplayThreshold)));
-      if (numAccuracyLEDs > (LEDSegmentRange.Strip1.count/2)) {
-        setColor(Color.kGreen, LEDSegmentRange.Strip1);
-      } else {
-        setPattern(LEDConstants.Patterns.accuracyDisplayPattern, Color.kGreen, numAccuracyLEDs, LEDSegmentRange.Strip1);
+      numAccuracyLEDs = (LEDSegmentRange.Strip1.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
+      Color[] accuracyArray = new Color[LEDSegmentRange.Strip1.count];
+      for(int index = 0; index < LEDSegmentRange.Strip1.count; index++){
+        if(index < numAccuracyLEDs){accuracyArray[index] = Color.kGreen;}
+        else{accuracyArray[index] = Color.kRed;}
       }
+      setPattern(accuracyArray, LEDSegmentRange.Strip1);
     }
 
     // Every scheduler run, update the animations for all segments
