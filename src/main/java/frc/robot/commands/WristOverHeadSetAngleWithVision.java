@@ -75,6 +75,7 @@ public class WristOverHeadSetAngleWithVision extends Command {
       wrist.updateWristLog(false);
     } catch (ArithmeticException e) {
       return;
+    }
   }
 
   // Called once after isFinished returns true

@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.VisionConstants.AimLockState;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.FileLog;
 
@@ -13,10 +14,10 @@ public class SetAimLock extends Command {
   private final DriveTrain driveTrain;
   private final FileLog log;
 
-  private final boolean state;
+  private final AimLockState state;
 
   /** Creates a new IntakeStop. */
-  public SetAimLock(DriveTrain driveTrain, boolean state, FileLog log) {
+  public SetAimLock(DriveTrain driveTrain, AimLockState state, FileLog log) {
     this.driveTrain = driveTrain;
     this.state = state;
     this.log = log;
