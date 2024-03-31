@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.HashMap;
 
+import com.ctre.phoenix.CANifier.LEDChannel;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
@@ -31,9 +32,9 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private boolean shouldClear;
+  private int degreesFromSpeaker;
+  private int numAccuracyLEDs;
   private Timer timer;
-  // private double accuracyDisplayThreshold;
-  // private int accuracy;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
   private HashMap<LEDSegmentRange, LEDSegment> segments;
@@ -311,9 +312,19 @@ public class LED extends SubsystemBase {
     updateStateLEDs(LEDSegmentRange.Full);
 
     if(RobotPreferences.isStickyFaultActive()) {
-      setAnimation(Color.kRed, LEDSegmentRange.CANdleFull);
+      segments.get(LEDSegmentRange.CANdleFull).setAnimation(Color.kRed);
     }
 
+    if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
+      LEDSegmentRange horizontalSegment = LEDSegmentRange.StripHorizontal;
+      numAccuracyLEDs = (horizontalSegment.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
+      Color[] accuracyArray = new Color[horizontalSegment.count];
+      for(int index = 0; index < horizontalSegment.count; index++){
+        if(index < numAccuracyLEDs){accuracyArray[index] = Color.kGreen;}
+        else{accuracyArray[index] = Color.kRed;}
+      }
+      segments.get(horizontalSegment).setAnimation(accuracyArray, shouldClear);
+    }
 
     DisplayLEDs();
   }

@@ -45,6 +45,19 @@ public class LEDSegment {
         this.loop = loop;
     }
 
+    /**
+     * Set/reset the pattern of the segment
+     * @param pattern the pattern to display
+     */
+    public void setAnimation(Color[] pattern, boolean loop) {
+        Color[][] animation = {pattern};
+        setAnimation(animation, true);
+    }
+
+    /**
+     * Set/reset the color of the segment
+     * @param color the color to display
+     */
     public void setAnimation(Color color) {
         Color[][] anim = {{color}};
         setAnimation(anim, true);
