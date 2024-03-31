@@ -14,16 +14,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
-import frc.robot.Constants.FeederConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
@@ -47,7 +43,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("A8");
+  private final FileLog log = new FileLog("B1");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
 
   // Define robot subsystems  
@@ -123,6 +119,7 @@ public class RobotContainer {
     SmartDashboard.putData("Wrist Set Angle", new WristSetAngle(wrist, log));
     SmartDashboard.putData("Wrist Calibration", new WristCalibrationRamp(0.01, 0.4, wrist, log));
     SmartDashboard.putData("Wrist Stop", new WristSetPercentOutput(0.0, wrist, log));
+    SmartDashboard.putData("Wrist Nudge Angle", new WristNudgeAngle(wrist, log));
   
     // Drive base commands
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
@@ -144,7 +141,7 @@ public class RobotContainer {
 
     // Sequences
     SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));
-    SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, robotState, log));
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
 
     // Autos
@@ -229,7 +226,7 @@ public class RobotContainer {
     // Store wrist, does not turn on intake
     xbX.onTrue(
       new ParallelCommandGroup(
-        new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, robotState, log),
+        new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, log),
         new SpeakerModeSet(true, robotState, log),
         new FarShotSet(false, robotState, log)
       ));
@@ -238,7 +235,7 @@ public class RobotContainer {
     xbBack.onTrue(new SetShooterWristSpeaker(WristAngle.lowerLimit, 
       ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, shooter, wrist, intake, feeder, robotState, log));
     // Shoot in slow speed pit shot when released
-    xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, 
+    xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, true,
       shooter, feeder, robotState, log) );
 
     // Prep for amp shot
@@ -278,9 +275,12 @@ public class RobotContainer {
     // Shoot the note
     left[2].onTrue(
         new ConditionalCommand(
-          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, feeder, robotState, log),
+          // Far shot lobbing note towards alliance partner
+          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, true, shooter, feeder, robotState, log),
           new ConditionalCommand(
-            new ShootPiece( ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
+            // Shoot in speaeker
+            new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, robotState, log),
+            // Shoot in amp
             new ShootPieceAmp(feeder, robotState, log),
             () -> robotState.isSpeakerMode()
           ),
@@ -323,7 +323,9 @@ public class RobotContainer {
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
       new WristSetAngle(WristAngle.climbStop, wrist, log)
     ));
-
+    // Nudge angle up or down
+    coP[5].onTrue(new WristNudgeAngle(2, wrist, log)); // Nudge down
+    coP[6].onTrue(new WristNudgeAngle(-2, wrist, log)); // Nudge up
   }
 
 

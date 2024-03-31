@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
@@ -18,7 +17,6 @@ import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveToPose;
 import frc.robot.commands.DriveTrajectory;
-import frc.robot.commands.ShooterSetPercent;
 import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.Sequences.IntakePieceAuto;
 import frc.robot.commands.Sequences.SetShooterWristSpeaker;
@@ -45,8 +43,7 @@ public class SourceTwoPieceShoot extends SequentialCommandGroup {
     addCommands(
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, feeder, robotState, log),
-      new ShooterSetPercent(-0.02, shooter, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log),
@@ -72,8 +69,7 @@ public class SourceTwoPieceShoot extends SequentialCommandGroup {
         new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
           ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
       ),
-      new ShootPiece(shooter, feeder, robotState, log),
-      new ShooterSetPercent(-0.02, shooter, log),
+      new ShootPiece(false, shooter, feeder, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new ConditionalCommand(

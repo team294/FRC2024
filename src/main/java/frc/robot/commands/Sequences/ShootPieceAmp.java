@@ -4,8 +4,6 @@
 
 package frc.robot.commands.Sequences;
 
-import java.nio.channels.FileLock;
-
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
