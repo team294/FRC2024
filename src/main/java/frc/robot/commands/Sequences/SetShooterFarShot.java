@@ -22,7 +22,8 @@ import frc.robot.utilities.*;
 public class SetShooterFarShot extends SequentialCommandGroup {
 
   /**
-   * Sets Shooter and Wrist to prime for a speaker shot.  Also stops the intake and sets the robot state.
+   * Sets Shooter and Wrist to prime for a Far shot (lobbing note towards alliance partner).  
+   * Also stops the intake and sets the robot state.
    * @param angle wrist target angle for shot, in degrees (+ = up, -  = down, 0 = horizontal)
    * @param velocityTop top shooter wheel velocity, in rpm  (+ = shoot forward, - = backwards)
    * @param velocityBottom bottom shooter wheel velocity, in rpm  (+ = shoot forward, - = backwards)
