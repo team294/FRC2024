@@ -14,9 +14,8 @@ public class FarShotSet extends InstantCommand {
   FileLog log;
 
   /**
-   * Immediately sets the shooter's mode to the given mode.
-   * This will update wherever the object is used.
-   * @param farShotMode true = farShotMode, false = amp mode
+   * Record if shooter is in mode for a Far shot (lobbing note towards alliance partner)
+   * @param farShotMode true = far shot, false = normal speaker shot
    * @param robotState
    * @param log
    */
