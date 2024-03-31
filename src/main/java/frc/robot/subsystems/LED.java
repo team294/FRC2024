@@ -323,15 +323,6 @@ public class LED extends SubsystemBase {
       segments.get(LEDSegmentRange.CANdleFull).setAnimation(Color.kRed);
     }
 
-    // if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
-    //   numAccuracyLEDs = (int)(((int)(LEDSegmentRange.Strip1.count/2))*(1-((degreesFromSpeaker-1)/LEDConstants.accuracyDisplayThreshold)));
-    //   if (numAccuracyLEDs > (LEDSegmentRange.Strip1.count/2)) {
-    //     setColor(Color.kGreen, LEDSegmentRange.Strip1);
-    //   } else {
-    //     setPattern(LEDConstants.Patterns.accuracyDisplayPattern, Color.kGreen, numAccuracyLEDs, LEDSegmentRange.Strip1);
-    //   }
-    // }
-    
     degreesFromSpeaker = driveTrain.getAngleErrorToSpeaker();
 
     if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
