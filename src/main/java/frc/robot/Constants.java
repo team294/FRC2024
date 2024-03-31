@@ -323,6 +323,12 @@ public final class Constants {
         public static final double pitchSetpoint = -18;
         public static final double yawSetpoint = 0;
       }
+
+      public static enum AimLockState {
+        NONE,
+        OVERHEAD,
+        STANDARD
+      }
     }
 
     public static final class WristConstants {

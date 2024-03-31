@@ -14,6 +14,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
+import frc.robot.Constants.VisionConstants.AimLockState;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.AutoSelection;
@@ -34,7 +35,7 @@ public class DriveWithJoysticksAdvance extends Command {
   private double goalAngle;       // in radians
   private double startTime;
   private boolean firstCorrecting;
-  private boolean aimLock = false;
+  private AimLockState aimLock = AimLockState.NONE;
 
 
     /**
@@ -76,7 +77,7 @@ public class DriveWithJoysticksAdvance extends Command {
   @Override
   public void execute() {
 
-    aimLock = driveTrain.isAimLockEnabled();
+    aimLock = driveTrain.getAimLockType();
 
     fwdVelocity = -leftJoystick.getY();
     leftVelocity = -leftJoystick.getX();
@@ -96,7 +97,7 @@ public class DriveWithJoysticksAdvance extends Command {
     // SmartDashboard.putNumber("Current Angle", driveTrain.getPose().getRotation().getRadians());
 
     // Uses profiled PID controller if the joystick is in the deadband
-    if(turnRate == 0 || aimLock){
+    if(turnRate == 0 || (aimLock != AimLockState.NONE)){
       if(firstInDeadband){
         // goalAngle = driveTrain.getPose().getRotation().getRadians();
         // goalAngle = MathUtil.angleModulus(goalAngle);
@@ -113,8 +114,12 @@ public class DriveWithJoysticksAdvance extends Command {
           goalAngle = MathUtil.angleModulus(goalAngle);
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
-        if(aimLock){
-          goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
+        if(aimLock != AimLockState.NONE){
+          goalAngle = driveTrain.getSpeakerAngleFromRobot();
+          if (aimLock == AimLockState.OVERHEAD) {
+            goalAngle += 180;
+          }
+
           goalAngle = MathUtil.angleModulus(goalAngle);
           SmartDashboard.putNumber("Goal Angle", goalAngle);
           turnRateController.reset(goalAngle);
@@ -145,8 +150,8 @@ public class DriveWithJoysticksAdvance extends Command {
         log.writeLog(false, "DriveWithJoystickAdvance", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", nextTurnRate, "Goal Angle", goalAngle);
       }
     
-      if(aimLock){ 
-        nextTurnRate *= 2.5;
+      if(aimLock != AimLockState.NONE){ 
+        nextTurnRate *= 2.3;
       }
       driveTrain.drive(fwdVelocity, leftVelocity, nextTurnRate, true, false);
 

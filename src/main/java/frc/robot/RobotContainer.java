@@ -26,6 +26,7 @@ import frc.robot.Constants.StopType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.Constants.VisionConstants.AimLockState;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.*;
 import frc.robot.commands.Autos.*;
@@ -290,17 +291,27 @@ public class RobotContainer {
         
     );
 
+    // Standard aim lock
     right[1].whileTrue(new ParallelCommandGroup(
-      new SetAimLock(driveTrain, true, log),
+      new SetAimLock(driveTrain, AimLockState.STANDARD, log),
       new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
       new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
     )); //TODO implement this once vision is brought in
     right[1].onFalse(
-      new SetAimLock(driveTrain, false, log)
+      new SetAimLock(driveTrain, AimLockState.NONE, log)
     ); //TODO implement this once vision is brought in
 
-    // right[2] //Turn to face amp
-    
+
+    // Overhead aim lock
+    right[2].whileTrue(new ParallelCommandGroup(
+      new SetAimLock(driveTrain, AimLockState.OVERHEAD, log),
+      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
+    )); //TODO implement this once vision is brought in
+    right[2].onFalse(
+      new SetAimLock(driveTrain, AimLockState.NONE, log)
+    ); //TODO implement
+
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
     // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
     // right[2].whileTrue(new DriveToNoteSequence(intake, shooter, feeder, wrist, driveTrain, robotState, log));

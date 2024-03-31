@@ -34,6 +34,7 @@ import static frc.robot.Constants.DriveConstants.*;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.VisionConstants.AimLockState;
 import frc.robot.utilities.*;
 
 // Vision imports
@@ -81,9 +82,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   // variable to store vision camera
   private PhotonCameraWrapper camera;
   private NotePhotonCameraWrapper noteCamera;
+  private AllianceSelection allianceSelection;
 
   // variable for vison-based aiming in DriveWithJoysticksAdvance
-  private boolean aimLock = false;
+  private AimLockState aimLock = AimLockState.NONE;
 
   // Odometry class for tracking robot pose
   private final SwerveDrivePoseEstimator poseEstimator; 
@@ -102,6 +104,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     logRotationKey = log.allocateLogRotation();     // Get log rotation for this subsystem
     this.camera = new PhotonCameraWrapper(allianceSelection, log, logRotationKey);
     this.noteCamera = new NotePhotonCameraWrapper(log, logRotationKey);
+    this.allianceSelection = allianceSelection;
     
     // enable cameras
     cameraInit();
@@ -223,6 +226,14 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   public double getAngularVelocity () {
     // return angularVelocity;
     return -pigeon.getRate();     // TODO check if this is accurate!  If so, then delete the commented-out code to calc angularVelocity in periodic, constructor, etc
+  }
+  
+  /**
+   * Gets the angle the robot needs to be to be facing the center of the speaker
+   * @return
+   */
+  public double getSpeakerAngleFromRobot() {
+    return Math.atan((getPose().getY() - allianceSelection.getSpeakerYPos())/getPose().getX());
   }
 
   /**
@@ -607,15 +618,11 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     return noteCamera.getLatestResult();
   }
 
-  public void setAimLock(boolean state) {
+  public void setAimLock(AimLockState state) {
     aimLock = state;
   }
 
-  public void toggleAimLock() {
-    aimLock = !aimLock;
-  }
-
-  public boolean isAimLockEnabled(){
+  public AimLockState getAimLockType(){
     return aimLock;
   }
 }
