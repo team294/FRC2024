@@ -54,7 +54,7 @@ public class IntakePiece extends SequentialCommandGroup {
               new ShooterSetPercent(0.0, shooter, log) // Stop the shooter, not the feeder
             ),
             new WaitCommand(0),
-            () -> (shooter.getBottomShooterVelocity() > 100.0) // TODO: which velocity, motor is considered too fast
+            () -> (shooter.getBottomShooterVelocity() > 200.0) // TODO: what velocity is considered too fast
           ).handleInterrupt(() -> { shooter.stopMotors(); })
         ),
         new WaitCommand(0),
