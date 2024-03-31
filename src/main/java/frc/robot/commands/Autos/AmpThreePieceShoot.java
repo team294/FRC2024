@@ -12,6 +12,7 @@ import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
+import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.ShooterSetPercent;
 import frc.robot.commands.WristSetAngle;
@@ -45,8 +46,14 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteBlue.value], driveTrain, log), 
+            new SequentialCommandGroup(          
+                  new DriveResetPose(1.3, 1.2, 0, false, driveTrain, log),
+                  new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteRed.value], driveTrain, log)
+            ),
+            new SequentialCommandGroup(
+                  new DriveResetPose(1.3, 7, 0, false, driveTrain, log),
+                  new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteBlue.value], driveTrain, log)
+            ),
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
