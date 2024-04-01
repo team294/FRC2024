@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import java.util.HashMap;
 
-import com.ctre.phoenix.CANifier.LEDChannel;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
@@ -31,8 +30,6 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private boolean shouldClear;
-  private int degreesFromSpeaker;
-  private int numAccuracyLEDs;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
   private HashMap<LEDSegmentRange, LEDSegment> segments;
