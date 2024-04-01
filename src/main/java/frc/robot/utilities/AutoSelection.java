@@ -118,7 +118,7 @@ public class AutoSelection {
 
 		else if(autoPlan == AmpTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Amp Two Piece Shoot");
-			autonomousCommand = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new AmpTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == CenterSourceThreePieceShoot){
@@ -128,7 +128,7 @@ public class AutoSelection {
 
 		else if(autoPlan == AmpThreePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Amp Three Piece Shoot");
-			autonomousCommand = new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new AmpThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 		
 		else if(autoPlan == CenterFourPieceShoot){
@@ -138,7 +138,7 @@ public class AutoSelection {
 
 		else if(autoPlan == SourceOnePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Source One Piece Shoot");
-			autonomousCommand = new SourceOneNoteShoot(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
+			autonomousCommand = new SourceOneNoteShootLeave(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
 		}
 
         else if (autonomousCommand == null) {
