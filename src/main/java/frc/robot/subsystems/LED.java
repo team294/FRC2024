@@ -6,9 +6,11 @@ package frc.robot.subsystems;
 
 import java.util.HashMap;
 
+import com.ctre.phoenix.CANifier.LEDChannel;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BCRColor;
@@ -30,22 +32,24 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private boolean shouldClear;
-  // private double accuracyDisplayThreshold;
-  // private int accuracy;
+  private int degreesFromSpeaker;
+  private int numAccuracyLEDs;
+  private Timer timer;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
-
-  // LED Segments
-  //private LEDSegment CANdle;
-  //private LEDSegment strip1;
   private HashMap<LEDSegmentRange, LEDSegment> segments;
 
   /**
    * Creates the CANdle LED subsystem.
+   * @param CANPort
    * @param subsystemName
+   * @param shooter
+   * @param feeder
+   * @param robotState
    * @param log
+   * @param timer
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, Timer timer) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
@@ -57,39 +61,12 @@ public class LED extends SubsystemBase {
     this.shouldClear = false;
     // this.accuracyDisplayThreshold = 35;
     // this.accuracy = 0;
+    this.timer = timer;
 
     // Create the LED segments
-    LEDSegment CANdleTop = new LEDSegment(
-      LEDConstants.LEDSegmentRange.CANdleTop.index,
-      LEDConstants.LEDSegmentRange.CANdleTop.count,
-      LEDConstants.Patterns.noPatternAnimation
-    );
-    LEDSegment CANdleBottom = new LEDSegment(
-      LEDConstants.LEDSegmentRange.CANdleBottom.index,
-      LEDConstants.LEDSegmentRange.CANdleBottom.count,
-      LEDConstants.Patterns.noPatternAnimation
-    );
-     LEDSegment CANdleFull = new LEDSegment(
-      LEDConstants.LEDSegmentRange.CANdleFull.index,
-      LEDConstants.LEDSegmentRange.CANdleFull.count,
-      LEDConstants.Patterns.noPatternAnimation
-    );
-    // LEDSegment Strip1 = new LEDSegment(      // strip not currently on robot
-    //   LEDConstants.LEDSegmentRange.Strip1.index,
-    //   LEDConstants.LEDSegmentRange.Strip1.count,
-    //   LEDConstants.Patterns.noPatternAnimation
-    // );
-    // LEDSegment Full = new LEDSegment(
-    //   LEDConstants.LEDSegmentRange.Full.index,
-    //   LEDConstants.LEDSegmentRange.Full.count,
-    //   LEDConstants.Patterns.noPatternAnimation
-    // );
-    
-    segments.put(LEDSegmentRange.CANdleTop, CANdleTop);
-    segments.put(LEDSegmentRange.CANdleBottom, CANdleBottom);
-    // segments.put(LEDSegmentRange.Strip1, Strip1);  // strip not currently on robot
-    // segments.put(LEDSegmentRange.Full, Full);
-    segments.put(LEDSegmentRange.CANdleFull, CANdleFull);
+    for (LEDSegmentRange segment : LEDSegmentRange.values()) {
+      segments.put(segment, new LEDSegment(segment.index, segment.count, LEDConstants.Patterns.noPatternAnimation));
+    }
   }
 
   /** Get the subsystem's name
@@ -135,7 +112,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Set the pattern and resizes it to fit the LED strip
+   * Sets the pattern and resizes it to fit the LED strip
    * @param color the color to use
    * @param segment the segment to use
    */
@@ -146,7 +123,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Set the pattern and resizes it to fit the LED strip
+   * Sets the pattern and resizes it to fit the LED strip
    * @param pattern the pattern to use
    * @param segment the segment to use
    */
@@ -159,33 +136,31 @@ public class LED extends SubsystemBase {
     log.writeLog(false, "LED", "Set Pattern");
   }
 
-  public void setPattern(Color[] pattern, Color edgeColor, int edgeWidth, LEDSegmentRange segment) {
-    if (pattern.length < (edgeWidth*2)+1) return;
-
-    setLEDs(edgeColor, segment.index, edgeWidth);
-    setLEDs(edgeColor, segment.count + segment.index-edgeWidth, edgeWidth);
-    
-    for (int indexLED = edgeWidth, indexPattern = 0; indexLED < segment.count-edgeWidth; indexLED++, indexPattern++) {
-      if (indexPattern >= pattern.length) indexPattern = 0;
-      setLEDs(pattern[indexPattern], segment.index + indexLED);
-    }
-    log.writeLog(false, "LED", "Set Pattern");
-  }
-
   /**
-   * Sets the animation for a given certain led segment
+   * Sets the animation for a given led segment
    * @param animation animation to display
    * @param segment segment to play animation on
    * @param loop whether the animation repeats
    */
   public void setAnimation(Color[][] animation, LEDSegmentRange segment, boolean loop) {
-    if (segments.containsKey(segment)) {
-      segments.get(segment).setAnimation(animation, loop);
-    } else if (segment == LEDSegmentRange.Full) {
-      // Special case
-      segments.get(LEDSegmentRange.CANdleTop).setAnimation(animation, loop);
-      segments.get(LEDSegmentRange.CANdleBottom).setAnimation(animation, loop);
-    }
+    segments.get(segment).setAnimation(animation, loop);
+    log.writeLog(false, "LED", "Set Animation");
+  }
+
+  public void setAnimation(Color[] pattern, LEDSegmentRange segment, boolean loop) {
+    Color[][] anim = {pattern};
+    segments.get(segment).setAnimation(anim, loop);
+    log.writeLog(false, "LED", "Set Animation");
+  }
+  
+  public void setAnimation(Color color, LEDSegmentRange segment) {
+    segments.get(segment).setAnimation(color);
+    log.writeLog(false, "LED", "Set Animation");
+  }
+  
+  public void setAnimation(BCRColor color, LEDSegmentRange segment) {
+    Color _color = new Color(color.r, color.g, color.b);
+    segments.get(segment).setAnimation(_color);
     log.writeLog(false, "LED", "Set Animation");
   }
 
@@ -282,56 +257,213 @@ public class LED extends SubsystemBase {
     switch (currentState) {
     case IDLE:
       if (feeder.isPiecePresent()) {
-        if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance){
-          setLEDs(150, 0, 255);
+        if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance
+        && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight)) {
+          setAnimation(Color.kGreen, segment);
+        } else if (shooter.getTopShooterTargetRPM() > 0 && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight))  {
+          Double percent = shooter.getTopShooterVelocity() / shooter.getTopShooterTargetRPM();
+          Color[] segmentPattern = new Color[segment.count];
+          if (segment == LEDSegmentRange.StripLeft) {
+            for (int i = 0; i < segment.count; i++) {
+              if (i >= (1.0 - percent) * segment.count) {
+                segmentPattern[i] = Color.kPurple;
+              } else {
+                segmentPattern[i] = Color.kOrange;
+              }
+            }
+          } else if (segment == LEDSegmentRange.StripRight) {
+            for (int i = 0; i < segment.count; i++) {
+              if (i <= percent * segment.count) {
+                segmentPattern[i] = Color.kPurple;
+              } else {
+                segmentPattern[i] = Color.kOrange;
+              }
+            }
+          }
+          setAnimation(segmentPattern, segment, true);
         } else {
-          setLEDs(255, 30, 0, segment.index, segment.count);
+          setAnimation(Color.kOrange, segment);
         }
       }
       else {
-        setLEDs(BCRColor.IDLE, segment.index, segment.count);
+        setAnimation(BCRColor.IDLE, segment);
       }
       break;
     case INTAKING:
-      setLEDs(BCRColor.INTAKING, segment.index, segment.count);
+      setAnimation(BCRColor.INTAKING, segment);
       break;
     case SHOOTING:
-      setLEDs(BCRColor.SHOOTING, segment.index, segment.count);
+      setAnimation(BCRColor.SHOOTING, segment);
       break;
     }
     log.writeLog(false, "LED", "Update State LEDs", "State", currentState);
   }
 
-
-  @Override
-  public void periodic() {
-
-    // if(degreesFromSpeaker <= accuracyDisplayThreshold){
-    //   accuracy = (int)((accuracyDisplayPattern.length/2)*(1-((degreesFromSpeaker-1)/accuracyDisplayThreshold)));
-    //   if (accuracy > (accuracyDisplayPattern.length/2)) {
-    //     setColor(Color.kGreen, LEDSegmentRange.Strip1);
-    //   } else {
-    //     setPattern(accuracyDisplayPattern, Color.kGreen, accuracy, LEDSegmentRange.Strip1);
-    //   }
-    // }
-
-    // Every scheduler run, update the animations for all segments
-    if(RobotPreferences.isStickyFaultActive()) segments.get(LEDSegmentRange.CANdleBottom).setEdgeColor(Color.kRed);
-    else segments.get(LEDSegmentRange.CANdleBottom).setEdgeColor(Color.kBlack);
+  private void DisplayLEDs() {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
-      if(segment.getEdgeColor() != Color.kBlack && segment.getEdgeColor() != null){
-        setPattern(segments.get(segmentKey).getCurrentFrame(), segment.getEdgeColor(), 1, segmentKey);
-      } else {
-        setPattern(segments.get(segmentKey).getCurrentFrame(), segmentKey);
-      }
+      setPattern(segment.getCurrentFrame(), segmentKey);
+      
       // Move to the next frame
-      shouldClear = segments.get(segmentKey).advanceFrame();
+      shouldClear = segment.advanceFrame();
       if (shouldClear) {
         updateStateLEDs(segmentKey);
       }
     }
-    updateStateLEDs(LEDSegmentRange.CANdleFull);
+  }
+
+  @Override
+  public void periodic() {
+    updateStateLEDs(LEDSegmentRange.Full);
+    if(RobotPreferences.isStickyFaultActive()) {
+      segments.get(LEDSegmentRange.CANdleFull).setAnimation(Color.kRed);
+    }
+    System.out.println(timer.hasElapsed(5));
+    System.out.println(timer.get());
+    if (timer.hasElapsed(34)) { // TODO: add 1 to all of these after testing
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.NinthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.NinthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.TenthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.TenthTenthStrip2);
+      timer.stop();
+    }
+    else if (timer.hasElapsed(33)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.NinthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.NinthTenthStrip2);
+    }
+    else if (timer.hasElapsed(32)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.EighthTenthStrip2);
+    }
+    else if (timer.hasElapsed(31)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SeventhTenthStrip2);
+    }
+    else if (timer.hasElapsed(30)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SixthTenthStrip2);
+    }
+    else if (timer.hasElapsed(29)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FifthTenthStrip2);
+    }
+    else if (timer.hasElapsed(28)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FourthTenthStrip2);
+    }
+    else if (timer.hasElapsed(27)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.ThirdTenthStrip2);
+    }
+    else if (timer.hasElapsed(26)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.SecondTenthStrip2);
+    }
+    else if (timer.hasElapsed(25)) {
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip1);
+      setAnimation(Color.kRed, LEDSegmentRange.FirstTenthStrip2);
+    }
+
+    if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
+      LEDSegmentRange horizontalSegment = LEDSegmentRange.StripHorizontal;
+      numAccuracyLEDs = (horizontalSegment.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
+      Color[] accuracyArray = new Color[horizontalSegment.count];
+      for(int index = 0; index < horizontalSegment.count; index++){
+        if(index < numAccuracyLEDs){accuracyArray[index] = Color.kGreen;}
+        else{accuracyArray[index] = Color.kRed;}
+      }
+      segments.get(horizontalSegment).setAnimation(accuracyArray, shouldClear);
+    }
+
+    DisplayLEDs();
   }
 }
