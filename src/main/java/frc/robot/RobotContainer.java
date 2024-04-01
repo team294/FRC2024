@@ -296,10 +296,10 @@ public class RobotContainer {
       new SetAimLock(driveTrain, AimLockState.STANDARD, log),
       new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
       new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
-    )); //TODO implement this once vision is brought in
+    )); 
     right[1].onFalse(
       new SetAimLock(driveTrain, AimLockState.NONE, log)
-    ); //TODO implement this once vision is brought in
+    );
 
 
     // Overhead aim lock
@@ -307,10 +307,10 @@ public class RobotContainer {
       new SetAimLock(driveTrain, AimLockState.OVERHEAD, log),
       new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
       new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
-    )); //TODO implement this once vision is brought in
+    ));
     right[2].onFalse(
       new SetAimLock(driveTrain, AimLockState.NONE, log)
-    ); //TODO implement
+    );
 
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
     // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
