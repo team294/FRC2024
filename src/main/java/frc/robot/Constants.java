@@ -330,6 +330,8 @@ public final class Constants {
       public static final double MMAcceleration = MMCruiseVelocity/0.35;    // Calibrated.  Accel in 0.35 sec.  Max trapezoid acceleration in motor rot/sec^2.  MMVel/MMAccel = (# seconds to full velocity)
       public static final double MMJerk = MMAcceleration/0.05;  // Calibrated.  Jerk in 0.05 sec.  Max trapezoid jerk in motor rot/sec^3.  MMAccel/MMJerk = (# seconds to full accel)
 
+      public static final double wristShootTolerance = 2.0;   // Only shoot if wrist is within this many degrees of the target angle
+
       // Wrist regions
       public enum WristRegion {
           // backFar,        // In the wrist backFar region, the elevator must be in the bottom region (not allowed to go to elevator main or low regions).
