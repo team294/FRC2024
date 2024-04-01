@@ -63,6 +63,10 @@ public class LEDSegment {
         setAnimation(anim, true);
     }
 
+    public void setLooping(boolean looping) {
+        this.loop = looping;
+    }
+
     public Color[] getCurrentFrame() {
         if (isFinished()) return Constants.LEDConstants.Patterns.noPatternStatic;
         else return animation[frame];

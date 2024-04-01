@@ -309,7 +309,7 @@ public class LED extends SubsystemBase {
       
       // Move to the next frame
       shouldClear = segment.advanceFrame();
-      if (shouldClear) {
+      if (shouldClear && segmentKey != LEDSegmentRange.CANdleFull) {
         updateStateLEDs(segmentKey);
       }
     }
@@ -334,7 +334,7 @@ public class LED extends SubsystemBase {
         else{accuracyArray[index] = Color.kRed;}
       }
       segments.get(horizontalSegment).setAnimation(accuracyArray);
-    }
+    } else {segments.get(LEDSegmentRange.StripHorizontal).setLooping(false);}
 
     DisplayLEDs();
   }
