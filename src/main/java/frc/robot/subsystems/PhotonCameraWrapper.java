@@ -4,6 +4,9 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
@@ -31,12 +34,17 @@ public class PhotonCameraWrapper extends SubsystemBase {
   private Alliance currAlliance = Alliance.Blue;
   private AllianceSelection allianceSelection;
   private int logRotationKey;
+  private String cameraName;
+  private Transform3d cameraTranslation;
   private boolean fastLogging = false;
 
-  public PhotonCameraWrapper(AllianceSelection allianceSelection, FileLog log, int logRotationKey) {
+  public PhotonCameraWrapper(String cameraName, Transform3d cameraTranslation, AllianceSelection allianceSelection, FileLog log, int logRotationKey) {
     this.log = log;
     this.logRotationKey = logRotationKey;
     this.allianceSelection = allianceSelection;
+
+    this.cameraName = cameraName;
+    this.cameraTranslation = cameraTranslation;
   }
 
   /**
@@ -53,7 +61,7 @@ public class PhotonCameraWrapper extends SubsystemBase {
     currAlliance = allianceSelection.getAlliance();
 
     if (photonCamera == null) {
-      photonCamera = new PhotonCamera(PhotonVisionConstants.aprilTagCameraName);
+      photonCamera = new PhotonCamera(cameraName);
     }
 
 
@@ -84,7 +92,7 @@ public class PhotonCameraWrapper extends SubsystemBase {
       aprilTagFieldLayout,
       PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
       photonCamera,
-      PhotonVisionConstants.robotToCamFront);
+      cameraTranslation);
       
     hasInit = true;
 

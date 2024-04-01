@@ -34,7 +34,9 @@ import static frc.robot.Constants.DriveConstants.*;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.Constants.VisionConstants.AimLockState;
+import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
 import frc.robot.utilities.*;
 
 // Vision imports
@@ -80,7 +82,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   // private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
 
   // variable to store vision camera
-  private PhotonCameraWrapper camera;
+  private PhotonCameraWrapper cameraFront;
+  private PhotonCameraWrapper cameraBack;
   private NotePhotonCameraWrapper noteCamera;
   private AllianceSelection allianceSelection;
 
@@ -102,7 +105,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   public DriveTrain(AllianceSelection allianceSelection, FileLog log) {
     this.log = log; // save reference to the fileLog
     logRotationKey = log.allocateLogRotation();     // Get log rotation for this subsystem
-    this.camera = new PhotonCameraWrapper(allianceSelection, log, logRotationKey);
+    this.cameraFront = new PhotonCameraWrapper(PhotonVisionConstants.aprilTagCameraFrontName, PhotonVisionConstants.robotToCamFront, allianceSelection, log, logRotationKey);
+    this.cameraBack = new PhotonCameraWrapper(PhotonVisionConstants.aprilTagCameraBackName, PhotonVisionConstants.robotToCamBack, allianceSelection, log, logRotationKey);
     this.noteCamera = new NotePhotonCameraWrapper(log, logRotationKey);
     this.allianceSelection = allianceSelection;
     
@@ -470,7 +474,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   @Override
   public void enableFastLogging(boolean enabled) {
     fastLogging = enabled;
-    camera.enableFastLogging(enabled);
+    cameraFront.enableFastLogging(enabled);
+    cameraBack.enableFastLogging(enabled);
   }
 
   /**
@@ -565,37 +570,68 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     poseEstimator.update(Rotation2d.fromDegrees(getGyroRotation()), getModulePositions());
 
     // Only run camera updates for pose estimator in teleop mode
-    if (camera.hasInit() && DriverStation.isTeleop()) {
-      Optional<EstimatedRobotPose> result = camera.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+    if ((cameraFront.hasInit() || cameraBack.hasInit()) && DriverStation.isTeleop()) {
+      if (cameraFront.hasInit()) {
+        Optional<EstimatedRobotPose> result = cameraFront.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
 
-      if (result.isPresent()) {
-        EstimatedRobotPose camPose = result.get();
+        if (result.isPresent()) {
+          EstimatedRobotPose camPose = result.get();
 
-        PhotonPipelineResult camResult = camera.getLatestResult();
-        if (camResult.hasTargets()) {
-          PhotonTrackedTarget bestTarget = camResult.getBestTarget();
-          if (bestTarget.getBestCameraToTarget().getX() < 3) {
-            poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+          PhotonPipelineResult camResult = cameraFront.getLatestResult();
+          if (camResult.hasTargets()) {
+            PhotonTrackedTarget bestTarget = camResult.getBestTarget();
+            if (bestTarget.getBestCameraToTarget().getX() < 3) {
+              poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
 
-            // poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, closeMatrix);
-            //field.getObject("Vision").setPose(camPose.estimatedPose.toPose2d());
+              // poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, closeMatrix);
+              //field.getObject("Vision").setPose(camPose.estimatedPose.toPose2d());
+            }
+            else if (bestTarget.getBestCameraToTarget().getX() < 7) {
+                poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, farMatrix);
+            }
           }
-          else if (bestTarget.getBestCameraToTarget().getX() < 7) {
-              poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, farMatrix);
+          SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
+          SmartDashboard.putNumber("Vision Y", camPose.estimatedPose.toPose2d().getY());
+          SmartDashboard.putNumber("Vision rot", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
+            
+          SmartDashboard.putNumber("Odo X", poseEstimator.getEstimatedPosition().getX());
+          SmartDashboard.putNumber("Odo Y", poseEstimator.getEstimatedPosition().getY());
+          SmartDashboard.putNumber("Odo rot", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+        } 
+      }
+        
+      if (cameraBack.hasInit()) {
+        Optional<EstimatedRobotPose> result = cameraFront.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+
+        if (result.isPresent()) {
+          EstimatedRobotPose camPose = result.get();
+
+          PhotonPipelineResult camResult = cameraFront.getLatestResult();
+          if (camResult.hasTargets()) {
+            PhotonTrackedTarget bestTarget = camResult.getBestTarget();
+            if (bestTarget.getBestCameraToTarget().getX() < 3) {
+              poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+
+              // poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, closeMatrix);
+              //field.getObject("Vision").setPose(camPose.estimatedPose.toPose2d());
+            }
+            else if (bestTarget.getBestCameraToTarget().getX() < 7) {
+                poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, farMatrix);
+            }
           }
+          SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
+          SmartDashboard.putNumber("Vision Y", camPose.estimatedPose.toPose2d().getY());
+          SmartDashboard.putNumber("Vision rot", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
+            
+          SmartDashboard.putNumber("Odo X", poseEstimator.getEstimatedPosition().getX());
+          SmartDashboard.putNumber("Odo Y", poseEstimator.getEstimatedPosition().getY());
+          SmartDashboard.putNumber("Odo rot", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
         }
-        SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
-        SmartDashboard.putNumber("Vision Y", camPose.estimatedPose.toPose2d().getY());
-        SmartDashboard.putNumber("Vision rot", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
-          
-        SmartDashboard.putNumber("Odo X", poseEstimator.getEstimatedPosition().getX());
-        SmartDashboard.putNumber("Odo Y", poseEstimator.getEstimatedPosition().getY());
-        SmartDashboard.putNumber("Odo rot", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
       }
 
     }
 
-    if (camera.getAlliance() == Alliance.Red) {
+    if (cameraFront.getAlliance() == Alliance.Red) {
       Pose2d currPose = poseEstimator.getEstimatedPosition();
       double x = FieldConstants.length - currPose.getX();
       double y = FieldConstants.width - currPose.getY();
@@ -606,7 +642,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   }  
 
   public void cameraInit() {
-    camera.init();
+    cameraFront.init();
+    cameraBack.init();
     noteCamera.init();
   }
 

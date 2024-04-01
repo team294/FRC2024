@@ -308,7 +308,7 @@ public final class Constants {
                     // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
                     new Translation3d(Units.inchesToMeters(8.9375), Units.inchesToMeters(0), Units.inchesToMeters(25.03125)),
                     new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(180))); // Cam mounted facing forward in center of robot
-        public static final String aprilTagCameraName = "AprilTagCamera";
+        public static final String aprilTagCameraFrontName = "AprilTagCamera";
         // 1.75 physical center to wheel center
         // 16.75 wheel cetner to intake center without bumper
         
