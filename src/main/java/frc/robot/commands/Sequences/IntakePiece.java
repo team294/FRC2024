@@ -5,13 +5,16 @@
 package frc.robot.commands.Sequences;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.subsystems.Feeder;
@@ -28,22 +31,33 @@ public class IntakePiece extends SequentialCommandGroup {
    * @param intake
    * @param feeder
    * @param wrist
+   * @param shooter
    * @param robotState
    * @param log
    */
-  public IntakePiece(Intake intake, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
+  public IntakePiece(Intake intake, Feeder feeder, Wrist wrist, Shooter shooter, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
       new ConditionalCommand(
-        new SequentialCommandGroup(
+        new ParallelCommandGroup(
           new WristSetAngle(WristAngle.lowerLimit, wrist, log),
           new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log),
           new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
-          new FeederSetPercent(FeederConstants.feederPercent, feeder, log)
+          new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
+          // Spin down the shooter if needed
+          new ConditionalCommand(
+            new SequentialCommandGroup(
+              new ShooterSetPercent(ShooterConstants.shooterPercentStopQuickly, shooter, log),
+              new WaitCommand(ShooterConstants.shooterSpinDownSeconds),
+              new ShooterSetPercent(0.0, shooter, log) // Stop the shooter, not the feeder
+            ).handleInterrupt(() -> { shooter.stopMotors(); }),
+            new FileLogWrite(false, false, "IntakePiece", "Shooter already stopped", log),
+            () -> (shooter.getBottomShooterVelocity() > 200.0)
+          )
         ),
-        new WaitCommand(0),
+        new FileLogWrite(false, false, "IntakePiece", "Already has piece", log),
         () -> (!feeder.isPiecePresent())
       )
     );
