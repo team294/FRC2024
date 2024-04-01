@@ -250,43 +250,21 @@ public class LED extends SubsystemBase {
     switch (currentState) {
     case IDLE:
       if (feeder.isPiecePresent()) {
-        if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance
-        && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight)) {
-          setAnimation(Color.kGreen, segment);
-        } else if (shooter.getTopShooterTargetRPM() > 0 && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight))  {
-          Double percent = shooter.getTopShooterVelocity() / shooter.getTopShooterTargetRPM();
-          Color[] segmentPattern = new Color[segment.count];
-          if (segment == LEDSegmentRange.StripLeft) {
-            for (int i = 0; i < segment.count; i++) {
-              if (i >= (1.0 - percent) * segment.count) {
-                segmentPattern[i] = Color.kPurple;
-              } else {
-                segmentPattern[i] = Color.kOrange;
-              }
-            }
-          } else if (segment == LEDSegmentRange.StripRight) {
-            for (int i = 0; i < segment.count; i++) {
-              if (i <= percent * segment.count) {
-                segmentPattern[i] = Color.kPurple;
-              } else {
-                segmentPattern[i] = Color.kOrange;
-              }
-            }
-          }
-          setAnimation(segmentPattern, segment, true);
+        if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance){
+          setLEDs(150, 0, 255);
         } else {
-          setAnimation(Color.kOrange, segment);
+          setLEDs(255, 30, 0, segment.index, segment.count);
         }
       }
       else {
-        setAnimation(BCRColor.IDLE, segment);
+        setLEDs(BCRColor.IDLE, segment.index, segment.count);
       }
       break;
     case INTAKING:
-      setAnimation(BCRColor.INTAKING, segment);
+      setLEDs(BCRColor.INTAKING, segment.index, segment.count);
       break;
     case SHOOTING:
-      setAnimation(BCRColor.SHOOTING, segment);
+      setLEDs(BCRColor.SHOOTING, segment.index, segment.count);
       break;
     }
     log.writeLog(false, "LED", "Update State LEDs", "State", currentState);
