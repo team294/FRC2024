@@ -309,7 +309,7 @@ public class LED extends SubsystemBase {
       
       // Move to the next frame
       shouldClear = segment.advanceFrame();
-      if (shouldClear && segmentKey != LEDSegmentRange.CANdleFull) {
+      if (shouldClear && segmentKey != LEDSegmentRange.CANdle) {
         updateStateLEDs(segmentKey);
       }
     }
@@ -317,20 +317,19 @@ public class LED extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateStateLEDs(LEDSegmentRange.Full);
 
     if(RobotPreferences.isStickyFaultActive()) {
-      segments.get(LEDSegmentRange.CANdleFull).setAnimation(Color.kRed);
+      segments.get(LEDSegmentRange.CANdle).setAnimation(Color.kRed);
     }
 
     degreesFromSpeaker = driveTrain.getAngleErrorToSpeaker();
-
+    //TODO: Make it so the strip is full at 1 degree off, decide accuracy colors
     if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
       LEDSegmentRange horizontalSegment = LEDSegmentRange.StripHorizontal;
-      halfAccuracyLEDs = ((int)horizontalSegment.count/2)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
+      halfAccuracyLEDs = (int)(((int)horizontalSegment.count/2)*((1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold))));
       Color[] accuracyArray = new Color[horizontalSegment.count];
       for(int index = 0; index < horizontalSegment.count; index++){
-        if(index < halfAccuracyLEDs || index >= (horizontalSegment.count-halfAccuracyLEDs)){accuracyArray[index] = Color.kGreen;}
+        if(index < halfAccuracyLEDs || index >= (horizontalSegment.count-halfAccuracyLEDs)){accuracyArray[index] = new Color(0,255,0);}
         else{accuracyArray[index] = Color.kRed;}
       }
       segments.get(horizontalSegment).setAnimation(accuracyArray);
