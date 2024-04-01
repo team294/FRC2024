@@ -28,8 +28,8 @@ public class SourceOneNoteShoot extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+      new SetShooterWristSpeaker(
+        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, driveTrain, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),

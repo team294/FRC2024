@@ -155,6 +155,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   }
   
 
+  public AllianceSelection getAllianceSelection() {
+    return allianceSelection;
+  }
+
   // ************ Gryo methods
 
   /**
@@ -565,7 +569,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     poseEstimator.update(Rotation2d.fromDegrees(getGyroRotation()), getModulePositions());
 
     // Only run camera updates for pose estimator in teleop mode
-    if (camera.hasInit() && DriverStation.isTeleop()) {
+    if (camera.hasInit()) {
       Optional<EstimatedRobotPose> result = camera.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
 
       if (result.isPresent()) {

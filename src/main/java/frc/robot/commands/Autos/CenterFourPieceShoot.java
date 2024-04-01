@@ -30,8 +30,8 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+      new SetShooterWristSpeaker(
+        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, driveTrain, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
@@ -49,8 +49,8 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new SetShooterWristSpeaker(WristAngle.sourceCloseNoteShot, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+      new SetShooterWristSpeaker(
+        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, driveTrain, robotState, log),
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
@@ -61,8 +61,8 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new SetShooterWristSpeaker(WristAngle.centerCloseNoteShot, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+      new SetShooterWristSpeaker(
+        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, driveTrain, robotState, log),
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),
       new ParallelCommandGroup(
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
@@ -73,8 +73,8 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new SetShooterWristSpeaker(WristAngle.ampCloseNoteShot, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+      new SetShooterWristSpeaker( 
+        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, driveTrain, robotState, log),
       new ShootPiece(true, shooter, feeder, wrist, robotState, log),
       new WristSetAngle(WristAngle.lowerLimit, wrist, log)
     );

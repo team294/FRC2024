@@ -13,6 +13,7 @@ import frc.robot.commands.IntakeStop;
 import frc.robot.commands.RobotStateSetIdle;
 import frc.robot.commands.ShooterSetVelocity;
 import frc.robot.commands.WristSetAngle;
+import frc.robot.commands.WristSetAngleWithVision;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
@@ -41,7 +42,26 @@ public class SetShooterWristSpeaker extends SequentialCommandGroup {
     addCommands(
         new ParallelCommandGroup(
           new IntakeStop(intake, log),
+          // new WristSetAngleWithVision(wrist, driveTrain.getAllianceSelection(), driveTrain, log),
           new WristSetAngle(angle, wrist, log),
+          new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log),
+          new SpeakerModeSet(true, robotState, log),
+          new FarShotSet(false, robotState, log),
+          new RobotStateSetIdle(robotState, feeder, log)
+        )
+      );
+  }
+
+
+  public SetShooterWristSpeaker(double velocityTop, double velocityBottom, 
+    Shooter shooter, Wrist wrist, Intake intake, Feeder feeder, DriveTrain driveTrain, BCRRobotState robotState, FileLog log) {
+    // Add your commands in the addCommands() call, e.g.
+    // addCommands(new FooCommand(), new BarCommand());
+    addCommands(
+        new ParallelCommandGroup(
+          new IntakeStop(intake, log),
+          new WristSetAngleWithVision(wrist, driveTrain.getAllianceSelection(), driveTrain, log),
+          // new WristSetAngle(angle, wrist, log),
           new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log),
           new SpeakerModeSet(true, robotState, log),
           new FarShotSet(false, robotState, log),
