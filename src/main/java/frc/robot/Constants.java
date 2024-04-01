@@ -385,7 +385,7 @@ public final class Constants {
     public enum BCRColor {
       IDLE(255, 255, 255), // White             (nothing running)
       INTAKING(0, 0, 255), // Blue       (intake running)
-      SHOOTING(0, 255, 0);       // Green       (shooter running)
+      SHOOTING(0, 255, 0); // Green       (shooter running)
 
       public final int r, g, b;
       BCRColor(int r, int g, int b) {
@@ -396,9 +396,12 @@ public final class Constants {
   }
 
     public static final class LEDConstants {
+      public static final double accuracyDisplayThreshold = 15; //TODO Decide what the threshold should be
+
       public static final class Patterns {
           // Static Patterns
           public static final Color[] blueOrangeStatic = {Color.kBlue, Color.kOrange};
+          public static final Color[] accuracyDisplayPattern = {Color.kRed};
           // Animated Patterns
           public static final Color[][] blueOrangeMovingAnim = {{Color.kBlue, Color.kOrange},{Color.kOrange,Color.kBlue}};
           public static final Color[][] rainbowArray = {
@@ -413,11 +416,13 @@ public final class Constants {
       }
 
       public enum LEDSegmentRange {
-          CANdleTop(0, 4),   // top row of CANdle  (bottom on robot, upside down)
-          CANdleBottom(4, 4),  // bottom row of CANdle  (top on robot, upside down)
-          CANdleFull(0,8),
-          Strip1(8, 68),  // 1st strip only
-          Full(0, 68);  // CANdle + 1st strip  (update values if second strip is ever added)
+          CANdle(0,8), // Whole CANdle
+          StripLeft(64, 60),  // Left strip only
+          StripRight(124, 60), // Right strip only
+          StripHorizontal(8, 56), // Horizontal strip only
+          StripVerticals(64, 120), // Both vertical strips
+          AllStripsNoCANdle(8, 176), // All strips and not CANdle
+          Full(0, 184);  // CANdle + all strips
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
@@ -425,8 +430,5 @@ public final class Constants {
               this.count = count;
           }
       }
-
-      // public static final double NumLEDs = 68;
   }
-
 }

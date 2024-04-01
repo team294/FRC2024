@@ -202,10 +202,24 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   /**
+   * @return current set point RPM for top shooter wheel
+   */
+  public double getTopShooterTargetRPM() {
+    return setpointRPMTop;
+  }
+
+  /**
    * @return difference between measured RPM and set point RPM for bottom shooter wheel
    */
   public double getBottomShooterVelocityPIDError() {
     return getBottomShooterVelocity() - setpointRPMBottom;
+  }
+
+  /**
+   * @return current set point RPM for bottom shooter wheel
+   */
+  public double getBottomShooterTargetRPM() {
+    return setpointRPMBottom;
   }
 
   /**
