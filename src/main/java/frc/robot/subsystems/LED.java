@@ -286,11 +286,10 @@ public class LED extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateStateLEDs(LEDSegmentRange.Full);
+    updateStateLEDs(LEDSegmentRange.AllStripsNoCANdle);
     if(RobotPreferences.isStickyFaultActive()) {
       segments.get(LEDSegmentRange.CANdle).setAnimation(Color.kRed);
     }
     DisplayLEDs();
-    updateStateLEDs(LEDSegmentRange.AllStripsNoCANdle);
   }
 }
