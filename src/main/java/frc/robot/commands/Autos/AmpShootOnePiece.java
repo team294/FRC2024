@@ -41,7 +41,7 @@ public class AmpShootOnePiece extends SequentialCommandGroup {
       //  () -> alliance.getAlliance() == Alliance.Red
      // ),
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, runsWhenDisabled(), shooter, feeder, robotState, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log)
     );
   }

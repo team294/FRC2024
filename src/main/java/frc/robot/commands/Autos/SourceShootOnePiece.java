@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
+import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.ShooterSetPercent;
 import frc.robot.commands.Sequences.SetShooterWristSpeaker;
 import frc.robot.commands.Sequences.ShootPiece;
@@ -32,11 +33,12 @@ public class SourceShootOnePiece extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ConditionalCommand(
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromAmpSideCounterClockwise, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromAmpSideClockwise, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-        () -> alliance.getAlliance() == Alliance.Red
-      ),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, runsWhenDisabled(), shooter, feeder, robotState, log),
+      new DriveResetPose(0.2, 1.2, 60, true, driveTrain, log), 
+      new DriveResetPose(0.2, 7.0, -60, true, driveTrain, log), 
+      () -> alliance.getAlliance() == Alliance.Red
+     ),
+      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log)
     );
   }

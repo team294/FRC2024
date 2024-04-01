@@ -50,11 +50,11 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
         new IntakePieceAuto(intake, feeder, robotState, log),
         new ConditionalCommand(
             new SequentialCommandGroup(          
-                  new DriveResetPose(0.7, 1.3, 0, false, driveTrain, log),
+                  new DriveResetPose(0.7, 1.3, -60, false, driveTrain, log),
                   new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteRed.value], driveTrain, log)
             ),
             new SequentialCommandGroup(
-                  new DriveResetPose(0.7, 6.5, 0, false, driveTrain, log),
+                  new DriveResetPose(0.7, 6.5, 60, false, driveTrain, log),
                   new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteBlue.value], driveTrain, log)
             ),
           () -> alliance.getAlliance() == Alliance.Red
