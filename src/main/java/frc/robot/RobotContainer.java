@@ -140,7 +140,7 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
     SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log));
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
 
@@ -164,10 +164,9 @@ public class RobotContainer {
   private void configureTriggers(){
     // Trigger to turn off intaking when a piece is detected in the feeder.
     // Note that this trigger will only turn off intaking if the robot is
-    // currently in the INTAKE_TO_FEEDER state; otherwise, it does nothing.
+    // currently in the INTAKING state; otherwise, it does nothing.
     Trigger intakeStopTrigger = new Trigger(()-> DriverStation.isTeleopEnabled() && 
-      robotState.getState() == State.INTAKING &&
-      (feeder.isPiecePresent() ||  wrist.getWristAngle() > WristAngle.intakeLimit.value) );
+      robotState.getState() == State.INTAKING && feeder.isPiecePresent());
     intakeStopTrigger.onTrue(
       new StopIntakingSequence(feeder, intake, robotState, log)
     );
@@ -201,8 +200,11 @@ public class RobotContainer {
     xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
+    // Clear piece jammed in intake.
+    xbRB.onTrue(new IntakeClearJam(intake, feeder, robotState, log));
+
     // Move wrist down and then intake a piece
-    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, robotState, log));
+    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
 
     // Reverse the intake
     xbLT.onTrue(new IntakeSetPercent(-.3, -.3, intake, log));
@@ -254,7 +256,7 @@ public class RobotContainer {
         new RobotStateSetIdle(robotState, feeder, log)      
     ) );
     
-    xbRJoystickTrigger.whileTrue(new WristXboxControl(xboxController, wrist, log));     
+    xbRJoystickTrigger.whileTrue(new WristXboxControl(xboxController, wrist, intake, feeder, log));     
   }
 
   /**
