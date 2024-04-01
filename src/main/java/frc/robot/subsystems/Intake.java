@@ -100,6 +100,12 @@ public class Intake extends SubsystemBase implements Loggable {
     intakeConfig.Voltage.PeakReverseVoltage = -IntakeConstants.compensationVoltage;
     intakeConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;         // # seconds from 0 to full power
 
+    // Supply current limit is typically used to prevent breakers from tripping.
+    intakeConfig.CurrentLimits.SupplyCurrentLimit = 35.0;       // (amps) If current is above threshold value longer than threshold time, then limit current to this value
+    intakeConfig.CurrentLimits.SupplyCurrentThreshold = 60.0;   // (amps) Threshold current
+    intakeConfig.CurrentLimits.SupplyTimeThreshold = 0.2;       // (sec) Threshold time
+    intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
     // Set intake motor sensor
     intakeConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;  // use built-in encoder
 
