@@ -201,6 +201,9 @@ public class RobotContainer {
     xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
+    // Clear piece jammed in intake.
+    xbRB.onTrue(new IntakeClearJam(intake, feeder, robotState, log));
+
     // Move wrist down and then intake a piece
     xbRT.onTrue(new IntakePiece(intake, feeder, wrist, robotState, log));
 
