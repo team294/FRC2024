@@ -14,6 +14,7 @@ import frc.robot.commands.RobotStateSetIdle;
 import frc.robot.commands.ShooterSetVelocity;
 import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.WristSetAngleWithVision;
+import frc.robot.commands.WristSetAngleWithVisionAuto;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
@@ -60,7 +61,7 @@ public class SetShooterWristSpeaker extends SequentialCommandGroup {
     addCommands(
         new ParallelCommandGroup(
           new IntakeStop(intake, log),
-          new WristSetAngleWithVision(wrist, driveTrain.getAllianceSelection(), driveTrain, log),
+          new WristSetAngleWithVisionAuto(wrist, driveTrain.getAllianceSelection(), driveTrain, log),
           // new WristSetAngle(angle, wrist, log),
           new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log),
           new SpeakerModeSet(true, robotState, log),
