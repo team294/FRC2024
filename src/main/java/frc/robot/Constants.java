@@ -416,13 +416,13 @@ public final class Constants {
       }
 
       public enum LEDSegmentRange {
-          CANdle(0,8), // Whole CANdle
-          StripLeft(64, 60),  // Left strip only
-          StripRight(124, 60), // Right strip only
-          StripHorizontal(8, 56), // Horizontal strip only
-          StripVerticals(64, 120), // Both vertical strips
-          AllStripsNoCANdle(8, 176), // All strips and not CANdle
-          Full(0, 184);  // CANdle + all strips
+          CANdle(0, 8), // Whole CANdle
+          StripLeft(34, 30),  // Left strip only
+          StripRight(64, 30), // Right strip only
+          StripHorizontal(8, 26), // Horizontal strip only
+          StripVerticals(26, 60), // Both vertical strips
+          AllStripsNoCANdle(8, 86), // All strips and not CANdle
+          Full(0, 94);  // CANdle + all strips
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
