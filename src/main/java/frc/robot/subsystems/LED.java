@@ -317,20 +317,9 @@ public class LED extends SubsystemBase {
   public void periodic() {
     updateStateLEDs(LEDSegmentRange.Full);
     if(RobotPreferences.isStickyFaultActive()) {
-      segments.get(LEDSegmentRange.CANdleFull).setAnimation(Color.kRed);
+      segments.get(LEDSegmentRange.CANdle).setAnimation(Color.kRed);
     }
-
-    if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
-      LEDSegmentRange horizontalSegment = LEDSegmentRange.StripHorizontal;
-      numAccuracyLEDs = (horizontalSegment.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
-      Color[] accuracyArray = new Color[horizontalSegment.count];
-      for(int index = 0; index < horizontalSegment.count; index++){
-        if(index < numAccuracyLEDs){accuracyArray[index] = Color.kGreen;}
-        else{accuracyArray[index] = Color.kRed;}
-      }
-      segments.get(horizontalSegment).setAnimation(accuracyArray, shouldClear);
-    }
-
     DisplayLEDs();
+    updateStateLEDs(LEDSegmentRange.AllStripsNoCANdle);
   }
 }
