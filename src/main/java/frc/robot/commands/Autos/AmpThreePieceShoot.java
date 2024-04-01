@@ -60,6 +60,7 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
+      // use vision to shoot.
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log),
       new ParallelCommandGroup(

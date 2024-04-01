@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Autos;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.CoordType;
@@ -35,11 +36,11 @@ public class AmpShootOnePiece extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-     // new ConditionalCommand(
-      //  new DriveResetPose(0.2, 1.2, -60, true, driveTrain, log), 
-      //  new DriveResetPose(0.2, 7.0, 60, true, driveTrain, log), 
-      //  () -> alliance.getAlliance() == Alliance.Red
-     // ),
+      new ConditionalCommand(
+        new DriveResetPose(0.2, 1.2, -60, true, driveTrain, log),
+        new DriveResetPose(0.2, 7.0, 60, true, driveTrain, log),
+        () -> alliance.getAlliance() == Alliance.Red
+      ),   
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ShooterSetPercent(-0.02, shooter, log)
