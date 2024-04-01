@@ -26,6 +26,7 @@ import frc.robot.Constants.StopType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.Constants.VisionConstants.AimLockState;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.*;
 import frc.robot.commands.Autos.*;
@@ -79,7 +80,7 @@ public class RobotContainer {
     configureShuffleboard();
 
     // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
-    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
+    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, allianceSelection, driveTrain, log));
 
   }
 
@@ -119,6 +120,7 @@ public class RobotContainer {
     SmartDashboard.putData("Wrist Set Angle", new WristSetAngle(wrist, log));
     SmartDashboard.putData("Wrist Calibration", new WristCalibrationRamp(0.01, 0.4, wrist, log));
     SmartDashboard.putData("Wrist Stop", new WristSetPercentOutput(0.0, wrist, log));
+    SmartDashboard.putData("Wrist Over Head with Vision", new WristOverHeadSetAngleWithVision(wrist, allianceSelection, driveTrain, log));
     SmartDashboard.putData("Wrist Nudge Angle", new WristNudgeAngle(wrist, log));
   
     // Drive base commands
@@ -291,16 +293,35 @@ public class RobotContainer {
         
     );
 
-    // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
-    // right[2] //Turn to face amp
-    
+    // Standard aim lock
+    right[1].whileTrue(new ParallelCommandGroup(
+      new SetAimLock(driveTrain, AimLockState.STANDARD, log),
+      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
+    )); 
+    right[1].onFalse(
+      new SetAimLock(driveTrain, AimLockState.NONE, log)
+    );
+
+
+    // Overhead aim lock
+    right[2].whileTrue(new ParallelCommandGroup(
+      new SetAimLock(driveTrain, AimLockState.OVERHEAD, log),
+      new WristOverHeadSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
+    ));
+    right[2].onFalse(
+      new SetAimLock(driveTrain, AimLockState.NONE, log)
+    );
+
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
-    //right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
+    // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
+    // right[2].whileTrue(new DriveToNoteSequence(intake, shooter, feeder, wrist, driveTrain, robotState, log));
     
      
   }
 
-  /** 
+  /**
    * Define Copanel button mappings.
    *  
    *  1  3  5  8
