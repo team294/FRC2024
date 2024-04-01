@@ -305,7 +305,7 @@ public class RobotContainer {
     // Overhead aim lock
     right[2].whileTrue(new ParallelCommandGroup(
       new SetAimLock(driveTrain, AimLockState.OVERHEAD, log),
-      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+      new WristOverHeadSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
       new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
     ));
     right[2].onFalse(

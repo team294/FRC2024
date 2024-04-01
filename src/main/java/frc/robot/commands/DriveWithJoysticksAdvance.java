@@ -117,7 +117,7 @@ public class DriveWithJoysticksAdvance extends Command {
         if(aimLock != AimLockState.NONE){
           goalAngle = driveTrain.getSpeakerAngleFromRobot();
           if (aimLock == AimLockState.OVERHEAD) {
-            goalAngle += 180;
+            goalAngle += Math.PI;
           }
 
           goalAngle = MathUtil.angleModulus(goalAngle);
