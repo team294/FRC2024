@@ -268,6 +268,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   }
 
   /**
+   * Sets the drive train to coast or brake mode.
+   * <p> <b>Note</b> that this procedure includes multiple blocking calls and will delay robot code by ~250ms if the mode is changed.
+   * However, if setCoast is the same as the current setting, then nothing is sent to the swerve modules and there will not
+   * be a delay.
    * @param setCoast true = coast mode, false = brake mode
    */
   public void setDriveModeCoast(boolean setCoast) {
