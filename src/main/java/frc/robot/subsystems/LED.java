@@ -313,7 +313,7 @@ public class LED extends SubsystemBase {
         segmentPatternLeft[i] = Color.kRed;
       } else {
         Color[] frame = segments.get(LEDSegmentRange.StripLeft).getCurrentFrame();
-        segmentPatternLeft[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+        if (frame.length > 0) {segmentPatternLeft[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];}
       }
     }
     // Generates segment pattern for the right vertical segment based on percent
@@ -323,7 +323,7 @@ public class LED extends SubsystemBase {
         segmentPatternRight[i] = Color.kRed;
       } else {
         Color[] frame = segments.get(LEDSegmentRange.StripRight).getCurrentFrame();
-        segmentPatternRight[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+        if (frame.length > 0) {segmentPatternRight[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];}
       }
     }
     // Generates segment pattern for the horizontal segment based on percent
@@ -333,7 +333,7 @@ public class LED extends SubsystemBase {
         segmentPatternHorizontal[i] = Color.kRed;
       } else {
         Color[] frame = segments.get(LEDSegmentRange.StripHorizontal).getCurrentFrame();
-        segmentPatternHorizontal[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+        if (frame.length > 0) {segmentPatternHorizontal[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];}
       }
     }
     // Sets segments based on generated patterns
