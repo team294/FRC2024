@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase implements Loggable {
 
   private final FileLog log;
   private final int logRotationKey;
-  private final Timer timer = new Timer();
+  private final Timer currentTimer = new Timer();
   private boolean fastLogging = false; // true is enabled to run every cycle; false follows normal logging cycles
   private String subsystemName;    // subsystem name for use in file logging and Shuffleboard
 
@@ -227,13 +227,13 @@ public class Intake extends SubsystemBase implements Loggable {
         SmartDashboard.putBoolean(buildString(subsystemName, " Is Piece Present"), isPiecePresent());
     }
 
-    if(intakeStatorCurrent.refresh().getValueAsDouble() < 30.0) {
-      timer.reset();
+    if(Math.abs(intakeStatorCurrent.refresh().getValueAsDouble()) < 30.0) {
+      currentTimer.reset();
     }
 
-    if(timer.hasElapsed(0.5)) {
+    if(currentTimer.hasElapsed(0.5)) {
       this.stopIntakeMotor();
-      timer.reset();
+      currentTimer.reset();
     }
   }
 
