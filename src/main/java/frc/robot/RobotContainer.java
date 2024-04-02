@@ -61,7 +61,7 @@ public class RobotContainer {
   private final BCRRobotState robotState = new BCRRobotState();
   
   // Is a subsystem, but requires a utility
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, log, matchTimer);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, matchTimer);
 
 
   // Define controllers

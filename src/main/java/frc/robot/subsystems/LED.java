@@ -23,7 +23,6 @@ import frc.robot.utilities.RobotPreferences;
 
 
 public class LED extends SubsystemBase {
-  private final FileLog log;
   private final CANdle candle;
   private String subsystemName;
   private BCRRobotState robotState;
@@ -43,11 +42,9 @@ public class LED extends SubsystemBase {
    * @param shooter
    * @param feeder
    * @param robotState
-   * @param log
    * @param matchTimer
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, Timer matchTimer) {
-    this.log = log;
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, Timer matchTimer) {
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
@@ -309,7 +306,7 @@ public class LED extends SubsystemBase {
 
     // Percent of the way through the last 10 seconds of the match (125 seconds in)
     Double percent = Math.max(matchTimer.get() - 125, 0) / 10.0;
-    
+
     // Generates segment pattern for the left vertical segment based on percent
     Color[] segmentPatternLeft = new Color[LEDSegmentRange.StripLeft.count];
     for (int i = 0; i < LEDSegmentRange.StripLeft.count; i++) {
@@ -320,6 +317,7 @@ public class LED extends SubsystemBase {
         segmentPatternLeft[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
       }
     }
+
     // Generates segment pattern for the right vertical segment based on percent
     Color[] segmentPatternRight = new Color[LEDSegmentRange.StripRight.count];
     for (int i = 0; i < LEDSegmentRange.StripRight.count; i++) {
@@ -330,6 +328,7 @@ public class LED extends SubsystemBase {
         segmentPatternRight[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
       }
     }
+    
     // Generates segment pattern for the horizontal segment based on percent
     Color[] segmentPatternHorizontal = new Color[LEDSegmentRange.StripHorizontal.count];
     for (int i = 0; i < LEDSegmentRange.StripHorizontal.count; i++) {
