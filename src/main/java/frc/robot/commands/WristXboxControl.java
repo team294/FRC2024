@@ -8,12 +8,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.Constants.WristConstants.WristAngle;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.FileLog;
 
 public class WristXboxControl extends Command {
   private final CommandXboxController xboxController;
   private final Wrist wrist;
+  private final Intake intake;
+  private final Feeder feeder;
   private final FileLog log;
 
   /**
@@ -23,12 +28,14 @@ public class WristXboxControl extends Command {
    * @param wrist
    * @param log
    */
-  public WristXboxControl(CommandXboxController xboxController, Wrist wrist, FileLog log) {
+  public WristXboxControl(CommandXboxController xboxController, Wrist wrist, Intake intake, Feeder feeder, FileLog log) {
     this.wrist = wrist;
+    this.intake = intake;
+    this.feeder = feeder;
     this.xboxController = xboxController;
     this.log = log;
 
-    addRequirements(wrist);
+    addRequirements(wrist, intake, feeder);
   }
 
   // Called when the command is initially scheduled.
@@ -43,6 +50,13 @@ public class WristXboxControl extends Command {
     double wristPct = -xboxController.getRightY();
     if (Math.abs(wristPct)<OIConstants.manualWristDeadband) wristPct=0;
     wristPct *= WristConstants.maxPercentOutput;
+
+    // If wrist is above intake limit, stop the intaking
+    if (wrist.getWristAngle() > WristAngle.intakeLimit.value) {
+      intake.setCenteringMotorPercentOutput(0);
+      intake.setIntakePercentOutput(0);
+      feeder.setFeederPercentOutput(0);
+    }
 
     log.writeLog(false, "WristXboxControl", "Execute", "Right Xbox", wristPct);
 
