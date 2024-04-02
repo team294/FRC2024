@@ -15,7 +15,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 
-public class StopIntakingSequence extends ParallelCommandGroup {
+public class StopIntakingSequence extends SequentialCommandGroup {
   
   /**
    * Stops the intaking sequence and sets the robot state to IDLE
