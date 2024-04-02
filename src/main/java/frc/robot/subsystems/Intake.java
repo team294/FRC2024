@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase implements Loggable {
 
   private final FileLog log;
   private final int logRotationKey;
-  private final Timer currentTimer = new Timer();
+  private Timer currentTimer = new Timer();
   private boolean fastLogging = false; // true is enabled to run every cycle; false follows normal logging cycles
   private String subsystemName;    // subsystem name for use in file logging and Shuffleboard
 
@@ -73,10 +73,11 @@ public class Intake extends SubsystemBase implements Loggable {
    * @param subsystemName
    * @param log
    */
-  public Intake(String subsystemName, FileLog log) {
+  public Intake(String subsystemName, FileLog log, Timer currentTimer) {
     this.log = log; // save reference to the fileLog
     this.subsystemName = subsystemName;
     logRotationKey = log.allocateLogRotation();
+    this.currentTimer = currentTimer;
 
     // Get signal and sensor objects
     intakeSupplyVoltage = intakeMotor.getSupplyVoltage();
