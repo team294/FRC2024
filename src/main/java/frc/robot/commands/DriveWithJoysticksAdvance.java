@@ -151,7 +151,7 @@ public class DriveWithJoysticksAdvance extends Command {
       }
     
       if(aimLock != AimLockState.NONE){ 
-        nextTurnRate *= 2.3;
+        nextTurnRate *= 2.2;
       }
       driveTrain.drive(fwdVelocity, leftVelocity, nextTurnRate, true, false);
 
