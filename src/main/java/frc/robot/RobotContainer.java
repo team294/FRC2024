@@ -46,11 +46,11 @@ public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
   private final FileLog log = new FileLog("B1");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
-  private final Timer timer = new Timer();
+  private final Timer matchTimer = new Timer();
 
   // Define robot subsystems  
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
-  private final Intake intake = new Intake("Intake", log, timer);
+  private final Intake intake = new Intake("Intake", log);
   private final Shooter shooter = new Shooter(log);
   private final Feeder feeder = new Feeder(log);
   private final Wrist wrist = new Wrist(log);
@@ -446,8 +446,8 @@ public class RobotContainer {
     // Set robot state
     robotState.setState(State.IDLE);
 
-    timer.reset();
-    timer.start();
+    matchTimer.reset();
+    matchTimer.start();
   }
 
   /**
