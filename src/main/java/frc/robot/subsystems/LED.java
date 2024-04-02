@@ -17,7 +17,6 @@ import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.LEDConstants.*;
 import frc.robot.utilities.BCRRobotState;
-import frc.robot.utilities.FileLog;
 import frc.robot.utilities.LEDSegment;
 import frc.robot.utilities.RobotPreferences;
 
