@@ -9,6 +9,8 @@ import com.ctre.phoenix6.StatusSignal;
 // import com.ctre.phoenix6.configs.Pigeon2Configurator;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,6 +19,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -34,6 +38,9 @@ import frc.robot.utilities.*;
 
 // Vision imports
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import java.util.Optional;
 
 
@@ -59,6 +66,9 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   private final StatusSignal<Boolean> pigeonFault = pigeon.getFault_Hardware();
   private double yawZero = 0.0;
   private double pitchZero = 0.0;
+  private final Matrix<N3, N1> closeMatrix = new Matrix<>(Nat.N3(), Nat.N1(), new double[] {.9,.9,.9});
+  private final Matrix<N3, N1> farMatrix = new Matrix<>(Nat.N3(), Nat.N1(), new double[] {2,2,2});
+
 
   // variables to help calculate angular velocity for turnGyro
   // private double prevAng; // last recorded gyro angle
@@ -70,6 +80,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   // variable to store vision camera
   private PhotonCameraWrapper camera;
+  private NotePhotonCameraWrapper noteCamera;
+
+  // variable for vison-based aiming in DriveWithJoysticksAdvance
+  private boolean aimLock = false;
 
   // Odometry class for tracking robot pose
   private final SwerveDrivePoseEstimator poseEstimator; 
@@ -87,6 +101,10 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     this.log = log; // save reference to the fileLog
     logRotationKey = log.allocateLogRotation();     // Get log rotation for this subsystem
     this.camera = new PhotonCameraWrapper(allianceSelection, log, logRotationKey);
+    this.noteCamera = new NotePhotonCameraWrapper(log, logRotationKey);
+    
+    // enable cameras
+    cameraInit();
 
     // create swerve modules
     swerveFrontLeft = new SwerveModule("FL",
@@ -129,6 +147,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     // Set initial location to 0,0.
     poseEstimator = new SwerveDrivePoseEstimator(kDriveKinematics, Rotation2d.fromDegrees(getGyroRotation()), 
        getModulePositions(), new Pose2d(0, 0, Rotation2d.fromDegrees(0)) );
+    // poseEstimator.setVisionMeasurementStdDevs(); // TODO
     SmartDashboard.putData("Field", field);
   }
   
@@ -456,6 +475,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   @Override
   public void periodic() {
+    
     // This method will be called once per scheduler run
     
     // save current angle and time for calculating angVel
@@ -539,20 +559,27 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
       if (result.isPresent()) {
         EstimatedRobotPose camPose = result.get();
-        // only updates odometry if close enough
-        // TODO change how it decides if it's too far
-        //if (camPose.estimatedPose.getX() < 3.3) {
-          poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
 
-          //field.getObject("Vision").setPose(camPose.estimatedPose.toPose2d());
-          SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
-          SmartDashboard.putNumber("Vision Y", camPose.estimatedPose.toPose2d().getY());
-          SmartDashboard.putNumber("Vision rot", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
+        PhotonPipelineResult camResult = camera.getLatestResult();
+        if (camResult.hasTargets()) {
+          PhotonTrackedTarget bestTarget = camResult.getBestTarget();
+          if (bestTarget.getBestCameraToTarget().getX() < 3) {
+            poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+
+            // poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, closeMatrix);
+            //field.getObject("Vision").setPose(camPose.estimatedPose.toPose2d());
+          }
+          else if (bestTarget.getBestCameraToTarget().getX() < 7) {
+              poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, farMatrix);
+          }
+        }
+        SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
+        SmartDashboard.putNumber("Vision Y", camPose.estimatedPose.toPose2d().getY());
+        SmartDashboard.putNumber("Vision rot", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
           
-          SmartDashboard.putNumber("Odo X", poseEstimator.getEstimatedPosition().getX());
-          SmartDashboard.putNumber("Odo Y", poseEstimator.getEstimatedPosition().getY());
-          SmartDashboard.putNumber("Odo rot", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
-       // }
+        SmartDashboard.putNumber("Odo X", poseEstimator.getEstimatedPosition().getX());
+        SmartDashboard.putNumber("Odo Y", poseEstimator.getEstimatedPosition().getY());
+        SmartDashboard.putNumber("Odo rot", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
       }
 
     }
@@ -569,6 +596,30 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
   public void cameraInit() {
     camera.init();
+    noteCamera.init();
   }
 
+  public NotePhotonCameraWrapper getNoteCamera() {
+    return noteCamera;
+  }
+
+  public PhotonTrackedTarget getBestTarget() {
+    return noteCamera.getBestTarget();
+  }
+
+  public PhotonPipelineResult getLatestResult() {
+    return noteCamera.getLatestResult();
+  }
+
+  public void setAimLock(boolean state) {
+    aimLock = state;
+  }
+
+  public void toggleAimLock() {
+    aimLock = !aimLock;
+  }
+
+  public boolean isAimLockEnabled(){
+    return aimLock;
+  }
 }
