@@ -15,7 +15,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 
-public class StopIntakingSequence extends SequentialCommandGroup {
+public class StopIntakingSequence extends ParallelCommandGroup {
   
   /**
    * Stops the intaking sequence and sets the robot state to IDLE
@@ -26,14 +26,15 @@ public class StopIntakingSequence extends SequentialCommandGroup {
    */
   public StopIntakingSequence(Feeder feeder, Intake intake, BCRRobotState robotState, FileLog log) {
     addCommands(
-      new IntakeSetPercent(0, 0, intake, log),
       new SequentialCommandGroup(
-        new FeederSetPercent(FeederConstants.feederBackPiecePercent, feeder, log),
-        new WaitCommand(FeederConstants.feederBackPieceTime),
-        new FeederSetPercent(0.0, feeder, log),
         new IntakeSetPercent(-IntakeConstants.intakePercent, IntakeConstants.centeringPercent, intake, log),
         new WaitCommand(0.250),
         new IntakeSetPercent(0.0, 0.0, intake, log)
+      ),
+      new SequentialCommandGroup(
+        new FeederSetPercent(FeederConstants.feederBackPiecePercent, feeder, log),
+        new WaitCommand(FeederConstants.feederBackPieceTime),
+        new FeederSetPercent(0.0, feeder, log)
       ),
       new RobotStateSetIdle(robotState, feeder, log)
     );
