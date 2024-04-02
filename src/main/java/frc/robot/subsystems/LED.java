@@ -301,6 +301,7 @@ public class LED extends SubsystemBase {
 
   private void DisplayLEDs() {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
+      if (segmentKey == LEDSegmentRange.Full || segmentKey == LEDSegmentRange.StripVerticals || segmentKey == LEDSegmentRange.AllStripsNoCANdle) {continue; }
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
       setPattern(segment.getCurrentFrame(), segmentKey);
@@ -315,10 +316,12 @@ public class LED extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateStateLEDs(LEDSegmentRange.Full);
+    for (LEDSegmentRange segmentKey : segments.keySet()) {
+      updateStateLEDs(segmentKey);
+    }
 
     if(RobotPreferences.isStickyFaultActive()) {
-      segments.get(LEDSegmentRange.CANdleFull).setAnimation(Color.kRed);
+      setAnimation(Color.kRed, LEDSegmentRange.CANdle);
     }
 
     if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
