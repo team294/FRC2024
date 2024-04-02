@@ -81,7 +81,7 @@ public class RobotContainer {
     configureShuffleboard();
 
     // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
-    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
+    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, allianceSelection, driveTrain, log));
 
   }
 
@@ -295,16 +295,25 @@ public class RobotContainer {
         
     );
 
-    // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
+    right[1].whileTrue(new ParallelCommandGroup(
+      new SetAimLock(driveTrain, true, log),
+      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
+    )); //TODO implement this once vision is brought in
+    right[1].onFalse(
+      new SetAimLock(driveTrain, false, log)
+    ); //TODO implement this once vision is brought in
+
     // right[2] //Turn to face amp
     
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
-    //right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
+    // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
+    // right[2].whileTrue(new DriveToNoteSequence(intake, shooter, feeder, wrist, driveTrain, robotState, log));
     
      
   }
 
-  /** 
+  /**
    * Define Copanel button mappings.
    *  
    *  1  3  5  8
