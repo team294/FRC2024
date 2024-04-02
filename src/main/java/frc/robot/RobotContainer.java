@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,10 +46,11 @@ public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
   private final FileLog log = new FileLog("B1");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
+  private final Timer timer = new Timer();
 
   // Define robot subsystems  
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
-  private final Intake intake = new Intake("Intake", log);
+  private final Intake intake = new Intake("Intake", log, timer);
   private final Shooter shooter = new Shooter(log);
   private final Feeder feeder = new Feeder(log);
   private final Wrist wrist = new Wrist(log);
@@ -434,6 +436,9 @@ public class RobotContainer {
 
     // Set robot state
     robotState.setState(State.IDLE);
+
+    timer.reset();
+    timer.start();
   }
 
   /**
