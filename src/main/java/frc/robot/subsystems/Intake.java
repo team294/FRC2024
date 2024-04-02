@@ -233,6 +233,7 @@ public class Intake extends SubsystemBase implements Loggable {
 
     if(timer.hasElapsed(0.5)) {
       this.stopIntakeMotor();
+      timer.reset();
     }
   }
 
