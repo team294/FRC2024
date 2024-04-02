@@ -145,7 +145,7 @@ public class AutoSelection {
 
         else if(autoPlan == AmpShootOnePiece){
 			log.writeLogEcho(true, "AutoSelect", "run Amp One Piece Shoot");
-			autonomousCommand = new SourceShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommand = new AmpShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 		
 		else if (autonomousCommand == null) {
