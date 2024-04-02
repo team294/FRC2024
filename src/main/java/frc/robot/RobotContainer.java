@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,6 +47,7 @@ public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
   private final FileLog log = new FileLog("B1");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
+  private final Timer matchTimer = new Timer();
 
   // Define robot subsystems  
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
@@ -60,7 +62,7 @@ public class RobotContainer {
   private final BCRRobotState robotState = new BCRRobotState();
   
   // Is a subsystem, but requires a utility
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, log);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, matchTimer);
 
 
   // Define controllers
@@ -80,7 +82,7 @@ public class RobotContainer {
     configureShuffleboard();
 
     // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
-    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
+    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, allianceSelection, driveTrain, log));
 
   }
 
@@ -302,16 +304,25 @@ public class RobotContainer {
         
     );
 
-    // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
+    right[1].whileTrue(new ParallelCommandGroup(
+      new SetAimLock(driveTrain, true, log),
+      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
+    )); //TODO implement this once vision is brought in
+    right[1].onFalse(
+      new SetAimLock(driveTrain, false, log)
+    ); //TODO implement this once vision is brought in
+
     // right[2] //Turn to face amp
     
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
-    //right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
+    // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
+    // right[2].whileTrue(new DriveToNoteSequence(intake, shooter, feeder, wrist, driveTrain, robotState, log));
     
      
   }
 
-  /** 
+  /**
    * Define Copanel button mappings.
    *  
    *  1  3  5  8
@@ -445,6 +456,9 @@ public class RobotContainer {
 
     // Set robot state
     robotState.setState(State.IDLE);
+
+    matchTimer.reset();
+    matchTimer.start();
   }
 
   /**

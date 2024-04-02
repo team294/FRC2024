@@ -17,6 +17,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -31,6 +32,7 @@ public class Intake extends SubsystemBase implements Loggable {
 
   private final FileLog log;
   private final int logRotationKey;
+  private Timer currentTimer = new Timer();
   private boolean fastLogging = false; // true is enabled to run every cycle; false follows normal logging cycles
   private String subsystemName;    // subsystem name for use in file logging and Shuffleboard
 
@@ -75,6 +77,8 @@ public class Intake extends SubsystemBase implements Loggable {
     this.log = log; // save reference to the fileLog
     this.subsystemName = subsystemName;
     logRotationKey = log.allocateLogRotation();
+    currentTimer.reset();
+    currentTimer.start();
 
     // Get signal and sensor objects
     intakeSupplyVoltage = intakeMotor.getSupplyVoltage();
@@ -99,6 +103,12 @@ public class Intake extends SubsystemBase implements Loggable {
     intakeConfig.Voltage.PeakForwardVoltage = IntakeConstants.compensationVoltage;
     intakeConfig.Voltage.PeakReverseVoltage = -IntakeConstants.compensationVoltage;
     intakeConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;         // # seconds from 0 to full power
+
+    // Supply current limit is typically used to prevent breakers from tripping.
+    intakeConfig.CurrentLimits.SupplyCurrentLimit = 35.0;       // (amps) If current is above threshold value longer than threshold time, then limit current to this value
+    intakeConfig.CurrentLimits.SupplyCurrentThreshold = 60.0;   // (amps) Threshold current
+    intakeConfig.CurrentLimits.SupplyTimeThreshold = 0.2;       // (sec) Threshold time
+    intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     // Set intake motor sensor
     intakeConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;  // use built-in encoder
@@ -223,6 +233,21 @@ public class Intake extends SubsystemBase implements Loggable {
         SmartDashboard.putNumber("Centering Velocity RPM", getCenteringMotorVelocity());
         SmartDashboard.putNumber("Centering Temperature C", centeringTemp.refresh().getValueAsDouble());
         SmartDashboard.putBoolean(buildString(subsystemName, " Is Piece Present"), isPiecePresent());
+    }
+
+    // Reset safety time if current is below the threshhold
+    if(Math.abs(intakeStatorCurrent.refresh().getValueAsDouble()) < 30.0) {
+      currentTimer.reset();
+    } else {
+      log.writeLog(false, subsystemName, "Intake current above limit", "Amps", intakeStatorCurrent.getValueAsDouble());
+    }
+
+    // If current is above threshold for too long, then shut off intake motor to prevent overheating.
+    // This will also also the centering and feeder motors to pull the piece in after a jam.
+    if(currentTimer.hasElapsed(0.5)) {
+      this.stopIntakeMotor();
+      currentTimer.reset();
+      log.writeLog(false, subsystemName, "Intake shutoff");
     }
   }
 

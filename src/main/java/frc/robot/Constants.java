@@ -107,6 +107,11 @@ public final class Constants {
       // front-back distance between the drivetrain wheels; should be measured from center to center
       public static final double DRIVETRAIN_WHEELBASE_METERS = 0.52705 * DrivetrainAdjustmentFactor;       // 0.52705m CALIBRATED.  Competition bot CAD = 20.75" = 0.52705m.  80% bot CAD = 0.60325m, calibrated = 0.626m.
 
+      // distance from the ground to the center of the wrist joint (m)
+      public static final double heightFromGroundToWristPivot = 0.5762625;
+
+      // distance from the center of the wrist pivot to the intersection of the path the notes travel through the shooter (m)
+      public static final double lengthOfArmFromWristPivotToCenterPathOfShooter = 0.365125;
     }
 
     public static final class SwerveConstants {
@@ -117,7 +122,7 @@ public final class Constants {
       public static final double kWheelDiameterMeters = 0.1003 * 1.025; // B1:  1.025 adjustment CALIBRATED.  Colson wheel = nominal 4" diameter, actual 3.95" = 0.1003m.  80% bot calibrated = 0.1013m.
       public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
-
+      
       // Robot calibration for feed-forward and max speeds
       public static final double voltageCompSaturation = 12.0;
       // Max speed is used to keep each motor from maxing out, which preserves ratio between motors 
@@ -184,7 +189,7 @@ public final class Constants {
       public static final double maxAccelerationRateWithElevatorUp = 1.5;           // m/s^2
       public static final double maxRotationRateWithElevatorUp = 0.8;     // rad/sec
 
-      public static final double kPJoystickThetaController = 3; // Theta kp value for joystick in rad/sec
+      public static final double kPJoystickThetaController = 3; // Theta kp value for joystick in rad/sec    
     }
 
     public static final class ShooterConstants {
@@ -290,16 +295,39 @@ public final class Constants {
     public static class FieldConstants {
       public static final double length = Units.feetToMeters(54);
       public static final double width = Units.feetToMeters(27);
+      public static final double yPosSpeakerRed = 2.663;
+      public static final double yPosSpeakerBlue = width - yPosSpeakerRed;
+      public static final double heightOfSpeaker = 2.03;
     }
 
     public static class VisionConstants {
-      //TODO NEED TO CALIBRATE
-      public static final Transform3d robotToCam =
+      // PhotonVision
+      public static class PhotonVisionConstants {
+        public static final int width = 1200;
+        //TODO NEED TO CALIBRATE
+        public static final Transform3d robotToCamFront =
                 new Transform3d(
                     // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
-                    new Translation3d(Units.inchesToMeters(0), 0, Units.inchesToMeters(0)),
-                    new Rotation3d(0, Units.degreesToRadians(0), 0)); // Cam mounted facing forward in center of robot
-        public static final String cameraName = "CenterCamera";
+                    new Translation3d(Units.inchesToMeters(8.9375), Units.inchesToMeters(0), Units.inchesToMeters(25.03125)),
+                    new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(180))); // Cam mounted facing forward in center of robot
+        public static final String aprilTagCameraName = "AprilTagCamera";
+        // 1.75 physical center to wheel center
+        // 16.75 wheel cetner to intake center without bumper
+        
+        public static final Transform3d robotToCamBack =
+                new Transform3d(
+                    // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
+                    new Translation3d(Units.inchesToMeters(6.125), Units.inchesToMeters(0), Units.inchesToMeters(25.03125)),
+                    new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(180))); // Cam mounted facing forward in center of robot
+
+             
+        public static final String aprilTagCameraBackName = "AprilTagCameraBack";
+
+
+        public static final String noteCameraName = "NoteCamera";
+        public static final double pitchSetpoint = -18;
+        public static final double yawSetpoint = 0;
+      }
     }
 
     public static final class WristConstants {
@@ -388,7 +416,7 @@ public final class Constants {
     public enum BCRColor {
       IDLE(255, 255, 255), // White             (nothing running)
       INTAKING(0, 0, 255), // Blue       (intake running)
-      SHOOTING(0, 255, 0);       // Green       (shooter running)
+      SHOOTING(0, 255, 0); // Green       (shooter running)
 
       public final int r, g, b;
       BCRColor(int r, int g, int b) {
@@ -399,9 +427,12 @@ public final class Constants {
   }
 
     public static final class LEDConstants {
+      public static final double accuracyDisplayThreshold = 35; //TODO Decide what the threshold should be
+
       public static final class Patterns {
           // Static Patterns
           public static final Color[] blueOrangeStatic = {Color.kBlue, Color.kOrange};
+          public static final Color[] accuracyDisplayPattern = {Color.kRed};
           // Animated Patterns
           public static final Color[][] blueOrangeMovingAnim = {{Color.kBlue, Color.kOrange},{Color.kOrange,Color.kBlue}};
           public static final Color[][] rainbowArray = {
@@ -416,11 +447,13 @@ public final class Constants {
       }
 
       public enum LEDSegmentRange {
-          CANdleTop(0, 4),   // top row of CANdle  (bottom on robot, upside down)
-          CANdleBottom(4, 4),  // bottom row of CANdle  (top on robot, upside down)
-          CANdleFull(0,8),
-          Strip1(8, 68),  // 1st strip only
-          Full(0, 68);  // CANdle + 1st strip  (update values if second strip is ever added)
+          CANdle(0,8), // Whole CANdle
+          StripLeft(34, 30),  // Left strip only
+          StripRight(64, 30), // Right strip only
+          StripHorizontal(8, 26), // Horizontal strip only
+          StripVerticals(34, 60), // Both vertical strips
+          AllStripsNoCANdle(8, 86), // All strips and not CANdle
+          Full(0, 94);  // CANdle + All strips
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
@@ -428,8 +461,5 @@ public final class Constants {
               this.count = count;
           }
       }
-
-      // public static final double NumLEDs = 68;
   }
-
 }
