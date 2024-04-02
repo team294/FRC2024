@@ -73,11 +73,12 @@ public class Intake extends SubsystemBase implements Loggable {
    * @param subsystemName
    * @param log
    */
-  public Intake(String subsystemName, FileLog log, Timer currentTimer) {
+  public Intake(String subsystemName, FileLog log) {
     this.log = log; // save reference to the fileLog
     this.subsystemName = subsystemName;
     logRotationKey = log.allocateLogRotation();
-    this.currentTimer = currentTimer;
+    currentTimer.reset();
+    currentTimer.start();
 
     // Get signal and sensor objects
     intakeSupplyVoltage = intakeMotor.getSupplyVoltage();
