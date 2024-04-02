@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import java.util.HashMap;
 
-import com.ctre.phoenix.CANifier.LEDChannel;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
@@ -259,7 +258,7 @@ public class LED extends SubsystemBase {
       if (feeder.isPiecePresent()) {
         if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance
         && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight)) {
-          setAnimation(Color.kGreen, segment);
+          setAnimation(new Color(0, 255, 0), segment);
         } else if (shooter.getTopShooterTargetRPM() > 0 && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight))  {
           Double percent = shooter.getTopShooterVelocity() / shooter.getTopShooterTargetRPM();
           Color[] segmentPattern = new Color[segment.count];
@@ -268,7 +267,7 @@ public class LED extends SubsystemBase {
               if (i >= (1.0 - percent) * segment.count) {
                 segmentPattern[i] = Color.kPurple;
               } else {
-                segmentPattern[i] = Color.kOrange;
+                segmentPattern[i] = new Color(255, 30, 0);
               }
             }
           } else if (segment == LEDSegmentRange.StripRight) {
@@ -276,13 +275,13 @@ public class LED extends SubsystemBase {
               if (i <= percent * segment.count) {
                 segmentPattern[i] = Color.kPurple;
               } else {
-                segmentPattern[i] = Color.kOrange;
+                segmentPattern[i] = new Color(255, 30, 0);
               }
             }
           }
           setAnimation(segmentPattern, segment, true);
         } else {
-          setAnimation(Color.kOrange, segment);
+          setAnimation(new Color(255, 30, 0), segment);
         }
       }
       else {
@@ -316,24 +315,44 @@ public class LED extends SubsystemBase {
 
   @Override
   public void periodic() {
-    for (LEDSegmentRange segmentKey : segments.keySet()) {
-      updateStateLEDs(segmentKey);
-    }
+    updateStateLEDs(LEDSegmentRange.StripLeft);
+    updateStateLEDs(LEDSegmentRange.StripRight);
 
     if(RobotPreferences.isStickyFaultActive()) {
       setAnimation(Color.kRed, LEDSegmentRange.CANdle);
     }
-
-    if (degreesFromSpeaker <= LEDConstants.accuracyDisplayThreshold){
-      LEDSegmentRange horizontalSegment = LEDSegmentRange.StripHorizontal;
-      numAccuracyLEDs = (horizontalSegment.count)*((int)(1-((degreesFromSpeaker)/LEDConstants.accuracyDisplayThreshold)));
-      Color[] accuracyArray = new Color[horizontalSegment.count];
-      for(int index = 0; index < horizontalSegment.count; index++){
-        if(index < numAccuracyLEDs){accuracyArray[index] = Color.kGreen;}
-        else{accuracyArray[index] = Color.kRed;}
+    Double percent = Math.max(timer.get() - 125, 0) / 10.0;
+    Color[] segmentPatternLeft = new Color[LEDSegmentRange.StripLeft.count];
+    for (int i = 0; i < LEDSegmentRange.StripLeft.count; i++) {
+      if (i >= (1.0 - percent) * LEDSegmentRange.StripLeft.count) {
+        segmentPatternLeft[i] = Color.kRed;
+      } else {
+        Color[] frame = segments.get(LEDSegmentRange.StripLeft).getCurrentFrame();
+        segmentPatternLeft[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
       }
-      segments.get(horizontalSegment).setAnimation(accuracyArray, shouldClear);
     }
+    Color[] segmentPatternRight = new Color[LEDSegmentRange.StripRight.count];
+    for (int i = 0; i < LEDSegmentRange.StripRight.count; i++) {
+      if (i < percent * LEDSegmentRange.StripRight.count) {
+        segmentPatternRight[i] = Color.kRed;
+      } else {
+        Color[] frame = segments.get(LEDSegmentRange.StripRight).getCurrentFrame();
+        segmentPatternRight[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+      }
+    }
+    Color[] segmentPatternHorizontal = new Color[LEDSegmentRange.StripHorizontal.count];
+    for (int i = 0; i < LEDSegmentRange.StripHorizontal.count; i++) {
+      if (i < percent * LEDSegmentRange.StripHorizontal.count) {
+        segmentPatternHorizontal[i] = Color.kRed;
+      } else {
+        Color[] frame = segments.get(LEDSegmentRange.StripHorizontal).getCurrentFrame();
+        segmentPatternHorizontal[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+      }
+    }
+    
+    setAnimation(segmentPatternLeft, LEDSegmentRange.StripLeft, true);
+    setAnimation(segmentPatternRight, LEDSegmentRange.StripRight, true);
+    setAnimation(segmentPatternHorizontal, LEDSegmentRange.StripHorizontal, true);
 
     DisplayLEDs();
   }
