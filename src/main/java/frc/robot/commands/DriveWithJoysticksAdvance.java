@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
@@ -14,7 +15,10 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.utilities.AllianceSelection;
+import frc.robot.utilities.AutoSelection;
 import frc.robot.utilities.FileLog;
+import java.lang.Math;
 
 
 public class DriveWithJoysticksAdvance extends Command {
@@ -22,6 +26,7 @@ public class DriveWithJoysticksAdvance extends Command {
   private final Joystick rightJoystick;
   private final DriveTrain driveTrain;
   private final FileLog log;
+  private final AllianceSelection allianceSelection;
   private ProfiledPIDController turnRateController;
   private boolean firstInDeadband;
   private int logRotationKey;
@@ -29,6 +34,7 @@ public class DriveWithJoysticksAdvance extends Command {
   private double goalAngle;       // in radians
   private double startTime;
   private boolean firstCorrecting;
+  private boolean aimLock = false;
 
 
     /**
@@ -38,10 +44,11 @@ public class DriveWithJoysticksAdvance extends Command {
    * @param log filelog to use
    */
 
-  public DriveWithJoysticksAdvance(Joystick leftJoystick, Joystick rightJoystick, DriveTrain driveTrain, FileLog log) {
+  public DriveWithJoysticksAdvance(Joystick leftJoystick, Joystick rightJoystick, AllianceSelection allianceSelection, DriveTrain driveTrain, FileLog log) {
     this.leftJoystick = leftJoystick;
     this.rightJoystick = rightJoystick;
     this.driveTrain = driveTrain;
+    this.allianceSelection = allianceSelection;
     this.log = log;
     turnRateController = new ProfiledPIDController(DriveConstants.kPJoystickThetaController, 0, 0, TrajectoryConstants.kThetaControllerConstraints);
     turnRateController.enableContinuousInput(-Math.PI, Math.PI);
@@ -69,6 +76,8 @@ public class DriveWithJoysticksAdvance extends Command {
   @Override
   public void execute() {
 
+    aimLock = driveTrain.isAimLockEnabled();
+
     fwdVelocity = -leftJoystick.getY();
     leftVelocity = -leftJoystick.getX();
     turnRate = -rightJoystick.getX();
@@ -87,7 +96,7 @@ public class DriveWithJoysticksAdvance extends Command {
     // SmartDashboard.putNumber("Current Angle", driveTrain.getPose().getRotation().getRadians());
 
     // Uses profiled PID controller if the joystick is in the deadband
-    if(turnRate == 0){
+    if(turnRate == 0 || aimLock){
       if(firstInDeadband){
         // goalAngle = driveTrain.getPose().getRotation().getRadians();
         // goalAngle = MathUtil.angleModulus(goalAngle);
@@ -104,7 +113,12 @@ public class DriveWithJoysticksAdvance extends Command {
           goalAngle = MathUtil.angleModulus(goalAngle);
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
-
+        if(aimLock){
+          goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
+          goalAngle = MathUtil.angleModulus(goalAngle);
+          SmartDashboard.putNumber("Goal Angle", goalAngle);
+          turnRateController.reset(goalAngle);
+        }
       // When the right button on the right joystick is pressed then the robot turns pi radians(180 degrees)
       // This button works but it is currently used for other commands
       // if(rightJoystick.getRawButtonPressed(2)){
@@ -127,13 +141,16 @@ public class DriveWithJoysticksAdvance extends Command {
       else{
         nextTurnRate = 0;
       }
-        if(log.isMyLogRotation(logRotationKey)) {
-          log.writeLog(false, "DriveWithJoystickAdvance", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", nextTurnRate, "Goal Angle", goalAngle);
-        }
-      
-        driveTrain.drive(fwdVelocity, leftVelocity, nextTurnRate, true, false);
+      if(log.isMyLogRotation(logRotationKey)) {
+        log.writeLog(false, "DriveWithJoystickAdvance", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", nextTurnRate, "Goal Angle", goalAngle);
+      }
+    
+      if(aimLock){ 
+        nextTurnRate *= 2.5;
+      }
+      driveTrain.drive(fwdVelocity, leftVelocity, nextTurnRate, true, false);
 
-        //firstInDeadband = false;
+      //firstInDeadband = false;
       }else{
         driveTrain.drive(fwdVelocity, leftVelocity, turnRate, true, false);
         
@@ -146,6 +163,7 @@ public class DriveWithJoysticksAdvance extends Command {
         log.writeLog(false, "DriveWithJoystickAdvance", "Joystick", "Fwd", fwdVelocity, "Left", leftVelocity, "Turn", turnRate);
       }
 
+      
       driveTrain.drive(fwdVelocity, leftVelocity, turnRate, true, false);
       
       firstInDeadband = true;
