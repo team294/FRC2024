@@ -9,6 +9,7 @@ import java.util.HashMap;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BCRColor;
@@ -29,6 +30,7 @@ public class LED extends SubsystemBase {
   private BCRRobotState.State currentState;
   private Shooter shooter;
   private Feeder feeder;
+  private Timer timer;
   private boolean shouldClear;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
@@ -42,8 +44,9 @@ public class LED extends SubsystemBase {
    * @param feeder
    * @param robotState
    * @param log
+   * @param timer
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, Timer timer) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
@@ -52,6 +55,7 @@ public class LED extends SubsystemBase {
     this.currentState = BCRRobotState.State.IDLE;
     this.shooter = shooter;
     this.feeder = feeder;
+    this.timer = timer;
     this.shouldClear = false;
     // this.accuracyDisplayThreshold = 35;
     // this.accuracy = 0;
