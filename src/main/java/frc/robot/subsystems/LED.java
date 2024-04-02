@@ -316,7 +316,6 @@ public class LED extends SubsystemBase {
         segmentPatternLeft[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
       }
     }
-
     // Generates segment pattern for the right vertical segment based on percent
     Color[] segmentPatternRight = new Color[LEDSegmentRange.StripRight.count];
     for (int i = 0; i < LEDSegmentRange.StripRight.count; i++) {
@@ -327,7 +326,6 @@ public class LED extends SubsystemBase {
         segmentPatternRight[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
       }
     }
-    
     // Generates segment pattern for the horizontal segment based on percent
     Color[] segmentPatternHorizontal = new Color[LEDSegmentRange.StripHorizontal.count];
     for (int i = 0; i < LEDSegmentRange.StripHorizontal.count; i++) {
@@ -338,7 +336,6 @@ public class LED extends SubsystemBase {
         segmentPatternHorizontal[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
       }
     }
-    
     // Sets segments based on generated patterns
     setAnimation(segmentPatternLeft, LEDSegmentRange.StripLeft, true);
     setAnimation(segmentPatternRight, LEDSegmentRange.StripRight, true);
