@@ -261,14 +261,14 @@ public class LED extends SubsystemBase {
         }
       }
       else {
-        setLEDs(BCRColor.IDLE, segment.index, segment.count);
+        setAnimation(BCRColor.IDLE, segment);
       }
       break;
     case INTAKING:
-      setLEDs(BCRColor.INTAKING, segment.index, segment.count);
+      setAnimation(BCRColor.INTAKING, segment);
       break;
     case SHOOTING:
-      setLEDs(BCRColor.SHOOTING, segment.index, segment.count);
+      setAnimation(BCRColor.SHOOTING, segment);
       break;
     }
   }
@@ -304,7 +304,7 @@ public class LED extends SubsystemBase {
     }
 
     // Percent of the way through the last 10 seconds of the match (125 seconds in)
-    Double percent = Math.max(matchTimer.get() - 125, 0) / 10.0;
+    Double percent = Math.max(matchTimer.get() - 35, 0) / 10.0;
 
     // Generates segment pattern for the left vertical segment based on percent
     Color[] segmentPatternLeft = new Color[LEDSegmentRange.StripLeft.count];
