@@ -7,20 +7,21 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.BCRRobotState.ShotMode;
 
-public class FarShotSet extends InstantCommand {
-  boolean farShotMode;
+public class ShotModeSet extends InstantCommand {
+  ShotMode shotMode;
   BCRRobotState robotState;
   FileLog log;
 
   /**
    * Record if shooter is in mode for a Far shot (lobbing note towards alliance partner)
-   * @param farShotMode true = far shot, false = normal speaker shot
+   * @param shotMode 
    * @param robotState
    * @param log
    */
-  public FarShotSet(boolean farShotMode, BCRRobotState robotState, FileLog log) {
-    this.farShotMode = farShotMode;
+  public ShotModeSet(ShotMode shotMode, BCRRobotState robotState, FileLog log) {
+    this.shotMode = shotMode;
     this.robotState = robotState;
     this.log = log;
   }
@@ -28,7 +29,7 @@ public class FarShotSet extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    robotState.setFarShotMode(farShotMode);
-    log.writeLog(true, "SetFarShotMode", "farShotMode", farShotMode);
+    robotState.setShotMode(shotMode);
+    log.writeLog(true, "SetFarShotMode", "ShotMode", shotMode);
   }
 }
