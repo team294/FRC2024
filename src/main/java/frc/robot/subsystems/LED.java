@@ -233,7 +233,7 @@ public class LED extends SubsystemBase {
     case IDLE:
       if (feeder.isPiecePresent()) {
         if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance   // if wheels are up to speed, set LEDs green
-        && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight)) {
+        && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight || segment == LEDSegmentRange.StripHorizontal)) {
           setAnimation(new Color(0, 255, 0), segment);  // rgb instead of kGreen due to error (kGreen is yellow for some reason)
         } else if (shooter.getTopShooterTargetRPM() > 0 && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight))  {
           Double percent = shooter.getTopShooterVelocity() / shooter.getTopShooterTargetRPM();
