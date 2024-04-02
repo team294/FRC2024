@@ -17,6 +17,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -31,6 +32,7 @@ public class Intake extends SubsystemBase implements Loggable {
 
   private final FileLog log;
   private final int logRotationKey;
+  private final Timer timer = new Timer();
   private boolean fastLogging = false; // true is enabled to run every cycle; false follows normal logging cycles
   private String subsystemName;    // subsystem name for use in file logging and Shuffleboard
 
@@ -223,6 +225,14 @@ public class Intake extends SubsystemBase implements Loggable {
         SmartDashboard.putNumber("Centering Velocity RPM", getCenteringMotorVelocity());
         SmartDashboard.putNumber("Centering Temperature C", centeringTemp.refresh().getValueAsDouble());
         SmartDashboard.putBoolean(buildString(subsystemName, " Is Piece Present"), isPiecePresent());
+    }
+
+    if(intakeStatorCurrent.refresh().getValueAsDouble() < 30.0) {
+      timer.reset();
+    }
+
+    if(timer.hasElapsed(0.5)) {
+      this.stopIntakeMotor();
     }
   }
 
