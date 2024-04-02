@@ -422,7 +422,7 @@ public final class Constants {
           StripHorizontal(8, 26), // Horizontal strip only
           StripVerticals(34, 60), // Both vertical strips
           AllStripsNoCANdle(8, 86), // All strips and not CANdle
-          Full(0, 94);  // CANdle + all strips
+          Full(0, 94);  // CANdle + All strips
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
