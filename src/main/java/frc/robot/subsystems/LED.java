@@ -9,7 +9,6 @@ import java.util.HashMap;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BCRColor;
@@ -31,9 +30,6 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private boolean shouldClear;
-  private int degreesFromSpeaker;
-  private int numAccuracyLEDs;
-  private Timer timer;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
   private HashMap<LEDSegmentRange, LEDSegment> segments;
@@ -46,9 +42,8 @@ public class LED extends SubsystemBase {
    * @param feeder
    * @param robotState
    * @param log
-   * @param timer
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log, Timer timer) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
     this.log = log;
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
@@ -60,7 +55,6 @@ public class LED extends SubsystemBase {
     this.shouldClear = false;
     // this.accuracyDisplayThreshold = 35;
     // this.accuracy = 0;
-    this.timer = timer;
 
     // Create the LED segments
     for (LEDSegmentRange segment : LEDSegmentRange.values()) {
@@ -285,14 +279,14 @@ public class LED extends SubsystemBase {
         }
       }
       else {
-        setAnimation(BCRColor.IDLE, segment);
+        setLEDs(BCRColor.IDLE, segment.index, segment.count);
       }
       break;
     case INTAKING:
-      setAnimation(BCRColor.INTAKING, segment);
+      setLEDs(BCRColor.INTAKING, segment.index, segment.count);
       break;
     case SHOOTING:
-      setAnimation(BCRColor.SHOOTING, segment);
+      setLEDs(BCRColor.SHOOTING, segment.index, segment.count);
       break;
     }
     log.writeLog(false, "LED", "Update State LEDs", "State", currentState);
