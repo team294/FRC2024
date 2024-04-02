@@ -235,13 +235,19 @@ public class Intake extends SubsystemBase implements Loggable {
         SmartDashboard.putBoolean(buildString(subsystemName, " Is Piece Present"), isPiecePresent());
     }
 
+    // Reset safety time if current is below the threshhold
     if(Math.abs(intakeStatorCurrent.refresh().getValueAsDouble()) < 30.0) {
       currentTimer.reset();
+    } else {
+      log.writeLog(false, subsystemName, "Intake current above limit", "Amps", intakeStatorCurrent.getValueAsDouble());
     }
 
+    // If current is above threshold for too long, then shut off intake motor to prevent overheating.
+    // This will also also the centering and feeder motors to pull the piece in after a jam.
     if(currentTimer.hasElapsed(0.5)) {
       this.stopIntakeMotor();
       currentTimer.reset();
+      log.writeLog(false, subsystemName, "Intake shutoff");
     }
   }
 
