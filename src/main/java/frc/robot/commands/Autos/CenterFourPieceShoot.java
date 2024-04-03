@@ -75,8 +75,19 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
       ),
       new SetShooterWristSpeaker(WristAngle.ampCloseNoteShot, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(true, shooter, feeder, wrist, robotState, log),
-      new WristSetAngle(WristAngle.lowerLimit, wrist, log)
+      new ShootPiece(false, shooter, feeder, wrist, robotState, log),
+      new ParallelCommandGroup(
+        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
+        new IntakePieceAuto(intake, feeder, robotState, log),
+        new ConditionalCommand(
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value], driveTrain, log), 
+          () -> alliance.getAlliance() == Alliance.Red
+        )
+      ),
+      new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
+      ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log),
+      new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, true, shooter, feeder, wrist, robotState, log)
     );
   }
 }
