@@ -374,7 +374,7 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             calcTrajectory("Source Note to Center note Red", .8, .6, false, 
             new Pose2d(1.7, 3.95, new Rotation2d(Math.toRadians(-160))),
-            List.of(new Translation2d(0.8, 2.8)), 
+            List.of(new Translation2d(1.6, 2.8)), 
             new Pose2d(2.0, 2.65, new Rotation2d(0))
             ));
 
@@ -383,7 +383,7 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             calcTrajectory("Source Note to Center note Blue", .8, .6, false, 
             new Pose2d(1.7, 4.25, new Rotation2d(Math.toRadians(160))),
-            List.of(new Translation2d(0.8, 5.4)), 
+            List.of(new Translation2d(1.6, 5.4)), 
             new Pose2d(2.0, 5.55, new Rotation2d(0))
             ));
 
@@ -392,7 +392,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(-25)), 
             calcTrajectory("Center Note to Amp note Red", .8, .6, false, 
             new Pose2d(2.0, 2.65, new Rotation2d(Math.toRadians(-160))),
-            List.of(new Translation2d(0.8, 1.4)), 
+            List.of(new Translation2d(1.6, 1.4)), 
             new Pose2d(2.0, 1.25, new Rotation2d(Math.toRadians(0)))
             ));
         
@@ -401,7 +401,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(25)), 
             calcTrajectory("Center Note  to Amp note Blue", .8, .6, false, 
             new Pose2d(2.0, 5.55, new Rotation2d(Math.toRadians(160))),
-            List.of(new Translation2d(0.8, 6.8)), 
+            List.of(new Translation2d(1.6, 6.8)), 
             new Pose2d(2.0, 6.95, new Rotation2d(Math.toRadians(0)))
             ));
         
