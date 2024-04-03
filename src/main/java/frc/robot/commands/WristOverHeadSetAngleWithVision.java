@@ -61,7 +61,7 @@ public class WristOverHeadSetAngleWithVision extends Command {
     double correctionOffset = (n == 3) ? (3.98406*dist - 28.1998) : 0;
 
     // 10 constant is offset of shooter from arm
-    return 90 - (Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker - heightOfShooter) /(dist + distOff)))) + 10 + correctionOffset;
+    return 90 - (Units.radiansToDegrees(Math.atan((FieldConstants.heightOfSpeaker - heightOfShooter) /(dist + distOff)))) + 7.5 + correctionOffset;
   } 
 
   // Called just before this Command runs the first time
