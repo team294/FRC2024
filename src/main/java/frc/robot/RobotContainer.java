@@ -103,6 +103,10 @@ public class RobotContainer {
    * Configures Shuffleboard for the robot
    */
   private void configureShuffleboard() {
+    // display sticky faults
+    RobotPreferences.showStickyFaultsOnShuffleboard();
+    SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
+
     // Intake commands
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
