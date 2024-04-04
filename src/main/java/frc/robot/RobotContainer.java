@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.led.RainbowAnimation;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -331,7 +333,10 @@ public class RobotContainer {
     }
 
     // top row UP then DOWN, from LEFT to RIGHT
-    coP[1].onTrue(new WristSetAngle(WristAngle.climbStart, wrist, log));
+    coP[1].onTrue(new SequentialCommandGroup(
+    new WristSetAngle(WristAngle.climbStart, wrist, log),
+    new CANdleRainbowAnimation(led)
+    ));
     coP[3].onTrue(new SequentialCommandGroup(
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
       new WristSetAngle(WristAngle.climbStop, wrist, log)

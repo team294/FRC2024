@@ -133,15 +133,31 @@ public class LED extends SubsystemBase {
     segments.get(segment).setAnimation(animation, loop);
   }
 
+   /**
+   * Sets the animation for a given led segment
+   * @param pattern pattern to display
+   * @param segment segment to play animation on
+   * @param loop whether the animation repeats
+   */
   public void setAnimation(Color[] pattern, LEDSegmentRange segment, boolean loop) {
     Color[][] anim = {pattern};
     segments.get(segment).setAnimation(anim, loop);
   }
   
+  /**
+   * Sets the animation for a given led segment
+   * @param color color to display
+   * @param segment segment to play animation on
+   */
   public void setAnimation(Color color, LEDSegmentRange segment) {
     segments.get(segment).setAnimation(color);
   }
   
+  /**
+   * Sets the animation for a given led segment
+   * @param color BCRColor to display
+   * @param segment segment to play animation on
+   */
   public void setAnimation(BCRColor color, LEDSegmentRange segment) {
     Color _color = new Color(color.r, color.g, color.b);
     segments.get(segment).setAnimation(_color);
@@ -298,7 +314,7 @@ public class LED extends SubsystemBase {
     updateStateLEDs(LEDSegmentRange.StripRight);
     updateStateLEDs(LEDSegmentRange.StripHorizontal);
 
-    // Sets CANdle red if there is a sticky fault ()
+    // Sets CANdle red if there is a sticky fault
     if(RobotPreferences.isStickyFaultActive()) {
       setAnimation(Color.kRed, LEDSegmentRange.CANdle);
     }
