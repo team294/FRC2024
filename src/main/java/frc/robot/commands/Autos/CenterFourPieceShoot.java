@@ -21,6 +21,7 @@ import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TrajectoryCache;
+import frc.robot.utilities.BCRRobotState.ShotMode;
 import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -88,8 +89,8 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),
       new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
-      ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, true, shooter, feeder, wrist, robotState, log)
+      ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, shooter, wrist, intake, feeder, ShotMode.SHORT_PASS, robotState, log),
+      new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log)
     );
   }
 }
