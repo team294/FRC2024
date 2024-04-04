@@ -30,6 +30,6 @@ public class ShotModeSet extends InstantCommand {
   @Override
   public void initialize() {
     robotState.setShotMode(shotMode);
-    log.writeLog(true, "SetFarShotMode", "ShotMode", shotMode);
+    log.writeLog(true, "ShotModeSet", "ShotMode", shotMode);
   }
 }
