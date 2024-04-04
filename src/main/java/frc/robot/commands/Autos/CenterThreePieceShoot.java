@@ -69,7 +69,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
         ),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
-      ),
+      ).andThen( new WaitUntilCommand( feeder::isPiecePresent ).withTimeout(0.5) ),
       new ParallelCommandGroup(
         new ConditionalCommand(
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartRed.value], driveTrain, log), 
