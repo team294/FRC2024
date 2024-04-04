@@ -30,6 +30,7 @@ public class LED extends SubsystemBase {
   private Feeder feeder;
   private Timer matchTimer;
   private boolean shouldClear;
+  private Wrist wrist;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
   private HashMap<LEDSegmentRange, LEDSegment> segments;
@@ -42,8 +43,9 @@ public class LED extends SubsystemBase {
    * @param feeder
    * @param robotState
    * @param matchTimer
+   * @param wrist
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, Timer matchTimer) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, Timer matchTimer, Wrist wrist) {
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
@@ -53,6 +55,7 @@ public class LED extends SubsystemBase {
     this.feeder = feeder;
     this.matchTimer = matchTimer;
     this.shouldClear = false;
+    this.wrist = wrist;
     // this.accuracyDisplayThreshold = 35;
     // this.accuracy = 0;
 
@@ -222,7 +225,7 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * 
+   * Updates LEDs for segment
    * @param segment
    */
   public void updateStateLEDs(LEDSegmentRange segment) {
@@ -299,8 +302,23 @@ public class LED extends SubsystemBase {
     updateStateLEDs(LEDSegmentRange.StripHorizontal);
 
     // Sets CANdle red if there is a sticky fault ()
+    boolean stickyFault = false;
     if(RobotPreferences.isStickyFaultActive()) {
       setAnimation(Color.kRed, LEDSegmentRange.CANdle);
+      stickyFault = true;
+    }
+    // Removes red if sticky fault is no longer active
+    else if (!RobotPreferences.isStickyFaultActive()) {
+      setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
+    }
+
+    // Sets CANdle yellow until wrist is calibrated
+    if (!wrist.isEncoderCalibrated()) {
+      setAnimation(Color.kYellow, LEDSegmentRange.CANdle);
+    }
+    // Removes yellow when wrist is calibrated
+    else if (wrist.isEncoderCalibrated() && !stickyFault) {
+      setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
     }
 
     // Percent of the way through the last 10 seconds of the match (125 seconds in)

@@ -45,7 +45,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("B1");
+  private final FileLog log = new FileLog("B2");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -62,7 +62,7 @@ public class RobotContainer {
   private final BCRRobotState robotState = new BCRRobotState();
   
   // Is a subsystem, but requires a utility
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, matchTimer);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, matchTimer, wrist);
 
 
   // Define controllers
@@ -103,6 +103,10 @@ public class RobotContainer {
    * Configures Shuffleboard for the robot
    */
   private void configureShuffleboard() {
+    // display sticky faults
+    RobotPreferences.showStickyFaultsOnShuffleboard();
+    SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
+
     // Intake commands
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
@@ -225,11 +229,11 @@ public class RobotContainer {
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Prep for short pass
-    xbPOVDown.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
+    xbPOVDown.onTrue(new SetShooterFarShot(WristAngle.shortPassAngle, 
       ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, shooter, wrist, intake, feeder, ShotMode.SHORT_PASS, robotState, log));
 
     // Prep for long pass
-    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.shortPassAngle, 
+    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.longPassAngle, 
     ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log));
 
     
