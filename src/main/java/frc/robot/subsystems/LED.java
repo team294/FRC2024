@@ -307,6 +307,7 @@ public class LED extends SubsystemBase {
       setAnimation(Color.kRed, LEDSegmentRange.CANdle);
       stickyFault = true;
     }
+    // Removes red if sticky fault is no longer active
     else if (!RobotPreferences.isStickyFaultActive()) {
       setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
     }
@@ -315,6 +316,7 @@ public class LED extends SubsystemBase {
     if (!wrist.isEncoderCalibrated()) {
       setAnimation(Color.kYellow, LEDSegmentRange.CANdle);
     }
+    // Removes yellow when wrist is calibrated
     else if (wrist.isEncoderCalibrated() && !stickyFault) {
       setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
     }
