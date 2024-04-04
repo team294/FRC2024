@@ -417,7 +417,7 @@ public class Wrist extends SubsystemBase implements Loggable{
     wristCalZero2 = getWristEncoder2RotationsRaw()* kWristDegreesPerRotation - angle;
 		wristCalibrated = true;
 
-    log.writeLog(false, "Wrist", "Calibrate wrist", "zero value", wristCalZero, 
+    log.writeLog(true, "Wrist", "Calibrate wrist", "zero value", wristCalZero, 
 			"Rev angle", getRevEncoderDegrees(), "Enc Raw", getWristEncoderRotationsRaw(),
 			"Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget());
   }  
