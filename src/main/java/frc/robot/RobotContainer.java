@@ -45,7 +45,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("B1");
+  private final FileLog log = new FileLog("B2");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -103,6 +103,10 @@ public class RobotContainer {
    * Configures Shuffleboard for the robot
    */
   private void configureShuffleboard() {
+    // display sticky faults
+    RobotPreferences.showStickyFaultsOnShuffleboard();
+    SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
+
     // Intake commands
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
@@ -227,10 +231,10 @@ public class RobotContainer {
     // Prep for short pass
     xbPOVDown.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
       ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, shooter, wrist, intake, feeder, ShotMode.SHORT_PASS, robotState, log));
+
     // Prep for long pass
-    
-     xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.shortPassAngle, 
-      ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log));
+    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.shortPassAngle, 
+    ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log));
 
     
     // Store wrist, does not turn on intake
@@ -348,8 +352,8 @@ public class RobotContainer {
       new WristSetAngle(WristAngle.climbStop, wrist, log)
     ));
     // Nudge angle up or down
-    coP[5].onTrue(new WristNudgeAngle(2, wrist, log)); // Nudge down
-    coP[6].onTrue(new WristNudgeAngle(-2, wrist, log)); // Nudge up
+    coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
+    coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
   }
 
 
