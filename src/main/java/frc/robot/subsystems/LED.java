@@ -295,7 +295,7 @@ public class LED extends SubsystemBase {
   /**
    * Displays leds of all led segments that don't encompass multiple other segments
    */
-  private void DisplayLEDs() {
+  private void displayLEDs() {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       if (segmentKey == LEDSegmentRange.Full || segmentKey == LEDSegmentRange.StripVerticals || segmentKey == LEDSegmentRange.AllStripsNoCANdle) {continue; }
       // Display this segments
@@ -375,6 +375,6 @@ public class LED extends SubsystemBase {
     setAnimation(segmentPatternRight, LEDSegmentRange.StripRight, true);
     setAnimation(segmentPatternHorizontal, LEDSegmentRange.StripHorizontal, true);
 
-    DisplayLEDs();
+    displayLEDs();
   }
 }
