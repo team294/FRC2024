@@ -9,6 +9,7 @@ import java.util.HashMap;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BCRColor;
@@ -23,13 +24,16 @@ import frc.robot.utilities.RobotPreferences;
 
 public class LED extends SubsystemBase {
   private final FileLog log;
+  private final int logRotationKey;
   private final CANdle candle;
   private String subsystemName;
   private BCRRobotState robotState;
   private BCRRobotState.State currentState;
   private Shooter shooter;
   private Feeder feeder;
+  private Timer matchTimer;
   private boolean shouldClear;
+  private Wrist wrist;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
   private HashMap<LEDSegmentRange, LEDSegment> segments;
@@ -41,10 +45,12 @@ public class LED extends SubsystemBase {
    * @param shooter
    * @param feeder
    * @param robotState
+   * @param matchTimer
+   * @param wrist
    * @param log
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, FileLog log) {
-    this.log = log;
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, Timer matchTimer, 
+             Wrist wrist, FileLog log) {
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
@@ -52,7 +58,12 @@ public class LED extends SubsystemBase {
     this.currentState = BCRRobotState.State.IDLE;
     this.shooter = shooter;
     this.feeder = feeder;
+    this.matchTimer = matchTimer;
     this.shouldClear = false;
+    this.wrist = wrist;
+    this.log = log;
+    logRotationKey = log.allocateLogRotation();
+
     // this.accuracyDisplayThreshold = 35;
     // this.accuracy = 0;
 
@@ -72,7 +83,6 @@ public class LED extends SubsystemBase {
   /** Clear all LEDs */
   public void clearLEDs() {
     setLEDs(0, 0, 0);
-    log.writeLog(false, "LED", "Clear LEDs");
   }
 
   /**
@@ -81,7 +91,6 @@ public class LED extends SubsystemBase {
    */
   public void clearLEDs(LEDSegmentRange segment) {
     setLEDs(0, 0, 0, segment);
-    log.writeLog(false, "LED", "Clear LEDs");
   }
   
   /**
@@ -92,7 +101,6 @@ public class LED extends SubsystemBase {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
       setAnimation(LEDConstants.Patterns.noPatternAnimation, segmentKey, false);
     }
-    log.writeLog(false, "LED", "Clear Animation");
   }
   
   /**
@@ -101,7 +109,6 @@ public class LED extends SubsystemBase {
    */
   public void animate(Animation anim) {
     candle.animate(anim);
-    log.writeLog(false, "LED", "Animate");
   }
 
   /**
@@ -112,7 +119,6 @@ public class LED extends SubsystemBase {
   public void setColor(Color color, LEDSegmentRange segment) {
     Color[] pattern = {color};
     setPattern(pattern, segment);
-    log.writeLog(false, "LED", "Set Color");
   }
 
   /**
@@ -126,7 +132,6 @@ public class LED extends SubsystemBase {
       if (indexPattern >= pattern.length) indexPattern = 0;
       setLEDs(pattern[indexPattern], segment.index + indexLED);
     }
-    log.writeLog(false, "LED", "Set Pattern");
   }
 
   /**
@@ -137,24 +142,20 @@ public class LED extends SubsystemBase {
    */
   public void setAnimation(Color[][] animation, LEDSegmentRange segment, boolean loop) {
     segments.get(segment).setAnimation(animation, loop);
-    log.writeLog(false, "LED", "Set Animation");
   }
 
   public void setAnimation(Color[] pattern, LEDSegmentRange segment, boolean loop) {
     Color[][] anim = {pattern};
     segments.get(segment).setAnimation(anim, loop);
-    log.writeLog(false, "LED", "Set Animation");
   }
   
   public void setAnimation(Color color, LEDSegmentRange segment) {
     segments.get(segment).setAnimation(color);
-    log.writeLog(false, "LED", "Set Animation");
   }
   
   public void setAnimation(BCRColor color, LEDSegmentRange segment) {
     Color _color = new Color(color.r, color.g, color.b);
     segments.get(segment).setAnimation(_color);
-    log.writeLog(false, "LED", "Set Animation");
   }
 
   /**
@@ -165,7 +166,6 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b) {
     candle.setLEDs(r, g, b);
-    log.writeLog(false, "LED", "Set LEDs");
   }
 
   /**
@@ -174,7 +174,6 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(Color color) {
     setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255));
-    log.writeLog(false, "LED", "Set LEDs");
   }
 
   /**
@@ -187,7 +186,6 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b, int index, int count) {
     candle.setLEDs(r, g, b, 0, index, count);
-    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using color and index values
@@ -196,7 +194,6 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(Color color, int index) {
     candle.setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255), 0, index, 1);
-    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using color, index, and count values
@@ -206,7 +203,6 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(Color color, int index, int count) {
     candle.setLEDs((int) (color.red * 255), (int) (color.green * 255), (int) (color.blue * 255), 0, index, count);
-    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using RGB and segment values
@@ -217,7 +213,6 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(int r, int g, int b, LEDSegmentRange segment) {
     candle.setLEDs(r, g, b, 0, segment.index, segment.count);
-    log.writeLog(false, "LED", "Set LEDs");
   }
   /**
    * Sets LEDs using BCR color enum (ex: IDLE)
@@ -225,7 +220,6 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(BCRColor color) {
     candle.setLEDs(color.r, color.g, color.b);
-    log.writeLog(false, "LED", "Set LEDs");
   }
   
   /**
@@ -236,11 +230,10 @@ public class LED extends SubsystemBase {
    */
   public void setLEDs(BCRColor color, int index, int count) {
     candle.setLEDs(color.r, color.g, color.b, 0, index, count);
-    log.writeLog(false, "LED", "Set LEDs");
   }
 
   /**
-   * 
+   * Updates LEDs for segment
    * @param segment
    */
   public void updateStateLEDs(LEDSegmentRange segment) {
@@ -250,28 +243,53 @@ public class LED extends SubsystemBase {
     switch (currentState) {
     case IDLE:
       if (feeder.isPiecePresent()) {
-        if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance){
-          setLEDs(150, 0, 255);
+        if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance   // if wheels are up to speed, set LEDs green
+        && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight || segment == LEDSegmentRange.StripHorizontal)) {
+          setAnimation(new Color(0, 255, 0), segment);  // rgb instead of kGreen due to error (kGreen is yellow for some reason)
+        } else if (shooter.getTopShooterTargetRPM() > 0 && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight))  {
+          Double percent = shooter.getTopShooterVelocity() / shooter.getTopShooterTargetRPM();
+          Color[] segmentPattern = new Color[segment.count];
+          if (segment == LEDSegmentRange.StripLeft) {
+            for (int i = 0; i < segment.count; i++) {
+              if (i >= (1.0 - percent) * segment.count) {
+                segmentPattern[i] = Color.kPurple;
+              } else {
+                segmentPattern[i] = new Color(255, 30, 0); // rgb values instead of kOrange due to kOrange being kYellow for some reason 
+              }
+            }
+          } else if (segment == LEDSegmentRange.StripRight) {
+            for (int i = 0; i < segment.count; i++) {
+              if (i <= percent * segment.count) {
+                segmentPattern[i] = Color.kPurple;
+              } else {
+                segmentPattern[i] = new Color(255, 30, 0); // rgb values instead of kOrange due to kOrange being kYellow for some reason
+              }
+            }
+          }
+          setAnimation(segmentPattern, segment, true);
         } else {
-          setLEDs(255, 30, 0, segment.index, segment.count);
+          setAnimation(new Color(255, 30, 0), segment); // rgb values instead of kOrange due to kOrange being kYellow for some reason
         }
       }
       else {
-        setLEDs(BCRColor.IDLE, segment.index, segment.count);
+        setAnimation(BCRColor.IDLE, segment);
       }
       break;
     case INTAKING:
-      setLEDs(BCRColor.INTAKING, segment.index, segment.count);
+      setAnimation(BCRColor.INTAKING, segment);
       break;
     case SHOOTING:
-      setLEDs(BCRColor.SHOOTING, segment.index, segment.count);
+      setAnimation(BCRColor.SHOOTING, segment);
       break;
     }
-    log.writeLog(false, "LED", "Update State LEDs", "State", currentState);
   }
 
+  /**
+   * Displays leds of all led segments that don't encompass multiple other segments
+   */
   private void DisplayLEDs() {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
+      // if (segmentKey == LEDSegmentRange.Full || segmentKey == LEDSegmentRange.StripVerticals || segmentKey == LEDSegmentRange.AllStripsNoCANdle) {continue; }
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
       setPattern(segment.getCurrentFrame(), segmentKey);
@@ -286,10 +304,72 @@ public class LED extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateStateLEDs(LEDSegmentRange.AllStripsNoCANdle);
-    if(RobotPreferences.isStickyFaultActive()) {
-      segments.get(LEDSegmentRange.CANdle).setAnimation(Color.kRed);
+
+    if(log.isMyLogRotation(logRotationKey)) {
+      // Updates certain segments based on RobotState
+      updateStateLEDs(LEDSegmentRange.StripLeft);
+      updateStateLEDs(LEDSegmentRange.StripRight);
+      updateStateLEDs(LEDSegmentRange.StripHorizontal);
+
+      // Sets CANdle red if there is a sticky fault ()
+      boolean stickyFault = false;
+      if(RobotPreferences.isStickyFaultActive()) {
+        setAnimation(Color.kRed, LEDSegmentRange.CANdle);
+        stickyFault = true;
+      }
+      // Removes red if sticky fault is no longer active
+      else if (!RobotPreferences.isStickyFaultActive()) {
+        setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
+      }
+
+      // Sets CANdle yellow until wrist is calibrated
+      if (!wrist.isEncoderCalibrated()) {
+        setAnimation(Color.kYellow, LEDSegmentRange.CANdle);
+      }
+      // Removes yellow when wrist is calibrated
+      else if (wrist.isEncoderCalibrated() && !stickyFault) {
+        setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
+      }
+
+      // Percent of the way through the last 10 seconds of the match (125 seconds in)
+      Double percent = Math.max(matchTimer.get() - 125, 0) / 10.0;
+
+      // Generates segment pattern for the left vertical segment based on percent
+      Color[] segmentPatternLeft = new Color[LEDSegmentRange.StripLeft.count];
+      for (int i = 0; i < LEDSegmentRange.StripLeft.count; i++) {
+        if (i >= (1.0 - percent) * LEDSegmentRange.StripLeft.count) {
+          segmentPatternLeft[i] = Color.kRed;
+        } else {
+          Color[] frame = segments.get(LEDSegmentRange.StripLeft).getCurrentFrame();
+          segmentPatternLeft[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+        }
+      }
+      // Generates segment pattern for the right vertical segment based on percent
+      Color[] segmentPatternRight = new Color[LEDSegmentRange.StripRight.count];
+      for (int i = 0; i < LEDSegmentRange.StripRight.count; i++) {
+        if (i < percent * LEDSegmentRange.StripRight.count) {
+          segmentPatternRight[i] = Color.kRed;
+        } else {
+          Color[] frame = segments.get(LEDSegmentRange.StripRight).getCurrentFrame();
+          segmentPatternRight[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+        }
+      }
+      // Generates segment pattern for the horizontal segment based on percent
+      Color[] segmentPatternHorizontal = new Color[LEDSegmentRange.StripHorizontal.count];
+      for (int i = 0; i < LEDSegmentRange.StripHorizontal.count; i++) {
+        if (i < percent * LEDSegmentRange.StripHorizontal.count) {
+          segmentPatternHorizontal[i] = Color.kRed;
+        } else {
+          Color[] frame = segments.get(LEDSegmentRange.StripHorizontal).getCurrentFrame();
+          segmentPatternHorizontal[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+        }
+      }
+      // Sets segments based on generated patterns
+      setAnimation(segmentPatternLeft, LEDSegmentRange.StripLeft, true);
+      setAnimation(segmentPatternRight, LEDSegmentRange.StripRight, true);
+      setAnimation(segmentPatternHorizontal, LEDSegmentRange.StripHorizontal, true);
+
+      DisplayLEDs();
     }
-    DisplayLEDs();
   }
 }

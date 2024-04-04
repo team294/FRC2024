@@ -226,8 +226,10 @@ public final class Constants {
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
       public static final double shooterVelocityPit = 500;
-      public static final double shooterVelocityFarTop =2000;
-      public static final double shooterVelocityFarBottom = 2000;
+      public static final double shooterVelocityShortPassTop =2000;
+      public static final double shooterVelocityShortPassBottom = 2000;
+      public static final double shooterVelocityFarPassTop =2600;
+      public static final double shooterVelocityFarPassBottom = 2600;
 
       // Time for the shooter to ramp down at shooterPercentStopQuickly before stopping
       public static final double shooterSpinDownSeconds = 0.5;
@@ -386,12 +388,13 @@ public final class Constants {
           speakerShotFromAmpSideClockwise(-60),
           speakerShotFromAmpSideCounterClockwise(60),
           speakerShotFromSourceSide(60),
-          speakerShotFromPodium(-70),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
+          speakerShotFromPodium(-67),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
           speakerShotFromMidStage(-79),
-          farShotAngle(-83),
-          sourceCloseNoteShot(-65),
-          centerCloseNoteShot(-62),
-          ampCloseNoteShot(-67),
+          shortPassAngle(-79),
+          longPassAngle(-60),
+          sourceCloseNoteShot(-62),
+          centerCloseNoteShot(-63),
+          ampCloseNoteShot(-64),
           overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-45.0),
           ampShot(50.0),
@@ -427,7 +430,7 @@ public final class Constants {
   }
 
     public static final class LEDConstants {
-      public static final double accuracyDisplayThreshold = 15; //TODO Decide what the threshold should be
+      public static final double accuracyDisplayThreshold = 35; //TODO Decide what the threshold should be
 
       public static final class Patterns {
           // Static Patterns
@@ -447,13 +450,13 @@ public final class Constants {
       }
 
       public enum LEDSegmentRange {
-          CANdle(0, 8), // Whole CANdle
+          CANdle(0,8), // Whole CANdle
           StripLeft(34, 30),  // Left strip only
           StripRight(64, 30), // Right strip only
-          StripHorizontal(8, 26), // Horizontal strip only
-          StripVerticals(26, 60), // Both vertical strips
-          AllStripsNoCANdle(8, 86), // All strips and not CANdle
-          Full(0, 94);  // CANdle + all strips
+          StripHorizontal(8, 26); // Horizontal strip only
+          // StripVerticals(34, 60), // Both vertical strips
+          // AllStripsNoCANdle(8, 86), // All strips and not CANdle
+          // Full(0, 94);  // CANdle + All strips
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {

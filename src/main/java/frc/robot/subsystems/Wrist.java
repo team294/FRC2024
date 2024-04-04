@@ -77,6 +77,7 @@ public class Wrist extends SubsystemBase implements Loggable{
   private long revEncoderBootCount = 0;       // Count number of periodic cycles since the rev encoder has booted
   private double revEncoderZero = 0;          // Reference raw encoder reading for encoder.  Calibration sets this to the absolute position from RobotPreferences.
   private double wristCalZero = 0;   		      // Wrist encoder position at O degrees, in degrees (i.e. the calibration factor).  Calibration sets this to match the REV through bore encoder.
+  private double wristCalZero2 = 0;   		     // Wrist encoder #2 position at O degrees, in degrees (i.e. the calibration factor).  Calibration sets this to match the REV through bore encoder.
   private boolean wristCalibrated = false;    // Default to wrist being uncalibrated.  Calibrate from robot preferences or "Calibrate Wrist Zero" button on dashboard
 
   private double safeAngle;         // current wrist target on position control on the Falcon motor (if the Falcon is in position mode)
@@ -309,6 +310,15 @@ public class Wrist extends SubsystemBase implements Loggable{
   }
 
   /**
+   * 
+   * @return raw encoder reading (2nd wrist motor), in pinion rotations, adjusted direction (positive is towards stowed, negative is towards lower hard stop)
+   */
+  public double getWristEncoder2RotationsRaw() {
+    wrist2EncoderPostion.refresh();          // Verified that this is not a blocking call.
+    return wrist2EncoderPostion.getValueAsDouble();
+  }
+
+  /**
    * Adjust the current calibration degrees of the wrist by a small amount
    * @param deltaDegrees the number of degrees to move up/down
    */
@@ -343,6 +353,17 @@ public class Wrist extends SubsystemBase implements Loggable{
   private double getWristEncoderDegrees() {
     // DO NOT normalize this angle.  It should not wrap, since the wrist mechanically can not cross the -180/+180 deg point
     return getWristEncoderRotationsRaw()* kWristDegreesPerRotation - wristCalZero;
+  }
+
+  /**
+   * For use in the wrist subsystem only.  Use getWristAngle() when calling from outside this class.
+   * Assumes that the encoder is calibrated.
+   * <p>Gets the current wrist angle from the Falcon encoder.
+   * @return current encoder ticks (based on zero) converted to degrees
+   */
+  private double getWristEncoder2Degrees() {
+    // DO NOT normalize this angle.  It should not wrap, since the wrist mechanically can not cross the -180/+180 deg point
+    return getWristEncoder2RotationsRaw()* kWristDegreesPerRotation - wristCalZero2;
   }
 
   /**
@@ -393,9 +414,10 @@ public class Wrist extends SubsystemBase implements Loggable{
 		stopWrist();	// Stop motor, so it doesn't jump to new value
 
     wristCalZero = getWristEncoderRotationsRaw()* kWristDegreesPerRotation - angle;
+    wristCalZero2 = getWristEncoder2RotationsRaw()* kWristDegreesPerRotation - angle;
 		wristCalibrated = true;
 
-    log.writeLog(false, "Wrist", "Calibrate wrist", "zero value", wristCalZero, 
+    log.writeLog(true, "Wrist", "Calibrate wrist", "zero value", wristCalZero, 
 			"Rev angle", getRevEncoderDegrees(), "Enc Raw", getWristEncoderRotationsRaw(),
 			"Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget());
   }  
@@ -485,6 +507,7 @@ public class Wrist extends SubsystemBase implements Loggable{
       "Enc Accel Raw", wrist1EncoderAcceleration.refresh().getValueAsDouble(),
       "WristCalZero", wristCalZero,
       "Wrist Degrees", getWristEncoderDegrees(),
+      "Wrist2 Degrees", getWristEncoder2Degrees(),
       "Wrist Angle", getWristAngle(), "Wrist Target", getCurrentWristTarget(),
       "Rev Connected", isRevEncoderConnected(), "Rev Degrees", getRevEncoderDegrees(),
       "Lower Limit 1", isWristAtLowerLimit1(), "Lower Limit 2", isWristAtLowerLimit2()

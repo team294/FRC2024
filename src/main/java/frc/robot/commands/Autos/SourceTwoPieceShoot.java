@@ -9,7 +9,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
@@ -35,9 +37,7 @@ public class SourceTwoPieceShoot extends SequentialCommandGroup {
       new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
-      new ParallelCommandGroup(
-        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-        new IntakePieceAuto(intake, feeder, robotState, log),
+      new ParallelDeadlineGroup(
         new ConditionalCommand(
           new SequentialCommandGroup(
             new DriveResetPose(1.1, 3.463, 54, false, driveTrain, log),
@@ -49,7 +49,9 @@ public class SourceTwoPieceShoot extends SequentialCommandGroup {
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteBlue.value], driveTrain, log)
           ), 
           () -> alliance.getAlliance() == Alliance.Red
-        )
+        ).andThen( new WaitUntilCommand( feeder::isPiecePresent ).withTimeout(0.5) ),
+        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
+        new IntakePieceAuto(intake, feeder, robotState, log)
       ),
       new ParallelCommandGroup(
         new ConditionalCommand(

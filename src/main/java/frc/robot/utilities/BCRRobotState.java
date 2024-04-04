@@ -20,7 +20,14 @@ public class BCRRobotState {
     private boolean speakerMode = true; 
 
     //True if in far shot mode, false to revert to speaker mode boolean
-    private boolean farShotMode = false;
+    // private boolean farShotMode = false;
+    public static enum ShotMode {
+        STANDARD,
+        SHORT_PASS,
+        FAR_PASS
+    }
+
+    private ShotMode shotMode = ShotMode.STANDARD;
 
     /** Creates a new BCRRobotState with the default State value of IDLE */
     public BCRRobotState() {
@@ -52,8 +59,8 @@ public class BCRRobotState {
      * returns if shooter is in mode for a Far shot (lobbing note towards alliance partner)
      * @return true = far shot, false = normal speaker shot
      */
-    public boolean isFarShotMode(){
-        return farShotMode;
+    public ShotMode getShotMode(){
+        return shotMode;
     }
 
     /**
@@ -68,8 +75,8 @@ public class BCRRobotState {
      * Set if in mode for a Far shot (lobbing note towards alliance partner)
      * @param farShotMode true = far shot, false = normal speaker shot
      */
-    public void setFarShotMode(boolean farShotMode){
-        this.farShotMode = farShotMode;
+    public void setShotMode(ShotMode shotMode){
+        this.shotMode = shotMode;
     }
 
     /**
