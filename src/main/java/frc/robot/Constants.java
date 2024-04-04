@@ -226,8 +226,10 @@ public final class Constants {
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
       public static final double shooterVelocityPit = 500;
-      public static final double shooterVelocityFarTop =2000;
-      public static final double shooterVelocityFarBottom = 2000;
+      public static final double shooterVelocityShortPassTop =2000;
+      public static final double shooterVelocityShortPassBottom = 2000;
+      public static final double shooterVelocityFarPassTop =2600;
+      public static final double shooterVelocityFarPassBottom = 2600;
 
       // Time for the shooter to ramp down at shooterPercentStopQuickly before stopping
       public static final double shooterSpinDownSeconds = 0.5;
@@ -383,9 +385,10 @@ public final class Constants {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
           speakerShotFromSpeaker(-42),  // A5: changed to -42 deg
-          speakerShotFromPodium(-70),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
+          speakerShotFromPodium(-67),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
           speakerShotFromMidStage(-79),
           farShotAngle(-83),
+          shortPassAngle(-60),
           sourceCloseNoteShot(-62),
           centerCloseNoteShot(-63),
           ampCloseNoteShot(-64),
