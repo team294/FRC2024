@@ -33,7 +33,7 @@ public class CANdleRainbowAnimation extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RainbowAnimation anim = new RainbowAnimation(1, .1, segment.count, false, segment.index);
+    RainbowAnimation anim = new RainbowAnimation(1, .4, segment.count, false, segment.index);
     led.animate(anim);
   }
 
