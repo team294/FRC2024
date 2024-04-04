@@ -312,6 +312,7 @@ public class LED extends SubsystemBase {
       setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
     }
 
+    // Sets CANdle yellow until wrist is calibrated
     if (!wrist.isEncoderCalibrated()) {
       setAnimation(Color.kYellow, LEDSegmentRange.CANdle);
     }
