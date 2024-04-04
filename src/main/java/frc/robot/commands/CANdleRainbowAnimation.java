@@ -8,17 +8,24 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.subsystems.LED;
 import frc.robot.utilities.FileLog;
 
 public class CANdleRainbowAnimation extends Command {
   private LED led;
   private boolean fromShuffleboard;
-  /** Creates a new CANdleStop. */
-  public CANdleRainbowAnimation(LED led) {
+  private LEDSegmentRange segment;
+
+/** Creates a new CANdle Rainbow Animation
+ * @param led led to use
+ * @param segment segment to turn rainbow
+ */
+  public CANdleRainbowAnimation(LED led, LEDSegmentRange segment) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.led = led;
     fromShuffleboard = true;
+    this.segment = segment;
 
     addRequirements(led);
   }
@@ -26,7 +33,7 @@ public class CANdleRainbowAnimation extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RainbowAnimation anim = new RainbowAnimation();
+    RainbowAnimation anim = new RainbowAnimation(1, .1, segment.count, false, segment.index);
     led.animate(anim);
   }
 
