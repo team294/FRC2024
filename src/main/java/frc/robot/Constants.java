@@ -385,9 +385,6 @@ public final class Constants {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
           speakerShotFromSpeaker(-42),  // A5: changed to -42 deg
-          speakerShotFromAmpSideClockwise(-60),
-          speakerShotFromAmpSideCounterClockwise(60),
-          speakerShotFromSourceSide(60),
           speakerShotFromPodium(-67),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
           speakerShotFromMidStage(-79),
           shortPassAngle(-79),
