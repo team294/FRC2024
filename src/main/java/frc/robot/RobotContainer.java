@@ -353,8 +353,8 @@ public class RobotContainer {
 
     // top row UP then DOWN, from LEFT to RIGHT
     coP[1].onTrue(new SequentialCommandGroup(
-    new WristSetAngle(WristAngle.climbStart, wrist, log),
-    new CANdleRainbowAnimation(led, LEDSegmentRange.StripHorizontal)
+      new WristSetAngle(WristAngle.climbStart, wrist, log),
+      new CANdleRainbowAnimation(led, LEDSegmentRange.StripHorizontal)
     ));
     coP[3].onTrue(new SequentialCommandGroup(
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
