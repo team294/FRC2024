@@ -12,17 +12,6 @@ import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.DriveTrajectory;
-import frc.robot.commands.WristSetAngle;
-import frc.robot.commands.Sequences.IntakePiece;
-import frc.robot.commands.Sequences.IntakePieceAuto;
-import frc.robot.commands.Sequences.SetShooterWristSpeaker;
-import frc.robot.commands.Sequences.ShootPiece;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Wrist;
 import frc.robot.commands.*;
 import frc.robot.commands.Sequences.*;
 import frc.robot.subsystems.*;
@@ -61,7 +50,7 @@ public class SourceThreePieceShoot extends SequentialCommandGroup {
           () -> alliance.getAlliance() == Alliance.Red
         )
       ),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log)
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
     );
   }
 }
