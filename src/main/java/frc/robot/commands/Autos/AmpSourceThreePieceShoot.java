@@ -10,14 +10,9 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
-import frc.robot.commands.DriveTrajectory;
-import frc.robot.commands.Sequences.IntakePieceAuto;
-import frc.robot.commands.Sequences.ShootPiece;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Wrist;
+import frc.robot.commands.*;
+import frc.robot.commands.Sequences.*;
+import frc.robot.subsystems.*;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
@@ -29,7 +24,7 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AmpSourceThreePieceShoot extends AmpTwoPieceShoot {
   /** Creates a new AmpSourceThreePieceShoot. */
-  public AmpSourceThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Wrist wrist, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public AmpSourceThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, Wrist wrist, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     super(intake, shooter, driveTrain, feeder, wrist, robotState, cache, alliance, log);

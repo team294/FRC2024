@@ -4,27 +4,22 @@
 
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Wrist;
-import frc.robot.utilities.AllianceSelection;
-import frc.robot.utilities.BCRRobotState;
-import frc.robot.utilities.FileLog;
-import frc.robot.utilities.TrajectoryCache;
-
-
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.Sequences.*;
-import frc.robot.commands.*;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.WristConstants.WristAngle;
+import frc.robot.commands.Sequences.*;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
+import frc.robot.utilities.AllianceSelection;
+import frc.robot.utilities.BCRRobotState;
+import frc.robot.utilities.FileLog;
+import frc.robot.utilities.TrajectoryCache;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.StopType;
 import frc.robot.utilities.TrajectoryCache.TrajectoryType;
@@ -34,7 +29,7 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AmpThreePieceShoot extends SequentialCommandGroup {
   /** Creates a new AmpTwoPieceShoot. */
-  public AmpThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Wrist wrist, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public AmpThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, Wrist wrist, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
