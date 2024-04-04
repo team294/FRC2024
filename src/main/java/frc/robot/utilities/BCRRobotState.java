@@ -75,7 +75,7 @@ public class BCRRobotState {
      * Set if in mode for a Far shot (lobbing note towards alliance partner)
      * @param farShotMode true = far shot, false = normal speaker shot
      */
-    public void setShotMode(ShotMode shot){
+    public void setShotMode(ShotMode shotMode){
         this.shotMode = shotMode;
     }
 

@@ -17,11 +17,14 @@ import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.LEDConstants.*;
 import frc.robot.utilities.BCRRobotState;
+import frc.robot.utilities.FileLog;
 import frc.robot.utilities.LEDSegment;
 import frc.robot.utilities.RobotPreferences;
 
 
 public class LED extends SubsystemBase {
+  private final FileLog log;
+  private final int logRotationKey;
   private final CANdle candle;
   private String subsystemName;
   private BCRRobotState robotState;
@@ -44,8 +47,10 @@ public class LED extends SubsystemBase {
    * @param robotState
    * @param matchTimer
    * @param wrist
+   * @param log
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, Timer matchTimer, Wrist wrist) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, Timer matchTimer, 
+             Wrist wrist, FileLog log) {
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
@@ -56,6 +61,9 @@ public class LED extends SubsystemBase {
     this.matchTimer = matchTimer;
     this.shouldClear = false;
     this.wrist = wrist;
+    this.log = log;
+    logRotationKey = log.allocateLogRotation();
+
     // this.accuracyDisplayThreshold = 35;
     // this.accuracy = 0;
 
@@ -297,7 +305,7 @@ public class LED extends SubsystemBase {
    */
   private void displayLEDs() {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
-      if (segmentKey == LEDSegmentRange.Full || segmentKey == LEDSegmentRange.StripVerticals || segmentKey == LEDSegmentRange.AllStripsNoCANdle) {continue; }
+      // if (segmentKey == LEDSegmentRange.Full || segmentKey == LEDSegmentRange.StripVerticals || segmentKey == LEDSegmentRange.AllStripsNoCANdle) {continue; }
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
       setPattern(segment.getCurrentFrame(), segmentKey);
@@ -312,69 +320,72 @@ public class LED extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Updates certain segments based on RobotState
-    updateStateLEDs(LEDSegmentRange.StripLeft);
-    updateStateLEDs(LEDSegmentRange.StripRight);
-    updateStateLEDs(LEDSegmentRange.StripHorizontal);
 
-    // Sets CANdle red if there is a sticky fault ()
-    boolean stickyFault = false;
-    if(RobotPreferences.isStickyFaultActive()) {
-      setAnimation(Color.kRed, LEDSegmentRange.CANdle);
-      stickyFault = true;
-    }
-    // Removes red if sticky fault is no longer active
-    else if (!RobotPreferences.isStickyFaultActive()) {
-      setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
-    }
+    if(log.isMyLogRotation(logRotationKey)) {
+      // Updates certain segments based on RobotState
+      updateStateLEDs(LEDSegmentRange.StripLeft);
+      updateStateLEDs(LEDSegmentRange.StripRight);
+      updateStateLEDs(LEDSegmentRange.StripHorizontal);
 
-    // Sets CANdle yellow until wrist is calibrated
-    if (!wrist.isEncoderCalibrated()) {
-      setAnimation(Color.kYellow, LEDSegmentRange.CANdle);
-    }
-    // Removes yellow when wrist is calibrated
-    else if (wrist.isEncoderCalibrated() && !stickyFault) {
-      setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
-    }
-
-    // Percent of the way through the last 10 seconds of the match (125 seconds in)
-    Double percent = Math.max(matchTimer.get() - 125, 0) / 10.0;
-
-    // Generates segment pattern for the left vertical segment based on percent
-    Color[] segmentPatternLeft = new Color[LEDSegmentRange.StripLeft.count];
-    for (int i = 0; i < LEDSegmentRange.StripLeft.count; i++) {
-      if (i >= (1.0 - percent) * LEDSegmentRange.StripLeft.count) {
-        segmentPatternLeft[i] = Color.kRed;
-      } else {
-        Color[] frame = segments.get(LEDSegmentRange.StripLeft).getCurrentFrame();
-        segmentPatternLeft[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+      // Sets CANdle red if there is a sticky fault ()
+      boolean stickyFault = false;
+      if(RobotPreferences.isStickyFaultActive()) {
+        setAnimation(Color.kRed, LEDSegmentRange.CANdle);
+        stickyFault = true;
       }
-    }
-    // Generates segment pattern for the right vertical segment based on percent
-    Color[] segmentPatternRight = new Color[LEDSegmentRange.StripRight.count];
-    for (int i = 0; i < LEDSegmentRange.StripRight.count; i++) {
-      if (i < percent * LEDSegmentRange.StripRight.count) {
-        segmentPatternRight[i] = Color.kRed;
-      } else {
-        Color[] frame = segments.get(LEDSegmentRange.StripRight).getCurrentFrame();
-        segmentPatternRight[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+      // Removes red if sticky fault is no longer active
+      else if (!RobotPreferences.isStickyFaultActive()) {
+        setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
       }
-    }
-    // Generates segment pattern for the horizontal segment based on percent
-    Color[] segmentPatternHorizontal = new Color[LEDSegmentRange.StripHorizontal.count];
-    for (int i = 0; i < LEDSegmentRange.StripHorizontal.count; i++) {
-      if (i < percent * LEDSegmentRange.StripHorizontal.count) {
-        segmentPatternHorizontal[i] = Color.kRed;
-      } else {
-        Color[] frame = segments.get(LEDSegmentRange.StripHorizontal).getCurrentFrame();
-        segmentPatternHorizontal[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
-      }
-    }
-    // Sets segments based on generated patterns
-    setAnimation(segmentPatternLeft, LEDSegmentRange.StripLeft, true);
-    setAnimation(segmentPatternRight, LEDSegmentRange.StripRight, true);
-    setAnimation(segmentPatternHorizontal, LEDSegmentRange.StripHorizontal, true);
 
-    displayLEDs();
+      // Sets CANdle yellow until wrist is calibrated
+      if (!wrist.isEncoderCalibrated()) {
+        setAnimation(Color.kYellow, LEDSegmentRange.CANdle);
+      }
+      // Removes yellow when wrist is calibrated
+      else if (wrist.isEncoderCalibrated() && !stickyFault) {
+        setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
+      }
+
+      // Percent of the way through the last 10 seconds of the match (125 seconds in)
+      Double percent = Math.max(matchTimer.get() - 125, 0) / 10.0;
+
+      // Generates segment pattern for the left vertical segment based on percent
+      Color[] segmentPatternLeft = new Color[LEDSegmentRange.StripLeft.count];
+      for (int i = 0; i < LEDSegmentRange.StripLeft.count; i++) {
+        if (i >= (1.0 - percent) * LEDSegmentRange.StripLeft.count) {
+          segmentPatternLeft[i] = Color.kRed;
+        } else {
+          Color[] frame = segments.get(LEDSegmentRange.StripLeft).getCurrentFrame();
+          segmentPatternLeft[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+        }
+      }
+      // Generates segment pattern for the right vertical segment based on percent
+      Color[] segmentPatternRight = new Color[LEDSegmentRange.StripRight.count];
+      for (int i = 0; i < LEDSegmentRange.StripRight.count; i++) {
+        if (i < percent * LEDSegmentRange.StripRight.count) {
+          segmentPatternRight[i] = Color.kRed;
+        } else {
+          Color[] frame = segments.get(LEDSegmentRange.StripRight).getCurrentFrame();
+          segmentPatternRight[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+        }
+      }
+      // Generates segment pattern for the horizontal segment based on percent
+      Color[] segmentPatternHorizontal = new Color[LEDSegmentRange.StripHorizontal.count];
+      for (int i = 0; i < LEDSegmentRange.StripHorizontal.count; i++) {
+        if (i < percent * LEDSegmentRange.StripHorizontal.count) {
+          segmentPatternHorizontal[i] = Color.kRed;
+        } else {
+          Color[] frame = segments.get(LEDSegmentRange.StripHorizontal).getCurrentFrame();
+          segmentPatternHorizontal[i] = frame[Math.max(Math.min(frame.length - 1, i), 0)];
+        }
+      }
+      // Sets segments based on generated patterns
+      setAnimation(segmentPatternLeft, LEDSegmentRange.StripLeft, true);
+      setAnimation(segmentPatternRight, LEDSegmentRange.StripRight, true);
+      setAnimation(segmentPatternHorizontal, LEDSegmentRange.StripHorizontal, true);
+
+      displayLEDs();
+    }
   }
 }
