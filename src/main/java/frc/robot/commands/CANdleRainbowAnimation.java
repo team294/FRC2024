@@ -46,6 +46,7 @@ public class CANdleRainbowAnimation extends Command {
   @Override
   public void end(boolean interrupted) {
     led.clearAnimation();
+    led.clearRainbow();
   }
 
   // Returns true when the command should end.

@@ -78,6 +78,10 @@ public class LED extends SubsystemBase {
   public void setRainbow() {
     isRainbow = true;
   }
+
+  public void clearRainbow() {
+    isRainbow = false;
+  }
   
   /** Get the subsystem's name
    * @return the name of the subsystem
