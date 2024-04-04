@@ -229,11 +229,11 @@ public class RobotContainer {
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Prep for short pass
-    xbPOVDown.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
+    xbPOVDown.onTrue(new SetShooterFarShot(WristAngle.shortPassAngle, 
       ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, shooter, wrist, intake, feeder, ShotMode.SHORT_PASS, robotState, log));
 
     // Prep for long pass
-    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.shortPassAngle, 
+    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.longPassAngle, 
     ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log));
 
     
