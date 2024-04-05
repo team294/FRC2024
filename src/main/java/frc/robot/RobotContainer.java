@@ -169,7 +169,7 @@ public class RobotContainer {
 
     // Copanel buttons
     SmartDashboard.putData("Climb Start", new ClimbStart(wrist, log, led));
-    SmartDashboard.putData("Climb End", new ClimbEnd(wrist, log));
+    SmartDashboard.putData("Climb End", new ClimbEnd(wrist, log, led));
     SmartDashboard.putData("Nudge Angle Down 1 deg", new WristNudgeAngle(1, wrist, log));
     SmartDashboard.putData("Nudge Angle Up 1 deg", new WristNudgeAngle(-1, wrist, log));
   }
@@ -359,7 +359,7 @@ public class RobotContainer {
 
     // top row UP then DOWN, from LEFT to RIGHT
     coP[1].onTrue(new ClimbStart(wrist, log, led));
-    coP[3].onTrue(new ClimbEnd(wrist, log));
+    coP[3].onTrue(new ClimbEnd(wrist, log, led));
     // Nudge angle up or down
     coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
     coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
