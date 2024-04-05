@@ -4,7 +4,7 @@
 
 package frc.robot.commands.Sequences;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.CANdleRainbowAnimation;
@@ -16,7 +16,7 @@ import frc.robot.utilities.FileLog;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimbStart extends SequentialCommandGroup {
+public class ClimbStart extends ParallelCommandGroup {
   /** Raises wrist to prepare for climb
    * @param wrist
    * @param log
