@@ -32,7 +32,7 @@ public class CenterTwoPieceShoot extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(
@@ -46,7 +46,7 @@ public class CenterTwoPieceShoot extends SequentialCommandGroup {
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log) 
           ),
           () -> alliance.getAlliance() == Alliance.Red
-        ).andThen( new WaitUntilCommand( feeder::isPiecePresent ).withTimeout(0.5) ),
+        ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
         new IntakePieceAuto(intake, feeder, robotState, log),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log)
       ),
@@ -55,7 +55,7 @@ public class CenterTwoPieceShoot extends SequentialCommandGroup {
         new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartBlue.value], driveTrain, log), 
         () -> alliance.getAlliance() == Alliance.Red
       ),
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
     );
