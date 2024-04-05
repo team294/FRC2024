@@ -174,8 +174,8 @@ public class RobotContainer {
     ));
     SmartDashboard.putData("Climb End", new SequentialCommandGroup(
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value + 5.0)),
-      new WristSetAngle(WristAngle.climbStop, wrist, log),
-      new CANdleRainbowAnimation(led, LEDSegmentRange.StripHorizontal)
+      new WristSetAngle(WristAngle.climbStop, wrist, log)
+      // new CANdleRainbowAnimation(led, LEDSegmentRange.StripHorizontal)
     ));
     SmartDashboard.putData("Nudge Angle Down 1 deg", new WristNudgeAngle(1, wrist, log));
     SmartDashboard.putData("Nudge Angle Up 1 deg", new WristNudgeAngle(-1, wrist, log));
@@ -371,8 +371,8 @@ public class RobotContainer {
     ));
     coP[3].onTrue(new SequentialCommandGroup(
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value + 5.0)),
-      new WristSetAngle(WristAngle.climbStop, wrist, log),
-      new CANdleRainbowAnimation(led, LEDSegmentRange.StripHorizontal)
+      new WristSetAngle(WristAngle.climbStop, wrist, log)
+      // new CANdleRainbowAnimation(led, LEDSegmentRange.StripHorizontal)
     ));
     // Nudge angle up or down
     coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
