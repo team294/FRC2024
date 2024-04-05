@@ -39,9 +39,16 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
 
     addCommands(
         // leaves speaker from source side to outside of notes
+        new ConditionalCommand(
         new SequentialCommandGroup(
             new DriveResetPose(1.1, 3.463, 54, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesRed.value], driveTrain, log) 
+        ),
+        new SequentialCommandGroup(
+            new DriveResetPose(1.1, 4.7666, -54, false, driveTrain, log),
+            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesBlue.value], driveTrain, log) 
+        ),
+        () -> alliance.getAlliance() == Alliance.Red
         ),
         // shoots preloaded note
         new WristSetAngleWithVision(wrist, alliance, driveTrain, log),
