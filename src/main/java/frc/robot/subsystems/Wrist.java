@@ -549,6 +549,27 @@ public class Wrist extends SubsystemBase implements Loggable{
     // After it boots up, it takes up to 40ms sec to settle into an accurate reading.
     // Wait for 5 periodic cycles after the encoder boots up before calibrating.
     if (!wristCalibrated) {
+      if (isWristAtLowerLimit()) {
+        calibrateWristEnc(WristAngle.lowerLimit.value);
+
+        // Configure soft limits on motor     //TODO will this limit both motors???
+        wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
+        wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
+        wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
+        // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
+        // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+  
+          // Apply configuration to the wrist motor. 1 and 2 
+        // This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
+        wristMotor1Configurator.apply(wristMotor1Config);
+        // wristMotor2Configurator.apply(wristMotor2Config);    
+
+      }
+
+/*
       if (isRevEncoderConnected() && revEncoderBootCount < 5) {
         revEncoderBootCount++;
         log.writeLog(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder connected", true,
@@ -581,6 +602,8 @@ public class Wrist extends SubsystemBase implements Loggable{
         wristMotor1Configurator.apply(wristMotor1Config);
         // wristMotor2Configurator.apply(wristMotor2Config);    
       }
+
+      */
     }
 
     // If driver station is no longer disabled and Rev encoder is not connect, then 
