@@ -34,24 +34,26 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
   public SourceThreeNoteCenter(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    // need to fix just for now ???????????!!!!!!!!!!!!!!!!!!!!!!   efhuqefhqfhuoquofqouefhq
-    // idk what to fix this is jank
+
 
     addCommands(
         // leaves speaker from source side to outside of notes
         new ConditionalCommand(
             new SequentialCommandGroup(
                 new DriveResetPose(1.1, 3.463, 54, false, driveTrain, log),
+                new VisionOdometryStateSet(true, driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesRed.value], driveTrain, log) 
             ),
             new SequentialCommandGroup(
                new DriveResetPose(1.1, 4.7666, -54, false, driveTrain, log),
+               new VisionOdometryStateSet(true, driveTrain, log),
                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesBlue.value], driveTrain, log) 
             ),
             () -> alliance.getAlliance() == Alliance.Red
         ),
         
         // shoots preloaded note
+        new VisionOdometryStateSet(true, driveTrain, log), // sending again incase auto init interferes with prior call
         new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
