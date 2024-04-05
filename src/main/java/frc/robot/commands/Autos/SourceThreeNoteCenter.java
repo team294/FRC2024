@@ -37,6 +37,10 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
 
 
     addCommands(
+        // shoots
+        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+        new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
+
         // leaves speaker from source side to outside of notes
         new ConditionalCommand(
             new SequentialCommandGroup(
@@ -51,11 +55,8 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
             ),
             () -> alliance.getAlliance() == Alliance.Red
         ),
-        
-        // shoots preloaded note
+
         new VisionOdometryStateSet(true, driveTrain, log), // sending again incase auto init interferes with prior call
-        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-        new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         // goes under stage to intake up middle center note
         new ParallelDeadlineGroup(
