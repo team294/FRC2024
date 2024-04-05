@@ -35,7 +35,6 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     // need to fix just for now ???????????!!!!!!!!!!!!!!!!!!!!!!   efhuqefhqfhuoquofqouefhq
-    final AllianceSelection allianceSelection = new AllianceSelection(log);
     // idk what to fix this is jank
 
     addCommands(
@@ -45,7 +44,7 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesRed.value], driveTrain, log) 
         ),
         // shoots preloaded note
-        new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+        new WristSetAngleWithVision(wrist, alliance, driveTrain, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         // goes under stage to intake up middle center note
         new ParallelDeadlineGroup(
@@ -62,7 +61,7 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoOutsideStage.value], driveTrain, log)
             ),    
         // shoots in speaker   
-        new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+        new WristSetAngleWithVision(wrist, alliance, driveTrain, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         // drives back through under stage to grab left of middle center note
         new ParallelDeadlineGroup(
@@ -79,7 +78,7 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveLeftCenterNotetoOutsideStage.value], driveTrain, log)
             ),
         // shoots note
-        new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+        new WristSetAngleWithVision(wrist, alliance, driveTrain, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         //leaves to midfield to get headstart in teleop
         new SequentialCommandGroup(
