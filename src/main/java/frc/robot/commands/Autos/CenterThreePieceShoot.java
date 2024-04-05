@@ -32,7 +32,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(
@@ -56,7 +56,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         ),
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, 
           ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
       ),
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),
@@ -75,7 +75,7 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         ),
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, 
           ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
       ),
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),

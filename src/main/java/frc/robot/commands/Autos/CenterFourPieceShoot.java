@@ -33,7 +33,7 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
+      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(
@@ -52,7 +52,7 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),
-      new SetShooterWristSpeaker(WristAngle.sourceCloseNoteShot, 
+      new SetShooterWristSpeakerAuto(WristAngle.sourceCloseNoteShot, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(
@@ -64,7 +64,7 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),
-      new SetShooterWristSpeaker(WristAngle.centerCloseNoteShot, 
+      new SetShooterWristSpeakerAuto(WristAngle.centerCloseNoteShot, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(
@@ -76,7 +76,7 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),
-      new SetShooterWristSpeaker(WristAngle.ampCloseNoteShot, 
+      new SetShooterWristSpeakerAuto(WristAngle.ampCloseNoteShot, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(
