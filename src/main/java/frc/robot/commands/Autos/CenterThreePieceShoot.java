@@ -38,11 +38,11 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
         new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveResetPose(1.3, 2.663, 0, false, driveTrain, log),
+            new DriveResetPose(0.4, 2.65, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterAmpNoteRed.value], driveTrain, log)
           ), 
           new SequentialCommandGroup(
-            new DriveResetPose(1.3, 5.57, 0, false, driveTrain, log),
+            new DriveResetPose(0.4, 5.55, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterAmpNoteBlue.value], driveTrain, log)
           ), 
           () -> alliance.getAlliance() == Alliance.Red
@@ -50,39 +50,25 @@ public class CenterThreePieceShoot extends SequentialCommandGroup {
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)  
       ),
-      new ParallelCommandGroup(
-        new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterStartBlue.value], driveTrain, log), 
-          () -> alliance.getAlliance() == Alliance.Red
-        ),
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
-      ),
+      new SetShooterWristSpeaker(WristAngle.ampCloseNoteShot, 
+        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterNoteRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToCenterNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         ),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
       ).andThen( new WaitUntilCommand( feeder::isPiecePresent ).withTimeout(0.5) ),
-      new ParallelCommandGroup(
-        new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartBlue.value], driveTrain, log), 
-          () -> alliance.getAlliance() == Alliance.Red
-        ),
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromSpeaker, 
-          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
-      ),
+      new SetShooterWristSpeaker(WristAngle.centerCloseNoteShot, 
+          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),
       new WristSetAngle(WristAngle.lowerLimit, wrist, log),
       new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterStartToEndCenterAutoRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterStartToEndCenterAutoBlue.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToEndCenterAutoRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToEndCenterAutoBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
       )
     );
