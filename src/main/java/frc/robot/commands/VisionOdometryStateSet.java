@@ -15,10 +15,8 @@ public class VisionOdometryStateSet extends InstantCommand {
   private final FileLog log;
 
   /**
-   * Immediately sets the Robot State object to the given state.
-   * This will update wherever the object is used.
-   * @param enabled 
-   * @param driveTrain
+   * Turns on or off vision updates for odometry.
+   * @param enabled true = uses vision for odometry, false = does not use vision for odometry   * @param driveTrain
    * @param log log
    */
   public VisionOdometryStateSet(boolean enabled, DriveTrain driveTrain, FileLog log) {
