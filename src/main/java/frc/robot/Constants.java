@@ -107,6 +107,11 @@ public final class Constants {
       // front-back distance between the drivetrain wheels; should be measured from center to center
       public static final double DRIVETRAIN_WHEELBASE_METERS = 0.52705 * DrivetrainAdjustmentFactor;       // 0.52705m CALIBRATED.  Competition bot CAD = 20.75" = 0.52705m.  80% bot CAD = 0.60325m, calibrated = 0.626m.
 
+      // distance from the ground to the center of the wrist joint (m)
+      public static final double heightFromGroundToWristPivot = 0.5762625;
+
+      // distance from the center of the wrist pivot to the intersection of the path the notes travel through the shooter (m)
+      public static final double lengthOfArmFromWristPivotToCenterPathOfShooter = 0.365125;
     }
 
     public static final class SwerveConstants {
@@ -117,7 +122,7 @@ public final class Constants {
       public static final double kWheelDiameterMeters = 0.1003 * 1.025; // B1:  1.025 adjustment CALIBRATED.  Colson wheel = nominal 4" diameter, actual 3.95" = 0.1003m.  80% bot calibrated = 0.1013m.
       public static final double kDriveEncoderMetersPerTick = (kWheelDiameterMeters * Math.PI) / kEncoderCPR / kDriveGearRatio;
       public static final double kTurningEncoderDegreesPerTick = 360.0/kEncoderCPR / kTurningGearRatio;
-
+      
       // Robot calibration for feed-forward and max speeds
       public static final double voltageCompSaturation = 12.0;
       // Max speed is used to keep each motor from maxing out, which preserves ratio between motors 
@@ -184,7 +189,7 @@ public final class Constants {
       public static final double maxAccelerationRateWithElevatorUp = 1.5;           // m/s^2
       public static final double maxRotationRateWithElevatorUp = 0.8;     // rad/sec
 
-      public static final double kPJoystickThetaController = 3; // Theta kp value for joystick in rad/sec
+      public static final double kPJoystickThetaController = 3; // Theta kp value for joystick in rad/sec    
     }
 
     public static final class ShooterConstants {
@@ -221,8 +226,13 @@ public final class Constants {
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
       public static final double shooterVelocityPit = 500;
-      public static final double shooterVelocityFarTop =2000;
-      public static final double shooterVelocityFarBottom = 2000;
+      public static final double shooterVelocityShortPassTop = 2600;
+      public static final double shooterVelocityShortPassBottom = 2600;
+      public static final double shooterVelocityFarPassTop = 3300;
+      public static final double shooterVelocityFarPassBottom = 3300;
+
+      // Time for the shooter to ramp down at shooterPercentStopQuickly before stopping
+      public static final double shooterSpinDownSeconds = 0.5;
     }
 
     public static final class FeederConstants {
@@ -291,13 +301,33 @@ public final class Constants {
     }
 
     public static class VisionConstants {
-      //TODO NEED TO CALIBRATE
-      public static final Transform3d robotToCam =
+      // PhotonVision
+      public static class PhotonVisionConstants {
+        public static final int width = 1200;
+        //TODO NEED TO CALIBRATE
+        public static final Transform3d robotToCamFront =
                 new Transform3d(
                     // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
-                    new Translation3d(Units.inchesToMeters(0), 0, Units.inchesToMeters(0)),
-                    new Rotation3d(0, Units.degreesToRadians(0), 0)); // Cam mounted facing forward in center of robot
-        public static final String cameraName = "CenterCamera";
+                    new Translation3d(Units.inchesToMeters(8.9375), Units.inchesToMeters(0), Units.inchesToMeters(25.03125)),
+                    new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(180))); // Cam mounted facing forward in center of robot
+        public static final String aprilTagCameraName = "AprilTagCamera";
+        // 1.75 physical center to wheel center
+        // 16.75 wheel cetner to intake center without bumper
+        
+        public static final Transform3d robotToCamBack =
+                new Transform3d(
+                    // new Translation3d(Units.inchesToMeters(6.0), 0.0, Units.inchesToMeters(30.5)),       Changed in B3
+                    new Translation3d(Units.inchesToMeters(6.125), Units.inchesToMeters(0), Units.inchesToMeters(25.03125)),
+                    new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(180))); // Cam mounted facing forward in center of robot
+
+             
+        public static final String aprilTagCameraBackName = "AprilTagCameraBack";
+
+
+        public static final String noteCameraName = "NoteCamera";
+        public static final double pitchSetpoint = -18;
+        public static final double yawSetpoint = 0;
+      }
     }
 
     public static final class WristConstants {
@@ -330,6 +360,8 @@ public final class Constants {
       public static final double MMAcceleration = MMCruiseVelocity/0.35;    // Calibrated.  Accel in 0.35 sec.  Max trapezoid acceleration in motor rot/sec^2.  MMVel/MMAccel = (# seconds to full velocity)
       public static final double MMJerk = MMAcceleration/0.05;  // Calibrated.  Jerk in 0.05 sec.  Max trapezoid jerk in motor rot/sec^3.  MMAccel/MMJerk = (# seconds to full accel)
 
+      public static final double wristShootTolerance = 2.0;   // Only shoot if wrist is within this many degrees of the target angle
+
       // Wrist regions
       public enum WristRegion {
           // backFar,        // In the wrist backFar region, the elevator must be in the bottom region (not allowed to go to elevator main or low regions).
@@ -353,12 +385,13 @@ public final class Constants {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
           speakerShotFromSpeaker(-42),  // A5: changed to -42 deg
-          speakerShotFromPodium(-70),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
+          speakerShotFromPodium(-67),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
           speakerShotFromMidStage(-79),
-          farShotAngle(-83),
-          sourceCloseNoteShot(-65),
-          centerCloseNoteShot(-62),
-          ampCloseNoteShot(-67),
+          shortPassAngle(-79),
+          longPassAngle(-60),
+          sourceCloseNoteShot(-62),
+          centerCloseNoteShot(-63),
+          ampCloseNoteShot(-64),
           overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-45.0),
           ampShot(50.0),
@@ -394,7 +427,7 @@ public final class Constants {
   }
 
     public static final class LEDConstants {
-      public static final double accuracyDisplayThreshold = 15; //TODO Decide what the threshold should be
+      public static final double accuracyDisplayThreshold = 35; //TODO Decide what the threshold should be
 
       public static final class Patterns {
           // Static Patterns

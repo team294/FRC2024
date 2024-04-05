@@ -41,7 +41,7 @@ public class CANdleTeamFlash extends Command {
   public CANdleTeamFlash(LED led, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.led = led;
-    this.segment = LEDSegmentRange.StripLeft;
+    this.segment = LEDSegmentRange.StripHorizontal;
     this.log = log;
 
     addRequirements(led);

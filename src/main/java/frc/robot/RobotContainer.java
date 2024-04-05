@@ -27,6 +27,7 @@ import frc.robot.Constants.StopType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.*;
 import frc.robot.commands.Autos.*;
@@ -34,6 +35,7 @@ import frc.robot.commands.Sequences.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
+import frc.robot.utilities.BCRRobotState.ShotMode;
 import frc.robot.utilities.BCRRobotState.State;
 
 /**
@@ -44,8 +46,9 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("B1");
+  private final FileLog log = new FileLog("B4");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
+  private final Timer matchTimer = new Timer();
 
   // Define robot subsystems  
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
@@ -58,10 +61,9 @@ public class RobotContainer {
   private final TrajectoryCache trajectoryCache = new TrajectoryCache(log);
   private final AutoSelection autoSelection = new AutoSelection(trajectoryCache, allianceSelection, log);
   private final BCRRobotState robotState = new BCRRobotState();
-  private final Timer timer = new Timer();
   
   // Is a subsystem, but requires a utility
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", driveTrain, shooter, feeder, robotState, log, timer);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, matchTimer, wrist, log);
 
 
   // Define controllers
@@ -81,7 +83,7 @@ public class RobotContainer {
     configureShuffleboard();
 
     // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
-    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, driveTrain, log));
+    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, allianceSelection, driveTrain, log));
 
   }
 
@@ -102,6 +104,10 @@ public class RobotContainer {
    * Configures Shuffleboard for the robot
    */
   private void configureShuffleboard() {
+    // display sticky faults
+    RobotPreferences.showStickyFaultsOnShuffleboard();
+    SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
+
     // Intake commands
     SmartDashboard.putData("Intake Set Percent", new IntakeSetPercent(intake, log));
     SmartDashboard.putData("Intake Stop", new IntakeStop(intake, log));
@@ -142,22 +148,30 @@ public class RobotContainer {
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
-    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, robotState, log));
-    SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, robotState, log));
+    SmartDashboard.putData("Intake Piece", new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
+    SmartDashboard.putData("Shoot Piece", new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log));
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
 
     // Autos
-    SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Amp Two Piece Shoot", new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Amp Two Piece Shoot", new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-    SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Amp Shoot One Piece", new AmpShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log));
+    SmartDashboard.putData("Source Shoot One Piece", new SourceShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log));
 
-    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Center Three Piece Shoot", new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
 
 
-    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
+
+    // Copanel buttons
+    SmartDashboard.putData("Climb Start", new ClimbStart(wrist, log, led));
+    SmartDashboard.putData("Climb End", new ClimbEnd(wrist, log, led));
+    SmartDashboard.putData("Nudge Angle Down 1 deg", new WristNudgeAngle(1, wrist, log));
+    SmartDashboard.putData("Nudge Angle Up 1 deg", new WristNudgeAngle(-1, wrist, log));
   }
 
   /**
@@ -166,10 +180,9 @@ public class RobotContainer {
   private void configureTriggers(){
     // Trigger to turn off intaking when a piece is detected in the feeder.
     // Note that this trigger will only turn off intaking if the robot is
-    // currently in the INTAKE_TO_FEEDER state; otherwise, it does nothing.
+    // currently in the INTAKING state; otherwise, it does nothing.
     Trigger intakeStopTrigger = new Trigger(()-> DriverStation.isTeleopEnabled() && 
-      robotState.getState() == State.INTAKING &&
-      (feeder.isPiecePresent() ||  wrist.getWristAngle() > WristAngle.intakeLimit.value) );
+      robotState.getState() == State.INTAKING && feeder.isPiecePresent());
     intakeStopTrigger.onTrue(
       new StopIntakingSequence(feeder, intake, robotState, log)
     );
@@ -203,8 +216,11 @@ public class RobotContainer {
     xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
+    // Clear piece jammed in intake.
+    xbRB.onTrue(new IntakeClearJam(intake, feeder, robotState, log));
+
     // Move wrist down and then intake a piece
-    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, robotState, log));
+    xbRT.onTrue(new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
 
     // Reverse the intake
     xbLT.onTrue(new IntakeSetPercent(-.3, -.3, intake, log));
@@ -221,16 +237,21 @@ public class RobotContainer {
     xbY.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
-    // Prep for Far Shot
-    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
-      ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, shooter, wrist, intake, feeder, robotState, log));
+    // Prep for short pass
+    xbPOVDown.onTrue(new SetShooterFarShot(WristAngle.shortPassAngle, 
+      ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, shooter, wrist, intake, feeder, ShotMode.SHORT_PASS, robotState, log));
 
+    // Prep for long pass
+    xbPOVUp.onTrue(new SetShooterFarShot(WristAngle.longPassAngle, 
+    ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log));
+
+    
     // Store wrist, does not turn on intake
     xbX.onTrue(
       new ParallelCommandGroup(
         new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, log),
         new SpeakerModeSet(true, robotState, log),
-        new FarShotSet(false, robotState, log)
+        new ShotModeSet(ShotMode.STANDARD, robotState, log)
       ));
     
     // Prep for pit shot when back button is pressed
@@ -238,14 +259,14 @@ public class RobotContainer {
       ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, shooter, wrist, intake, feeder, robotState, log));
     // Shoot in slow speed pit shot when released
     xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, true,
-      shooter, feeder, robotState, log) );
+      shooter, feeder, wrist, robotState, log) );
 
     // Prep for amp shot
     xbPOVRight.onTrue( new ParallelCommandGroup(
         new IntakeStop(intake, log),
         new WristSetAngle(WristAngle.ampShot, wrist, log),
         new SpeakerModeSet(false, robotState, log),
-        new FarShotSet(false, robotState, log),
+        new ShotModeSet(ShotMode.STANDARD, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
     ) );  
 
@@ -256,7 +277,7 @@ public class RobotContainer {
         new RobotStateSetIdle(robotState, feeder, log)      
     ) );
     
-    xbRJoystickTrigger.whileTrue(new WristXboxControl(xboxController, wrist, log));     
+    xbRJoystickTrigger.whileTrue(new WristXboxControl(xboxController, wrist, intake, feeder, log));     
   }
 
   /**
@@ -277,30 +298,47 @@ public class RobotContainer {
     // Shoot the note
     left[2].onTrue(
         new ConditionalCommand(
-          // Far shot lobbing note towards alliance partner
-          new ShootPiece(ShooterConstants.shooterVelocityFarTop, ShooterConstants.shooterVelocityFarBottom, true, shooter, feeder, robotState, log),
           new ConditionalCommand(
             // Shoot in speaeker
-            new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, robotState, log),
+            new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
             // Shoot in amp
             new ShootPieceAmp(feeder, robotState, log),
             () -> robotState.isSpeakerMode()
           ),
-          () -> robotState.isFarShotMode()
+          new ConditionalCommand(
+            // Short pass lobbing note towards alliance partner
+            new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log), 
+            // Far Pass lobbing note over stage to alliance partner
+            new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
+            () -> robotState.getShotMode() == ShotMode.SHORT_PASS
+            ),
+          () -> robotState.getShotMode() == ShotMode.STANDARD
         )
         
     );
 
-    // right[1].onTrue(new SetAimLock(true)); TODO implement this once vision is brought in
+    right[1].whileTrue(new ParallelCommandGroup(
+      new SetAimLock(driveTrain, true, log),
+      new SpeakerModeSet(true, robotState, log),
+      new ShotModeSet(ShotMode.STANDARD, robotState, log),
+      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
+      
+    )); //TODO implement this once vision is brought in
+    right[1].onFalse(
+      new SetAimLock(driveTrain, false, log)
+    ); //TODO implement this once vision is brought in
+
     // right[2] //Turn to face amp
     
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
-    //right[2].onTrue(new IntakePiece(intake, feeder, robotState, log));
+    // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
+    // right[2].whileTrue(new DriveToNoteSequence(intake, shooter, feeder, wrist, driveTrain, robotState, log));
     
      
   }
 
-  /** 
+  /**
    * Define Copanel button mappings.
    *  
    *  1  3  5  8
@@ -320,14 +358,11 @@ public class RobotContainer {
     }
 
     // top row UP then DOWN, from LEFT to RIGHT
-    coP[1].onTrue(new WristSetAngle(WristAngle.climbStart, wrist, log));
-    coP[3].onTrue(new SequentialCommandGroup(
-      new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
-      new WristSetAngle(WristAngle.climbStop, wrist, log)
-    ));
+    coP[1].onTrue(new ClimbStart(wrist, log, led));
+    coP[3].onTrue(new ClimbEnd(wrist, log, led));
     // Nudge angle up or down
-    coP[5].onTrue(new WristNudgeAngle(2, wrist, log)); // Nudge down
-    coP[6].onTrue(new WristNudgeAngle(-2, wrist, log)); // Nudge up
+    coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
+    coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
   }
 
 
@@ -378,7 +413,7 @@ public class RobotContainer {
 
     driveTrain.stopMotors();                // SAFETY:  Turn off any closed loop control that may be running, so the robot does not move when re-enabled.
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-
+    driveTrain.setVisionForOdomoetryState(true);
   }
 
   /**
@@ -410,6 +445,7 @@ public class RobotContainer {
     lastEnabledModeAuto = true;
 
     driveTrain.setDriveModeCoast(false);
+    driveTrain.setVisionForOdomoetryState(false);
 
     // NOTE:  Do NOT reset the gyro or encoder here!!!!!
     // The first command in auto mode initializes before this code is run, and
@@ -431,11 +467,13 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
+    driveTrain.setVisionForOdomoetryState(true);
 
     // Set robot state
     robotState.setState(State.IDLE);
-    // Starts timer @ zero seconds
-    timer.reset();
+
+    matchTimer.reset();
+    matchTimer.start();
   }
 
   /**
