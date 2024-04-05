@@ -32,7 +32,8 @@ public class AutoSelection {
 	public static final int AmpThreePieceShoot = 6;
 	public static final int CenterSourceThreePieceShoot = 7;
 	public static final int CenterFourPieceShoot = 8;
-	public static final int SourceOnePieceShoot = 9;
+	public static final int SourceShootOnePiece = 9;
+	public static final int AmpShootOnePiece = 10;
 
 
 
@@ -57,8 +58,9 @@ public class AutoSelection {
 		// autoChooser.addOption("AmpThreePieceShoot", AmpThreePieceShoot);
 		// autoChooser.addOption("OnePieceShoot", shootOne);
 		autoChooser.addOption("CenterThreePieceShootAmp", CenterSourceThreePieceShoot);
-		autoChooser.addOption("SourceOnePieceShoot", SourceOnePieceShoot);
-		autoChooser.addOption("CenterFourPieceNearNoteAuto", CenterFourPieceShoot);
+		autoChooser.addOption("SourceShootOnePiece", SourceShootOnePiece);
+		autoChooser.addOption("AmpShootOnePiece", AmpShootOnePiece);
+		// autoChooser.addOption("CenterFourPieceNearNoteAuto", CenterFourPieceShoot);
 		
 
 	
@@ -136,12 +138,17 @@ public class AutoSelection {
 			autonomousCommand = new CenterFourPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
-		else if(autoPlan == SourceOnePieceShoot){
+		else if(autoPlan == SourceShootOnePiece){
 			log.writeLogEcho(true, "AutoSelect", "run Source One Piece Shoot");
-			autonomousCommand = new SourceOneNoteShoot(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
+			autonomousCommand = new SourceShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
 		}
 
-        else if (autonomousCommand == null) {
+        else if(autoPlan == AmpShootOnePiece){
+			log.writeLogEcho(true, "AutoSelect", "run Amp One Piece Shoot");
+			autonomousCommand = new AmpShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
+		}
+		
+		else if (autonomousCommand == null) {
 			log.writeLogEcho(true, "AutoSelect", "No autocommand found");
 			autonomousCommand = new WaitCommand(1);
 		}
