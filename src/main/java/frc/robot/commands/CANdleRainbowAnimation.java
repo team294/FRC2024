@@ -17,7 +17,8 @@ public class CANdleRainbowAnimation extends Command {
   private boolean fromShuffleboard;
   private LEDSegmentRange segment;
 
-/** Creates a new CANdle Rainbow Animation
+/** Creates a new CANdle Rainbow Animation.  Note that this command
+ * runs until interrupted.
  * @param led led to use
  * @param segment segment to turn rainbow
  */

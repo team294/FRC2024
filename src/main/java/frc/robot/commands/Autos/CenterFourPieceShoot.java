@@ -87,10 +87,10 @@ public class CenterFourPieceShoot extends SequentialCommandGroup {
         ).andThen( new WaitUntilCommand( feeder::isPiecePresent ).withTimeout(0.5) ),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
-      ),
-      new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
-      ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, shooter, wrist, intake, feeder, ShotMode.SHORT_PASS, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log)
+      )
+      // new SetShooterFarShot(WristAngle.speakerShotFromMidStage, 
+      // ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, shooter, wrist, intake, feeder, ShotMode.SHORT_PASS, robotState, log),
+      // new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log)
     );
   }
 }
