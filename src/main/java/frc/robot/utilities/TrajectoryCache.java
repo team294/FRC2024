@@ -404,6 +404,17 @@ public class TrajectoryCache {
             List.of(new Translation2d(0.8, 6.8)), 
             new Pose2d(2.0, 6.95, new Rotation2d(Math.toRadians(0)))
             ));
+        cache[TrajectoryType.driveFromSourceToBeforeSourceCenterRed] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(54)),
+            new Rotation2d(Math.toRadians(-33)),
+            calcTrajectory("Source Side to Before Source Center Red", .8, .6, false, 
+            new Pose2d(1.1, 3.463, new Rotation2d(Math.toRadians(0))), 
+            List.of(
+                new Translation2d(2, 5.463),
+                new Translation2d(7.54, 8)
+            ),
+            new Pose2d(8.2, 7.4646, newRotation2d(Math.toRadians(-33)))
+        ));
         
     }
 
