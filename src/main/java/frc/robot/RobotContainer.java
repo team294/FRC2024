@@ -415,7 +415,7 @@ public class RobotContainer {
 
     driveTrain.stopMotors();                // SAFETY:  Turn off any closed loop control that may be running, so the robot does not move when re-enabled.
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-
+    driveTrain.setVisionForOdomoetryState(true);
   }
 
   /**
@@ -447,6 +447,7 @@ public class RobotContainer {
     lastEnabledModeAuto = true;
 
     driveTrain.setDriveModeCoast(false);
+    driveTrain.setVisionForOdomoetryState(false);
 
     // NOTE:  Do NOT reset the gyro or encoder here!!!!!
     // The first command in auto mode initializes before this code is run, and
@@ -468,6 +469,7 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
+    driveTrain.setVisionForOdomoetryState(true);
 
     // Set robot state
     robotState.setState(State.IDLE);
