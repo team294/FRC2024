@@ -291,6 +291,7 @@ public class SwerveControllerLogCommand extends Command {
   @Override
   public boolean isFinished() {
     return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds()) &&
-        ( Math.abs(m_pose.get().getRotation().getDegrees() - m_desiredRotation.get().getDegrees()) <= TrajectoryConstants.maxThetaErrorDegrees );
+        ( Math.abs(m_pose.get().getRotation().getDegrees() - m_desiredRotation.get().getDegrees()) <= TrajectoryConstants.maxThetaErrorDegrees ||
+          m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds() + 0.7));
   }
 }
