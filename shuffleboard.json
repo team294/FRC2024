@@ -219,6 +219,79 @@
               "imageWidth": 0,
               "imageHeight": 0
             }
+          },
+          "2,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Wrist calibrated",
+              "_title": "Wrist calibrated",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "5,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Climb",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Climb Start",
+                  "_title": "Climb Start",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Climb End",
+                  "_title": "Climb End",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              ]
+            }
+          },
+          "7,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Nudge Angle",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Nudge Angle Up 1 deg",
+                  "_title": "Up 1 deg",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Nudge Angle Down 1 deg",
+                  "_title": "Down 1 deg",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              ]
+            }
           }
         }
       }
@@ -840,13 +913,6 @@
                   "_title": "Drive Turn Calibration",
                   "_glyph": 148,
                   "_showGlyph": false
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Drive 6m +X",
-                  "_title": "Drive 6m +X",
-                  "_glyph": 148,
-                  "_showGlyph": false
                 }
               ]
             }
@@ -929,13 +995,6 @@
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Wrist enc2 raw",
                   "_title": "Wrist enc2 raw",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Wrist Rev raw",
-                  "_title": "Wrist Rev raw",
                   "_glyph": 148,
                   "_showGlyph": false
                 },

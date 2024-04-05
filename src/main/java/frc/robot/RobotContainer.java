@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.led.RainbowAnimation;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -48,7 +46,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("B3");
+  private final FileLog log = new FileLog("B4");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -168,6 +166,12 @@ public class RobotContainer {
 
 
     SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
+
+    // Copanel buttons
+    SmartDashboard.putData("Climb Start", new ClimbStart(wrist, log, led));
+    SmartDashboard.putData("Climb End", new ClimbEnd(wrist, log, led));
+    SmartDashboard.putData("Nudge Angle Down 1 deg", new WristNudgeAngle(1, wrist, log));
+    SmartDashboard.putData("Nudge Angle Up 1 deg", new WristNudgeAngle(-1, wrist, log));
   }
 
   /**
@@ -354,14 +358,8 @@ public class RobotContainer {
     }
 
     // top row UP then DOWN, from LEFT to RIGHT
-    coP[1].onTrue(new SequentialCommandGroup(
-      new WristSetAngle(WristAngle.climbStart, wrist, log),
-      new CANdleRainbowAnimation(led, LEDSegmentRange.StripHorizontal)
-    ));
-    coP[3].onTrue(new SequentialCommandGroup(
-      new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
-      new WristSetAngle(WristAngle.climbStop, wrist, log)
-    ));
+    coP[1].onTrue(new ClimbStart(wrist, log, led));
+    coP[3].onTrue(new ClimbEnd(wrist, log, led));
     // Nudge angle up or down
     coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
     coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
