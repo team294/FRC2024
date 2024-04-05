@@ -6,9 +6,12 @@ package frc.robot.commands.Sequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.WristConstants;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.Constants.WristConstants.WristAngle;
+import frc.robot.commands.CANdleRainbowAnimation;
 import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.WristSetPercentOutput;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.FileLog;
 
@@ -16,17 +19,18 @@ import frc.robot.utilities.FileLog;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimbEnd extends SequentialCommandGroup {
-  /** Creates a new ClimbEnd. 
+  /** Lowers wrist to climb chain
    * @param wrist
    * @param log
+   * @param led
   */
-  public ClimbEnd(Wrist wrist, FileLog log) {
+  public ClimbEnd(Wrist wrist, FileLog log, LED led) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value + 5.0)),
-      new WristSetAngle(WristAngle.climbStop, wrist, log)
-      // new CANdleRainbowAnimation(led, LEDSegmentRange.StripHorizontal)
+      new WristSetAngle(WristAngle.climbStop, wrist, log),
+      new CANdleRainbowAnimation(led, LEDSegmentRange.StripHorizontal)
     );
   }
 }
