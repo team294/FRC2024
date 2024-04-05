@@ -16,7 +16,10 @@ import frc.robot.utilities.FileLog;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimbEnd extends SequentialCommandGroup {
-  /** Creates a new ClimbEnd. */
+  /** Creates a new ClimbEnd. 
+   * @param wrist
+   * @param log
+  */
   public ClimbEnd(Wrist wrist, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());

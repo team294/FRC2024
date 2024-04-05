@@ -17,7 +17,11 @@ import frc.robot.utilities.FileLog;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimbStart extends SequentialCommandGroup {
-  /** Creates a new ClimbStart. */
+  /** Creates a new ClimbStart. 
+   * @param wrist
+   * @param log
+   * @param leds
+  */
   public ClimbStart(Wrist wrist, FileLog log, LED led) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
