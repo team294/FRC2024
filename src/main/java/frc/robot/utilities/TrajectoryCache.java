@@ -153,21 +153,21 @@ public class TrajectoryCache {
             ));
         
         cache[TrajectoryType.driveToAmpCloseNoteRed.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(-33)), 
-            new Rotation2d(Math.toRadians(-33)), 
+            new Rotation2d(Math.toRadians(-60)), 
+            new Rotation2d(Math.toRadians(-26)), 
             calcTrajectory("Amp Start to Close Note Red", .8, .4, false, 
-            new Pose2d(1.3, 1.2, new Rotation2d(Math.toRadians(0))), 
+            new Pose2d(0.7, 1.3, new Rotation2d(Math.toRadians(0))), 
             List.of(), 
-            new Pose2d(3.0, 1.2, new Rotation2d(0))
+            new Pose2d(3.0, 0.8, new Rotation2d(0))
             ));
 
         cache[TrajectoryType.driveToAmpCloseNoteBlue.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(33)), 
-            new Rotation2d(Math.toRadians(33)), 
+            new Rotation2d(Math.toRadians(60)), 
+            new Rotation2d(Math.toRadians(26)), 
             calcTrajectory("Amp Start to Close Note Blue", .8, .4, false, 
-            new Pose2d(1.3, 7, new Rotation2d(Math.toRadians(0))), 
+            new Pose2d(0.7, 6.5, new Rotation2d(Math.toRadians(0))), 
             List.of(), 
-            new Pose2d(3.0, 7, new Rotation2d(0))
+            new Pose2d(3.0, 7.4, new Rotation2d(0))
             ));
 
         
