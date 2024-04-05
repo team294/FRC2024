@@ -49,7 +49,6 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         // goes under stage to intake up middle center note
         new ParallelDeadlineGroup(
             new SequentialCommandGroup(
-                new DriveResetPose(2.72, 5.3296, 45, false, driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotestoCenterNoteRed.value], driveTrain, log)
             ),
             new WristSetAngle(WristAngle.lowerLimit, wrist, log),
@@ -57,7 +56,6 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         ),
         // drives back to shoot in speaker
         new SequentialCommandGroup(
-            new DriveResetPose(8.1742, 4.1546, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoOutsideStageRed.value], driveTrain, log)
             ),    
         // shoots in speaker   
@@ -66,7 +64,6 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         // drives back through under stage to grab left of middle center note
         new ParallelDeadlineGroup(
             new SequentialCommandGroup(
-                new DriveResetPose(3.7582, 2.7516, 0, false, driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveOutsideStageLeftCenterNoteRed.value], driveTrain, log)
             ),
             new WristSetAngle(WristAngle.lowerLimit, wrist, log),
@@ -74,16 +71,18 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         ),
         // drive back under stage to shoot note
         new SequentialCommandGroup(
-            new DriveResetPose(8.0652, 5.7986, 0, false, driveTrain, log),
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveLeftCenterNotetoOutsideStageRed.value], driveTrain, log)
             ),
         // shoots note
         new WristSetAngleWithVision(wrist, alliance, driveTrain, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         //leaves to midfield to get headstart in teleop
-        new SequentialCommandGroup(
-            new DriveResetPose(3.7582, 2.7516, 0, false, driveTrain, log),
+        new ParallelDeadlineGroup(
+            new SequentialCommandGroup(
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveOutsideStageLeftCenterNoteRed.value], driveTrain, log)
+            ),
+            new WristSetAngle(WristAngle.lowerLimit, wrist, log)
+    
         )      
     );
   }

@@ -410,18 +410,18 @@ public class TrajectoryCache {
         
         cache[TrajectoryType.driveSourceOutsideNotesRed.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(54)), 
-            new Rotation2d(Math.toRadians(45)), 
+            new Rotation2d(Math.toRadians(54)), 
             calcTrajectory("Center Note  to Amp note Blue", .8, .6, false, 
-            new Pose2d(1.1, 3.463, new Rotation2d(Math.toRadians(45))), 
-            List.of(new Translation2d(1.2, 6.0766)), 
-            new Pose2d(2.7822, 5.3296, new Rotation2d(Math.toRadians(45)))
+            new Pose2d(1.1, 3.463, new Rotation2d(Math.toRadians(54))), 
+            List.of(new Translation2d(1.2, 4.3)), 
+            new Pose2d(2.5106846055, 5.405, new Rotation2d(Math.toRadians(54)))
             ));
         
         cache[TrajectoryType.driveSourceOutsideNotestoCenterNoteRed.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(45)), 
+            new Rotation2d(Math.toRadians(54)), 
             new Rotation2d(0), 
             calcTrajectory("Center Note  to Amp note Blue", .8, .6, false, 
-            new Pose2d(2.7822, 5.3296, new Rotation2d(0)),
+            new Pose2d(2.7822, 5.405, new Rotation2d(0)),
             List.of(new Translation2d(6.0592, 4.1436)), 
             new Pose2d(8.1742, 4.1546, new Rotation2d(0))
             ));
