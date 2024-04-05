@@ -52,7 +52,7 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         ),
         
         // shoots preloaded note
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         // goes under stage to intake up middle center note
@@ -60,7 +60,8 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
            new ConditionalCommand(
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotestoCenterNoteRed.value], driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotestoCenterNoteBlue.value], driveTrain, log),
-                () -> alliance.getAlliance() == Alliance.Red),
+                () -> alliance.getAlliance() == Alliance.Red
+                ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
           new WristSetAngle(WristAngle.lowerLimit, wrist, log),
           new IntakePieceAuto(intake, feeder, robotState, log)
         ),
@@ -73,7 +74,7 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         ),
 
         // shoots in speaker   
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         // drives back through under stage to grab left of middle center note
@@ -82,7 +83,7 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveOutsideStageLeftCenterNoteRed.value], driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveOutsideStageLeftCenterNoteBlue.value], driveTrain, log),
                 () -> alliance.getAlliance() == Alliance.Red
-            ),    
+            ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
             new WristSetAngle(WristAngle.lowerLimit, wrist, log),
             new IntakePieceAuto(intake, feeder, robotState, log)
         ),
@@ -95,7 +96,7 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         ),
         
         // shoots note
-        new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         //leaves to midfield to get headstart in teleop
