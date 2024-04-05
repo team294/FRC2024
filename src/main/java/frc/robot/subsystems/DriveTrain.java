@@ -82,6 +82,9 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   private PhotonCameraWrapper camera;
   private NotePhotonCameraWrapper noteCamera;
 
+  // false = will not use vision in odometry, true = uses vision for odometry
+  private boolean useVisionForOdometry = false;
+
   // variable for vison-based aiming in DriveWithJoysticksAdvance
   private boolean aimLock = false;
 
@@ -554,7 +557,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     poseEstimator.update(Rotation2d.fromDegrees(getGyroRotation()), getModulePositions());
 
     // Only run camera updates for pose estimator in teleop mode
-    if (camera.hasInit() && DriverStation.isTeleop()) {
+    if (camera.hasInit() && useVisionForOdometry) {
       Optional<EstimatedRobotPose> result = camera.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
 
       if (result.isPresent()) {
@@ -597,6 +600,14 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   public void cameraInit() {
     camera.init();
     noteCamera.init();
+  }
+
+  /**
+   * 
+   * @param enabled true = uses vision for odometry, false = does not use vision for odometry
+   */
+  public void setVisionForOdomoetryState(boolean enabled) {
+    useVisionForOdometry = enabled;
   }
 
   public NotePhotonCameraWrapper getNoteCamera() {
