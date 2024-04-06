@@ -394,7 +394,7 @@ public final class Constants {
           centerCloseNoteShot(-62),
           ampCloseNoteShot(-63),
           endFiveNoteShot(-77),
-          overheadShotAngle(55),      // 135" field edge to front of bumper
+          overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
           climbStop(-45.0),
           ampShot(50.0),
           clearBellyPanMinAngle(-65),
