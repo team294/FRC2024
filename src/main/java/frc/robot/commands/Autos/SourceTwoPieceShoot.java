@@ -34,7 +34,7 @@ public class SourceTwoPieceShoot extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, 
+      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSide, 
         ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(

@@ -30,7 +30,7 @@ public class SourceShootOnePiece extends SequentialCommandGroup {
         new DriveResetPose(0.2, 7.0, -60, true, driveTrain, log), 
         () -> alliance.getAlliance() == Alliance.Red
       ),
-      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSide, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
     );
   }
