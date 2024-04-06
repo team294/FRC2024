@@ -72,7 +72,7 @@ public class AutoSelection {
 
 		// show auto parameters on Shuffleboard
 		SmartDashboard.putNumber("Autonomous delay", 0);
-		SmartDashboard.putBoolean("Autonomous use vision", false);
+		// SmartDashboard.putBoolean("Autonomous use vision", false);
 	}
 
 	/**
@@ -160,6 +160,7 @@ public class AutoSelection {
 			autonomousCommandMain = new WaitCommand(1);
 		}
 
+		// Add auto wait time before the main auto command
 		Command autonomousCommand = new SequentialCommandGroup(
 			new WaitCommand(waitTime),
 			autonomousCommandMain
