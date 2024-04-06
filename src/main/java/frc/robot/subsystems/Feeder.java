@@ -48,6 +48,7 @@ public class Feeder extends SubsystemBase implements Loggable{
 
   private boolean velocityControlOn = false;
   private double setpointRPM;
+  private double setpointPercent;
 
   // Piece sensor inside the intake 
   private final DigitalInput pieceSensor = new DigitalInput(Ports.DIOFeederPieceSensor);
@@ -107,6 +108,7 @@ public class Feeder extends SubsystemBase implements Loggable{
     // Percent output control does not exist; multiply compensationVoltage by percent
     feeder.setControl(motorVoltageControl.withOutput(percent * FeederConstants.compensationVoltage));
     velocityControlOn = false;
+    setpointPercent = percent;
     setpointRPM = 0.0;
   }
 
@@ -115,6 +117,15 @@ public class Feeder extends SubsystemBase implements Loggable{
   */
   public void stopFeeder() {
     setFeederPercentOutput(0.0);
+  }
+
+  /**
+   * Returns the setpoint percent for the feeder motor.
+   * If the feeder is under velocity control, then returns 0.
+   * @return
+   */
+  public double getFeederSetPercent() {
+    return setpointPercent;
   }
 
   // *** Velocity motor controls
@@ -126,6 +137,7 @@ public class Feeder extends SubsystemBase implements Loggable{
   public void setFeederVelocity(double rpm) { 
     velocityControlOn = true;
     setpointRPM = rpm;
+    setpointPercent = 0.0;
     feeder.setControl(motorVelocityControl.withVelocity(rpm/60.0/FeederConstants.feederGearRatio));
   }
 
@@ -170,7 +182,7 @@ public class Feeder extends SubsystemBase implements Loggable{
    * @return true if piece is in feeder
    */
   public boolean isPiecePresent(){
-    return pieceSensor.get();
+    return !pieceSensor.get();
   }
 
 

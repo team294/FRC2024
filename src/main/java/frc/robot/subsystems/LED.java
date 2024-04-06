@@ -34,6 +34,7 @@ public class LED extends SubsystemBase {
   private Timer matchTimer;
   private boolean shouldClear;
   private Wrist wrist;
+  private boolean isRainbow;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
   private HashMap<LEDSegmentRange, LEDSegment> segments;
@@ -49,8 +50,8 @@ public class LED extends SubsystemBase {
    * @param wrist
    * @param log
    */
-  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, BCRRobotState robotState, Timer matchTimer, 
-             Wrist wrist, FileLog log) {
+  public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, 
+             BCRRobotState robotState, Timer matchTimer, Wrist wrist, FileLog log) {
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
@@ -62,6 +63,7 @@ public class LED extends SubsystemBase {
     this.shouldClear = false;
     this.wrist = wrist;
     this.log = log;
+    this.isRainbow = false;
     logRotationKey = log.allocateLogRotation();
 
     // this.accuracyDisplayThreshold = 35;
@@ -73,6 +75,14 @@ public class LED extends SubsystemBase {
     }
   }
 
+  public void setRainbow() {
+    isRainbow = true;
+  }
+
+  public void clearRainbow() {
+    isRainbow = false;
+  }
+  
   /** Get the subsystem's name
    * @return the name of the subsystem
    */
@@ -144,15 +154,31 @@ public class LED extends SubsystemBase {
     segments.get(segment).setAnimation(animation, loop);
   }
 
+   /**
+   * Sets the animation for a given led segment
+   * @param pattern pattern to display
+   * @param segment segment to play animation on
+   * @param loop whether the animation repeats
+   */
   public void setAnimation(Color[] pattern, LEDSegmentRange segment, boolean loop) {
     Color[][] anim = {pattern};
     segments.get(segment).setAnimation(anim, loop);
   }
   
+  /**
+   * Sets the animation for a given led segment
+   * @param color color to display
+   * @param segment segment to play animation on
+   */
   public void setAnimation(Color color, LEDSegmentRange segment) {
     segments.get(segment).setAnimation(color);
   }
   
+  /**
+   * Sets the animation for a given led segment
+   * @param color BCRColor to display
+   * @param segment segment to play animation on
+   */
   public void setAnimation(BCRColor color, LEDSegmentRange segment) {
     Color _color = new Color(color.r, color.g, color.b);
     segments.get(segment).setAnimation(_color);
@@ -287,9 +313,9 @@ public class LED extends SubsystemBase {
   /**
    * Displays leds of all led segments that don't encompass multiple other segments
    */
-  private void DisplayLEDs() {
+  private void displayLEDs() {
     for (LEDSegmentRange segmentKey : segments.keySet()) {
-      // if (segmentKey == LEDSegmentRange.Full || segmentKey == LEDSegmentRange.StripVerticals || segmentKey == LEDSegmentRange.AllStripsNoCANdle) {continue; }
+      if (isRainbow && segmentKey == LEDSegmentRange.StripHorizontal) { continue; }
       // Display this segments
       LEDSegment segment = segments.get(segmentKey);
       setPattern(segment.getCurrentFrame(), segmentKey);
@@ -369,7 +395,7 @@ public class LED extends SubsystemBase {
       setAnimation(segmentPatternRight, LEDSegmentRange.StripRight, true);
       setAnimation(segmentPatternHorizontal, LEDSegmentRange.StripHorizontal, true);
 
-      DisplayLEDs();
+      displayLEDs();
     }
   }
 }

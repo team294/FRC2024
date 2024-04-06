@@ -27,6 +27,7 @@ import frc.robot.Constants.StopType;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.*;
 import frc.robot.commands.Autos.*;
@@ -45,7 +46,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("B2");
+  private final FileLog log = new FileLog("B4");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -157,12 +158,20 @@ public class RobotContainer {
     SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Two Piece Shoot", new SourceTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Amp Shoot One Piece", new AmpShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log));
+    SmartDashboard.putData("Source Shoot One Piece", new SourceShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log));
 
     SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Center Three Piece Shoot", new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
 
 
     SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
+
+    // Copanel buttons
+    SmartDashboard.putData("Climb Start", new ClimbStart(wrist, log, led));
+    SmartDashboard.putData("Climb End", new ClimbEnd(wrist, log, led));
+    SmartDashboard.putData("Nudge Angle Down 1 deg", new WristNudgeAngle(1, wrist, log));
+    SmartDashboard.putData("Nudge Angle Up 1 deg", new WristNudgeAngle(-1, wrist, log));
   }
 
   /**
@@ -349,11 +358,8 @@ public class RobotContainer {
     }
 
     // top row UP then DOWN, from LEFT to RIGHT
-    coP[1].onTrue(new WristSetAngle(WristAngle.climbStart, wrist, log));
-    coP[3].onTrue(new SequentialCommandGroup(
-      new WristSetPercentOutput(WristConstants.climbPercentOutput, wrist, log).until(() -> (wrist.getWristAngle() <= WristAngle.climbStop.value+5.0)),
-      new WristSetAngle(WristAngle.climbStop, wrist, log)
-    ));
+    coP[1].onTrue(new ClimbStart(wrist, log, led));
+    coP[3].onTrue(new ClimbEnd(wrist, log, led));
     // Nudge angle up or down
     coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
     coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
@@ -407,7 +413,7 @@ public class RobotContainer {
 
     driveTrain.stopMotors();                // SAFETY:  Turn off any closed loop control that may be running, so the robot does not move when re-enabled.
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-
+    driveTrain.setVisionForOdomoetryState(true);
   }
 
   /**
@@ -439,6 +445,7 @@ public class RobotContainer {
     lastEnabledModeAuto = true;
 
     driveTrain.setDriveModeCoast(false);
+    driveTrain.setVisionForOdomoetryState(false);
 
     // NOTE:  Do NOT reset the gyro or encoder here!!!!!
     // The first command in auto mode initializes before this code is run, and
@@ -460,6 +467,7 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
+    driveTrain.setVisionForOdomoetryState(true);
 
     // Set robot state
     robotState.setState(State.IDLE);
