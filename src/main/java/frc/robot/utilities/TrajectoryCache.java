@@ -543,8 +543,8 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(0)), 
             new Rotation2d(0), 
             calcTrajectory("Drive Amp Far Note To shooting pos Blue", .8, .8, false,
-            new Pose2d(7.8, 7.45, new Rotation2d(Math.toRadians(180))), 
-            List.of(new Translation2d(5, 7.2)), 
+            new Pose2d(7.8, 7.35, new Rotation2d(Math.toRadians(180))), 
+            List.of(new Translation2d(5, 7.1)), 
             new Pose2d(3.5, 5.55, new Rotation2d(Math.toRadians(-120)))
             ));
     
