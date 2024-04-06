@@ -389,9 +389,10 @@ public final class Constants {
           speakerShotFromMidStage(-79),
           shortPassAngle(-79),
           longPassAngle(-60),
-          sourceCloseNoteShot(-62),
-          centerCloseNoteShot(-63),
-          ampCloseNoteShot(-64),
+          sourceCloseNoteShot(-61),
+          centerCloseNoteShot(-62),
+          ampCloseNoteShot(-63),
+          endFiveNoteShot(-70),
           overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-45.0),
           ampShot(50.0),
