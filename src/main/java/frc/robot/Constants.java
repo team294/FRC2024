@@ -81,7 +81,7 @@ public final class Constants {
 
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
-      public static final int DIOWristRevThroughBoreEncoder = 1;
+      public static final int DIOWristRevThroughBoreEncoder = 7;
       public static final int DIOWristLowerLimit1 = 2;
       public static final int DIOWristLowerLimit2 = 3;
       public static final int DIOIntakePieceSensor = 9;
