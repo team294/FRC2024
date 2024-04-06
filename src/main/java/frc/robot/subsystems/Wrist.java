@@ -20,6 +20,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -39,6 +40,7 @@ public class Wrist extends SubsystemBase implements Loggable{
   private int logRotationKey;         // key for the logging cycle for this subsystem
   private boolean fastLogging = false;
   private final String subsystemName;
+  private final Timer bootTimer = new Timer();
   
   private final TalonFX wristMotor1 = new TalonFX(Ports.CANWrist1);
   private final TalonFX wristMotor2 = new TalonFX(Ports.CANWrist2);
@@ -73,8 +75,7 @@ public class Wrist extends SubsystemBase implements Loggable{
   // Rev through-bore encoder
   private final DutyCycleEncoder revEncoder = new DutyCycleEncoder(Ports.DIOWristRevThroughBoreEncoder);
 
-  private boolean revStickyFaultReported = false;   // True if we have reported a sticky fault
-  private long revEncoderBootCount = 0;       // Count number of periodic cycles since the rev encoder has booted
+  private boolean calibrationStickyFaultReported = false;   // True if we have reported a sticky fault for wrist calibration
   private double revEncoderZero = 0;          // Reference raw encoder reading for encoder.  Calibration sets this to the absolute position from RobotPreferences.
   private double wristCalZero = 0;   		      // Wrist encoder position at O degrees, in degrees (i.e. the calibration factor).  Calibration sets this to match the REV through bore encoder.
   private double wristCalZero2 = 0;   		     // Wrist encoder #2 position at O degrees, in degrees (i.e. the calibration factor).  Calibration sets this to match the REV through bore encoder.
@@ -161,6 +162,9 @@ public class Wrist extends SubsystemBase implements Loggable{
     stopWrist();
 
     // Rev Encoder takes a while to boot.  Calibrate encoder in Wrist.periodic() after it boots.
+    // Set timer for calibration
+    bootTimer.reset();
+    bootTimer.start();
   }
 
   /**
@@ -547,71 +551,48 @@ public class Wrist extends SubsystemBase implements Loggable{
 
     // Rev Through-Bore Encoder takes a while to boot up.
     // After it boots up, it takes up to 40ms sec to settle into an accurate reading.
-    // Wait for 5 periodic cycles after the encoder boots up before calibrating.
-    if (!wristCalibrated) {
-      if (isWristAtLowerLimit()) {
-        calibrateWristEnc(WristAngle.lowerLimit.value);
-
-        // Configure soft limits on motor     //TODO will this limit both motors???
-        wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
-        wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
-        wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
-        // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
-        // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-  
-          // Apply configuration to the wrist motor. 1 and 2 
-        // This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
-        wristMotor1Configurator.apply(wristMotor1Config);
-        // wristMotor2Configurator.apply(wristMotor2Config);    
-
-      }
-
-/*
-      if (isRevEncoderConnected() && revEncoderBootCount < 5) {
-        revEncoderBootCount++;
-        log.writeLog(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder connected", true,
-          "Boot cylces", revEncoderBootCount,
-          "Rev angle", getRevEncoderDegrees());  
-      }
-      if (isRevEncoderConnected() && revEncoderBootCount >= 5 && isWristAtLowerLimit()) {
+    // Previously, we waited for 5 periodic cycles after the encoder boots up before calibrating.
+    // Now, just wait 2.5 seconds after the Wrist constructor.  If the Rev encoder is still not
+    // reading, then just use the hard stop angle.
+    if (!wristCalibrated && bootTimer.hasElapsed(2.5) && isWristAtLowerLimit()) {
+      if (isRevEncoderConnected()) {
         // Calibrate Rev encoder
+        log.writeLogEcho(true, subsystemName, "calibrateEncoder pre", "Rev encoder connecected", true,
+          "Pre Rev angle", getRevEncoderDegrees());
+
         calibrateRevEncoderDegrees(revEncoderOffsetAngleWrist);
-        log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder calibrated", true,
-          "Boot cylces", revEncoderBootCount,
-          "Rev angle", getRevEncoderDegrees());  
 
         // Copy calibration to wrist encoder
         // This sets wristCalibrated to true
         calibrateWristEnc(getRevEncoderDegrees());
 
-        // Configure soft limits on motor     //TODO will this limit both motors???
-        wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
-        wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
-        wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
-        // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
-        // wristMotor2Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        // wristMotor2Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-  
-          // Apply configuration to the wrist motor. 1 and 2 
-        // This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
-        wristMotor1Configurator.apply(wristMotor1Config);
-        // wristMotor2Configurator.apply(wristMotor2Config);    
+        log.writeLogEcho(true, subsystemName, "calibrateEncoder post", "Rev encoder connecected", true,
+          "Post Rev angle", getRevEncoderDegrees(), "Post wrist angle", getWristAngle());
+      } else {
+        // Wrist is at lower limit, but Rev encoder is not working.  Assume wrist is on the hard stop.
+        calibrateWristEnc(WristAngle.lowerLimit.value);
+
+        log.writeLogEcho(true, subsystemName, "calibrateEncoder post", "Rev encoder connecected", false,
+          "Post wrist angle", getWristAngle());
       }
 
-      */
+      // Configure soft limits on motor
+      wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.upperLimit.value);
+      wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = wristDegreesToEncoderRotations(WristAngle.lowerLimit.value);
+      wristMotor1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      wristMotor1Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+
+      // Apply configuration to the wrist motor. 1 and 2 
+      // This is a blocking call and will wait up to 50ms-70ms for the config to apply.  (initial test = 62ms delay)
+      wristMotor1Configurator.apply(wristMotor1Config);
     }
 
-    // If driver station is no longer disabled and Rev encoder is not connect, then 
+    // If driver station is no longer disabled and wrist is not calibrated, then 
     // record a sticky fault (once)
-    if (!revStickyFaultReported && !wristCalibrated && !DriverStation.isDisabled()) {
-      revStickyFaultReported = true;
-      RobotPreferences.recordStickyFaults("Wrist-ThroughBoreEncoder", log);
-      log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "Rev encoder connected", false);
+    if (!calibrationStickyFaultReported && !wristCalibrated && !DriverStation.isDisabled()) {
+      calibrationStickyFaultReported = true;
+      RobotPreferences.recordStickyFaults("Wrist-Not-calibrated-when-enabled", log);
+      log.writeLogEcho(true, subsystemName, "calibrate Wrist", "Wrist calibrated", false);
     }
 
     // If the driver station is disabled, then turn off any position control for the wrist motor
