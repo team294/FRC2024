@@ -1,6 +1,7 @@
 package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -73,7 +74,7 @@ public class AutoSelection {
 
 		// show auto parameters on Shuffleboard
 		SmartDashboard.putNumber("Autonomous delay", 0);
-		SmartDashboard.putBoolean("Autonomous use vision", false);
+		// SmartDashboard.putBoolean("Autonomous use vision", false);
 	}
 
 	/**
@@ -86,7 +87,7 @@ public class AutoSelection {
 	 */
 
 	public Command getAutoCommand(Intake intake, Wrist wrist, Shooter shooter, Feeder feeder, DriveTrain driveTrain, TrajectoryCache trajectoryCache, BCRRobotState robotState, FileLog log) {
-		Command autonomousCommand = null;
+		Command autonomousCommandMain = null;
 
 		// Get parameters from Shuffleboard
 		int autoPlan = autoChooser.getSelected();
@@ -99,75 +100,80 @@ public class AutoSelection {
 		if (autoPlan == NONE) {
 			// Starting position = facing drivers
 			log.writeLogEcho(true, "AutoSelect", "run None");
-			autonomousCommand = new DriveResetPose(180, false, driveTrain, log);
+			autonomousCommandMain = new DriveResetPose(180, false, driveTrain, log);
 		}
 
 		else if(autoPlan == test){
 			log.writeLogEcho(true, "AutoSelect", "run Test");
-			autonomousCommand = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
+			autonomousCommandMain = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
 		}
 
 		else if(autoPlan == shootOne){
 			log.writeLogEcho(true, "AutoSelect", "run One Piece Shoot");
-			autonomousCommand = new ShootPiece(true, shooter, feeder, wrist, robotState, log);
+			autonomousCommandMain = new ShootPiece(true, shooter, feeder, wrist, robotState, log);
 		}
 
 		else if(autoPlan == CenterTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Two Piece Shoot");
-			autonomousCommand = new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == SourceTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Source Two Piece Shoot");
-			autonomousCommand = new SourceTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new SourceTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == AmpTwoPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Amp Two Piece Shoot");
-			autonomousCommand = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == CenterSourceThreePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Source Center Three Piece Shoot");
-			autonomousCommand = new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == AmpThreePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Amp Three Piece Shoot");
-			autonomousCommand = new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log);
 		}
 		
 		else if(autoPlan == CenterFourPieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Four Piece Shoot");
-			autonomousCommand = new CenterFourPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new CenterFourPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == SourceShootOnePiece){
 			log.writeLogEcho(true, "AutoSelect", "run Source One Piece Shoot");
-			autonomousCommand = new SourceShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
+			autonomousCommandMain = new SourceShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
 		}
 
         else if(autoPlan == AmpShootOnePiece){
 			log.writeLogEcho(true, "AutoSelect", "run Amp One Piece Shoot");
-			autonomousCommand = new AmpShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
+			autonomousCommandMain = new AmpShootOnePiece(intake, wrist, shooter, driveTrain, feeder, robotState, allianceSelection, log);
 		}
 		
         else if(autoPlan == SourceThreePieceCenter){
 			log.writeLogEcho(true, "AutoSelect", "run Source Three Piece Center");
-			autonomousCommand = new SourceThreeNoteCenter(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new SourceThreeNoteCenter(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == CenterFivePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Five Piece Shoot");
-			autonomousCommand = new CenterFivePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new CenterFivePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
-		else if (autonomousCommand == null) {
+		else if (autonomousCommandMain == null) {
 			log.writeLogEcho(true, "AutoSelect", "No autocommand found");
-			autonomousCommand = new WaitCommand(1);
+			autonomousCommandMain = new WaitCommand(1);
 		}
 
-		
+		// Add auto wait time before the main auto command
+		Command autonomousCommand = new SequentialCommandGroup(
+			new WaitCommand(waitTime),
+			autonomousCommandMain
+		);
+
 		return autonomousCommand;
 	}
 
