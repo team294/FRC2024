@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.commands.Autos.SourceThreeNoteCenter;
 import frc.robot.utilities.TrapezoidProfileBCR;
 
 /**
@@ -392,7 +393,7 @@ public final class Constants {
           sourceCloseNoteShot(-61),
           centerCloseNoteShot(-62),
           ampCloseNoteShot(-63),
-          endFiveNoteShot(-77),
+          endFiveNoteShot(-72),
           overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-45.0),
           ampShot(50.0),
