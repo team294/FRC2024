@@ -419,14 +419,14 @@ public class TrajectoryCache {
             calcTrajectory("Source to next to note Red", .8, .6, false, 
             new Pose2d(0.8, 3.73, new Rotation2d(Math.toRadians(54))), 
             List.of(new Translation2d(1.2, 4.3)), 
-            new Pose2d(3, 5.405, new Rotation2d(0)))
+            new Pose2d(3.5, 5.705, new Rotation2d(0)))
             );
         
         cache[TrajectoryType.driveSourceOutsideNotestoCenterNoteRed.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Next to note to center note Red", .8, .6, false, 
-            new Pose2d(3, 5.405, new Rotation2d(0)),
+            new Pose2d(3.5, 5.705, new Rotation2d(0)),
             List.of(
                 new Translation2d(4.8, 4.1436),
                 new Translation2d(6.0592, 4.1436)
@@ -476,14 +476,14 @@ public class TrajectoryCache {
             calcTrajectory("Source to next to note Blue", .8, .6, false, 
             new Pose2d(0.8, 4.5, new Rotation2d(Math.toRadians(-54))), 
             List.of(), 
-            new Pose2d(3, 2.8246, new Rotation2d(0)) 
+            new Pose2d(3.5, 2.5246, new Rotation2d(0)) 
             ));
         
         cache[TrajectoryType.driveSourceOutsideNotestoCenterNoteBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Next to note to center note Blue", .8, .6, false, 
-            new Pose2d(3, 2.8246, new Rotation2d(0)),
+            new Pose2d(3.5, 2.5246, new Rotation2d(0)),
             List.of(
                 new Translation2d(4.8, 4.086),
                 new Translation2d(6.0592, 4.086)
