@@ -394,6 +394,7 @@ public final class Constants {
           centerCloseNoteShot(-62),
           ampCloseNoteShot(-63),
           endFiveNoteShot(-77),
+          sourceThreePieceShot(-71),
           overheadShotAngle(55),      // 135" field edge to front of bumper
           climbStop(-45.0),
           ampShot(50.0),

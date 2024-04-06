@@ -77,7 +77,7 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         ),
 
         // shoots in speaker   
-        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+        new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         // drives back through under stage to grab left of middle center note
@@ -99,7 +99,7 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         ),
         
         // shoots note
-        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromMidStage, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+        new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         //leaves to midfield to get headstart in teleop
