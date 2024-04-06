@@ -226,10 +226,10 @@ public final class Constants {
       public static final double shooterVelocityTop = 4000;
       public static final double shooterVelocityBottom = 4400;
       public static final double shooterVelocityPit = 500;
-      public static final double shooterVelocityShortPassTop =2000;
-      public static final double shooterVelocityShortPassBottom = 2000;
-      public static final double shooterVelocityFarPassTop =2600;
-      public static final double shooterVelocityFarPassBottom = 2600;
+      public static final double shooterVelocityShortPassTop = 2600;
+      public static final double shooterVelocityShortPassBottom = 2600;
+      public static final double shooterVelocityFarPassTop = 3300;
+      public static final double shooterVelocityFarPassBottom = 3300;
 
       // Time for the shooter to ramp down at shooterPercentStopQuickly before stopping
       public static final double shooterSpinDownSeconds = 0.5;
@@ -451,9 +451,6 @@ public final class Constants {
           StripLeft(34, 30),  // Left strip only
           StripRight(64, 30), // Right strip only
           StripHorizontal(8, 26); // Horizontal strip only
-          // StripVerticals(34, 60), // Both vertical strips
-          // AllStripsNoCANdle(8, 86), // All strips and not CANdle
-          // Full(0, 94);  // CANdle + All strips
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
