@@ -44,12 +44,12 @@ public class SourceThreeNoteCenter extends SequentialCommandGroup {
         // leaves speaker from source side to outside of notes
         new ConditionalCommand(
             new SequentialCommandGroup(
-                new DriveResetPose(1.1, 3.463, 54, false, driveTrain, log),
+                new DriveResetPose(0.8, 3.73, 54, false, driveTrain, log),
                 new VisionOdometryStateSet(true, driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesRed.value], driveTrain, log) 
             ),
             new SequentialCommandGroup(
-               new DriveResetPose(1.1, 4.7666, -54, false, driveTrain, log),
+               new DriveResetPose(0.8, 4.5, -54, false, driveTrain, log),
                new VisionOdometryStateSet(true, driveTrain, log),
                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesBlue.value], driveTrain, log) 
             ),

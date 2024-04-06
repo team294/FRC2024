@@ -417,7 +417,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(54)), 
             new Rotation2d(0), 
             calcTrajectory("Source to next to note Red", .8, .6, false, 
-            new Pose2d(1.1, 3.463, new Rotation2d(Math.toRadians(54))), 
+            new Pose2d(0.8, 3.73, new Rotation2d(Math.toRadians(54))), 
             List.of(new Translation2d(1.2, 4.3)), 
             new Pose2d(3, 5.405, new Rotation2d(0)))
             );
@@ -474,7 +474,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(-54)), 
             new Rotation2d(Math.toRadians(0)), 
             calcTrajectory("Source to next to note Blue", .8, .6, false, 
-            new Pose2d(1.1, 4.7666, new Rotation2d(Math.toRadians(-54))), 
+            new Pose2d(0.8, 4.5, new Rotation2d(Math.toRadians(-54))), 
             List.of(), 
             new Pose2d(3, 2.8246, new Rotation2d(0)) 
             ));
