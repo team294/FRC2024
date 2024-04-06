@@ -373,7 +373,7 @@ public class TrajectoryCache {
         
         cache[TrajectoryType.driveCenterStartToSourceNearBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
-            new Rotation2d(Math.toRadians(-23)), 
+            new Rotation2d(Math.toRadians(-25)), 
             calcTrajectory("Center Start to Source note Blue", .8, .8, false, 
             new Pose2d(0.4, 5.55, new Rotation2d(Math.toRadians(-23))), 
             List.of(), 
@@ -390,7 +390,7 @@ public class TrajectoryCache {
             ));
 
         cache[TrajectoryType.driveFromSourceNoteToCenterNoteBlue.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(-23)), 
+            new Rotation2d(Math.toRadians(-25)), 
             new Rotation2d(0), 
             calcTrajectory("Source Note to Center note Blue", .8, .8, false, 
             new Pose2d(1.7, 4.25, new Rotation2d(Math.toRadians(160))),
