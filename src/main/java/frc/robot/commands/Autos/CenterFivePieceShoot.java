@@ -88,7 +88,7 @@ public class CenterFivePieceShoot extends SequentialCommandGroup {
       new ShootPiece(false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToSecondCenter.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpNoteToFarNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
@@ -97,7 +97,7 @@ public class CenterFivePieceShoot extends SequentialCommandGroup {
       ),
       new ParallelCommandGroup(
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpFarToShootingPosRed.value], driveTrain, log), 
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterSecondToScorePos.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpFarToShootingPosBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
         ),
