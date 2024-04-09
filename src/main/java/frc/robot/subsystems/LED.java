@@ -268,34 +268,32 @@ public class LED extends SubsystemBase {
     // Set LEDs to match the state, as defined in Constants.BCRColor
     switch (currentState) {
     case IDLE:
-      if (feeder.isPiecePresent()) {
-        if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance   // if wheels are up to speed, set LEDs green
-        && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight || segment == LEDSegmentRange.StripHorizontal)) {
-          setAnimation(new Color(0, 255, 0), segment);  // rgb instead of kGreen due to error (kGreen is yellow for some reason)
-        } else if (shooter.getTopShooterTargetRPM() > 0 && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight))  {
-          Double percent = shooter.getTopShooterVelocity() / shooter.getTopShooterTargetRPM();
-          Color[] segmentPattern = new Color[segment.count];
-          if (segment == LEDSegmentRange.StripLeft) {
-            for (int i = 0; i < segment.count; i++) {
-              if (i >= (1.0 - percent) * segment.count) {
-                segmentPattern[i] = Color.kPurple;
-              } else {
-                segmentPattern[i] = new Color(255, 30, 0); // rgb values instead of kOrange due to kOrange being kYellow for some reason 
-              }
-            }
-          } else if (segment == LEDSegmentRange.StripRight) {
-            for (int i = 0; i < segment.count; i++) {
-              if (i <= percent * segment.count) {
-                segmentPattern[i] = Color.kPurple;
-              } else {
-                segmentPattern[i] = new Color(255, 30, 0); // rgb values instead of kOrange due to kOrange being kYellow for some reason
-              }
+      if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance   // if wheels are up to speed, set LEDs green
+      && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight || segment == LEDSegmentRange.StripHorizontal)) {
+        setAnimation(new Color(0, 255, 0), segment);  // rgb instead of kGreen due to error (kGreen is yellow for some reason)
+      } else if (shooter.getTopShooterTargetRPM() > 0 && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight))  {
+        Double percent = shooter.getTopShooterVelocity() / shooter.getTopShooterTargetRPM();
+        Color[] segmentPattern = new Color[segment.count];
+        if (segment == LEDSegmentRange.StripLeft) {
+          for (int i = 0; i < segment.count; i++) {
+            if (i >= (1.0 - percent) * segment.count) {
+              segmentPattern[i] = Color.kPurple;
+            } else {
+              segmentPattern[i] = new Color(255, 30, 0); // rgb values instead of kOrange due to kOrange being kYellow for some reason 
             }
           }
-          setAnimation(segmentPattern, segment, true);
-        } else {
-          setAnimation(new Color(255, 30, 0), segment); // rgb values instead of kOrange due to kOrange being kYellow for some reason
+        } else if (segment == LEDSegmentRange.StripRight) {
+          for (int i = 0; i < segment.count; i++) {
+            if (i <= percent * segment.count) {
+              segmentPattern[i] = Color.kPurple;
+            } else {
+              segmentPattern[i] = new Color(255, 30, 0); // rgb values instead of kOrange due to kOrange being kYellow for some reason
+            }
+          }
         }
+        setAnimation(segmentPattern, segment, true);
+      } else if (feeder.isPiecePresent()) {
+        setAnimation(new Color(255, 30, 0), segment);
       }
       else {
         setAnimation(BCRColor.IDLE, segment);
@@ -337,7 +335,7 @@ public class LED extends SubsystemBase {
       updateStateLEDs(LEDSegmentRange.StripRight);
       updateStateLEDs(LEDSegmentRange.StripHorizontal);
 
-      // Sets CANdle red if there is a sticky fault ()
+      // Sets CANdle red if there is a sticky fault
       boolean stickyFault = false;
       if(RobotPreferences.isStickyFaultActive()) {
         setAnimation(Color.kRed, LEDSegmentRange.CANdle);
@@ -352,7 +350,7 @@ public class LED extends SubsystemBase {
       if (!wrist.isEncoderCalibrated()) {
         setAnimation(Color.kYellow, LEDSegmentRange.CANdle);
       }
-      // Removes yellow when wrist is calibrated
+      // Removes yellow when wrist is calibrated (please note a sticky fault will appear upon calibration of wrist, just clear it)
       else if (wrist.isEncoderCalibrated() && !stickyFault) {
         setAnimation(Color.kBlack, LEDSegmentRange.CANdle);
       }
