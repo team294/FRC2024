@@ -114,8 +114,13 @@ public class DriveWithJoysticksAdvance extends Command {
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
         if(aimLock){
-          goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
-          goalAngle = MathUtil.angleModulus(goalAngle);
+          if(driveTrain.getPose().getX() < 8){
+            goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
+            goalAngle = MathUtil.angleModulus(goalAngle);
+          }else{
+            goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getFarPassYPos())/driveTrain.getPose().getX());
+            goalAngle = MathUtil.angleModulus(goalAngle);
+          }
           SmartDashboard.putNumber("Goal Angle", goalAngle);
           turnRateController.reset(goalAngle);
         }

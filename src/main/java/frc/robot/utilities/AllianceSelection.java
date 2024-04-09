@@ -79,6 +79,10 @@ public class AllianceSelection {
         return (alliance == Alliance.Red) ? FieldConstants.yPosSpeakerRed : FieldConstants.yPosSpeakerBlue;
     }
 
+    public double getFarPassYPos() {
+        return (alliance == Alliance.Red) ? FieldConstants.yPosFarPassTargetRed : FieldConstants.yPosFarPassTargetBlue;
+    }
+
     /**
      * Runs once per scheduler cycle
      */
