@@ -23,7 +23,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 47;
+    private static int trajectoryCount = 49;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
@@ -73,7 +73,9 @@ public class TrajectoryCache {
         driveFromAmpFarToShootingPosRed(43),
         driveFromAmpFarToShootingPosBlue(44),
         driveFromAmpNoteToSecondCenter(45),
-        driveFromCenterSecondToScorePos(46);
+        driveFromCenterSecondToScorePos(46),
+        driveSourceNextNoteToCenterNoteRightRed(47),
+        driveSourceNextNoteToCenterNoteRightBlue(48);
 
 
         @SuppressWarnings({"MemberName", "PMD.SingularField"})
@@ -567,7 +569,29 @@ public class TrajectoryCache {
             List.of(new Translation2d(5, 1.3)), 
             new Pose2d(3.5, 2.65, new Rotation2d(Math.toRadians(120)))
             ));
-    
+
+
+    cache[TrajectoryType.driveSourceNextNoteToCenterNoteRightRed.value] = new TrajectoryFacing(
+        new Rotation2d(0), 
+        new Rotation2d(0), 
+        calcTrajectory("Next to note to center note Red", .8, .6, false, 
+        new Pose2d(3.5, 5.705, new Rotation2d(0)),
+        List.of(
+            new Translation2d(5.5, 6.4296)
+        ), 
+        new Pose2d(8.1742, 5.7986, new Rotation2d(0))
+        ));
+
+    cache[TrajectoryType.driveSourceNextNoteToCenterNoteRightBlue.value] = new TrajectoryFacing(
+        new Rotation2d(0), 
+        new Rotation2d(0), 
+        calcTrajectory("Next to note to center note Blue", .8, .6, false, 
+        new Pose2d(3.5, 2.5246, new Rotation2d(0)),
+        List.of(
+            new Translation2d(5.5, 1.8)
+        ), 
+        new Pose2d(8.1742, 2.431, new Rotation2d(0))
+        ));
     
         
     }
