@@ -4,6 +4,32 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.DriveConstants.kDriveKinematics;
+import static frc.robot.Constants.DriveConstants.offsetAngleBackLeftMotor;
+import static frc.robot.Constants.DriveConstants.offsetAngleBackRightMotor;
+import static frc.robot.Constants.DriveConstants.offsetAngleFrontLeftMotor;
+import static frc.robot.Constants.DriveConstants.offsetAngleFrontRightMotor;
+import static frc.robot.Constants.Ports.CANDriveBackLeftMotor;
+import static frc.robot.Constants.Ports.CANDriveBackRightMotor;
+import static frc.robot.Constants.Ports.CANDriveFrontLeftMotor;
+import static frc.robot.Constants.Ports.CANDriveFrontRightMotor;
+import static frc.robot.Constants.Ports.CANDriveTurnBackLeftMotor;
+import static frc.robot.Constants.Ports.CANDriveTurnBackRightMotor;
+import static frc.robot.Constants.Ports.CANDriveTurnFrontLeftMotor;
+import static frc.robot.Constants.Ports.CANDriveTurnFrontRightMotor;
+import static frc.robot.Constants.Ports.CANPigeonGyro;
+import static frc.robot.Constants.Ports.CANTurnEncoderBackLeft;
+import static frc.robot.Constants.Ports.CANTurnEncoderBackRight;
+import static frc.robot.Constants.Ports.CANTurnEncoderFrontLeft;
+import static frc.robot.Constants.Ports.CANTurnEncoderFrontRight;
+
+import java.util.Optional;
+
+// Vision imports
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import com.ctre.phoenix6.StatusSignal;
 // import com.ctre.phoenix6.configs.Pigeon2Configuration;
 // import com.ctre.phoenix6.configs.Pigeon2Configurator;
@@ -14,6 +40,7 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -21,27 +48,18 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import static frc.robot.Constants.Ports.*;
-
-import static frc.robot.Constants.DriveConstants.*;
-
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.utilities.*;
-
-// Vision imports
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
-import java.util.Optional;
+import frc.robot.utilities.AllianceSelection;
+import frc.robot.utilities.FileLog;
+import frc.robot.utilities.Loggable;
+import frc.robot.utilities.MathBCR;
+import frc.robot.utilities.RobotPreferences;
 
 
 public class DriveTrain extends SubsystemBase implements Loggable {
@@ -371,6 +389,15 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       swerveFrontLeft.getPosition(), swerveFrontRight.getPosition(),
       swerveBackLeft.getPosition(), swerveBackRight.getPosition()
     };
+  }
+
+  public Pose2d getFuturePose2d(double time) {
+    Pose2d currPose = poseEstimator.getEstimatedPosition();
+
+    ChassisSpeeds globalChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(getChassisSpeeds(), currPose.getRotation());
+    Transform2d transform = new Transform2d(globalChassisSpeeds.vxMetersPerSecond * time, globalChassisSpeeds.vyMetersPerSecond * time, new Rotation2d(0)); // TODO can optomize by adding 
+
+    return currPose.plus(transform);
   }
   
   /**

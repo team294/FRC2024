@@ -234,6 +234,8 @@ public final class Constants {
 
       // Time for the shooter to ramp down at shooterPercentStopQuickly before stopping
       public static final double shooterSpinDownSeconds = 0.5;
+
+      public static final double shooterExitVelocity = 9; // (m/s) // TODO GUESSED 
     }
 
     public static final class FeederConstants {

@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -49,8 +50,13 @@ public class WristSetAngleWithVision extends Command {
   private double getAngleFromDistance(int n) {
     if (n == 0) return 0;
 
-    double x = driveTrain.getPose().getX();
-    double y = (driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos());
+
+    // Pose2d robotPose = driveTrain.getPose();
+    Pose2d currPose = driveTrain.getPose();
+    Pose2d robotPose = driveTrain.getFuturePose2d(0.5/Math.sqrt(currPose.getX()*currPose.getX() + (currPose.getY() - allianceSelection.getSpeakerYPos())*(currPose.getY() - allianceSelection.getSpeakerYPos())));
+
+    double x = robotPose.getX();
+    double y = (robotPose.getY() - allianceSelection.getSpeakerYPos());
     // distance from center of robot to shooter
     double distOff = RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(Units.degreesToRadians(getAngleFromDistance(n-1)));
     // distance from speaker

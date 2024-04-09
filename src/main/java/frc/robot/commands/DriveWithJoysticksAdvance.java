@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -114,7 +115,11 @@ public class DriveWithJoysticksAdvance extends Command {
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
         if(aimLock){
-          goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
+          // Pose2d robotPose = driveTrain.getPose();
+          Pose2d currPose = driveTrain.getPose();
+          Pose2d robotPose = driveTrain.getFuturePose2d(0.5/(Math.sqrt(currPose.getX()*currPose.getX() + (currPose.getY()- allianceSelection.getSpeakerYPos())*(currPose.getY()- allianceSelection.getSpeakerYPos()))));
+
+          goalAngle = Math.atan((robotPose.getY() - allianceSelection.getSpeakerYPos())/robotPose.getX());
           goalAngle = MathUtil.angleModulus(goalAngle);
           SmartDashboard.putNumber("Goal Angle", goalAngle);
           turnRateController.reset(goalAngle);
