@@ -6,6 +6,7 @@ package frc.robot.utilities;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -77,6 +78,10 @@ public class AllianceSelection {
 
     public double getSpeakerYPos() {
         return (alliance == Alliance.Red) ? FieldConstants.yPosSpeakerRed : FieldConstants.yPosSpeakerBlue;
+    }
+
+    public Pose2d getAmpPos() {
+        return (alliance == Alliance.Red) ? FieldConstants.posAmpRed : FieldConstants.posAmpBlue;
     }
 
     /**
