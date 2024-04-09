@@ -39,6 +39,7 @@ public class ShootPiece extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log),
         new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log),
+        new WristSetAngle(wrist.getCurrentWristTarget(), wrist, log),
         new WaitUntilCommand( () -> !wrist.isEncoderCalibrated() || (Math.abs(wrist.getCurrentWristTarget() - wrist.getWristAngle()) < WristConstants.wristShootTolerance) )
       ).withTimeout(1.5),
 
