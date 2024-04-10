@@ -38,7 +38,7 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
 
     addCommands(
         // shoots
-        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSide, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
 
         // leaves speaker from amp side to outside of notes
