@@ -36,27 +36,23 @@ public class AlternetSourceThreeNoteCenter extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
-        // leaves speaker from source side to outside of notes
-        new ConditionalCommand(
-            new SequentialCommandGroup(
-                new DriveResetPose(0.8, 3.73, 54, false, driveTrain, log),
-                new VisionOdometryStateSet(true, driveTrain, log),
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesRed.value], driveTrain, log) 
-            ),
-            new SequentialCommandGroup(
-               new DriveResetPose(0.8, 4.5, -54, false, driveTrain, log),
-               new VisionOdometryStateSet(true, driveTrain, log),
-               new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesBlue.value], driveTrain, log) 
-            ),
-            () -> alliance.getAlliance() == Alliance.Red
-        ),
-
-        new VisionOdometryStateSet(true, driveTrain, log), // sending again incase auto init interferes with prior call
-        
         // shoots
         new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSide, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
 
+        // leaves speaker from source side to outside of notes
+        new ConditionalCommand(
+            new SequentialCommandGroup(
+                new DriveResetPose(0.8, 3.73, 54, false, driveTrain, log),
+                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesRed.value], driveTrain, log) 
+            ),
+            new SequentialCommandGroup(
+               new DriveResetPose(0.8, 4.5, -54, false, driveTrain, log),
+               new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotesBlue.value], driveTrain, log) 
+            ),
+            () -> alliance.getAlliance() == Alliance.Red
+        ),
+        
         // goes around stage intake up note left of middle center note
         new ParallelDeadlineGroup(
            new ConditionalCommand(
