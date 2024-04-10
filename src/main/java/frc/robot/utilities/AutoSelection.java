@@ -37,6 +37,8 @@ public class AutoSelection {
 	public static final int AmpShootOnePiece = 10;
 	public static final int SourceThreePieceCenter = 11;
 	public static final int CenterFivePieceShoot = 12;
+	public static final int AlternetSourceThreeNoteCenter = 13;
+	public static final int SourceFourNoteCenter = 14;
 
 
 
@@ -66,7 +68,8 @@ public class AutoSelection {
 		autoChooser.addOption("CenterFourPieceNearNoteAuto", CenterFourPieceShoot);
 		autoChooser.addOption("SourceThreePieceCenter", SourceThreePieceCenter);
 		autoChooser.addOption("CenterFivePieceShoot", CenterFivePieceShoot);
-		
+		autoChooser.addOption("AlternetSourceThreeNoteCenter", AlternetSourceThreeNoteCenter);
+		autoChooser.addOption("SourceFourNoteCenter", SourceFourNoteCenter);
 
 	
 		// show auto selection widget on Shuffleboard
@@ -161,6 +164,16 @@ public class AutoSelection {
 		else if(autoPlan == CenterFivePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Five Piece Shoot");
 			autonomousCommandMain = new CenterFivePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == AlternetSourceThreeNoteCenter){
+			log.writeLogEcho(true, "AutoSelect", "run Alternet SourceThreeNoteCenter");
+			autonomousCommandMain = new AlternetSourceThreeNoteCenter(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == SourceFourNoteCenter){
+			log.writeLogEcho(true, "AutoSelect", "run Source Four Note Center");
+			autonomousCommandMain = new SourceFourNoteCenter(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if (autonomousCommandMain == null) {

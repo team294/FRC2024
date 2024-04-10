@@ -69,14 +69,16 @@ public class AlternetSourceThreeNoteCenter extends SequentialCommandGroup {
         ),
 
         // drive back under stage to shoot note
-        new ConditionalCommand(
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveLeftCenterNotetoOutsideStageRed.value], driveTrain, log),
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveLeftCenterNotetoOutsideStageBlue.value], driveTrain, log),
-                () -> alliance.getAlliance() == Alliance.Red
-        ),
+        new ParallelCommandGroup(
+            new ConditionalCommand(
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveLeftCenterNotetoOutsideStageRed.value], driveTrain, log),
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveLeftCenterNotetoOutsideStageBlue.value], driveTrain, log),
+                    () -> alliance.getAlliance() == Alliance.Red
+            ),
+            new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
 
+        ),
         // shoots in speaker   
-        new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         // drives back through under stage to grab middle center note
@@ -91,13 +93,17 @@ public class AlternetSourceThreeNoteCenter extends SequentialCommandGroup {
         ),
        
         // drives back to shoot in speaker
-        new ConditionalCommand(
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoOutsideStageRed.value], driveTrain, log),
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoOutsideStageBlue.value], driveTrain, log),
-                () -> alliance.getAlliance() == Alliance.Red
+        new ParallelDeadlineGroup(
+            new ConditionalCommand(
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoOutsideStageRed.value], driveTrain, log),
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoOutsideStageBlue.value], driveTrain, log),
+                    () -> alliance.getAlliance() == Alliance.Red
+            ),            
+            new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
+
         ),
+        
         // shoots note
-        new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         //leaves to midfield to get headstart in teleop
