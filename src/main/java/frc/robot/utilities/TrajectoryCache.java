@@ -638,8 +638,8 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(60)), 
             new Rotation2d(0), 
             calcTrajectory("Amp to Far center note Blue", .8, .6, false, 
-            new Pose2d(0.8, 6.6, new Rotation2d(Math.toRadians(54))), 
-            List.of(new Translation2d(2.6, 7.700)), 
+            new Pose2d(0.8, 6.6, new Rotation2d(Math.toRadians(60))), 
+            List.of(new Translation2d(2.6, 7.7596)), 
             new Pose2d(7.9, 7.460, new Rotation2d(0)) 
             ));
         
@@ -647,7 +647,7 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Center note to Podium Shot Blue", .8, .6, false, 
-            new Pose2d(7.9, 7.460, new Rotation2d(0)), 
+            new Pose2d(7.9, 7.46, new Rotation2d(0)), 
             List.of(), 
             new Pose2d(5.0, 6.3, new Rotation2d(0)) 
             ));
