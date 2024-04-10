@@ -45,14 +45,14 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
         new ParallelDeadlineGroup(
             new ConditionalCommand(
                 new SequentialCommandGroup(
-                    new DriveResetPose(0.8, 1.6296, -54, false, driveTrain, log),
-                    new VisionOdometryStateSet(true, driveTrain, log),
+                    new DriveResetPose(0.8, 1.6296, -60, false, driveTrain, log),
+                    // new VisionOdometryStateSet(true, driveTrain, log),
                     new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpToFarCenterRed.value], driveTrain, log) 
                 ),
                 new SequentialCommandGroup(
-                new DriveResetPose(0.8, 6.6, 54, false, driveTrain, log),
-                new VisionOdometryStateSet(true, driveTrain, log),
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpToFarCenterBlue.value], driveTrain, log) 
+                    new DriveResetPose(0.8, 6.6, 60, false, driveTrain, log),
+                    // new VisionOdometryStateSet(true, driveTrain, log),
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpToFarCenterBlue.value], driveTrain, log) 
                 ),
                 () -> alliance.getAlliance() == Alliance.Red
             ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
@@ -60,17 +60,18 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
             new IntakePieceAuto(intake, feeder, robotState, log)
         ),
 
-        new VisionOdometryStateSet(true, driveTrain, log), // sending again incase auto init interferes with prior call
+        // new VisionOdometryStateSet(true, driveTrain, log), // sending again incase auto init interferes with prior call
         
         // drives back to shoot 
-        new ConditionalCommand(
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFarCenterNoteToPodiumShotRed.value], driveTrain, log),
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFarCenterNoteToPodiumShotBlue.value], driveTrain, log),
-                () -> alliance.getAlliance() == Alliance.Red
+        new ParallelCommandGroup(
+            new ConditionalCommand(
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFarCenterNoteToPodiumShotRed.value], driveTrain, log),
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFarCenterNoteToPodiumShotBlue.value], driveTrain, log),
+                    () -> alliance.getAlliance() == Alliance.Red
+            ),
+            new SetShooterWristSpeakerAuto(WristAngle.ampFourPieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
         ),
-    
         // shoots in speaker   
-        new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
 
@@ -86,14 +87,16 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
         ),
 
         // drive back to shoot note
-        new ConditionalCommand(
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveNextCenterNotetoPodiumShotRed.value], driveTrain, log),
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveNextCenterNotetoPodiumShotBlue.value], driveTrain, log),
-                () -> alliance.getAlliance() == Alliance.Red
+        new ParallelCommandGroup(
+            new ConditionalCommand(
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveNextCenterNotetoPodiumShotRed.value], driveTrain, log),
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveNextCenterNotetoPodiumShotBlue.value], driveTrain, log),
+                    () -> alliance.getAlliance() == Alliance.Red
+            ),
+        new SetShooterWristSpeakerAuto(WristAngle.ampFourPieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
         ),
-
-        // shoots note
-        new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+        
+        // shoots piece
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         // drives back to grab middle center note
@@ -108,14 +111,15 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
         ),
        
         // drive back under stage to shoot note
-        new ConditionalCommand(
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotRed.value], driveTrain, log),
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotBlue.value], driveTrain, log),
-                () -> alliance.getAlliance() == Alliance.Red
+        new ParallelCommandGroup(
+            new ConditionalCommand(
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotRed.value], driveTrain, log),
+                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotBlue.value], driveTrain, log),
+                    () -> alliance.getAlliance() == Alliance.Red
+            ),
+            new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
         ),
-        
         // shoots note
-        new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
         
               
