@@ -304,8 +304,10 @@ public final class Constants {
       public static final double yPosSpeakerRed = 2.663;
       public static final double yPosSpeakerBlue = width - yPosSpeakerRed;
       public static final double heightOfSpeaker = 2.03;
-      public static final Pose2d posAmpRed = new Pose2d(1.849, RobotDimensions.robotWidth/2, new Rotation2d(Units.degreesToRadians(90)));
-      public static final Pose2d posAmpBlue = new Pose2d(1.849, width-RobotDimensions.robotWidth/2, new Rotation2d(Units.degreesToRadians(-90)));
+      public static final Pose2d posAmpRed = new Pose2d(1.849, -.2, new Rotation2d(Units.degreesToRadians(90)));
+      public static final Pose2d posAmpBlue = new Pose2d(1.849, width + 0.2, new Rotation2d(Units.degreesToRadians(-90)));
+      public static final Pose2d posAmpRedInitial = new Pose2d(1.849, .2, new Rotation2d(Units.degreesToRadians(90)));
+      public static final Pose2d posAmpBlueInitial = new Pose2d(1.849, width - .2, new Rotation2d(Units.degreesToRadians(-90)));
     }
 
     public static class VisionConstants {

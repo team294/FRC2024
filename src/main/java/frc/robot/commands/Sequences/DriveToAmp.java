@@ -26,14 +26,16 @@ public class DriveToAmp extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      // new DriveToPose(() -> allianceSelection.getAmpPosInitial(), .25, 10, driveTrain, log),
       new ParallelCommandGroup(
-        new DriveToPose(allianceSelection.getAmpPos(), driveTrain, log),
+        new DriveToPose(() -> allianceSelection.getAmpPosInitial(), .25, 10, driveTrain, log),
         new IntakeStop(intake, log),
         new WristSetAngle(WristAngle.ampShot, wrist, log),
         new SpeakerModeSet(false, robotState, log),
         new ShotModeSet(ShotMode.STANDARD, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
-      ) 
+      ),
+      new DriveToPose(allianceSelection.getAmpPos(), driveTrain, log)
     );
   }
 }

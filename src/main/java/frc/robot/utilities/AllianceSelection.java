@@ -84,6 +84,10 @@ public class AllianceSelection {
         return (alliance == Alliance.Red) ? FieldConstants.posAmpRed : FieldConstants.posAmpBlue;
     }
 
+    public Pose2d getAmpPosInitial() {
+        return (alliance == Alliance.Red) ? FieldConstants.posAmpRedInitial : FieldConstants.posAmpBlueInitial;
+    }
+
     /**
      * Runs once per scheduler cycle
      */

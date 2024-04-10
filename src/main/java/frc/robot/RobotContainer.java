@@ -329,7 +329,10 @@ public class RobotContainer {
       new SetAimLock(driveTrain, false, log)
     ); //TODO implement this once vision is brought in
 
-    // right[2] //Turn to face amp
+    right[2].whileTrue(
+      new DriveToAmp(allianceSelection, intake, feeder, wrist, driveTrain, robotState, log)
+    );
+     //Turn to face amp
     
     // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
     // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
