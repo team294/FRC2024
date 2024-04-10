@@ -602,14 +602,14 @@ public class TrajectoryCache {
             calcTrajectory("Podium Shot to Next Center note Red", .8, .6, false, 
             new Pose2d(5.6, 1.9296, new Rotation2d(0)), 
             List.of(), 
-            new Pose2d(7.9, 5.8, new Rotation2d(0)) 
+            new Pose2d(7.9, 2.4296, new Rotation2d(0)) 
             ));
 
        cache[TrajectoryType.driveNextCenterNotetoPodiumShotRed.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Next Center note to Podium Shot Red", .8, .6, false, 
-            new Pose2d(7.9, 0.7696, new Rotation2d(0)),
+            new Pose2d(7.9, 2.4296, new Rotation2d(0)),
             List.of(), 
             new Pose2d(5.6, 1.9296, new Rotation2d(0))
             ));
@@ -627,8 +627,8 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Center note to Podium Shot Red", .8, .6, false, 
-            new Pose2d(7.9, 4.13, new Rotation2d(0)), 
-            List.of(new Translation2d(4.9, 4.2)), 
+            new Pose2d(7.9, 4.0996, new Rotation2d(0)), 
+            List.of(new Translation2d(4.9, 4.0296)), 
             new Pose2d(3.7582, 2.7516, new Rotation2d(Math.PI)) 
             ));
 
