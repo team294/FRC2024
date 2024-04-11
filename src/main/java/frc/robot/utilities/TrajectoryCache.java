@@ -622,14 +622,14 @@ public class TrajectoryCache {
             new Pose2d(3.7582, 2.7516, new Rotation2d(Math.PI))
             ));
             
-        cache[TrajectoryType.driveLeftCenterNotetoOutsideStageBlue.value] = new TrajectoryFacing(
+        cache[TrajectoryType.drivePodiumShotToCenterRightNoteBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Podium shot to center right note Blue", .8, .6, false, 
             new Pose2d(3.7582, 5.478, new Rotation2d(0)),
             List.of(
-                new Translation2d(4.8, 4.1436),
-                new Translation2d(6.0592, 4.1436) 
+                new Translation2d(4.8, 4.086),
+                new Translation2d(6.0592, 4.086) 
 
             ), 
             new Pose2d(7.9, 5.7986, new Rotation2d(0))
