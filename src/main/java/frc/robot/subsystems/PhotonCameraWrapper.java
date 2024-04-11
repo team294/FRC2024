@@ -82,9 +82,9 @@ public class PhotonCameraWrapper extends SubsystemBase {
     // Create pose estimator
     photonPoseEstimator = new PhotonPoseEstimator(
       aprilTagFieldLayout,
-      PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
+      PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
       photonCamera,
-      PhotonVisionConstants.robotToCamFront);
+      PhotonVisionConstants.robotToCamBack);
       
     hasInit = true;
 
