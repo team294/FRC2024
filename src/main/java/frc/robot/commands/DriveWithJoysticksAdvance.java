@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
@@ -113,14 +114,14 @@ public class DriveWithJoysticksAdvance extends Command {
           goalAngle = MathUtil.angleModulus(goalAngle);
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
-        if(aimLock){
-          if(driveTrain.getPose().getX() < 8){
+        if (aimLock) {
+          // aims for pass position when x > xPassCutOff meters
+          if (driveTrain.getPose().getX() < FieldConstants.xPassCutOff) {
             goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
-            goalAngle = MathUtil.angleModulus(goalAngle);
-          }else{
-            goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getFarPassYPos())/driveTrain.getPose().getX());
-            goalAngle = MathUtil.angleModulus(goalAngle);
+          } else {
+            goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getFarPassYPos())/(driveTrain.getPose().getX() - allianceSelection.getFarPassXPos()));
           }
+          goalAngle = MathUtil.angleModulus(goalAngle);
           SmartDashboard.putNumber("Goal Angle", goalAngle);
           turnRateController.reset(goalAngle);
         }

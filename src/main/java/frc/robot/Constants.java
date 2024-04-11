@@ -299,8 +299,15 @@ public final class Constants {
       public static final double yPosSpeakerRed = 2.663;
       public static final double yPosSpeakerBlue = width - yPosSpeakerRed;
       public static final double heightOfSpeaker = 2.03;
+      
+      // pass position
       public static final double yPosFarPassTargetRed = 0;
       public static final double yPosFarPassTargetBlue = 8.2;
+      public static final double xPosFarPassTargetRed = 0.9;
+      public static final double xPosFarPassTargetBlue = 0.9;
+
+      // pass cut off distance
+      public static final double xPassCutOff = 8;
     }
 
     public static class VisionConstants {

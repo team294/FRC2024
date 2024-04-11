@@ -83,6 +83,10 @@ public class AllianceSelection {
         return (alliance == Alliance.Red) ? FieldConstants.yPosFarPassTargetRed : FieldConstants.yPosFarPassTargetBlue;
     }
 
+    public double getFarPassXPos() {
+        return (alliance == Alliance.Red) ? FieldConstants.xPosFarPassTargetRed : FieldConstants.xPosFarPassTargetBlue;
+    }
+
     /**
      * Runs once per scheduler cycle
      */
