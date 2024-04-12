@@ -73,18 +73,13 @@ public class WristSetAngleWithVision extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
-    if (driveTrain.getPose().getX() < FieldConstants.xPassCutOff) {
-      try {
-        angle = getAngleFromDistance(3);
-      } catch (ArithmeticException e) {
-        return;
-      }
-    } else {
-      angle = WristAngle.longPassAngle.value;
+    try {
+      angle = getAngleFromDistance(3);
+      wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
+      wrist.updateWristLog(false);
+    } catch (ArithmeticException e) {
+      return;
     }
-
-    wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
-    wrist.updateWristLog(false);
   }
 
   // Called once after isFinished returns true
