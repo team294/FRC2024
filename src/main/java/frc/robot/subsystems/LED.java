@@ -35,6 +35,7 @@ public class LED extends SubsystemBase {
   private boolean shouldClear;
   private Wrist wrist;
   private boolean isRainbow;
+  private boolean hasPiece;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
   private HashMap<LEDSegmentRange, LEDSegment> segments;
@@ -64,6 +65,7 @@ public class LED extends SubsystemBase {
     this.wrist = wrist;
     this.log = log;
     this.isRainbow = false;
+    this.hasPiece = false;
     logRotationKey = log.allocateLogRotation();
 
     // this.accuracyDisplayThreshold = 35;
@@ -81,6 +83,14 @@ public class LED extends SubsystemBase {
 
   public void clearRainbow() {
     isRainbow = false;
+  }
+
+  public void setHasPiece() {
+    hasPiece = true;
+  }
+
+  public void clearHasPiece() {
+    hasPiece = false;
   }
   
   /** Get the subsystem's name
@@ -269,6 +279,10 @@ public class LED extends SubsystemBase {
     switch (currentState) {
     case IDLE:
       if (feeder.isPiecePresent()) {
+        setAnimation(new Color(255, 30, 0), segment);
+        setHasPiece();
+      }
+      if (hasPiece) {
         if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance   // if wheels are up to speed, set LEDs green
         && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight || segment == LEDSegmentRange.StripHorizontal)) {
           setAnimation(new Color(0, 255, 0), segment);  // rgb instead of kGreen due to error (kGreen is yellow for some reason)
@@ -306,6 +320,7 @@ public class LED extends SubsystemBase {
       break;
     case SHOOTING:
       setAnimation(BCRColor.SHOOTING, segment);
+      clearHasPiece();
       break;
     }
   }
