@@ -13,7 +13,6 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.commands.Autos.SourceThreeNoteCenter;
 import frc.robot.utilities.TrapezoidProfileBCR;
 
 /**
@@ -82,7 +81,7 @@ public final class Constants {
 
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
-      public static final int DIOWristRevThroughBoreEncoder = 7;
+      public static final int DIOWristRevThroughBoreEncoder = 5;
       public static final int DIOWristLowerLimit1 = 2;
       public static final int DIOWristLowerLimit2 = 3;
       public static final int DIOIntakePieceSensor = 9;
