@@ -23,7 +23,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 47;
+    private static int trajectoryCount = 49;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
@@ -72,9 +72,10 @@ public class TrajectoryCache {
         driveLeftCenterNotetoOutsideStageBlue(42),
         driveFromAmpFarToShootingPosRed(43),
         driveFromAmpFarToShootingPosBlue(44),
-        driveFromAmpNoteToSecondCenter(45),
-        driveFromCenterSecondToScorePos(46);
-
+        driveFromAmpNoteToSecondCenterRed(45),
+        driveFromCenterSecondToScorePosRed(46),
+        driveFromAmpNoteToSecondCenterBlue(47),
+        driveFromCenterSecondToScorePosBlue(48);
 
         @SuppressWarnings({"MemberName", "PMD.SingularField"})
         public final int value;
@@ -550,22 +551,40 @@ public class TrajectoryCache {
             new Pose2d(3.5, 5.45, new Rotation2d(Math.toRadians(-120)))
             ));
 
-        cache[TrajectoryType.driveFromAmpNoteToSecondCenter.value] = new TrajectoryFacing(
+        cache[TrajectoryType.driveFromAmpNoteToSecondCenterRed.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(-25)), 
             new Rotation2d(0), 
-            calcTrajectory("Drive Center To Far Note Red", .9, .9, false,
+            calcTrajectory("Drive Amp Note To Second Far Note Red", .9, .9, false,
             new Pose2d(2.0, 1.25, new Rotation2d(Math.toRadians(0))), 
             List.of(new Translation2d(5, 1.25)), 
             new Pose2d(7.8, 2.4, new Rotation2d(0))
             ));
 
-        cache[TrajectoryType.driveFromCenterSecondToScorePos.value] = new TrajectoryFacing(
+        cache[TrajectoryType.driveFromCenterSecondToScorePosRed.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(0)), 
             new Rotation2d(0), 
-            calcTrajectory("Drive Amp Far Note To shooting pos Red", .9, .9, false,
+            calcTrajectory("Drive Second Amp Far Note To shooting pos Red", .9, .9, false,
             new Pose2d(7.8, 2.4, new Rotation2d(Math.toRadians(180))), 
             List.of(new Translation2d(5, 1.3)), 
             new Pose2d(3.5, 2.65, new Rotation2d(Math.toRadians(120)))
+            ));
+
+        cache[TrajectoryType.driveFromAmpNoteToSecondCenterBlue.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(25)), 
+            new Rotation2d(0), 
+            calcTrajectory("Drive Center To Second Far Note Blue", .9, .9, false,
+            new Pose2d(2.0, 6.85, new Rotation2d(Math.toRadians(0))), 
+            List.of(new Translation2d(5, 6.85)), 
+            new Pose2d(7.8, 5.7, new Rotation2d(0))
+            ));
+
+        cache[TrajectoryType.driveFromCenterSecondToScorePosBlue.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(0)), 
+            new Rotation2d(0), 
+            calcTrajectory("Drive Second Amp Far Note To shooting pos Blue", .9, .9, false,
+            new Pose2d(7.8, 5.7, new Rotation2d(Math.toRadians(180))), 
+            List.of(new Translation2d(5, 6.8)), 
+            new Pose2d(3.5, 5.45, new Rotation2d(Math.toRadians(-120)))
             ));
     
     
