@@ -210,6 +210,15 @@ public class Intake extends SubsystemBase implements Loggable {
   }
 
   /**
+   * Gets the intake motor current
+   * @return Intake motor current, in amps
+   */
+  public double getIntakeAmps() {
+    intakeStatorCurrent.refresh();
+    return intakeStatorCurrent.getValueAsDouble();
+  }
+
+  /**
    * 
    * @return true if piece is in intake
    */
@@ -236,10 +245,10 @@ public class Intake extends SubsystemBase implements Loggable {
     }
 
     // Reset safety time if current is below the threshhold
-    if(Math.abs(intakeStatorCurrent.refresh().getValueAsDouble()) < 30.0) {
+    if(Math.abs(getIntakeAmps()) < IntakeConstants.intakingPieceCurrentThreshold) {
       currentTimer.reset();
     } else {
-      log.writeLog(false, subsystemName, "Intake current above limit", "Amps", intakeStatorCurrent.getValueAsDouble());
+      log.writeLog(false, subsystemName, "Intake current above limit", "Amps", getIntakeAmps());
     }
 
     // If current is above threshold for too long, then shut off intake motor to prevent overheating.
@@ -265,7 +274,7 @@ public class Intake extends SubsystemBase implements Loggable {
       "Bus Volt", intakeSupplyVoltage.refresh().getValueAsDouble(),
       "Intake Percent", intakeDutyCycle.refresh().getValueAsDouble(),
       "Centering Percent", centeringDutyCycle.refresh().getValueAsDouble(),
-      "Intake Amps", intakeStatorCurrent.refresh().getValueAsDouble(),
+      "Intake Amps", getIntakeAmps(),
       "Centering Amps", centeringStatorCurrent.refresh().getValueAsDouble(),
       "Intake Temperature", intakeTemp.refresh().getValueAsDouble(),
       "Centering Temperature", centeringTemp.refresh().getValueAsDouble(),
