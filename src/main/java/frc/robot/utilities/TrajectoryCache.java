@@ -716,7 +716,7 @@ public class TrajectoryCache {
             calcTrajectory("Next center note to middle note red", .9, .8, false, 
             new Pose2d(8.0, 2.4296, new Rotation2d(Math.PI)),
             List.of(new Translation2d(6.8, 3.25)), 
-            new Pose2d(8.2, 3.95, new Rotation2d(Math.toRadians(20))) 
+            new Pose2d(8.0, 3.95, new Rotation2d(Math.toRadians(20))) 
             ));
 
         cache[TrajectoryType.driveNextCenterNoteToCenterNoteBlue.value] = new TrajectoryFacing(
@@ -725,7 +725,7 @@ public class TrajectoryCache {
             calcTrajectory("Next center note to middle note blue", .9, .8, false, 
             new Pose2d(8.0, 5.8, new Rotation2d(Math.PI)), 
             List.of(new Translation2d(6.8, 4.9796)), 
-            new Pose2d(8.2, 4.2796, new Rotation2d(Math.toRadians(-20))) 
+            new Pose2d(8.0, 4.2796, new Rotation2d(Math.toRadians(-20))) 
             ));
 
         
