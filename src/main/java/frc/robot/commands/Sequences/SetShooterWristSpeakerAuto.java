@@ -4,16 +4,13 @@
 
 package frc.robot.commands.Sequences;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.SpeakerModeSet;
-import frc.robot.commands.ShotModeSet;
-import frc.robot.commands.FeederSetPercent;
-import frc.robot.commands.IntakeStop;
-import frc.robot.commands.RobotStateSetIdle;
-import frc.robot.commands.ShooterSetVelocity;
-import frc.robot.commands.WristSetAngle;
+import frc.robot.commands.*;
 import frc.robot.commands.ShooterSetVelocity.VelocityType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
@@ -38,18 +35,36 @@ public class SetShooterWristSpeakerAuto extends SequentialCommandGroup {
    */
   public SetShooterWristSpeakerAuto(WristAngle angle, double velocityTop, double velocityBottom, 
     Shooter shooter, Wrist wrist, Intake intake, Feeder feeder, BCRRobotState robotState, FileLog log) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new ParallelCommandGroup(
-          new IntakeStop(intake, log),
-          new FeederSetPercent(0.0, feeder, log),     // Added for autos
-          new WristSetAngle(angle, wrist, log),
-          new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(0.5),  // Added timeout for auto
-          new SpeakerModeSet(true, robotState, log),
-          new ShotModeSet(ShotMode.STANDARD, robotState, log),
+      // If we don't detect a piece, but the intake current is high, then assume that the piece is still
+      // in the the process of intaking.  So, finish the intake sequence before changing the wrist angle
+      // (which would be an issue for the piece getting into the wrist) and before setting the shooter motor
+      // speed (which would cause an errant shot).
+      // Note that the anti-jam code in wrist.periodic() is still active and will turn off the intake motor if needed after 0.5 sec.
+      new ConditionalCommand(
+        new SequentialCommandGroup(
+          new FileLogWrite(false, false, "SetShooterWristSpeakerAuto", "Finish intaking", log, "Intake current", intake.getIntakeAmps()),
+          new WaitCommand(1.0).until(() -> feeder.isPiecePresent()),
+          new IntakeSetPercent(0, 0, intake, log),
+          new FeederSetPercent(-0.05, feeder, log),
+          new WaitCommand(0.1),
+          new FeederSetPercent(0.0, feeder, log),      
           new RobotStateSetIdle(robotState, feeder, log)
-        )
-      );
+        ), 
+        new WaitCommand(0.01), 
+        () -> !feeder.isPiecePresent() && intake.getIntakeAmps() >= IntakeConstants.intakingPieceCurrentThreshold
+      ),
+
+      // Turn off intake, set wrist angle, set shooter speed
+      new ParallelCommandGroup(
+        new IntakeStop(intake, log),
+        new FeederSetPercent(0.0, feeder, log),     // Added for autos
+        new WristSetAngle(angle, wrist, log),
+        new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(0.5),  // Added timeout for auto
+        new SpeakerModeSet(true, robotState, log),
+        new ShotModeSet(ShotMode.STANDARD, robotState, log),
+        new RobotStateSetIdle(robotState, feeder, log)
+      )
+    );
   }
 }
