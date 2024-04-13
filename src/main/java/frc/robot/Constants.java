@@ -13,7 +13,6 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.commands.Autos.SourceThreeNoteCenter;
 import frc.robot.utilities.TrapezoidProfileBCR;
 
 /**
