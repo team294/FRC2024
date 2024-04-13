@@ -129,20 +129,25 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
             ),
             () -> feeder.isPiecePresent() == true
         ),
-
-        // drive back under stage to shoot note
-        new ParallelCommandGroup(
-            new ConditionalCommand(
-                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotRed.value], driveTrain, log),
-                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotBlue.value], driveTrain, log),
-                    () -> alliance.getAlliance() == Alliance.Red
+        new ConditionalCommand(
+            new SequentialCommandGroup(
+                // drive back under stage to shoot note
+                new ParallelCommandGroup(
+                    new ConditionalCommand(
+                            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotRed.value], driveTrain, log),
+                            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotBlue.value], driveTrain, log),
+                            () -> alliance.getAlliance() == Alliance.Red
+                    ),
+                    new SetShooterWristSpeakerAuto(WristAngle.endAmpFourcePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
+                ),
+                // shoots note
+                new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
             ),
-            new SetShooterWristSpeakerAuto(WristAngle.endAmpFourcePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
-        ),
-        // shoots note
-        new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
-        
-              
+            new SequentialCommandGroup(
+                new WristSetAngle(WristAngle.lowerLimit, wrist, log)
+            ),  
+            () -> feeder.isPiecePresent() == true
+        )
     );
   }
 }
