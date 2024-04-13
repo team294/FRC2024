@@ -142,7 +142,7 @@ public class SwerveModule {
  		// Start with factory default TalonFX configuration
 		driveMotorConfig = new TalonFXConfiguration();			// Factory default configuration
     driveMotorConfig.MotorOutput.Inverted = driveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;		// Invert motor if needed
-		driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
+		driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // C1:  Boot to brake mode, so robot starts quickly in auto
     driveMotorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.0;
 		driveMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
 
@@ -171,7 +171,7 @@ public class SwerveModule {
  		// Start with factory default TalonFX configuration
 		turningMotorConfig = new TalonFXConfiguration();			// Factory default configuration
     turningMotorConfig.MotorOutput.Inverted = turningMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;		// Invert motor if needed
-		turningMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;          // Boot to coast mode, so robot is easy to push
+		turningMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;          // C1:  Boot to brake mode, so robot starts quickly in auto
     turningMotorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
 		turningMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
 
@@ -206,7 +206,7 @@ public class SwerveModule {
     configSwerveModule();
 
     // other configs for drive and turning motors
-    setMotorModeCoast(true);        // true on boot up, so robot is easy to push.  Change to false in autoinit or teleopinit
+    setMotorModeCoast(false);        // false on boot up, so robot starts quickly in auto.  Change to false in autoinit or teleopinit, true when disabled.
   }
 
   // ********** Swerve module configuration methods
