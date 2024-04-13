@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
@@ -91,7 +92,7 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
                 new WristSetAngle(WristAngle.lowerLimit, wrist, log),
                 new IntakePieceAuto(intake, feeder, robotState, log)
             ),
-            () -> feeder.isPiecePresent() == true
+            () -> (feeder.isPiecePresent() == true || intake.getIntakeAmps() >= IntakeConstants.intakingPieceCurrentThreshold)
         ),
 
         new ConditionalCommand(
@@ -127,7 +128,7 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
                 new WristSetAngle(WristAngle.lowerLimit, wrist, log),
                 new IntakePieceAuto(intake, feeder, robotState, log)
             ),
-            () -> feeder.isPiecePresent() == true
+            () -> (feeder.isPiecePresent() == true || intake.getIntakeAmps() >= IntakeConstants.intakingPieceCurrentThreshold)
         ),
         new ConditionalCommand(
             new SequentialCommandGroup(
@@ -146,7 +147,7 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
             new SequentialCommandGroup(
                 new WristSetAngle(WristAngle.lowerLimit, wrist, log)
             ),  
-            () -> feeder.isPiecePresent() == true
+            () -> (feeder.isPiecePresent() == true || intake.getIntakeAmps() >= IntakeConstants.intakingPieceCurrentThreshold)
         )
     );
   }
