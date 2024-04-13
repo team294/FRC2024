@@ -687,6 +687,7 @@ public class TrajectoryCache {
             new Pose2d(5.0, 6.3, new Rotation2d(0)), 
             List.of(new Translation2d(6.647, 5.735)), 
             new Pose2d(8.0, 4.13, new Rotation2d(0)) 
+        ));
 
         cache[TrajectoryType.driveFromAmpNoteToSecondCenterBlue.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(25)), 
