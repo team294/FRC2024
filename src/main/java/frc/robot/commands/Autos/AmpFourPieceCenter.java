@@ -131,7 +131,7 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
                     new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotBlue.value], driveTrain, log),
                     () -> alliance.getAlliance() == Alliance.Red
             ),
-            new SetShooterWristSpeakerAuto(WristAngle.sourceThreePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
+            new SetShooterWristSpeakerAuto(WristAngle.endAmpFourcePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
         ),
         // shoots note
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
