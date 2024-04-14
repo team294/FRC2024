@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.Ports;
+import frc.robot.Constants.WristConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.Constants.WristConstants.WristRegion;
 import frc.robot.utilities.FileLog;
@@ -443,6 +444,14 @@ public class Wrist extends SubsystemBase implements Loggable{
     // by the number of integer encoder rotations.
     revEncoderZero += 360.0/kRevEncoderGearRatio * Math.floor( revEncoder.get() );
 
+    // // Fix encoder value if calibrated in "sort of up" position
+    // if (getRevEncoderDegrees()< WristAngle.lowerLimit.value - 10) {
+    //   revEncoderZero -= 360.0/kRevEncoderGearRatio;
+    // }
+    // if (getRevEncoderDegrees()> WristAngle.upperLimit.value + 10) {
+    //   revEncoderZero += 360.0/kRevEncoderGearRatio;
+    // }
+
     log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "encoderZero", revEncoderZero, 
         "raw encoder", revEncoder.get()*360.0/kRevEncoderGearRatio, "encoder degrees", getRevEncoderDegrees());
   }
@@ -536,7 +545,7 @@ public class Wrist extends SubsystemBase implements Loggable{
       // SmartDashboard.putBoolean("Wrist LL2", isWristAtLowerLimit2());
       SmartDashboard.putBoolean("Wrist lower limit", isWristAtLowerLimit());
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
-      SmartDashboard.putNumber("Wrist Rev raw", revEncoder.get());
+      SmartDashboard.putNumber("Wrist Rev raw", revEncoder.get()*360.0);
       SmartDashboard.putNumber("Wrist angle", getWristEncoderDegrees());
       SmartDashboard.putNumber("Wrist target angle", getCurrentWristTarget());
       SmartDashboard.putNumber("Wrist enc1 raw", getWristEncoderRotationsRaw());
