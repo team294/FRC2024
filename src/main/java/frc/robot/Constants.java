@@ -401,8 +401,8 @@ public final class Constants {
           ampCloseNoteShot(-63),
           endFiveNoteShot(-72),
           sourceThreePieceShot(-69),
-          endAmpFourcePieceShot(-65),
-          ampFourPieceShot(-69),
+          endAmpFourcePieceShot(-68),
+          ampFourPieceShot(-71),
           overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
           climbStop(-45.0),
           ampShot(50.0),
