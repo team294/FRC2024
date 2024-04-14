@@ -298,6 +298,12 @@ public final class Constants {
       public static final double yPosSpeakerRed = 2.663;
       public static final double yPosSpeakerBlue = width - yPosSpeakerRed;
       public static final double heightOfSpeaker = 2.03;
+      
+      // pass position
+      public static final double yPosFarPassTargetRed = 0;
+      public static final double yPosFarPassTargetBlue = 8.2;
+      public static final double xPosFarPassTargetRed = 0.9;
+      public static final double xPosFarPassTargetBlue = 0.9;
     }
 
     public static class VisionConstants {
@@ -347,7 +353,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // B1: Updated to -162 deg from -141 deg (tightened wrist chain)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // C2: Updated 149 deg (changed REV sensor)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
