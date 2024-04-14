@@ -613,14 +613,14 @@ public class TrajectoryCache {
             calcTrajectory("Podium Shot to Center note Red", .9, .8, false, 
             new Pose2d(5.0, 1.929, new Rotation2d(0)), 
             List.of(new Translation2d(6.647, 2.4946)), 
-            new Pose2d(8.0, 4.0996, new Rotation2d(0)) 
+            new Pose2d(8.4, 4.0996, new Rotation2d(0)) 
             ));
 
         cache[TrajectoryType.driveCenterNotetoPodiumShotRed.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(20)), 
             new Rotation2d(0), 
             calcTrajectory("Center note to Podium Shot Red", .9, 8, false, 
-            new Pose2d(8.0, 4.0996, new Rotation2d(Math.PI)), 
+            new Pose2d(8.4, 4.0996, new Rotation2d(Math.PI)), 
             List.of(new Translation2d(4.9, 4.0296)), 
             new Pose2d(3.7582, 2.7516, new Rotation2d(Math.PI)) 
             ));
@@ -667,7 +667,7 @@ public class TrajectoryCache {
             calcTrajectory("Podium Shot to Center note Blue", .9, .8, false, 
             new Pose2d(5.0, 6.3, new Rotation2d(0)), 
             List.of(new Translation2d(6.647, 5.735)), 
-            new Pose2d(8.0, 4.13, new Rotation2d(0)) 
+            new Pose2d(8.4, 4.13, new Rotation2d(0)) 
         ));
 
 
@@ -676,7 +676,7 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             new Rotation2d(0), 
             calcTrajectory("Center note to Podium Shot Blue", .9, .8, false, 
-            new Pose2d(8.0, 4.13, new Rotation2d(0)), 
+            new Pose2d(8.4, 4.13, new Rotation2d(0)), 
             List.of(new Translation2d(4.9, 4.2)), 
             new Pose2d(3.7582, 5.478, new Rotation2d(Math.PI)) 
             ));
@@ -702,25 +702,25 @@ public class TrajectoryCache {
         cache[TrajectoryType.driveNextCenterNoteToCenterNoteRed.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(Math.toRadians(20)), 
-            calcTrajectory("Next center note to middle note red", .9, .8, false, 
+            calcTrajectory("Next center note to middle note red", .9, .25, false, 
             new Pose2d(8.0, 2.4296, new Rotation2d(Math.PI)),
             List.of(new Translation2d(7.2, 3.25)), 
-            new Pose2d(8.0, 3.95, new Rotation2d(Math.toRadians(20))) 
+            new Pose2d(8.4, 3.95, new Rotation2d(Math.toRadians(20))) 
             ));
 
         cache[TrajectoryType.driveNextCenterNoteToCenterNoteBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(Math.toRadians(-20)), 
-            calcTrajectory("Next center note to middle note blue", .9, .8, false, 
+            calcTrajectory("Next center note to middle note blue", .9, .25, false, 
             new Pose2d(8.0, 5.8, new Rotation2d(Math.PI)), 
             List.of(new Translation2d(7.2, 4.9796)), 
-            new Pose2d(8.0, 4.2796, new Rotation2d(Math.toRadians(-20))) 
+            new Pose2d(8.4, 4.2796, new Rotation2d(Math.toRadians(-20))) 
             ));
 
       cache[TrajectoryType.driveFirstCenterAmpToNextCenterNoteRed.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
-            calcTrajectory("First center note to next middle note red", .9, .8, false, 
+            calcTrajectory("First center note to next middle note red", .9, .25, false, 
             new Pose2d(8.0, 0.7696, new Rotation2d(Math.PI)),
             List.of(new Translation2d(7.2, 2)), 
             new Pose2d(8.0, 2.4296, new Rotation2d(0)) 
@@ -729,7 +729,7 @@ public class TrajectoryCache {
         cache[TrajectoryType.driveFirstCenterAmpToNextCenterNoteBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
-            calcTrajectory("First center note to next middle note blue", .9, .8, false, 
+            calcTrajectory("First center note to next middle note blue", .9, .25, false, 
             new Pose2d(8.0, 7.460, new Rotation2d(Math.PI)), 
             List.of(new Translation2d(7.2, 6.2296)), 
             new Pose2d(8.0, 5.8, new Rotation2d(0)) 
