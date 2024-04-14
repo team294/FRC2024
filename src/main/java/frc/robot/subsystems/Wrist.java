@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.Ports;
+import frc.robot.Constants.WristConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.Constants.WristConstants.WristRegion;
 import frc.robot.utilities.FileLog;
@@ -442,6 +443,14 @@ public class Wrist extends SubsystemBase implements Loggable{
     // 0 and 1 (rotation units).  If the encoder has wrapped, then adjust the encoder zero point
     // by the number of integer encoder rotations.
     revEncoderZero += 360.0/kRevEncoderGearRatio * Math.floor( revEncoder.get() );
+
+    // // Fix encoder value if calibrated in "sort of up" position
+    // if (getRevEncoderDegrees()< WristAngle.lowerLimit.value - 10) {
+    //   revEncoderZero -= 360.0/kRevEncoderGearRatio;
+    // }
+    // if (getRevEncoderDegrees()> WristAngle.upperLimit.value + 10) {
+    //   revEncoderZero += 360.0/kRevEncoderGearRatio;
+    // }
 
     log.writeLogEcho(true, subsystemName, "calibrateThroughBoreEncoder", "encoderZero", revEncoderZero, 
         "raw encoder", revEncoder.get()*360.0/kRevEncoderGearRatio, "encoder degrees", getRevEncoderDegrees());
