@@ -300,10 +300,11 @@ public final class Constants {
       public static final double heightOfSpeaker = 2.03;
       
       // pass position
-      public static final double yPosFarPassTargetRed = 0;
-      public static final double yPosFarPassTargetBlue = 8.2;
-      public static final double xPosFarPassTargetRed = 0.9;
-      public static final double xPosFarPassTargetBlue = 0.9;
+      public static final double yPosFarPassTargetRed = Units.inchesToMeters(39);
+      public static final double xPosFarPassTargetRed = Units.feetToMeters(4);
+      
+      public static final double yPosFarPassTargetBlue = width - yPosFarPassTargetRed;
+      public static final double xPosFarPassTargetBlue = xPosFarPassTargetRed;
     }
 
     public static class VisionConstants {
