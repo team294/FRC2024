@@ -42,7 +42,7 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
         new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
 
-        // leaves speaker from amp side to outside of notes
+        // leaves speaker from amp side to outside of notes and pick up first note
         new ParallelDeadlineGroup(
             new ConditionalCommand(
                 new SequentialCommandGroup(
@@ -83,6 +83,7 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
                 new IntakePieceAuto(intake, feeder, robotState, log)
                 )
             ),
+            // We missed the first note, to go to 2nd note
             new ParallelDeadlineGroup(
                 new ConditionalCommand(
                     new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFirstCenterAmpToNextCenterNoteRed.value], driveTrain, log),

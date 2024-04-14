@@ -47,7 +47,7 @@ public class SetShooterWristSpeakerAuto extends SequentialCommandGroup {
           new WaitCommand(1.0).until(() -> feeder.isPiecePresent()),
           new IntakeSetPercent(0, 0, intake, log),
           new FeederSetPercent(-0.05, feeder, log),
-          new WaitCommand(0.2),
+          new WaitCommand(0.1),
           new FeederSetPercent(0.0, feeder, log),      
           new RobotStateSetIdle(robotState, feeder, log)
         ), 
