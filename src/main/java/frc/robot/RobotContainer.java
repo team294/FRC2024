@@ -46,7 +46,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("B7");
+  private final FileLog log = new FileLog("C2");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -73,7 +73,7 @@ public class RobotContainer {
   private final Joystick coPanel = new Joystick(OIConstants.usbCoPanel);
 
   private final CommandXboxController xboxController = new CommandXboxController(OIConstants.usbXboxController);
-  private boolean lastEnabledModeAuto = false;    // True if the last mode was auto
+  private boolean lastEnabledModeAuto = true;    // True if the last mode was auto (if so, then don't go to coast mode on drivetrain)
 
   // Set to this pattern when the robot is disabled
   

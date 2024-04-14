@@ -13,7 +13,6 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.commands.Autos.SourceThreeNoteCenter;
 import frc.robot.utilities.TrapezoidProfileBCR;
 
 /**
@@ -82,7 +81,7 @@ public final class Constants {
 
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
-      public static final int DIOWristRevThroughBoreEncoder = 7;
+      public static final int DIOWristRevThroughBoreEncoder = 5;
       public static final int DIOWristLowerLimit1 = 2;
       public static final int DIOWristLowerLimit2 = 3;
       public static final int DIOIntakePieceSensor = 9;
@@ -348,7 +347,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // B1: Updated to -162 deg from -141 deg (tightened wrist chain)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // C2: Updated 149 deg (changed REV sensor)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
