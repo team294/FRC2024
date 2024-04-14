@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
@@ -83,7 +84,7 @@ public class RobotContainer {
     configureShuffleboard();
 
     // driveTrain.setDefaultCommand(new DriveWithJoystick(leftJoystick, rightJoystick, driveTrain, log));
-    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, allianceSelection, driveTrain, log));
+    driveTrain.setDefaultCommand(new DriveWithJoysticksAdvance(leftJoystick, rightJoystick, allianceSelection, driveTrain, robotState, log));
 
   }
 
@@ -317,35 +318,28 @@ public class RobotContainer {
         
     );
 
+    // Right button 1:  Aim lock on speaker
     right[1].whileTrue(new ParallelCommandGroup(
       new SetAimLock(driveTrain, true, log),
-      new ConditionalCommand(
-        // Auto Aim for speaker
-        new ParallelCommandGroup(
-          new SpeakerModeSet(true, robotState, log),
-          new ShotModeSet(ShotMode.STANDARD, robotState, log),
-          new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
-          new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
-        ),
-        // Auto aim for long pass
-        new ParallelCommandGroup(
-          new SetShooterFarShot(WristAngle.longPassAngle, 
-      ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log)
-        ),
-        () -> driveTrain.getPose().getX() < 8
-      )
-    )); //TODO implement this once vision is brought in
+      new SpeakerModeSet(true, robotState, log),
+      new ShotModeSet(ShotMode.STANDARD, robotState, log),
+      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
+    ));
     right[1].onFalse(
       new SetAimLock(driveTrain, false, log)
-    ); //TODO implement this once vision is brought in
+    );
 
-    // right[2] //Turn to face amp
-    
-    // right[1].onTrue(new ShootPiece(shooter, feeder, robotState, log));
-    // right[2].onTrue(new DriveToNote(feeder, driveTrain, log));
-    // right[2].whileTrue(new DriveToNoteSequence(intake, shooter, feeder, wrist, driveTrain, robotState, log));
-    
-     
+    // Right button 2:  Aim lock on far pass target
+    right[2].whileTrue(new ParallelCommandGroup(
+      new SetAimLock(driveTrain, true, log),
+      new SetShooterFarShot(WristAngle.longPassAngle, 
+        ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, 
+        shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log)
+    ));
+    right[2].onFalse(
+      new SetAimLock(driveTrain, false, log)
+    );
   }
 
   /**

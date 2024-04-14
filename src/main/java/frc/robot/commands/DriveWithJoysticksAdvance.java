@@ -7,7 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
@@ -17,8 +16,10 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.AllianceSelection;
-import frc.robot.utilities.AutoSelection;
+import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.BCRRobotState.ShotMode;
+
 import java.lang.Math;
 
 
@@ -26,6 +27,7 @@ public class DriveWithJoysticksAdvance extends Command {
   private final Joystick leftJoystick;
   private final Joystick rightJoystick;
   private final DriveTrain driveTrain;
+  private final BCRRobotState robotState;
   private final FileLog log;
   private final AllianceSelection allianceSelection;
   private ProfiledPIDController turnRateController;
@@ -45,11 +47,13 @@ public class DriveWithJoysticksAdvance extends Command {
    * @param log filelog to use
    */
 
-  public DriveWithJoysticksAdvance(Joystick leftJoystick, Joystick rightJoystick, AllianceSelection allianceSelection, DriveTrain driveTrain, FileLog log) {
+  public DriveWithJoysticksAdvance(Joystick leftJoystick, Joystick rightJoystick, AllianceSelection allianceSelection, 
+      DriveTrain driveTrain, BCRRobotState robotstate, FileLog log) {
     this.leftJoystick = leftJoystick;
     this.rightJoystick = rightJoystick;
     this.driveTrain = driveTrain;
     this.allianceSelection = allianceSelection;
+    this.robotState = robotstate;
     this.log = log;
     turnRateController = new ProfiledPIDController(DriveConstants.kPJoystickThetaController, 0, 0, TrajectoryConstants.kThetaControllerConstraints);
     turnRateController.enableContinuousInput(-Math.PI, Math.PI);
@@ -115,11 +119,12 @@ public class DriveWithJoysticksAdvance extends Command {
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
         if (aimLock) {
-          // aims for pass position when x > xPassCutOff meters
-          if (driveTrain.getPose().getX() < FieldConstants.xPassCutOff) {
-            goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
-          } else {
+          if (robotState.getShotMode() == ShotMode.FAR_PASS) {
+            // Aim towards far pass target
             goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getFarPassYPos())/(driveTrain.getPose().getX() - allianceSelection.getFarPassXPos()));
+          } else {
+            // Aim towards speaker
+            goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());
           }
           goalAngle = MathUtil.angleModulus(goalAngle);
           SmartDashboard.putNumber("Goal Angle", goalAngle);
