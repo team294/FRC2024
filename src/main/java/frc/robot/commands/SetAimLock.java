@@ -33,6 +33,7 @@ public class SetAimLock extends Command {
   @Override
   public void initialize() {
     driveTrain.setAimLock(state);
+    log.writeLog(false, "SetAimLock", "Initialize", "AimLock", state);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
