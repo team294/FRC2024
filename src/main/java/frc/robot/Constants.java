@@ -417,6 +417,8 @@ public final class Constants {
     public static final class IntakeConstants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
 
+      public static final double intakingPieceCurrentThreshold = 35.0;            // Current to indicate intake is loading a piece (or jammed), in Amps.  Note that the intake turning on can briefly spike this high as well.
+
       public static final double intakePercent = 0.7;       // 0.7
       public static final double centeringPercent = 0.4;    // 0.4
     }
