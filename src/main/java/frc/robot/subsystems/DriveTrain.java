@@ -621,14 +621,28 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     return noteCamera.getLatestResult();
   }
 
+  /**
+   * Turns on or off robot "aim rotation lock" on the target (speaker or long pass target)
+   * for DriveWithJoysticksAdvance.
+   * @param state true = aim rotation lock on, false = aim rotation lock off
+   */
   public void setAimLock(boolean state) {
     aimLock = state;
   }
 
+  /**
+   * Toggles on or off robot "aim rotation lock" on the target (speaker or long pass target)
+   * for DriveWithJoysticksAdvance.
+   */
   public void toggleAimLock() {
     aimLock = !aimLock;
   }
 
+  /**
+   * Returns if robot "aim rotation lock" for the target (speaker or long pass target)
+   * for DriveWithJoysticksAdvance is turned on or turned off
+   * @return true = aim rotation lock is on, false = aim rotation lock is off
+   */
   public boolean isAimLockEnabled(){
     return aimLock;
   }
