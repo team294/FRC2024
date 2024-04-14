@@ -15,7 +15,13 @@ public class SetAimLock extends Command {
 
   private final boolean state;
 
-  /** Creates a new IntakeStop. */
+  /**
+   * Turns on or off robot "aim rotation lock" on the target (speaker or long pass target)
+   * for DriveWithJoysticksAdvance.
+   * @param driveTrain
+   * @param state true = aim rotation lock on, false = aim rotation lock off
+   * @param log
+   */
   public SetAimLock(DriveTrain driveTrain, boolean state, FileLog log) {
     this.driveTrain = driveTrain;
     this.state = state;
@@ -27,6 +33,7 @@ public class SetAimLock extends Command {
   @Override
   public void initialize() {
     driveTrain.setAimLock(state);
+    log.writeLog(false, "SetAimLock", "Initialize", "AimLock", state);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
