@@ -24,7 +24,8 @@ public class BCRRobotState {
     public static enum ShotMode {
         STANDARD,
         SHORT_PASS,
-        FAR_PASS
+        FAR_PASS,
+        VISION_PASS
     }
 
     private ShotMode shotMode = ShotMode.STANDARD;
