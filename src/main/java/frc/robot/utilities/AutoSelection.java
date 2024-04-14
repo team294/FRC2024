@@ -37,6 +37,7 @@ public class AutoSelection {
 	public static final int AmpShootOnePiece = 10;
 	public static final int SourceThreePieceCenter = 11;
 	public static final int CenterFivePieceShoot = 12;
+	public static final int AmpFourPieceCenter = 13;
 
 
 
@@ -66,6 +67,7 @@ public class AutoSelection {
 		autoChooser.addOption("CenterFourPieceNearNoteAuto", CenterFourPieceShoot);
 		autoChooser.addOption("SourceThreePieceCenter", SourceThreePieceCenter);
 		autoChooser.addOption("CenterFivePieceShoot", CenterFivePieceShoot);
+		autoChooser.addOption("AmpFourPieceCenter", AmpFourPieceCenter);
 		
 
 	
@@ -135,7 +137,7 @@ public class AutoSelection {
 
 		else if(autoPlan == AmpThreePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Amp Three Piece Shoot");
-			autonomousCommandMain = new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new AmpThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 		
 		else if(autoPlan == CenterFourPieceShoot){
@@ -161,6 +163,11 @@ public class AutoSelection {
 		else if(autoPlan == CenterFivePieceShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Center Five Piece Shoot");
 			autonomousCommandMain = new CenterFivePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+
+		else if(autoPlan == AmpFourPieceCenter){
+			log.writeLogEcho(true, "AutoSelect", "run Amp Four Piece Center");
+			autonomousCommandMain = new AmpFourPieceCenter(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if (autonomousCommandMain == null) {
