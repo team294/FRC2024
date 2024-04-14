@@ -1000,6 +1000,13 @@
                 },
                 {
                   "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Wrist Rev raw",
+                  "_title": "Wrist Rev raw",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Wrist Rev angle",
                   "_title": "Rev angle",
                   "_glyph": 148,

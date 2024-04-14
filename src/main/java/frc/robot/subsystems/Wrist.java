@@ -536,7 +536,7 @@ public class Wrist extends SubsystemBase implements Loggable{
       // SmartDashboard.putBoolean("Wrist LL2", isWristAtLowerLimit2());
       SmartDashboard.putBoolean("Wrist lower limit", isWristAtLowerLimit());
       SmartDashboard.putNumber("Wrist Rev angle", getRevEncoderDegrees());
-      SmartDashboard.putNumber("Wrist Rev raw", revEncoder.get());
+      SmartDashboard.putNumber("Wrist Rev raw", revEncoder.get()*360.0);
       SmartDashboard.putNumber("Wrist angle", getWristEncoderDegrees());
       SmartDashboard.putNumber("Wrist target angle", getCurrentWristTarget());
       SmartDashboard.putNumber("Wrist enc1 raw", getWristEncoderRotationsRaw());
