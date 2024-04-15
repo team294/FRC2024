@@ -469,7 +469,7 @@ public class TrajectoryCache {
         cache[TrajectoryType.driveCenterNotetoOutsideStageRed.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
-            calcTrajectory("Center Note  to podium shot Red", .8, .8, false, 
+            calcTrajectory("Center Note to podium shot Red", .8, .8, false, 
             new Pose2d(7.9, 4.1546, new Rotation2d(Math.PI)),
             List.of(
                 new Translation2d(6.0592, 4.1436),
@@ -645,7 +645,7 @@ public class TrajectoryCache {
         
         cache[TrajectoryType.driveFarCenterNoteToPodiumShotBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
-            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(10)), 
             calcTrajectory("Center note to Podium Shot Blue", .9, .8, false, 
             new Pose2d(8.0, 7.46, new Rotation2d(0)), 
             List.of(), 
@@ -653,7 +653,7 @@ public class TrajectoryCache {
             ));
 
         cache[TrajectoryType.drivePodiumShotToNextCenterNoteBlue.value] = new TrajectoryFacing(
-            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(10)), 
             new Rotation2d(0), 
             calcTrajectory("Podium Shot to Next Center note Blue", .9, .8, false, 
             new Pose2d(4.6, 6.3, new Rotation2d(0)), 
@@ -663,7 +663,7 @@ public class TrajectoryCache {
         
         cache[TrajectoryType.driveNextCenterNotetoPodiumShotBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
-            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(10)), 
             calcTrajectory("Next Center note to Podium Shot Blue", .9, .8, false, 
             new Pose2d(8.2, 5.8, new Rotation2d(0)),
             List.of(), 
@@ -671,8 +671,8 @@ public class TrajectoryCache {
             ));
 
         cache[TrajectoryType.drivePodiumShotToCenterNoteBlue.value] = new TrajectoryFacing(
-            new Rotation2d(0), 
-            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(10)), 
+            new Rotation2d(Math.toRadians(-20)), 
             calcTrajectory("Podium Shot to Center note Blue", .9, .8, false, 
             new Pose2d(5.0, 6.3, new Rotation2d(0)), 
             List.of(new Translation2d(6.647, 5.735)), 
@@ -680,7 +680,7 @@ public class TrajectoryCache {
             ));
     
         cache[TrajectoryType.driveCenterNotetoPodiumShotBlue.value] = new TrajectoryFacing(
-            new Rotation2d(0), 
+            new Rotation2d(Math.toRadians(-20)), 
             new Rotation2d(0), 
             calcTrajectory("Center note to Podium Shot Blue", .9, .8, false, 
             new Pose2d(8.4, 4.13, new Rotation2d(0)), 
@@ -803,7 +803,7 @@ public class TrajectoryCache {
         cache[TrajectoryType.drivePodiumShotToCenterRightNoteRed.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
-            calcTrajectory("Podium shot to center right note Red", .8, .6, false, 
+            calcTrajectory("Podium shot to center right note Red", .8, .8, false, 
             new Pose2d(3.7582, 2.7516, new Rotation2d(0)),
             List.of(
                 new Translation2d(4.8, 4.1436),   
@@ -815,7 +815,7 @@ public class TrajectoryCache {
         cache[TrajectoryType.driveCenterRightNoteToPodiumShotRed.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
-            calcTrajectory("Center right note to Podium Red", .8, .6, false, 
+            calcTrajectory("Center right note to Podium Red", .8, .8, false, 
             new Pose2d(7.9, 2.431, new Rotation2d(Math.PI)),
             List.of(
                 new Translation2d(6.0592, 4.1436),
@@ -827,7 +827,7 @@ public class TrajectoryCache {
         cache[TrajectoryType.drivePodiumShotToCenterRightNoteBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
-            calcTrajectory("Podium shot to center right note Blue", .8, .6, false, 
+            calcTrajectory("Podium shot to center right note Blue", .8, .8, false, 
             new Pose2d(3.7582, 5.478, new Rotation2d(0)),
             List.of(
                 new Translation2d(4.8, 4.086),
@@ -840,13 +840,13 @@ public class TrajectoryCache {
         cache[TrajectoryType.driveCenterRightNoteToPodiumShotBlue.value] = new TrajectoryFacing(
             new Rotation2d(0), 
             new Rotation2d(0), 
-            calcTrajectory("Center right note to Podium Blue", .8, .6, false, 
+            calcTrajectory("Center right note to Podium Blue", .8, .8, false, 
             new Pose2d(7.9, 5.7986, new Rotation2d(Math.PI)),
             List.of(
                 new Translation2d(6.0592, 4.086),
                 new Translation2d(4.8, 4.086) 
             ), 
-            new Pose2d(3.7582, 5.47, new Rotation2d(Math.PI))
+            new Pose2d(3.7582, 5.478, new Rotation2d(Math.PI))
             ));
         
     }
