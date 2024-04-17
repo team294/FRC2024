@@ -151,7 +151,6 @@ public class RobotContainer {
     SmartDashboard.putData("Stop All", new StopIntakeFeederShooter(intake, shooter, feeder, robotState, log));
 
     // Autos
-    SmartDashboard.putData("Amp Three Piece Shoot", new AmpThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Amp Two Piece Shoot", new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Center Two Piece Shoot", new CenterTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Three Piece Shoot", new SourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
@@ -290,8 +289,10 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    // Reset pose
-    left[1].onTrue(new DriveResetPose( 0, false, driveTrain, log));
+    // Auto Drive to Amp
+    left[1].whileTrue(
+      new DriveToAmp(allianceSelection, intake, feeder, wrist, driveTrain, robotState, log)
+    );
 
     // Shoot the note
     left[2].onTrue(
@@ -368,6 +369,8 @@ public class RobotContainer {
     // Nudge angle up or down
     coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
     coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
+
+    coP[9].onTrue(new DriveResetPose(0, false, driveTrain, log));
   }
 
 

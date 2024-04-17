@@ -4,6 +4,8 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -112,6 +114,9 @@ public final class Constants {
 
       // distance from the center of the wrist pivot to the intersection of the path the notes travel through the shooter (m)
       public static final double lengthOfArmFromWristPivotToCenterPathOfShooter = 0.365125;
+
+      // Width of robot in meters
+      public static final double robotWidth = 0.9144;
     }
 
     public static final class SwerveConstants {
@@ -305,6 +310,10 @@ public final class Constants {
       
       public static final double yPosFarPassTargetBlue = width - yPosFarPassTargetRed;
       public static final double xPosFarPassTargetBlue = xPosFarPassTargetRed;
+      public static final Pose2d posAmpRed = new Pose2d(1.849, -.2, new Rotation2d(Units.degreesToRadians(90)));
+      public static final Pose2d posAmpBlue = new Pose2d(1.849, width + 0.2, new Rotation2d(Units.degreesToRadians(-90)));
+      public static final Pose2d posAmpRedInitial = new Pose2d(1.849, .2, new Rotation2d(Units.degreesToRadians(90)));
+      public static final Pose2d posAmpBlueInitial = new Pose2d(1.849, width - .2, new Rotation2d(Units.degreesToRadians(-90)));
     }
 
     public static class VisionConstants {
@@ -401,7 +410,9 @@ public final class Constants {
           centerCloseNoteShot(-62),
           ampCloseNoteShot(-63),
           endFiveNoteShot(-72),
-          sourceThreePieceShot(-71),
+          sourceThreePieceShot(-69),
+          endAmpFourcePieceShot(-68), // last note shot for amp 4 note 
+          ampFourPieceShot(-71),     // normal shot for amp 4 note
           overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
           climbStop(-45.0),
           ampShot(50.0),
@@ -417,6 +428,8 @@ public final class Constants {
 
     public static final class IntakeConstants {
       public static final double compensationVoltage = 12.0;                      // voltage compensation on motor
+
+      public static final double intakingPieceCurrentThreshold = 35.0;            // Current to indicate intake is loading a piece (or jammed), in Amps.  Note that the intake turning on can briefly spike this high as well.
 
       public static final double intakePercent = 0.7;       // 0.7
       public static final double centeringPercent = 0.4;    // 0.4
