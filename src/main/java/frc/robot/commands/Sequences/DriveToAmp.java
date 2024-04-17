@@ -4,8 +4,13 @@
 
 package frc.robot.commands.Sequences;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.CoordType;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.*;
 import frc.robot.subsystems.DriveTrain;
@@ -26,14 +31,22 @@ public class DriveToAmp extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      // new DriveToPose(() -> allianceSelection.getAmpPosInitial(), .25, 10, driveTrain, log),
+      //new DriveToPose(() -> allianceSelection.getAmpPosInitial(), .25, 10, driveTrain, log),
       new ParallelCommandGroup(
-        new DriveToPose(() -> allianceSelection.getAmpPosInitial(), .25, 10, driveTrain, log),
+        new ConditionalCommand(
+          new DriveToPose(CoordType.kAbsolute, 90, driveTrain, log),
+          new DriveToPose(CoordType.kAbsolute, -90, driveTrain, log), 
+          () -> allianceSelection.getAlliance() == Alliance.Red
+        ),
         new IntakeStop(intake, log),
-        new WristSetAngle(WristAngle.ampShot, wrist, log),
         new SpeakerModeSet(false, robotState, log),
         new ShotModeSet(ShotMode.STANDARD, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
+      ),
+      //new DriveToPose(CoordType.kAbsolute, new Rotation2d(Math.toRadians(90)), driveTrain, log),
+      new ParallelDeadlineGroup(
+        new WristSetAngle(WristAngle.ampShot, wrist, log),
+        new DriveToPose(() -> allianceSelection.getAmpPosInitial(), .25, 10, driveTrain, log)
       ),
       new DriveToPose(allianceSelection.getAmpPos(), driveTrain, log)
     );
