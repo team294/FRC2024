@@ -289,8 +289,10 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    // Reset pose
-    // left[1].onTrue();
+    // Auto Drive to Amp
+    left[1].whileTrue(
+      new DriveToAmp(allianceSelection, intake, feeder, wrist, driveTrain, robotState, log)
+    );
 
     // Shoot the note
     left[2].onTrue(

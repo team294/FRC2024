@@ -4,6 +4,8 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -112,6 +114,9 @@ public final class Constants {
 
       // distance from the center of the wrist pivot to the intersection of the path the notes travel through the shooter (m)
       public static final double lengthOfArmFromWristPivotToCenterPathOfShooter = 0.365125;
+
+      // Width of robot in meters
+      public static final double robotWidth = 0.9144;
     }
 
     public static final class SwerveConstants {
@@ -305,6 +310,10 @@ public final class Constants {
       
       public static final double yPosFarPassTargetBlue = width - yPosFarPassTargetRed;
       public static final double xPosFarPassTargetBlue = xPosFarPassTargetRed;
+      public static final Pose2d posAmpRed = new Pose2d(1.849, -.2, new Rotation2d(Units.degreesToRadians(90)));
+      public static final Pose2d posAmpBlue = new Pose2d(1.849, width + 0.2, new Rotation2d(Units.degreesToRadians(-90)));
+      public static final Pose2d posAmpRedInitial = new Pose2d(1.849, .2, new Rotation2d(Units.degreesToRadians(90)));
+      public static final Pose2d posAmpBlueInitial = new Pose2d(1.849, width - .2, new Rotation2d(Units.degreesToRadians(-90)));
     }
 
     public static class VisionConstants {
