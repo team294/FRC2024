@@ -290,7 +290,7 @@ public class RobotContainer {
     }
 
     // Reset pose
-    left[1].onTrue(new DriveResetPose( 0, false, driveTrain, log));
+    // left[1].onTrue();
 
     // Shoot the note
     left[2].onTrue(
@@ -363,6 +363,8 @@ public class RobotContainer {
     // Nudge angle up or down
     coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
     coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
+
+    coP[9].onTrue(new DriveResetPose(0, false, driveTrain, log));
   }
 
 
