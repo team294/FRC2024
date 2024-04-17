@@ -335,9 +335,11 @@ public class RobotContainer {
     // Right button 2:  Aim lock on far pass target
     right[2].whileTrue(new ParallelCommandGroup(
       new SetAimLock(driveTrain, true, log),
+      new SpeakerModeSet(true, robotState, log),
+      new ShotModeSet(ShotMode.FAR_PASS, robotState, log),
       new SetShooterFarShot(WristAngle.longPassAngle, 
         ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, 
-        shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log)
+        shooter, wrist, intake, feeder, ShotMode.VISION_PASS, robotState, log)
     ));
     right[2].onFalse(
       new SetAimLock(driveTrain, false, log)
