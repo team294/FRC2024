@@ -412,7 +412,7 @@ public final class Constants {
           endFiveNoteShot(-72),
           sourceThreePieceShot(-69),
           endAmpFourcePieceShot(-68), // last note shot for amp 4 note 
-          ampFourPieceShot(-71),     // normal shot for amp 4 note
+          ampFourPieceShot(-72),     // normal shot for amp 4 note
           overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
           climbStop(-45.0),
           ampShot(52.0),            // C4:  Increased from 50 to 52
