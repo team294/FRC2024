@@ -4,6 +4,8 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -112,6 +114,9 @@ public final class Constants {
 
       // distance from the center of the wrist pivot to the intersection of the path the notes travel through the shooter (m)
       public static final double lengthOfArmFromWristPivotToCenterPathOfShooter = 0.365125;
+
+      // Width of robot in meters
+      public static final double robotWidth = 0.9144;
     }
 
     public static final class SwerveConstants {
@@ -305,6 +310,10 @@ public final class Constants {
       
       public static final double yPosFarPassTargetBlue = width - yPosFarPassTargetRed;
       public static final double xPosFarPassTargetBlue = xPosFarPassTargetRed;
+      public static final Pose2d posAmpRed = new Pose2d(1.849, -.2, new Rotation2d(Units.degreesToRadians(90)));
+      public static final Pose2d posAmpBlue = new Pose2d(1.849, width + 0.2, new Rotation2d(Units.degreesToRadians(-90)));
+      public static final Pose2d posAmpRedInitial = new Pose2d(1.849, .2, new Rotation2d(Units.degreesToRadians(90)));
+      public static final Pose2d posAmpBlueInitial = new Pose2d(1.849, width - .2, new Rotation2d(Units.degreesToRadians(-90)));
     }
 
     public static class VisionConstants {
@@ -354,7 +363,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // C2: Updated 149 deg (changed REV sensor)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // C3: Updated 156 deg (changed REV sensor)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
@@ -402,8 +411,8 @@ public final class Constants {
           ampCloseNoteShot(-63),
           endFiveNoteShot(-72),
           sourceThreePieceShot(-69),
-          endAmpFourcePieceShot(-68),
-          ampFourPieceShot(-71),
+          endAmpFourcePieceShot(-68), // last note shot for amp 4 note 
+          ampFourPieceShot(-71),     // normal shot for amp 4 note
           overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
           climbStop(-45.0),
           ampShot(50.0),

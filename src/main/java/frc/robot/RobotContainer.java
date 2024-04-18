@@ -44,7 +44,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("C2");
+  private final FileLog log = new FileLog("C3");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -289,8 +289,10 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    // Reset pose
-    left[1].onTrue(new DriveResetPose( 0, false, driveTrain, log));
+    // Auto Drive to Amp
+    left[1].whileTrue(
+      new DriveToAmp(allianceSelection, intake, feeder, wrist, driveTrain, robotState, log)
+    );
 
     // Shoot the note
     left[2].onTrue(
@@ -363,6 +365,8 @@ public class RobotContainer {
     // Nudge angle up or down
     coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
     coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
+
+    coP[9].onTrue(new DriveResetPose(0, false, driveTrain, log));
   }
 
 
