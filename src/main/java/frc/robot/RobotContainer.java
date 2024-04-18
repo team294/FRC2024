@@ -214,7 +214,7 @@ public class RobotContainer {
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Clear piece jammed in intake.
-    xbRB.onTrue(new ShootFullSequence(shooter, feeder, wrist, robotState, log));
+    xbRB.onTrue(new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log));
 
     // Move wrist down and then intake a piece
     xbRT.onTrue(new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
@@ -296,7 +296,7 @@ public class RobotContainer {
 
     // Shoot the note
     left[2].onTrue(
-        new ShootFullSequence(shooter, feeder, wrist, robotState, log)
+        new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log)
     );
 
     // Right button 1:  Aim lock on speaker

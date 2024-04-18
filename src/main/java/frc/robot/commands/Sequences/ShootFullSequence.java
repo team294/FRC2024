@@ -7,9 +7,8 @@ package frc.robot.commands.Sequences;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Wrist;
+import frc.robot.subsystems.*;
+import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.BCRRobotState.ShotMode;
 import frc.robot.utilities.FileLog;
@@ -19,7 +18,7 @@ import frc.robot.utilities.FileLog;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootFullSequence extends SequentialCommandGroup {
   /** Creates a new ShootFullSequence. */
-  public ShootFullSequence(Shooter shooter, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
+  public ShootFullSequence(AllianceSelection allianceSelection, DriveTrain driveTrain, Shooter shooter, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -35,9 +34,14 @@ public class ShootFullSequence extends SequentialCommandGroup {
             // Short pass lobbing note towards alliance partner
             new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log), 
             // Far Pass lobbing note over stage to alliance partner
-            new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
-            () -> robotState.getShotMode() == ShotMode.SHORT_PASS
+            
+            new ConditionalCommand(
+              new ShootPieceFarPassWithVision(true, allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log),
+              new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
+              () -> robotState.getShotMode() == ShotMode.VISION_PASS
             ),
+            () -> robotState.getShotMode() == ShotMode.SHORT_PASS
+          ),
           () -> robotState.getShotMode() == ShotMode.STANDARD
         )
     );
