@@ -363,7 +363,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // C2: Updated 149 deg (changed REV sensor)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // C3: Updated 156 deg (changed REV sensor)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
@@ -399,7 +399,7 @@ public final class Constants {
       // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
       public enum WristAngle {
           lowerLimit(-83.0),      // CALIBRATED
-          intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
+          intakeLimit(-75), // Max angle that we can intake from. CALIBRATED (we know -75deg is ok.  Maybe could be higher, not tested.)
           speakerShotFromSpeaker(-42),  // A5: changed to -42 deg
           speakerShotFromSide(-38),
           speakerShotFromPodium(-67),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
@@ -412,10 +412,10 @@ public final class Constants {
           endFiveNoteShot(-72),
           sourceThreePieceShot(-69),
           endAmpFourcePieceShot(-68), // last note shot for amp 4 note 
-          ampFourPieceShot(-71),     // normal shot for amp 4 note
+          ampFourPieceShot(-75),     // C6:  Decreased by 3 degrees.  normal shot for amp 4 note
           overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
           climbStop(-45.0),
-          ampShot(50.0),
+          ampShot(52.0),            // C4:  Increased from 50 to 52
           clearBellyPanMinAngle(-65),
           climbStart(65.0),
           upperLimit(90.0);       // CALIBRATED

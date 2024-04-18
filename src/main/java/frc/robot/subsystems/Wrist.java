@@ -84,6 +84,8 @@ public class Wrist extends SubsystemBase implements Loggable{
 
   private double safeAngle;         // current wrist target on position control on the Falcon motor (if the Falcon is in position mode)
 
+  private double ampAngleOffset = 0; 
+  
   public Wrist(FileLog log) {
     this.log = log;
     logRotationKey = log.allocateLogRotation();     // Get log rotation for this subsystem
@@ -338,6 +340,23 @@ public class Wrist extends SubsystemBase implements Loggable{
     if (isWristMotorPositionControl()) {
       setWristAngle(safeAngle);
     }
+  }
+
+  /**
+   * Adjust the current variable for amp angle of the wrist by a small amount
+   * @param deltaDegrees the number of degrees to move up/down
+   */
+  public void nudgeAmpAngle(double deltaDegrees){
+    ampAngleOffset += deltaDegrees;
+  }
+
+  /**
+   * Returns the current value of the amp angle shooting offset (higher or lower by
+   * a few degrees).
+   * @return
+   */
+  public double getAmpOffSet() {
+    return ampAngleOffset;
   }
 
   /**
