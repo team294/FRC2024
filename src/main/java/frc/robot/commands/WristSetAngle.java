@@ -77,7 +77,7 @@ public class WristSetAngle extends Command {
     this.log = log;
     fromShuffleboard = false;
     angle = WristAngle.ampShot.value;
-    
+
     addRequirements(wrist);
   }
 
@@ -88,6 +88,7 @@ public class WristSetAngle extends Command {
       angle = SmartDashboard.getNumber("Wrist Angle to set", 0);
     }
     if(isAmp){
+      angle = WristAngle.ampShot.value;
       angle += wrist.getAmpOffSet();
     }
     wrist.setWristAngle(angle);
