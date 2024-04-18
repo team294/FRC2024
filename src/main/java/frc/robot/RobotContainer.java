@@ -44,7 +44,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("C4");
+  private final FileLog log = new FileLog("C5");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -316,7 +316,7 @@ public class RobotContainer {
       new SetAimLock(driveTrain, true, log),
       new SetShooterFarShot(WristAngle.longPassAngle, 
         ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, 
-        shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log)
+        shooter, wrist, intake, feeder, ShotMode.VISION_PASS, robotState, log)
     ));
     right[2].onFalse(
       new SetAimLock(driveTrain, false, log)
