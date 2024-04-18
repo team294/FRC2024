@@ -396,7 +396,8 @@ public final class Constants {
 
       // Wrist pre-defined angles (in degrees)
       // 0 degrees = horizontal (in front of robot) relative to wrist center of gravity
-      // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
+      // -83 degrees = vertical = wrist is hanging "down" naturally due to gravity
+      // 90 degrees = vertical = wrist is straight up
       public enum WristAngle {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
@@ -412,7 +413,7 @@ public final class Constants {
           endFiveNoteShot(-72),
           sourceThreePieceShot(-69),
           endAmpFourcePieceShot(-68), // last note shot for amp 4 note 
-          ampFourPieceShot(-71),     // normal shot for amp 4 note
+          ampFourPieceShot(-73),     // normal shot for amp 4 note
           overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
           climbStop(-45.0),
           ampShot(50.0),
