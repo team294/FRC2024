@@ -53,8 +53,8 @@ public class SourceFourNoteCenter extends SequentialCommandGroup {
         // goes around stage intake up note left of middle center note
         new ParallelDeadlineGroup(
            new ConditionalCommand(
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveOutsideStageLeftCenterNoteRed.value], driveTrain, log),
-                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveOutsideStageLeftCenterNoteBlue.value], driveTrain, log),
+                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNextNoteToCenterNoteRightRed.value], driveTrain, log),
+                new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNextNoteToCenterNoteRightBlue.value], driveTrain, log),
                 () -> alliance.getAlliance() == Alliance.Red
                 ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
           new WristSetAngle(WristAngle.lowerLimit, wrist, log),
