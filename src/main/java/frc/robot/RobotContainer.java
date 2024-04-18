@@ -47,7 +47,6 @@ public class RobotContainer {
   private final FileLog log = new FileLog("C7");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
-  private final Timer pieceTimer = new Timer();
 
   // Define robot subsystems  
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
@@ -62,7 +61,7 @@ public class RobotContainer {
   private final BCRRobotState robotState = new BCRRobotState();
   
   // Is a subsystem, but requires a utility
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, matchTimer, pieceTimer, wrist, log);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, matchTimer, wrist, log);
 
 
   // Define controllers

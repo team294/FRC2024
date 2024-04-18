@@ -49,13 +49,11 @@ public class LED extends SubsystemBase {
    * @param feeder
    * @param robotState
    * @param matchTimer
-   * @param pieceTimer
    * @param wrist
    * @param log
    */
   public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, 
-             BCRRobotState robotState, Timer matchTimer, Timer pieceTimer, Wrist wrist,
-             FileLog log)
+             BCRRobotState robotState, Timer matchTimer, Wrist wrist, FileLog log)
             {
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
@@ -65,7 +63,6 @@ public class LED extends SubsystemBase {
     this.shooter = shooter;
     this.feeder = feeder;
     this.matchTimer = matchTimer;
-    this.pieceTimer = pieceTimer;
     this.shouldClear = false;
     this.wrist = wrist;
     this.log = log;
@@ -284,15 +281,18 @@ public class LED extends SubsystemBase {
     // Set LEDs to match the state, as defined in Constants.BCRColor
     switch (currentState) {
     case IDLE:
-      pieceTimer.start();
       if (feeder.isPiecePresent()) {
-        setAnimation(new Color(255, 30, 0), segment);
+        pieceTimer.start();
         if (pieceTimer.get() >= .5) {
           setHasPiece();
           pieceTimer.stop();
+          pieceTimer.reset();
         }
+      } else {
+          pieceTimer.stop();
+          pieceTimer.reset();
       }
-      if (hasPiece) {
+      if (hasPiece || feeder.isPiecePresent()) {
         if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance   // if wheels are up to speed, set LEDs green
         && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight || segment == LEDSegmentRange.StripHorizontal)) {
           setAnimation(new Color(0, 255, 0), segment);  // rgb instead of kGreen due to error (kGreen is yellow for some reason)
