@@ -61,8 +61,8 @@ public class ShootPieceFarPassWithVision extends SequentialCommandGroup {
           // distance from center of robot to shooter
           double dist = Math.sqrt(x*x+y*y);
 
-          return (269.848 * dist) + 94.4051; 
-        }, driveTrain, VelocityType.waitForVelocity, shooter, log),
+          return (280.0 * dist) + 94.4051;   // C4:  Increased multipler from 269 to 280
+        }, VelocityType.waitForVelocity, shooter, log),
         new WaitUntilCommand( () -> !wrist.isEncoderCalibrated() || (Math.abs(wrist.getCurrentWristTarget() - wrist.getWristAngle()) < WristConstants.wristShootTolerance) )
       ).withTimeout(1.5),
 

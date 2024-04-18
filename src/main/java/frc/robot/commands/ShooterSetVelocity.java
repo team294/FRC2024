@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Sequences.ShootPieceFarPassWithVision.VelocityGetter;
-import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
 
@@ -22,7 +21,6 @@ public class ShooterSetVelocity extends Command {
 
   private VelocityGetter velocityGetter;
   private boolean useGetter = false;
-  private DriveTrain driveTrain;
 
   public enum VelocityType{
     immediatelyEnd,
@@ -68,7 +66,7 @@ public class ShooterSetVelocity extends Command {
     addRequirements(shooter);
   }
   
-  public ShooterSetVelocity(VelocityGetter getter, DriveTrain driveTrain, VelocityType type, Shooter shooter, FileLog log) {
+  public ShooterSetVelocity(VelocityGetter getter, VelocityType type, Shooter shooter, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.velocityGetter = getter;
     this.type = type;
@@ -76,7 +74,6 @@ public class ShooterSetVelocity extends Command {
     this.shooter = shooter;
     this.fromShuffleboard = false;
     this.useGetter = true;
-    this.driveTrain = driveTrain;
     addRequirements(shooter);
   }
 
@@ -126,12 +123,15 @@ public class ShooterSetVelocity extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    if (useGetter) {
+    if (useGetter && type == VelocityType.runForever) {
+      // Don't update velocity from getter if type == waitForVelocity, otherwise the getter could
+      // change the velocity up/down a little (due to noise from vision) and never settle on
+      // a value.  Then the PID controller would try to track and maybe never get in tolerance,
+      // and then this command would never end.
       velocityTop = velocityGetter.get();
       velocityBottom = velocityTop*1.1;
+      shooter.setShooterVelocity(velocityTop, velocityBottom);
     }
-
   }
 
   // Called once the command ends or is interrupted.
