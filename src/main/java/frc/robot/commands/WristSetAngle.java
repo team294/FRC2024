@@ -68,9 +68,12 @@ public class WristSetAngle extends Command {
   }
 
    /**
-   * Moves wrist to target angle from Shuffleboard.  Command ends when wrist is within 5 degrees of the target position.
-   * <p> This command does nothing and immediately returns if the wrist is not calibrated.
-   */
+    * Moves wrist to target angle from Shuffleboard.  Command ends when wrist is within 5 degrees of the target position.
+    * <p> This command does nothing and immediately returns if the wrist is not calibrated.
+    * @param isAmp True = Move wrist to amp angle with nudge offset.  False = Move wrist to amp angle without nudge offset.  
+    * @param wrist
+    * @param log
+    */
   public WristSetAngle(boolean isAmp, Wrist wrist, FileLog log) {
     this.isAmp = isAmp;
     this.wrist = wrist;

@@ -18,7 +18,7 @@ public class WristNudgeAmpAngle extends InstantCommand {
   private FileLog log;
 
   /**
-   * Adjust the current calibration degrees of the wrist by a small amount
+   * Adjust the current amp shooting angle of the wrist by a small amount
    * @param deltaDegrees the number of degrees to move up/down
    * @param wrist
    * @param log
@@ -28,19 +28,6 @@ public class WristNudgeAmpAngle extends InstantCommand {
     this.wrist = wrist;
     this.log = log;
 
-    addRequirements(wrist);
-  }
-
-  /**
-   * Adjust the current calibration degrees of the wrist by a small amount (from SmartDashboard)
-   * @param deltaDegrees the number of degrees to move up/down (Wrist Nudge Delta Degrees from SmartDashboard)
-   * @param wrist
-   * @param log
-   */
-  public WristNudgeAmpAngle(Wrist wrist, FileLog log) {
-    this.wrist = wrist;
-    this.log = log;
-   
     addRequirements(wrist);
   }
 

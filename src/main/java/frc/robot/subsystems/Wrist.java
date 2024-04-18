@@ -350,6 +350,11 @@ public class Wrist extends SubsystemBase implements Loggable{
     ampAngleOffset += deltaDegrees;
   }
 
+  /**
+   * Returns the current value of the amp angle shooting offset (higher or lower by
+   * a few degrees).
+   * @return
+   */
   public double getAmpOffSet() {
     return ampAngleOffset;
   }
