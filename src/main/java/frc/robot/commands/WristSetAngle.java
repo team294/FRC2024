@@ -19,6 +19,7 @@ public class WristSetAngle extends Command {
   private final Wrist wrist;
   private final FileLog log;
   private final boolean fromShuffleboard;
+  private final boolean isAmp;
 
   /**
    * Moves wrist to target angle.  Command ends when wrist is within 5 degrees of the target position.
@@ -30,6 +31,7 @@ public class WristSetAngle extends Command {
     this.wrist = wrist;
     this.log = log;
     fromShuffleboard = false;
+    isAmp = false;
 
     addRequirements(wrist);
   }
@@ -44,6 +46,7 @@ public class WristSetAngle extends Command {
     this.wrist = wrist;
     this.log = log;
     fromShuffleboard = false;
+    isAmp = false;
 
     addRequirements(wrist);
   }
@@ -56,10 +59,28 @@ public class WristSetAngle extends Command {
     this.wrist = wrist;
     this.log = log;
     fromShuffleboard = true;
+    isAmp = false;
 
     if(SmartDashboard.getNumber("Wrist Angle to set", -9999) == -9999) {
       SmartDashboard.putNumber("Wrist Angle to set", 0);
     }
+    addRequirements(wrist);
+  }
+
+   /**
+    * Moves wrist to target angle from Shuffleboard.  Command ends when wrist is within 5 degrees of the target position.
+    * <p> This command does nothing and immediately returns if the wrist is not calibrated.
+    * @param isAmp True = Move wrist to amp angle with nudge offset.  False = Move wrist to amp angle without nudge offset.  
+    * @param wrist
+    * @param log
+    */
+  public WristSetAngle(boolean isAmp, Wrist wrist, FileLog log) {
+    this.isAmp = isAmp;
+    this.wrist = wrist;
+    this.log = log;
+    fromShuffleboard = false;
+    angle = WristAngle.ampShot.value;
+
     addRequirements(wrist);
   }
 
@@ -68,6 +89,10 @@ public class WristSetAngle extends Command {
   public void initialize() {
     if(fromShuffleboard){
       angle = SmartDashboard.getNumber("Wrist Angle to set", 0);
+    }
+    if(isAmp){
+      angle = WristAngle.ampShot.value;
+      angle += wrist.getAmpOffSet();
     }
     wrist.setWristAngle(angle);
     log.writeLog(false, "WristSetAngle", "Initialize", "Target", angle);

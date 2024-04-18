@@ -213,7 +213,7 @@ public class RobotContainer {
     xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
-    // Clear piece jammed in intake.
+    // Shoot the piece (smart shoot -- depending on what arm button or auto-aim was pressed last)
     xbRB.onTrue(new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log));
 
     // Move wrist down and then intake a piece
@@ -261,7 +261,7 @@ public class RobotContainer {
     // Prep for amp shot
     xbPOVRight.onTrue( new ParallelCommandGroup(
         new IntakeStop(intake, log),
-        new WristSetAngle(WristAngle.ampShot, wrist, log),
+        new WristSetAngle(true, wrist, log),
         new SpeakerModeSet(false, robotState, log),
         new ShotModeSet(ShotMode.STANDARD, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
@@ -296,7 +296,7 @@ public class RobotContainer {
 
     // Shoot the note
     left[2].onTrue(
-        new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log)
+      new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log)
     );
 
     // Right button 1:  Aim lock on speaker
@@ -349,7 +349,10 @@ public class RobotContainer {
     coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
     coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
 
-    coP[9].onTrue(new DriveResetPose(0, false, driveTrain, log));
+    coP[9].onTrue(new WristNudgeAmpAngle(1, wrist, log)); //Nudge down
+    coP[10].onTrue(new WristNudgeAmpAngle(-1 ,wrist, log)); //Nudge up
+
+    coP[11].onTrue(new DriveResetPose(0, false, driveTrain, log));
   }
 
 
