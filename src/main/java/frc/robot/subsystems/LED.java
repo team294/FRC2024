@@ -9,6 +9,7 @@ import java.util.HashMap;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -421,6 +422,9 @@ public class LED extends SubsystemBase {
       setAnimation(segmentPatternHorizontal, LEDSegmentRange.StripHorizontal, true);
 
       displayLEDs();
+      if (DriverStation.isDisabled()) { // non-permanent piece detection when robot is disabled
+        clearHasPiece();
+      }
     }
   }
 }
