@@ -44,7 +44,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("C4");
+  private final FileLog log = new FileLog("C5");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -308,12 +308,16 @@ public class RobotContainer {
             // Short pass lobbing note towards alliance partner
             new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log), 
             // Far Pass lobbing note over stage to alliance partner
-            new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
-            () -> robotState.getShotMode() == ShotMode.SHORT_PASS
+            
+            new ConditionalCommand(
+              new ShootPieceFarPassWithVision(true, allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log),
+              new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
+              () -> robotState.getShotMode() == ShotMode.VISION_PASS
             ),
+            () -> robotState.getShotMode() == ShotMode.SHORT_PASS
+          ),
           () -> robotState.getShotMode() == ShotMode.STANDARD
         )
-        
     );
 
     // Right button 1:  Aim lock on speaker
@@ -333,7 +337,7 @@ public class RobotContainer {
       new SetAimLock(driveTrain, true, log),
       new SetShooterFarShot(WristAngle.longPassAngle, 
         ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, 
-        shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log)
+        shooter, wrist, intake, feeder, ShotMode.VISION_PASS, robotState, log)
     ));
     right[2].onFalse(
       new SetAimLock(driveTrain, false, log)
