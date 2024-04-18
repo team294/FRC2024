@@ -214,7 +214,7 @@ public class RobotContainer {
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Clear piece jammed in intake.
-    xbRB.onTrue(new IntakeClearJam(intake, feeder, robotState, log));
+    xbRB.onTrue(new ShootFullSequence(shooter, feeder, wrist, robotState, log));
 
     // Move wrist down and then intake a piece
     xbRT.onTrue(new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
@@ -296,24 +296,7 @@ public class RobotContainer {
 
     // Shoot the note
     left[2].onTrue(
-        new ConditionalCommand(
-          new ConditionalCommand(
-            // Shoot in speaeker
-            new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
-            // Shoot in amp
-            new ShootPieceAmp(feeder, robotState, log),
-            () -> robotState.isSpeakerMode()
-          ),
-          new ConditionalCommand(
-            // Short pass lobbing note towards alliance partner
-            new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log), 
-            // Far Pass lobbing note over stage to alliance partner
-            new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
-            () -> robotState.getShotMode() == ShotMode.SHORT_PASS
-            ),
-          () -> robotState.getShotMode() == ShotMode.STANDARD
-        )
-        
+        new ShootFullSequence(shooter, feeder, wrist, robotState, log)
     );
 
     // Right button 1:  Aim lock on speaker
