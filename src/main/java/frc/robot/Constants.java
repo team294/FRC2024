@@ -399,7 +399,7 @@ public final class Constants {
       // -90 degrees = vertical = wrist is hanging "down" naturally due to gravity
       public enum WristAngle {
           lowerLimit(-83.0),      // CALIBRATED
-          intakeLimit(-75), // Max angle that we can intake from NOT CALIBRATED
+          intakeLimit(-75), // Max angle that we can intake from. CALIBRATED (we know -75deg is ok.  Maybe could be higher, not tested.)
           speakerShotFromSpeaker(-42),  // A5: changed to -42 deg
           speakerShotFromSide(-38),
           speakerShotFromPodium(-67),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
@@ -415,7 +415,7 @@ public final class Constants {
           ampFourPieceShot(-71),     // normal shot for amp 4 note
           overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
           climbStop(-45.0),
-          ampShot(50.0),
+          ampShot(52.0),            // C4:  Increased from 50 to 52
           clearBellyPanMinAngle(-65),
           climbStart(65.0),
           upperLimit(90.0);       // CALIBRATED
