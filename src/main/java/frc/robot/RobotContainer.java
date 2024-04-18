@@ -418,6 +418,8 @@ public class RobotContainer {
     driveTrain.stopMotors();                // SAFETY:  Turn off any closed loop control that may be running, so the robot does not move when re-enabled.
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
     driveTrain.setVisionForOdomoetryState(true);
+
+    matchTimer.stop();
   }
 
   /**
