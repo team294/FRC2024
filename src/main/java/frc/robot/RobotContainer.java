@@ -213,8 +213,8 @@ public class RobotContainer {
     xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
-    // Clear piece jammed in intake.
-    xbRB.onTrue(new IntakeClearJam(intake, feeder, robotState, log));
+    // Shoot the piece (smart shoot -- depending on what arm button or auto-aim was pressed last)
+    xbRB.onTrue(new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log));
 
     // Move wrist down and then intake a piece
     xbRT.onTrue(new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
@@ -296,24 +296,7 @@ public class RobotContainer {
 
     // Shoot the note
     left[2].onTrue(
-        new ConditionalCommand(
-          new ConditionalCommand(
-            // Shoot in speaeker
-            new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
-            // Shoot in amp
-            new ShootPieceAmp(feeder, robotState, log),
-            () -> robotState.isSpeakerMode()
-          ),
-          new ConditionalCommand(
-            // Short pass lobbing note towards alliance partner
-            new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log), 
-            // Far Pass lobbing note over stage to alliance partner
-            new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
-            () -> robotState.getShotMode() == ShotMode.SHORT_PASS
-            ),
-          () -> robotState.getShotMode() == ShotMode.STANDARD
-        )
-        
+      new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log)
     );
 
     // Right button 1:  Aim lock on speaker
@@ -333,7 +316,7 @@ public class RobotContainer {
       new SetAimLock(driveTrain, true, log),
       new SetShooterFarShot(WristAngle.longPassAngle, 
         ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, 
-        shooter, wrist, intake, feeder, ShotMode.FAR_PASS, robotState, log)
+        shooter, wrist, intake, feeder, ShotMode.VISION_PASS, robotState, log)
     ));
     right[2].onFalse(
       new SetAimLock(driveTrain, false, log)
