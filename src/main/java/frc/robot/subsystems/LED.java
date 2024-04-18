@@ -288,6 +288,7 @@ public class LED extends SubsystemBase {
       pieceTimer.start();
       if (feeder.isPiecePresent() && pieceTimer.get() >= .5) {
         setHasPiece();
+        setAnimation(new Color(255, 30, 0), segment);
       }
       if (hasPiece) {
         if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance   // if wheels are up to speed, set LEDs green
