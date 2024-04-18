@@ -415,7 +415,7 @@ public final class Constants {
           ampFourPieceShot(-71),     // normal shot for amp 4 note
           overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
           climbStop(-45.0),
-          ampShot(50.0),
+          ampShot(52.0),            // C4:  Increased from 50 to 52
           clearBellyPanMinAngle(-65),
           climbStart(65.0),
           upperLimit(90.0);       // CALIBRATED
