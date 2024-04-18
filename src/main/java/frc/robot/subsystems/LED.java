@@ -32,7 +32,7 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private Timer matchTimer;
-  private Timer pieceTimer;
+  private Timer pieceTimer = new Timer();
   private boolean shouldClear;
   private Wrist wrist;
   private boolean isRainbow;
