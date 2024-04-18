@@ -9,6 +9,7 @@ import java.util.HashMap;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,9 +33,11 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private Timer matchTimer;
+  private Timer pieceTimer = new Timer();
   private boolean shouldClear;
   private Wrist wrist;
   private boolean isRainbow;
+  private boolean hasPiece;
 
   // private Color[] accuracyDisplayPattern = {Color.kRed, Color.kRed};
   private HashMap<LEDSegmentRange, LEDSegment> segments;
@@ -51,7 +54,8 @@ public class LED extends SubsystemBase {
    * @param log
    */
   public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, 
-             BCRRobotState robotState, Timer matchTimer, Wrist wrist, FileLog log) {
+             BCRRobotState robotState, Timer matchTimer, Wrist wrist, FileLog log)
+            {
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
@@ -64,6 +68,7 @@ public class LED extends SubsystemBase {
     this.wrist = wrist;
     this.log = log;
     this.isRainbow = false;
+    this.hasPiece = false;
     logRotationKey = log.allocateLogRotation();
 
     // this.accuracyDisplayThreshold = 35;
@@ -81,6 +86,15 @@ public class LED extends SubsystemBase {
 
   public void clearRainbow() {
     isRainbow = false;
+  }
+
+  public void setHasPiece() {
+    hasPiece = true;
+    pieceTimer.stop();
+  }
+
+  public void clearHasPiece() {
+    hasPiece = false;
   }
   
   /** Get the subsystem's name
@@ -269,6 +283,17 @@ public class LED extends SubsystemBase {
     switch (currentState) {
     case IDLE:
       if (feeder.isPiecePresent()) {
+        pieceTimer.start();
+        if (pieceTimer.get() >= .5) {
+          setHasPiece();
+          pieceTimer.stop();
+          pieceTimer.reset();
+        }
+      } else {
+          pieceTimer.stop();
+          pieceTimer.reset();
+      }
+      if (hasPiece || feeder.isPiecePresent()) {
         if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance   // if wheels are up to speed, set LEDs green
         && (segment == LEDSegmentRange.StripLeft || segment == LEDSegmentRange.StripRight || segment == LEDSegmentRange.StripHorizontal)) {
           setAnimation(new Color(0, 255, 0), segment);  // rgb instead of kGreen due to error (kGreen is yellow for some reason)
@@ -306,6 +331,7 @@ public class LED extends SubsystemBase {
       break;
     case SHOOTING:
       setAnimation(BCRColor.SHOOTING, segment);
+      clearHasPiece();
       break;
     }
   }
@@ -396,6 +422,9 @@ public class LED extends SubsystemBase {
       setAnimation(segmentPatternHorizontal, LEDSegmentRange.StripHorizontal, true);
 
       displayLEDs();
+      if (DriverStation.isDisabled()) { // non-permanent piece detection when robot is disabled
+        clearHasPiece();
+      }
     }
   }
 }
