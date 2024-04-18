@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
@@ -44,7 +45,10 @@ public class IntakePiece extends SequentialCommandGroup {
         new ParallelCommandGroup(
           new WristSetAngle(WristAngle.lowerLimit, wrist, log),
           new RobotStateSet(BCRRobotState.State.INTAKING, robotState, log),
-          new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log),
+          new SequentialCommandGroup(
+            new WaitUntilCommand(() -> wrist.getWristAngle() < WristAngle.intakeLimit.value).withTimeout(1.5),
+            new IntakeSetPercent(IntakeConstants.intakePercent,IntakeConstants.centeringPercent, intake, log)
+          ),
           new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
           // Spin down the shooter if needed
           new ConditionalCommand(
