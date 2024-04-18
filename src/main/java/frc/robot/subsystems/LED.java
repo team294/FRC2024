@@ -284,11 +284,13 @@ public class LED extends SubsystemBase {
     // Set LEDs to match the state, as defined in Constants.BCRColor
     switch (currentState) {
     case IDLE:
-      pieceTimer.reset();
       pieceTimer.start();
-      if (feeder.isPiecePresent() && pieceTimer.get() >= .5) {
-        setHasPiece();
+      if (feeder.isPiecePresent()) {
         setAnimation(new Color(255, 30, 0), segment);
+        if (pieceTimer.get() >= .5) {
+          setHasPiece();
+          pieceTimer.stop();
+        }
       }
       if (hasPiece) {
         if(shooter.isVelocityControlOn() && Math.abs(shooter.getTopShooterVelocityPIDError()) < ShooterConstants.velocityErrorTolerance   // if wheels are up to speed, set LEDs green
