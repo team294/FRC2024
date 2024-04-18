@@ -47,6 +47,7 @@ public class RobotContainer {
   private final FileLog log = new FileLog("C2");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
+  private final Timer pieceTimer = new Timer();
 
   // Define robot subsystems  
   private final DriveTrain driveTrain = new DriveTrain(allianceSelection, log);
@@ -61,7 +62,7 @@ public class RobotContainer {
   private final BCRRobotState robotState = new BCRRobotState();
   
   // Is a subsystem, but requires a utility
-  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, matchTimer, wrist, log);
+  private final LED led = new LED(Constants.Ports.CANdle1, "LED", shooter, feeder, robotState, matchTimer, pieceTimer, wrist, log);
 
 
   // Define controllers
@@ -418,6 +419,8 @@ public class RobotContainer {
     driveTrain.stopMotors();                // SAFETY:  Turn off any closed loop control that may be running, so the robot does not move when re-enabled.
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
     driveTrain.setVisionForOdomoetryState(true);
+
+    matchTimer.stop();
   }
 
   /**
