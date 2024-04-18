@@ -32,6 +32,7 @@ public class LED extends SubsystemBase {
   private Shooter shooter;
   private Feeder feeder;
   private Timer matchTimer;
+  private Timer pieceTimer;
   private boolean shouldClear;
   private Wrist wrist;
   private boolean isRainbow;
@@ -48,11 +49,14 @@ public class LED extends SubsystemBase {
    * @param feeder
    * @param robotState
    * @param matchTimer
+   * @param pieceTimer
    * @param wrist
    * @param log
    */
   public LED(int CANPort, String subsystemName, Shooter shooter, Feeder feeder, 
-             BCRRobotState robotState, Timer matchTimer, Wrist wrist, FileLog log) {
+             BCRRobotState robotState, Timer matchTimer, Timer pieceTimer, Wrist wrist,
+             FileLog log)
+            {
     this.subsystemName = subsystemName;
     this.candle = new CANdle(CANPort, "");
     this.segments = new HashMap<LEDSegmentRange, LEDSegment>();
@@ -61,6 +65,7 @@ public class LED extends SubsystemBase {
     this.shooter = shooter;
     this.feeder = feeder;
     this.matchTimer = matchTimer;
+    this.pieceTimer = pieceTimer;
     this.shouldClear = false;
     this.wrist = wrist;
     this.log = log;
@@ -87,6 +92,7 @@ public class LED extends SubsystemBase {
 
   public void setHasPiece() {
     hasPiece = true;
+    pieceTimer.stop();
   }
 
   public void clearHasPiece() {
@@ -278,8 +284,9 @@ public class LED extends SubsystemBase {
     // Set LEDs to match the state, as defined in Constants.BCRColor
     switch (currentState) {
     case IDLE:
-      if (feeder.isPiecePresent()) {
-        setAnimation(new Color(255, 30, 0), segment);
+      pieceTimer.reset();
+      pieceTimer.start();
+      if (feeder.isPiecePresent() && pieceTimer.get() >= .5) {
         setHasPiece();
       }
       if (hasPiece) {
