@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
 import frc.robot.utilities.AllianceSelection;
@@ -105,9 +106,9 @@ public class PhotonCameraWrapper extends SubsystemBase {
       log.writeLogEcho(true, "PhotonCameraWrapper", "UpdateAlliance", "Alliance changed", currAlliance);
     }
 
-    // if (fastLogging || log.isMyLogRotation(logRotationKey)) {
-    //   log.writeLog(false, "PhotonCameraWrapper", "Periodic", "");
-    // }
+    if (fastLogging || log.isMyLogRotation(logRotationKey)) {
+      // log.writeLog(false, "PhotonCameraWrapper", "Periodic", "");
+    }
   }
 
   /**
@@ -133,7 +134,13 @@ public class PhotonCameraWrapper extends SubsystemBase {
     if (newPoseOptional.isPresent()) {
       EstimatedRobotPose newPose = newPoseOptional.get();
       if(fastLogging || log.isMyLogRotation(logRotationKey)) {
-        log.writeLog(false, "PhotonCameraWrapper", "getEstimatedGlobalPose", "X",newPose.estimatedPose.getX(),"Y",newPose.estimatedPose.getY());
+        log.writeLog(false, "PhotonCameraWrapper", "getEstimatedGlobalPose", "IsConnected", photonCamera.isConnected(), "TagPresent", true, "X",newPose.estimatedPose.getX(),"Y",newPose.estimatedPose.getY());
+        SmartDashboard.putBoolean("PhotonVision Connected", photonCamera.isConnected());
+      }
+    } else {
+      if(fastLogging || log.isMyLogRotation(logRotationKey)) {
+        log.writeLog(false, "PhotonCameraWrapper", "getEstimatedGlobalPose", "IsConnected", photonCamera.isConnected(), "TagPresent", false, "X", 0, "Y", 0);
+        SmartDashboard.putBoolean("PhotonVision Connected", photonCamera.isConnected());
       }
     }
     return newPoseOptional;
