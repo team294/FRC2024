@@ -647,9 +647,9 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             new Rotation2d(Math.toRadians(10)), 
             calcTrajectory("Center note to Podium Shot Blue", .9, .8, false, 
-            new Pose2d(9, 7.46, new Rotation2d(0)), 
+            new Pose2d(9, 7.46, new Rotation2d(Math.PI)), 
             List.of(), 
-            new Pose2d(4.6, 6.3, new Rotation2d(0)) 
+            new Pose2d(4.6, 6.3, new Rotation2d(Math.PI)) 
             ));
 
         cache[TrajectoryType.drivePodiumShotToNextCenterNoteBlue.value] = new TrajectoryFacing(
@@ -665,9 +665,9 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             new Rotation2d(Math.toRadians(10)), 
             calcTrajectory("Next Center note to Podium Shot Blue", .9, .8, false, 
-            new Pose2d(9, 5.8, new Rotation2d(0)),
+            new Pose2d(9, 5.8, new Rotation2d(Math.PI)),
             List.of(new Translation2d(7, 6.1296)), 
-            new Pose2d(4.6, 6.3, new Rotation2d(0))
+            new Pose2d(4.6, 6.3, new Rotation2d(Math.PI))
             ));
 
         cache[TrajectoryType.drivePodiumShotToCenterNoteBlue.value] = new TrajectoryFacing(
@@ -683,7 +683,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(-20)), 
             new Rotation2d(0), 
             calcTrajectory("Center note to Podium Shot Blue", .9, .8, false, 
-            new Pose2d(8.4, 4.13, new Rotation2d(0)), 
+            new Pose2d(8.4, 4.13, new Rotation2d(Math.PI)), 
             List.of(new Translation2d(4.9, 4.2)), 
             new Pose2d(3.7582, 5.478, new Rotation2d(Math.PI)) 
             ));
