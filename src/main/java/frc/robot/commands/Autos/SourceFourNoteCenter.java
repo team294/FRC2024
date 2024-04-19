@@ -56,7 +56,7 @@ public class SourceFourNoteCenter extends SequentialCommandGroup {
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveOutsideStageLeftCenterNoteRed.value], driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveOutsideStageLeftCenterNoteBlue.value], driveTrain, log),
                 () -> alliance.getAlliance() == Alliance.Red
-                ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
+                ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
           new WristSetAngle(WristAngle.lowerLimit, wrist, log),
           new IntakePieceAuto(intake, feeder, robotState, log)
         ),
@@ -80,7 +80,7 @@ public class SourceFourNoteCenter extends SequentialCommandGroup {
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotestoCenterNoteRed.value], driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceOutsideNotestoCenterNoteBlue.value], driveTrain, log),
                 () -> alliance.getAlliance() == Alliance.Red
-            ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
+            ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
             new WristSetAngle(WristAngle.lowerLimit, wrist, log),
             new IntakePieceAuto(intake, feeder, robotState, log)
         ),
@@ -105,7 +105,7 @@ public class SourceFourNoteCenter extends SequentialCommandGroup {
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.drivePodiumShotToCenterRightNoteRed.value], driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.drivePodiumShotToCenterRightNoteBlue.value], driveTrain, log),
                 () -> alliance.getAlliance() == Alliance.Red
-            ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
+            ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
             new WristSetAngle(WristAngle.lowerLimit, wrist, log),
             new IntakePieceAuto(intake, feeder, robotState, log)
         ),

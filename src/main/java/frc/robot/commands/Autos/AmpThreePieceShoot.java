@@ -49,7 +49,7 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
                     new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpToSecondFarCenterBlue.value], driveTrain, log) 
                 ),
                 () -> alliance.getAlliance() == Alliance.Red
-            ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
+            ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
             new WristSetAngle(WristAngle.lowerLimit, wrist, log),
             new IntakePieceAuto(intake, feeder, robotState, log)
         ),
@@ -75,7 +75,7 @@ public class AmpThreePieceShoot extends SequentialCommandGroup {
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.drivePodiumShotToCenterNoteRed.value], driveTrain, log),
                 new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.drivePodiumShotToCenterNoteBlue.value], driveTrain, log),
                 () -> alliance.getAlliance() == Alliance.Red
-            ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
+            ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
             new WristSetAngle(WristAngle.lowerLimit, wrist, log),
             new IntakePieceAuto(intake, feeder, robotState, log)
         ),
