@@ -400,7 +400,7 @@ public final class Constants {
       public enum WristAngle {
           lowerLimit(-83.0),      // CALIBRATED
           intakeLimit(-75), // Max angle that we can intake from. CALIBRATED (we know -75deg is ok.  Maybe could be higher, not tested.)
-          speakerShotFromSpeaker(-42),  // A5: changed to -42 deg
+          speakerShotFromSpeaker(-38),  // A5: changed to -42 deg
           speakerShotFromSide(-38),
           speakerShotFromPodium(-67),  // A4: changed to -70 deg.  Practice field -72deg for 128" field edge to front of bumper, ~144" to robot origin
           speakerShotFromMidStage(-79),
@@ -409,7 +409,7 @@ public final class Constants {
           sourceCloseNoteShot(-61),
           centerCloseNoteShot(-62),
           ampCloseNoteShot(-63),
-          endFiveNoteShot(-72),
+          endFiveNoteShot(-69),
           sourceThreePieceShot(-69),
           endAmpFourcePieceShot(-66), // last note shot for amp 4 note 
           ampFourPieceShot(-73),     // C6:  Decreased by 3 degrees.  normal shot for amp 4 note
