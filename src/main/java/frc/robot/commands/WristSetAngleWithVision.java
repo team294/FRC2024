@@ -70,14 +70,20 @@ public class WristSetAngleWithVision extends Command {
   private double getAngleFromDistance(int n, double xRobot, double yRobot) {
     if (n == 0) return 0;
 
+    // distance from speaker
     double x = xRobot;
     double y = yRobot - allianceSelection.getSpeakerYPos();
+    double dist = Math.sqrt(x*x+y*y);
+
+    // Fix for short angles
+    if (dist<=1.0) {
+      return (-4.5518)*dist -36.2;
+    }
+
     double armAngleIterateRadians = Units.degreesToRadians(getAngleFromDistance(n-1, xRobot, yRobot));
 
     // distance from center of robot to shooter
     double distOff = RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(armAngleIterateRadians);
-    // distance from speaker
-    double dist = Math.sqrt(x*x+y*y);
 
     double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot+RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(armAngleIterateRadians);
 
