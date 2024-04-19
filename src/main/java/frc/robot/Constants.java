@@ -411,9 +411,9 @@ public final class Constants {
           ampCloseNoteShot(-63),
           endFiveNoteShot(-72),
           sourceThreePieceShot(-69),
-          endAmpFourcePieceShot(-68), // last note shot for amp 4 note 
-          ampFourPieceShot(-75),     // C6:  Decreased by 3 degrees.  normal shot for amp 4 note
-          overheadShotAngle(56),      // B5:  Increased from 55 to 56 deg after Qual 63
+          endAmpFourcePieceShot(-66), // last note shot for amp 4 note 
+          ampFourPieceShot(-73),     // C6:  Decreased by 3 degrees.  normal shot for amp 4 note
+          overheadShotAngle(57),      // D1:  Increased from 56 to 57 deg Worlds Fri before matches.
           climbStop(-45.0),
           ampShot(52.0),            // C4:  Increased from 50 to 52
           clearBellyPanMinAngle(-65),
