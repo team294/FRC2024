@@ -55,7 +55,7 @@ public class CenterFivePieceShootNextToEdge extends SequentialCommandGroup {
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterStartToSourceNearBlue.value], driveTrain, log)
           ), 
           () -> alliance.getAlliance() == Alliance.Red
-        ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0).withTimeout(0.5) ),
+        ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0).withTimeout(0.5) ),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),
@@ -67,7 +67,7 @@ public class CenterFivePieceShootNextToEdge extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceNoteToCenterNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceNoteToCenterNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
-        ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
+        ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),
@@ -79,7 +79,7 @@ public class CenterFivePieceShootNextToEdge extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToAmpNoteRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToAmpNoteBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
-        ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
+        ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),
@@ -91,7 +91,7 @@ public class CenterFivePieceShootNextToEdge extends SequentialCommandGroup {
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToSecondCenterRed.value], driveTrain, log), 
           new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromAmpNoteToSecondCenterBlue.value], driveTrain, log), 
           () -> alliance.getAlliance() == Alliance.Red
-        ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
+        ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),
         new IntakePieceAuto(intake, feeder, robotState, log)
       ),

@@ -4,6 +4,9 @@
 
 package frc.robot.commands.Sequences;
 
+import javax.swing.text.ParagraphView;
+
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
@@ -39,8 +42,10 @@ public class IntakePieceAuto extends SequentialCommandGroup {
       new IntakeSetPercent(0, 0, intake, log),
       new FeederSetPercent(-0.05, feeder, log),
       new WaitCommand(0.1),
-      new FeederSetPercent(0.0, feeder, log),      
-      new RobotStateSetIdle(robotState, feeder, log)
-      );
+      new ParallelCommandGroup(
+        new FeederSetPercent(0.0, feeder, log),      
+        new RobotStateSetIdle(robotState, feeder, log)
+      )
+    );
   }
 }
