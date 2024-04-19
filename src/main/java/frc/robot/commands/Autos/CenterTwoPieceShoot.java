@@ -46,7 +46,7 @@ public class CenterTwoPieceShoot extends SequentialCommandGroup {
             new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log) 
           ),
           () -> alliance.getAlliance() == Alliance.Red
-        ).andThen( new WaitUntilCommand( () -> feeder.isPiecePresent() && feeder.getFeederSetPercent() >= 0.0 ).withTimeout(0.5) ),
+        ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
         new IntakePieceAuto(intake, feeder, robotState, log),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log)
       ),
