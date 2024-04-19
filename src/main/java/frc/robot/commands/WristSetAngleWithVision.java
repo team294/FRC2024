@@ -40,6 +40,14 @@ public class WristSetAngleWithVision extends Command {
 
     SmartDashboard.putNumber("Wrist Vision Constant Offset", 0);
 
+    // Print out table of arm angles versus distance
+    double x;
+    double y = allianceSelection.getSpeakerYPos();
+    for (x = 0; x <= 6; x += 0.1) {
+      log.writeLog(true, "WristSetAngleWithVision", "Initialize", "x", x, "y", y,
+        "angle", getAngleFromDistance(3, x, y));
+    }
+
     addRequirements(wrist);
   }
 
