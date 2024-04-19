@@ -43,20 +43,35 @@ public class WristSetAngleWithVision extends Command {
     addRequirements(wrist);
   }
 
-  /*
-   * @param int n the number of recursions the function runs before using base condition
+  /**
+   * Calculates the desired arm angle for the speaker shot, based on robot location on the field
+   * @param n the number of recursions the function runs before using base condition
+   * @return Recommended wrist angle, in degrees 
    */
   private double getAngleFromDistance(int n) {
+    return getAngleFromDistance(n, driveTrain.getPose().getX(), driveTrain.getPose().getY());
+  }
+
+  /**
+   * Calculates the desired arm angle for the speaker shot, based on robot location passed in
+   * @param n the number of recursions the function runs before using base condition
+   * @param xRobot robot X location on field, in meters
+   * @param yRobot robot X location on field, in meters
+   * @return Recommended wrist angle, in degrees 
+   */
+  private double getAngleFromDistance(int n, double xRobot, double yRobot) {
     if (n == 0) return 0;
 
-    double x = driveTrain.getPose().getX();
-    double y = (driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos());
+    double x = xRobot;
+    double y = yRobot - allianceSelection.getSpeakerYPos();
+    double armAngleIterateRadians = Units.degreesToRadians(getAngleFromDistance(n-1, xRobot, yRobot));
+
     // distance from center of robot to shooter
-    double distOff = RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(Units.degreesToRadians(getAngleFromDistance(n-1)));
+    double distOff = RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.cos(armAngleIterateRadians);
     // distance from speaker
     double dist = Math.sqrt(x*x+y*y);
 
-    double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot+RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(Units.degreesToRadians(getAngleFromDistance(n-1)));
+    double heightOfShooter = RobotDimensions.heightFromGroundToWristPivot+RobotDimensions.lengthOfArmFromWristPivotToCenterPathOfShooter*Math.sin(armAngleIterateRadians);
 
     // correction offset calculated from regression
     double correctionOffset = (n == 3) ? (3.79204*dist - 12.7572 + 1) : 0;
