@@ -36,10 +36,11 @@ public class AutoSelection {
 	public static final int SourceShootOnePiece = 9;
 	public static final int AmpShootOnePiece = 10;
 	public static final int SourceThreePieceCenter = 11;
-	public static final int CenterFivePieceShoot = 12;
-	public static final int AmpFourPieceCenter = 13;
-	public static final int AlternetSourceThreeNoteCenter = 14;
-	public static final int SourceFourNoteCenter = 15;
+	public static final int CenterFivePieceShootNextToEdge = 12;
+	public static final int CenterFivePieceShootEdge = 13;
+	public static final int AmpFourPieceCenter = 14;
+	public static final int AlternetSourceThreeNoteCenter = 15;
+	public static final int SourceFourNoteCenter = 16;
 
 
 
@@ -67,7 +68,8 @@ public class AutoSelection {
 		autoChooser.addOption("SourceShootOnePiece", SourceShootOnePiece);
 		autoChooser.addOption("AmpShootOnePiece", AmpShootOnePiece);
 		autoChooser.addOption("CenterFourPieceNearNoteAuto", CenterFourPieceShoot);
-		autoChooser.addOption("CenterFivePieceShoot", CenterFivePieceShoot);
+		autoChooser.addOption("CenterFivePieceShootNextToEdge", CenterFivePieceShootNextToEdge);
+		autoChooser.addOption("CenterFivePieceShootEdge", CenterFivePieceShootEdge);
 		autoChooser.addOption("AmpFourPieceCenter", AmpFourPieceCenter);
 		autoChooser.addOption("SourceThreePieceCenter", SourceThreePieceCenter);
 		autoChooser.addOption("AlternetSourceThreeNoteCenter", AlternetSourceThreeNoteCenter);
@@ -163,9 +165,13 @@ public class AutoSelection {
 			autonomousCommandMain = new SourceThreeNoteCenter(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
-		else if(autoPlan == CenterFivePieceShoot){
-			log.writeLogEcho(true, "AutoSelect", "run Center Five Piece Shoot");
-			autonomousCommandMain = new CenterFivePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		else if(autoPlan == CenterFivePieceShootNextToEdge){
+			log.writeLogEcho(true, "AutoSelect", "run Center Five Piece Shoot Next To Edge");
+			autonomousCommandMain = new CenterFivePieceShootNextToEdge(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
+		else if(autoPlan == CenterFivePieceShootEdge){
+			log.writeLogEcho(true, "AutoSelect", "run Center Five Piece Shoot Edge");
+			autonomousCommandMain = new CenterFivePieceShootEdge(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == AmpFourPieceCenter){
