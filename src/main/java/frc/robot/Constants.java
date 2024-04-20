@@ -305,8 +305,8 @@ public final class Constants {
       public static final double heightOfSpeaker = 2.03;
       
       // pass position
-      public static final double yPosFarPassTargetRed = Units.inchesToMeters(39);
-      public static final double xPosFarPassTargetRed = Units.feetToMeters(4);
+      public static final double yPosFarPassTargetRed = Units.inchesToMeters(44);   // D4:  Changed from 39 to 44
+      public static final double xPosFarPassTargetRed = Units.feetToMeters(3.66);   // D4:  Changed from 4 to 3.66
       
       public static final double yPosFarPassTargetBlue = width - yPosFarPassTargetRed;
       public static final double xPosFarPassTargetBlue = xPosFarPassTargetRed;
