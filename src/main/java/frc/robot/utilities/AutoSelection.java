@@ -42,6 +42,8 @@ public class AutoSelection {
 	public static final int AlternetSourceThreeNoteCenter = 15;
 	public static final int SourceFourNoteCenter = 16;
 	public static final int SourceFifthNote = 17;
+	public static final int SourceFifthNoteAndShoot = 18;
+
 
 
 
@@ -76,6 +78,8 @@ public class AutoSelection {
 		autoChooser.addOption("AlternetSourceThreeNoteCenter", AlternetSourceThreeNoteCenter);
 		autoChooser.addOption("SourceFourNoteCenter", SourceFourNoteCenter);
 		autoChooser.addOption("SourceFifthNote", SourceFifthNote);
+		autoChooser.addOption("SourceFifthNoteAndShoot", SourceFifthNoteAndShoot);
+
 
 
 	
@@ -198,6 +202,10 @@ public class AutoSelection {
 			autonomousCommandMain = new SourceOnePieceDriveToFifthNote(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
+		else if(autoPlan == SourceFifthNoteAndShoot){
+			log.writeLogEcho(true, "AutoSelect", "run Source Two Notes With Fifth note");
+			autonomousCommandMain = new SourceTwoPieceFifthNoteShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		}
 
 		else if (autonomousCommandMain == null) {
 			log.writeLogEcho(true, "AutoSelect", "No autocommand found");
