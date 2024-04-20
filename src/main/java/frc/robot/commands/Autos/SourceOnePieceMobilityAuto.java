@@ -6,6 +6,7 @@ package frc.robot.commands.Autos;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
@@ -13,6 +14,8 @@ import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
+import frc.robot.commands.WristSetAngle;
+import frc.robot.commands.Sequences.IntakePieceAuto;
 import frc.robot.commands.Sequences.SetShooterWristSpeakerAuto;
 import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
@@ -37,16 +40,20 @@ public class SourceOnePieceMobilityAuto extends SequentialCommandGroup {
     addCommands(
       new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
-      new ConditionalCommand(
-        new SequentialCommandGroup(
-            new DriveResetPose(0.8, 3.7296, 60, false, driveTrain, log),
-            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpToFarCenterRed.value], driveTrain, log) 
+      new ParallelCommandGroup(
+        new ConditionalCommand(
+          new SequentialCommandGroup(
+              new DriveResetPose(0.8, 3.7296, 60, false, driveTrain, log),
+              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToSideMobilityRed.value], driveTrain, log) 
+          ),
+          new SequentialCommandGroup(
+              new DriveResetPose(0.8, 4.5, -60, false, driveTrain, log),
+              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToSideMobilityBlue.value], driveTrain, log) 
+          ),
+          () -> alliance.getAlliance() == Alliance.Red
         ),
-        new SequentialCommandGroup(
-            new DriveResetPose(0.8, 4.5, -60, false, driveTrain, log),
-            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpToFarCenterBlue.value], driveTrain, log) 
-        ),
-        () -> alliance.getAlliance() == Alliance.Red
+        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
+        new IntakePieceAuto(intake, feeder, robotState, log)
       )
     );
   }
