@@ -22,7 +22,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 79;
+    private static int trajectoryCount = 81;
     public TrajectoryFacing[] cache = new TrajectoryFacing[trajectoryCount];        // array of trajectories
 
     public enum TrajectoryType {
@@ -104,7 +104,9 @@ public class TrajectoryCache {
         driveFromSourceToSideMobilityRed(75),
         driveFromSourceToSideMobilityBlue(76),
         driveFromWaitSpotToShootingPosRed(77),
-        driveFromWaitSpotToShootingPosBlue(78);
+        driveFromWaitSpotToShootingPosBlue(78),
+        driveFromSourceToWallMobilityRed(79),
+        driveFromSourceToWallMobilityBlue(80);
 
 
 
@@ -896,6 +898,28 @@ public class TrajectoryCache {
                 new Translation2d(1.4, 1.4)
             ), 
             new Pose2d(0.8, 4.5, new Rotation2d(Math.toRadians(90)))
+            ));
+
+        cache[TrajectoryType.driveFromSourceToWallMobilityRed.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(60)), 
+            new Rotation2d(0), 
+            calcTrajectory("Source Start To far note Red", .8, .8, false, 
+            new Pose2d(0.8, 3.7296, new Rotation2d(Math.toRadians(90))),
+            List.of(
+                new Translation2d(1.4, 6.8296)
+            ), 
+            new Pose2d(3, 7.460, new Rotation2d(0))
+            ));
+
+        cache[TrajectoryType.driveFromSourceToWallMobilityBlue.value] = new TrajectoryFacing(
+            new Rotation2d(Math.toRadians(-60)), 
+            new Rotation2d(0), 
+            calcTrajectory("Source Start to far note Blue", .8, .8, false, 
+            new Pose2d(0.8, 4.5, new Rotation2d(Math.toRadians(-90))),
+            List.of(
+                new Translation2d(1.4, 1.4)
+            ), 
+            new Pose2d(3, 0.7696, new Rotation2d(0))
             ));
             
 
