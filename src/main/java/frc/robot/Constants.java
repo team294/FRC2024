@@ -471,9 +471,9 @@ public final class Constants {
 
       public enum LEDSegmentRange {
           CANdle(0,8), // Whole CANdle
-          StripLeft(34, 30),  // Left strip only
-          StripRight(64, 30), // Right strip only
-          StripHorizontal(8, 26); // Horizontal strip only
+          StripLeft(33, 30),  // Left strip only -- D2:  Updated start address for shorter horizontal chain
+          StripRight(63, 30), // Right strip only -- D2:  Updated start address for shorter horizontal chain
+          StripHorizontal(8, 25); // Horizontal strip only -- D2:  Changed count from 26 to 25 for World elim - cut off 1 LED
 
           public final int index, count;
           LEDSegmentRange(int index, int count) {
