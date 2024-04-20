@@ -43,7 +43,7 @@ public class AutoSelection {
 	public static final int SourceFourNoteCenter = 16;
 	public static final int SourceFifthNote = 17;
 	public static final int SourceFifthNoteAndShoot = 18;
-	public static final int SourceWallMobilityAuto = 18;
+	public static final int SourceWallMobilityAuto = 19;
 
 
 
