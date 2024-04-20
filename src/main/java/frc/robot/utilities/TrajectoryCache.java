@@ -855,7 +855,7 @@ public class TrajectoryCache {
             new Rotation2d(Math.toRadians(60)), 
             new Rotation2d(0), 
             calcTrajectory("Source Start To far note Red", .8, .8, false, 
-            new Pose2d(0.8, 3.7296, new Rotation2d(Math.toRadians(-90))),
+            new Pose2d(0.8, 3.7296, new Rotation2d(Math.toRadians(90))),
             List.of(
                 new Translation2d(1.4, 6.8296)
             ), 
