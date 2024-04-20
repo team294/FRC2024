@@ -32,24 +32,34 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class SourceTwoPieceFifthNoteShoot extends SequentialCommandGroup {
   /** Creates a new SourceTwoPieceFifthNoteShoot. */
-  public SourceTwoPieceFifthNoteShoot(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+
+  /**
+   * waitTime:  Does **not** wait for waitTime!!!!  Used for information purposes only. 
+   */
+  public SourceTwoPieceFifthNoteShoot(double waitTime, Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ParallelCommandGroup(
         new SourceOnePieceDriveToFifthNote(intake, wrist, shooter, driveTrain, feeder, robotState, cache, alliance, log),
-        new WaitCommand(9)
+        new WaitCommand(Math.abs(9-waitTime))
       ),
-      new ParallelCommandGroup(
-        new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromWaitSpotToShootingPosRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromWaitSpotToShootingPosRed.value], driveTrain, log),  
-          () -> alliance.getAlliance() == Alliance.Red
+      new ConditionalCommand( 
+        new SequentialCommandGroup(
+          new ParallelCommandGroup(
+            new ConditionalCommand(
+              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromWaitSpotToShootingPosRed.value], driveTrain, log), 
+              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromWaitSpotToShootingPosBlue.value], driveTrain, log),  
+              () -> alliance.getAlliance() == Alliance.Red
+            ),
+            new SetShooterWristSpeakerAuto(WristAngle.sourceCloseNoteShot, 
+              ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
+          ),
+          new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
         ),
-        new SetShooterWristSpeakerAuto(WristAngle.sourceCloseNoteShot, 
-          ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
-      ),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
+        new WaitCommand(0.01),
+        () -> feeder.isPiecePresent()
+      )
     );
   }
 }

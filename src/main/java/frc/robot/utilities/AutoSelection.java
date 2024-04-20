@@ -207,7 +207,7 @@ public class AutoSelection {
 
 		else if(autoPlan == SourceFifthNoteAndShoot){
 			log.writeLogEcho(true, "AutoSelect", "run Source Two Notes With Fifth note");
-			autonomousCommandMain = new SourceTwoPieceFifthNoteShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new SourceTwoPieceFifthNoteShoot(waitTime, intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if(autoPlan == SourceWallMobilityAuto){

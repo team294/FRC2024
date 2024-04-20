@@ -43,11 +43,11 @@ public class SourceWallMobilityAuto extends SequentialCommandGroup {
         new ConditionalCommand(
           new SequentialCommandGroup(
               new DriveResetPose(0.8, 3.7296, 60, false, driveTrain, log),
-              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToSideMobilityRed.value], driveTrain, log) 
+              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToWallMobilityRed.value], driveTrain, log) 
           ),
           new SequentialCommandGroup(
               new DriveResetPose(0.8, 4.5, -60, false, driveTrain, log),
-              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToSideMobilityBlue.value], driveTrain, log) 
+              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToWallMobilityBlue.value], driveTrain, log) 
           ),
           () -> alliance.getAlliance() == Alliance.Red
         ),
