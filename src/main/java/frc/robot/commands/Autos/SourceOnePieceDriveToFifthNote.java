@@ -44,7 +44,7 @@ public class SourceOnePieceDriveToFifthNote extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
+      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ParallelDeadlineGroup(
         new ConditionalCommand(
           new SequentialCommandGroup(
