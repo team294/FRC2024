@@ -62,10 +62,10 @@ public class SourceOnePieceDriveToFifthNote extends SequentialCommandGroup {
       ),
       new ConditionalCommand(
           new SequentialCommandGroup(
-            new DriveToPose(new Pose2d(7.0, 7.467, new Rotation2d(0)), driveTrain, log)
+            new DriveToPose(new Pose2d(8.0, 7.467, new Rotation2d(0)), driveTrain, log)
           ),
           new SequentialCommandGroup(
-            new DriveToPose(new Pose2d(7.0, 0.7696, new Rotation2d(0)), driveTrain, log)
+            new DriveToPose(new Pose2d(8.0, 0.7696, new Rotation2d(0)), driveTrain, log)
           ),
           () -> alliance.getAlliance() == Alliance.Red
       )
