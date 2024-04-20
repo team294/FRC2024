@@ -854,23 +854,23 @@ public class TrajectoryCache {
         cache[TrajectoryType.driveFromSourceToSideMobilityRed.value] = new TrajectoryFacing(
             new Rotation2d(Math.toRadians(60)), 
             new Rotation2d(0), 
-            calcTrajectory("Source Start to Far Side Piece Red", .8, .8, false, 
+            calcTrajectory("Source Start To far note Red", .8, .8, false, 
             new Pose2d(0.8, 3.7296, new Rotation2d(Math.toRadians(-90))),
             List.of(
                 new Translation2d(1.4, 6.8296)
             ), 
             new Pose2d(9, 7.460, new Rotation2d(0))
             ));
-        
+
         cache[TrajectoryType.driveFromSourceToSideMobilityBlue.value] = new TrajectoryFacing(
-            new Rotation2d(Math.toRadians(60)), 
+            new Rotation2d(Math.toRadians(-60)), 
             new Rotation2d(0), 
-            calcTrajectory("Source Start to Far Side Piece Blue", .8, .8, false, 
-            new Pose2d(0.8, 3.7296, new Rotation2d(Math.toRadians(-90))),
+            calcTrajectory("Source Start to far note Blue", .8, .8, false, 
+            new Pose2d(0.8, 4.5, new Rotation2d(Math.toRadians(-90))),
             List.of(
-                new Translation2d(1.4, 6.8296)
+                new Translation2d(1.4, 1.4)
             ), 
-            new Pose2d(9, 7.460, new Rotation2d(0))
+            new Pose2d(9, 0.7696, new Rotation2d(0))
             ));
         
     }
