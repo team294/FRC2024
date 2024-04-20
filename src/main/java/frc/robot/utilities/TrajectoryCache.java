@@ -882,7 +882,7 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             new Rotation2d(Math.toRadians(60)), 
             calcTrajectory("Source Center Note To Start Red", .8, .8, false, 
-            new Pose2d(8, 7.460, new Rotation2d(0)),
+            new Pose2d(8, 7.460, new Rotation2d(Math.PI)),
             List.of(
                 new Translation2d(1.4, 6.8296)
             ), 
@@ -893,7 +893,7 @@ public class TrajectoryCache {
             new Rotation2d(0), 
             new Rotation2d(Math.toRadians(-60)), 
             calcTrajectory("Source Center Note To Start Blue", .8, .8, false, 
-            new Pose2d(8, 0.7696, new Rotation2d(0)),
+            new Pose2d(8, 0.7696, new Rotation2d(Math.PI)),
             List.of(
                 new Translation2d(1.4, 1.4)
             ), 
