@@ -25,7 +25,8 @@ public class BCRRobotState {
         STANDARD,
         SHORT_PASS,
         FAR_PASS,
-        VISION_PASS
+        VISION_PASS,
+        OUTREACH
     }
 
     private ShotMode shotMode = ShotMode.STANDARD;

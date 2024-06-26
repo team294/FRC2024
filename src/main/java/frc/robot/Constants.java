@@ -235,7 +235,7 @@ public final class Constants {
       public static final double shooterVelocityShortPassBottom = 2600;
       public static final double shooterVelocityFarPassTop = 2970;
       public static final double shooterVelocityFarPassBottom = 2970;
-      public static final double shooterVelocityOutreach = 1500;
+      public static final double shooterVelocityOutreach = 500;
 
       // Time for the shooter to ramp down at shooterPercentStopQuickly before stopping
       public static final double shooterSpinDownSeconds = 0.5;

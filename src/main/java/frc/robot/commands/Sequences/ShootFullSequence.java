@@ -33,11 +33,15 @@ public class ShootFullSequence extends SequentialCommandGroup {
           new ConditionalCommand(
             // Short pass lobbing note towards alliance partner
             new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log), 
-            // Far Pass lobbing note over stage to alliance partner
-            
             new ConditionalCommand(
               new ShootPieceFarPassWithVision(true, allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log),
-              new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
+              new ConditionalCommand(
+                  //Shoot outreach shot
+                  new ShootPiece(ShooterConstants.shooterVelocityOutreach, ShooterConstants.shooterVelocityOutreach, true, shooter, feeder, wrist, robotState, log),
+                  // Far Pass lobbing note over stage to alliance partner
+                  new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
+                  () -> robotState.getShotMode() == ShotMode.OUTREACH
+                  ),
               () -> robotState.getShotMode() == ShotMode.VISION_PASS
             ),
             () -> robotState.getShotMode() == ShotMode.SHORT_PASS

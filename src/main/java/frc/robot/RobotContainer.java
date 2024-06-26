@@ -268,8 +268,11 @@ public class RobotContainer {
     ) );
     
     //Prep for outreach shot (Slower podium shot) when button is pressed
-    xbPOVLeft.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromPodium, ShooterConstants.shooterVelocityOutreach, 
-      ShooterConstants.shooterVelocityOutreach, shooter, wrist, intake, feeder, robotState, log) );
+    xbPOVLeft.onTrue( new ParallelCommandGroup(
+      new SetShooterWristSpeaker(WristAngle.speakerShotFromPodium, ShooterConstants.shooterVelocityOutreach, ShooterConstants.shooterVelocityOutreach, shooter, wrist, intake, feeder, robotState, log),
+      new ShotModeSet(ShotMode.OUTREACH, robotState, log),
+      new RobotStateSetIdle(robotState, feeder, log)
+      ) );
 
     // Stop all motors
     xbStart.onTrue(new ParallelCommandGroup(
