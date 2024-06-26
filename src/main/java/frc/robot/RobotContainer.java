@@ -265,7 +265,11 @@ public class RobotContainer {
         new SpeakerModeSet(false, robotState, log),
         new ShotModeSet(ShotMode.STANDARD, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
-    ) );  
+    ) );
+    
+    //Prep for outreach shot (Slower podium shot) when button is pressed
+    xbPOVLeft.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromPodium, ShooterConstants.shooterVelocityOutreach, 
+      ShooterConstants.shooterVelocityOutreach, shooter, wrist, intake, feeder, robotState, log) );
 
     // Stop all motors
     xbStart.onTrue(new ParallelCommandGroup(
