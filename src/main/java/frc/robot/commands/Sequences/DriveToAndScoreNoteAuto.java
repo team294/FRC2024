@@ -29,9 +29,9 @@ import frc.robot.utilities.AllianceSelection;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class DriveToAndScoreNote extends SequentialCommandGroup {
+public class DriveToAndScoreNoteAuto extends SequentialCommandGroup {
   /** Creates a new DriveToAndScoreNote. */
-  public DriveToAndScoreNote(TrajectoryType trajectoryRed, TrajectoryType trajectoryBlue, WristAngle wristAngle, DriveTrain drivetrain, Feeder feeder, Shooter shooter, Wrist wrist, Intake intake, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public DriveToAndScoreNoteAuto(TrajectoryType trajectoryRed, TrajectoryType trajectoryBlue, WristAngle wristAngle, DriveTrain drivetrain, Feeder feeder, Shooter shooter, Wrist wrist, Intake intake, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
