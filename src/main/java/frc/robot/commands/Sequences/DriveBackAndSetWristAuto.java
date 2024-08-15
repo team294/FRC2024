@@ -6,16 +6,12 @@ package frc.robot.commands.Sequences;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveTrajectory;
-import frc.robot.commands.WristSetAngle;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -30,11 +26,12 @@ import frc.robot.utilities.AllianceSelection;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class DriveToAndIntakeNoteAuto extends ParallelDeadlineGroup {
-  /** Creates a new DriveToAndIntakeNoteAuto.
-   * Drives to a given trajectory based on alliance, and attempts to intake a note.
+public class DriveBackAndSetWristAuto extends ParallelDeadlineGroup {
+  /** 
+   * Drives to a given trajectory based on alliance, and primes the Shooter and Wrist for a speaker shot.
    * @param trajectoryRed trajectory to follow if on the Red Alliance
    * @param trajectoryBlue trajectory to follow if on the Blue Alliance
+   * @param wristAngle wrist target angle for shot, in degrees (+ = up, -  = down, 0 = horizontal)
    * @param drivetrain
    * @param feeder
    * @param shooter
@@ -44,8 +41,8 @@ public class DriveToAndIntakeNoteAuto extends ParallelDeadlineGroup {
    * @param cache
    * @param alliance
    * @param log
-   */
-  public DriveToAndIntakeNoteAuto(TrajectoryType trajectoryRed, TrajectoryType trajectoryBlue, DriveTrain drivetrain, Feeder feeder, Shooter shooter, Wrist wrist, Intake intake, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  */
+  public DriveBackAndSetWristAuto(TrajectoryType trajectoryRed, TrajectoryType trajectoryBlue, WristAngle wristAngle, DriveTrain drivetrain, Feeder feeder, Shooter shooter, Wrist wrist, Intake intake, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add the deadline command in the super() call. 
     // Add other commands using addCommands().
     super(
@@ -53,11 +50,10 @@ public class DriveToAndIntakeNoteAuto extends ParallelDeadlineGroup {
         new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectoryRed.value], drivetrain, log),
         new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectoryBlue.value], drivetrain, log),
         () -> alliance.getAlliance() == Alliance.Red
-      ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0).withTimeout(0.5) ) 
+      )
     );
     addCommands(
-      new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-      new IntakePieceAuto(intake, feeder, robotState, log)
+      new SetShooterWristSpeakerAuto(wristAngle, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
     );
   }
 }
