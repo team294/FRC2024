@@ -21,7 +21,7 @@ import frc.robot.utilities.AllianceSelection;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ResetPoseAndDriveToPos extends ConditionalCommand {
+public class ResetPoseAndDriveToPosAuto extends ConditionalCommand {
   /**
    * Reset pose and drives based on a given trajectory depending on alliance
    * @param redPos A Pose2d used to reset the pose when on the red alliance
@@ -38,7 +38,7 @@ public class ResetPoseAndDriveToPos extends ConditionalCommand {
    * @param alliance
    * @param log
    */
-  public ResetPoseAndDriveToPos(Pose2d redPos, Pose2d bluePos, TrajectoryType trajectoryRed, TrajectoryType trajectoryBlue, DriveTrain drivetrain, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public ResetPoseAndDriveToPosAuto(Pose2d redPos, Pose2d bluePos, TrajectoryType trajectoryRed, TrajectoryType trajectoryBlue, DriveTrain drivetrain, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add the deadline command in the super() call. 
     // Add other commands using addCommands().
     super(
