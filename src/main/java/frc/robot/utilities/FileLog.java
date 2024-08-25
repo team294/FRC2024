@@ -10,6 +10,8 @@ package frc.robot.utilities;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -43,9 +45,19 @@ public class FileLog {
 	public FileLog(String version) {
 		// When running on a RoboRio:  Logfile is placed in /home/lvuser/
 		// When running in simulation:  Logfile is placed in the VSCode project in the "sim" subdirectory
-		// 		Note that the "sim" directory must exist, otherwise the code will crash when simulating.
-		//		TODO when simulating, check if the sim directory exists, and if not then create it.
-		this(RobotBase.isReal() ? "/home/lvuser/logfile" : "sim\\logfilesim", version);
+
+		if (RobotBase.isReal()) {
+			createLog( "/home/lvuser/logfile", version);
+		} else {
+			// If the logfile directory does not exist, then create it.
+			try {
+				Files.createDirectories(Paths.get("sim"));
+			} catch (IOException exception) {
+				System.out.println("Could not create sim subdirectory: " + exception);
+			}
+
+			createLog( "sim\\logfilesim", version);
+		}
 	}
 	
 	/**
@@ -54,6 +66,15 @@ public class FileLog {
      * @param version Version of robot code (i.e. A1).
 	 */
 	public FileLog(String filenameBase, String version) {
+		createLog(filenameBase, version);
+	}
+
+	/**
+	 * Creates a new log file. ".ver.date.time.csv" will automatically be added to the end of the base file name.
+	 * @param filenameBase Path and name of log file.
+     * @param version Version of robot code (i.e. A1).
+	 */
+	private void createLog(String filenameBase, String version) {
 		this.fileNameBase = buildString(filenameBase, ".", version, ".");
         startTime = System.currentTimeMillis();
 		fileNameFull = buildString(fileNameBase, (fileDateFormat.format(startTime)), ".csv");
