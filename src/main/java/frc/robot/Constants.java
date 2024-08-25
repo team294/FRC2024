@@ -270,6 +270,10 @@ public final class Constants {
       public static final double interimThetaErrorDegrees = 2.0;        
       public static final double interimPositionErrorMeters = 0.20; // 8 inches
 
+      // Constants for 2nd dimension of the cache array
+      public static final int RED = 0;
+      public static final int BLUE = 1;
+
       // Feedback terms for holonomic drive controllers
 
       // X-velocity controller:  kp.  Units = (meters/sec of velocity) / (meters of position error)

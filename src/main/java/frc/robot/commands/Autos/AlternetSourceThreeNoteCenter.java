@@ -39,28 +39,28 @@ public class AlternetSourceThreeNoteCenter extends SequentialCommandGroup {
         new ScoreNoteAuto(WristAngle.speakerShotFromSide, feeder, shooter, wrist, intake, robotState, log),
 
         // leaves speaker from source side to outside of notes
-        new ResetPoseAndDriveToPosAuto(new Pose2d(0.8, 3.73, Rotation2d.fromDegrees(54)), new Pose2d(0.8, 4.5, Rotation2d.fromDegrees(-54)), TrajectoryType.driveSourceOutsideNotesRed, TrajectoryType.driveSourceOutsideNotesBlue, driveTrain, cache, alliance, log),
+        new ResetPoseAndDriveToPosAuto(new Pose2d(0.8, 3.73, Rotation2d.fromDegrees(54)), new Pose2d(0.8, 4.5, Rotation2d.fromDegrees(-54)), TrajectoryType.driveSourceOutsideNotes, driveTrain, cache, alliance, log),
         
         // goes around stage intake up note left of middle center note
-        new DriveToAndIntakeNoteAuto(TrajectoryType.driveOutsideStageLeftCenterNoteRed, TrajectoryType.driveOutsideStageLeftCenterNoteBlue, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+        new DriveToAndIntakeNoteAuto(TrajectoryType.driveOutsideStageLeftCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
 
         // drive back under stage to shoot note
-        new DriveBackAndSetWristAuto(TrajectoryType.driveLeftCenterNotetoOutsideStageRed, TrajectoryType.driveLeftCenterNotetoOutsideStageBlue, WristAngle.sourceThreePieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+        new DriveBackAndSetWristAuto(TrajectoryType.driveLeftCenterNotetoOutsideStage, WristAngle.sourceThreePieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
         
         // shoots in speaker   
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         // drives back through under stage to grab middle center note
-        new DriveToAndIntakeNoteAuto(TrajectoryType.driveSourceOutsideNotestoCenterNoteRed, TrajectoryType.driveSourceOutsideNotestoCenterNoteBlue, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+        new DriveToAndIntakeNoteAuto(TrajectoryType.driveSourceOutsideNotestoCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
        
         // drives back to shoot in speaker
-        new DriveBackAndSetWristAuto(TrajectoryType.driveCenterNotetoOutsideStageRed, TrajectoryType.driveCenterNotetoOutsideStageBlue, WristAngle.sourceThreePieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+        new DriveBackAndSetWristAuto(TrajectoryType.driveCenterNotetoOutsideStage, WristAngle.sourceThreePieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
         
         // shoots note
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
         //leaves to midfield to get headstart in teleop
-        new DriveBackAndSetWristAuto(TrajectoryType.driveOutsideStageLeftCenterNoteRed, TrajectoryType.driveOutsideStageLeftCenterNoteBlue, WristAngle.lowerLimit, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
+        new DriveBackAndSetWristAuto(TrajectoryType.driveOutsideStageLeftCenterNote, WristAngle.lowerLimit, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
     );
   }
 }

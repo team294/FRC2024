@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
+import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.WristSetAngle;
@@ -45,13 +46,13 @@ public class DriveToAndIntakeNoteAuto extends ParallelDeadlineGroup {
    * @param alliance
    * @param log
    */
-  public DriveToAndIntakeNoteAuto(TrajectoryType trajectoryRed, TrajectoryType trajectoryBlue, DriveTrain drivetrain, Feeder feeder, Shooter shooter, Wrist wrist, Intake intake, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public DriveToAndIntakeNoteAuto(TrajectoryType trajectory, DriveTrain drivetrain, Feeder feeder, Shooter shooter, Wrist wrist, Intake intake, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add the deadline command in the super() call. 
     // Add other commands using addCommands().
     super(
       new ConditionalCommand(
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectoryRed.value], drivetrain, log),
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectoryBlue.value], drivetrain, log),
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value][TrajectoryConstants.RED], drivetrain, log),
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value][TrajectoryConstants.BLUE], drivetrain, log),
         () -> alliance.getAlliance() == Alliance.Red
       ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0).withTimeout(0.5) ) 
     );

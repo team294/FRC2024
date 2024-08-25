@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
+import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.WristSetAngle;
@@ -31,14 +32,14 @@ import frc.robot.utilities.AllianceSelection;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveToAndScoreNoteAuto extends SequentialCommandGroup {
   /** Creates a new DriveToAndScoreNoteAuto. */
-  public DriveToAndScoreNoteAuto(TrajectoryType trajectoryRed, TrajectoryType trajectoryBlue, WristAngle wristAngle, DriveTrain drivetrain, Feeder feeder, Shooter shooter, Wrist wrist, Intake intake, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public DriveToAndScoreNoteAuto(TrajectoryType trajectory, WristAngle wristAngle, DriveTrain drivetrain, Feeder feeder, Shooter shooter, Wrist wrist, Intake intake, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ParallelDeadlineGroup(
         new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectoryRed.value], drivetrain, log),
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectoryBlue.value], drivetrain, log),
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value][TrajectoryConstants.RED], drivetrain, log),
+          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value][TrajectoryConstants.BLUE], drivetrain, log),
           () -> alliance.getAlliance() == Alliance.Red
         ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0).withTimeout(0.5) ),
         new WristSetAngle(WristAngle.lowerLimit, wrist, log),

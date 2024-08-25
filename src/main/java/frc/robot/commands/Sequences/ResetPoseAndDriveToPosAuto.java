@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.StopType;
+import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.subsystems.DriveTrain;
@@ -38,17 +39,17 @@ public class ResetPoseAndDriveToPosAuto extends ConditionalCommand {
    * @param alliance
    * @param log
    */
-  public ResetPoseAndDriveToPosAuto(Pose2d redPos, Pose2d bluePos, TrajectoryType trajectoryRed, TrajectoryType trajectoryBlue, DriveTrain drivetrain, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public ResetPoseAndDriveToPosAuto(Pose2d redPos, Pose2d bluePos, TrajectoryType trajectory, DriveTrain drivetrain, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add the deadline command in the super() call. 
     // Add other commands using addCommands().
     super(
       new SequentialCommandGroup(
         new DriveResetPose(redPos, false, drivetrain, log),
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectoryRed.value], drivetrain, log)
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value][TrajectoryConstants.RED], drivetrain, log)
       ),
       new SequentialCommandGroup(
         new DriveResetPose(bluePos, false, drivetrain, log),
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectoryBlue.value], drivetrain, log)
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value][TrajectoryConstants.BLUE], drivetrain, log)
       ),
       () -> alliance.getAlliance() == Alliance.Red
     );
