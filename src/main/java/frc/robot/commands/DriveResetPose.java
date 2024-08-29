@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,6 +66,22 @@ public class DriveResetPose extends Command {
 	 */
   public DriveResetPose(Pose2d curPose, boolean tolerance, DriveTrain driveTrain, FileLog log) {
     this(curPose.getX(), curPose.getY(), curPose.getRotation().getDegrees(), tolerance,
+        driveTrain, log);
+  }
+
+  /**
+	 * Resets the pose, gyro, and encoders on the drive train
+   * <p> Note:  This command can run while the robot is disabled.
+   * @param curPose Robot current pose on the field.  Pose components include
+   *    <p> Robot X location in the field, in meters (0 = field edge in front of driver station, +=away from our drivestation)
+   *    <p> Robot Y location in the field, in meters (0 = right edge of field when standing in driver station, +=left when looking from our drivestation)
+   *    <p> Robot angle on the field (0 = facing away from our drivestation, + to the left, - to the right)
+   * @param tolerance true = Don't reset if within 0.5m or 15 degrees of location, false = always reset
+   * @param driveTrain DriveTrain subsytem
+   * @param log FileLog
+	 */
+  public DriveResetPose(Supplier<Pose2d> curPose, boolean tolerance, DriveTrain driveTrain, FileLog log) {
+    this(curPose.get().getX(), curPose.get().getY(), curPose.get().getRotation().getDegrees(), tolerance,
         driveTrain, log);
   }
 
