@@ -4,13 +4,10 @@
 
 package frc.robot.commands.Sequences;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
-import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.subsystems.DriveTrain;
@@ -30,8 +27,7 @@ import frc.robot.utilities.AllianceSelection;
 public class DriveBackAndSetWristAuto extends ParallelDeadlineGroup {
   /** 
    * Drives to a given trajectory based on alliance, and primes the Shooter and Wrist for a speaker shot.
-   * @param trajectoryRed trajectory to follow if on the Red Alliance
-   * @param trajectoryBlue trajectory to follow if on the Blue Alliance
+   * @param trajectory trajectory to follow (Changing with alliance)
    * @param wristAngle wrist target angle for shot, in degrees (+ = up, -  = down, 0 = horizontal)
    * @param drivetrain
    * @param feeder
@@ -46,13 +42,7 @@ public class DriveBackAndSetWristAuto extends ParallelDeadlineGroup {
   public DriveBackAndSetWristAuto(TrajectoryType trajectory, WristAngle wristAngle, DriveTrain drivetrain, Feeder feeder, Shooter shooter, Wrist wrist, Intake intake, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add the deadline command in the super() call. 
     // Add other commands using addCommands().
-    super(
-      new ConditionalCommand(
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value][TrajectoryConstants.RED], drivetrain, log),
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value][TrajectoryConstants.BLUE], drivetrain, log),
-        () -> alliance.getAlliance() == Alliance.Red
-      )
-    );
+    super(new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value], drivetrain, alliance, log));
     addCommands(
       new SetShooterWristSpeakerAuto(wristAngle, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
     );

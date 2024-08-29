@@ -27,8 +27,7 @@ public class ResetPoseAndDriveToPosAuto extends ConditionalCommand {
    * Reset pose and drives based on a given trajectory depending on alliance
    * @param redPos A Pose2d used to reset the pose when on the red alliance
    * @param bluePose A Pose2d used to reset the pose when on the blue alliance
-   * @param trajectoryRed trajectory to follow if on the Red Alliance
-   * @param trajectoryBlue trajectory to follow if on the Blue Alliance
+   * @param trajectory trajectory to follow (Changing with alliance)
    * @param drivetrain
    * @param feeder
    * @param shooter
