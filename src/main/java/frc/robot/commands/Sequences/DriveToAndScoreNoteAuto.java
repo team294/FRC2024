@@ -28,7 +28,7 @@ import frc.robot.utilities.AllianceSelection;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveToAndScoreNoteAuto extends SequentialCommandGroup {
-  /** Creates a new DriveToAndScoreNoteAuto.
+  /** Creates a new DriveToAndScoreNoteAuto. (Should be renamed to DriveToIntakeAndScoreNoteAuto)
    * Drives to intake a note based on a given trajectory (changing with alliance) and shoots it
    * @param trajectory trajectory to follow (Changing with alliance)
    * @param wristAngle wrist target angle for shot, in degrees (+ = up, -  = down, 0 = horizontal)
