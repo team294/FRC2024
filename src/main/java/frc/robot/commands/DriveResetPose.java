@@ -28,6 +28,8 @@ public class DriveResetPose extends Command {
   private final boolean onlyAngle;      // true = resent angle but not X-Y position
   private final boolean tolerance;      // true = Don't reset if within 0.5m or 15 degrees of location, false = always reset
   private double curX, curY, curAngle;    // in meters and degrees
+  private Supplier<Pose2d> pose;
+  private boolean usingLambda = false;
   
   /**
 	 * Resets the pose, gyro, and encoders on the drive train
@@ -70,22 +72,6 @@ public class DriveResetPose extends Command {
   }
 
   /**
-	 * Resets the pose, gyro, and encoders on the drive train
-   * <p> Note:  This command can run while the robot is disabled.
-   * @param curPose Robot current pose on the field.  Pose components include
-   *    <p> Robot X location in the field, in meters (0 = field edge in front of driver station, +=away from our drivestation)
-   *    <p> Robot Y location in the field, in meters (0 = right edge of field when standing in driver station, +=left when looking from our drivestation)
-   *    <p> Robot angle on the field (0 = facing away from our drivestation, + to the left, - to the right)
-   * @param tolerance true = Don't reset if within 0.5m or 15 degrees of location, false = always reset
-   * @param driveTrain DriveTrain subsytem
-   * @param log FileLog
-	 */
-  public DriveResetPose(Supplier<Pose2d> curPose, boolean tolerance, DriveTrain driveTrain, FileLog log) {
-    this(curPose.get().getX(), curPose.get().getY(), curPose.get().getRotation().getDegrees(), tolerance,
-        driveTrain, log);
-  }
-
-  /**
 	 * Resets the pose and gyro (not the encoders) on the drive train.
    * Reset the angle but keep the current position (use the current measured position as the new position).
    * <p> Note:  This command can run while the robot is disabled.
@@ -100,6 +86,30 @@ public class DriveResetPose extends Command {
     curAngle = curAngleinDegrees;
     fromShuffleboard = false;
     onlyAngle = true;
+    this.tolerance = tolerance;
+
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(driveTrain);
+  }
+
+  /**
+	 * Resets the pose, gyro, and encoders on the drive train
+   * <p> Note:  This command can run while the robot is disabled.
+   * @param curPose Robot current pose on the field.  Pose components include
+   *    <p> Robot X location in the field, in meters (0 = field edge in front of driver station, +=away from our drivestation)
+   *    <p> Robot Y location in the field, in meters (0 = right edge of field when standing in driver station, +=left when looking from our drivestation)
+   *    <p> Robot angle on the field (0 = facing away from our drivestation, + to the left, - to the right)
+   * @param tolerance true = Don't reset if within 0.5m or 15 degrees of location, false = always reset
+   * @param driveTrain DriveTrain subsytem
+   * @param log FileLog
+	 */
+  public DriveResetPose(Supplier<Pose2d> curPose, boolean tolerance, DriveTrain driveTrain, FileLog log) {
+    this.driveTrain = driveTrain;
+    this.log = log;
+    pose = curPose;
+    fromShuffleboard = false;
+    onlyAngle = true;
+    usingLambda = true;
     this.tolerance = tolerance;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -135,6 +145,10 @@ public class DriveResetPose extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if(usingLambda){
+      curAngle = pose.get().getX();
+    }
+
     if(fromShuffleboard){
       curX = SmartDashboard.getNumber("DriveResetPose X", 0);
       curY = SmartDashboard.getNumber("DriveResetPose Y", 0);
@@ -164,6 +178,7 @@ public class DriveResetPose extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    usingLambda = false;
   }
 
   // Returns true when the command should end.

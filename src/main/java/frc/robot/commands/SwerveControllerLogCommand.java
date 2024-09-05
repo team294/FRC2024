@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  */
 public class SwerveControllerLogCommand extends Command {
   private final Timer m_timer = new Timer();
-  private final Trajectory m_trajectory;
+  private final Supplier<Trajectory> m_trajectory;
   private final Supplier<Pose2d> m_pose;
   private final SwerveDriveKinematics m_kinematics;
   private final HolonomicDriveControllerBCR m_controller;
@@ -50,6 +50,7 @@ public class SwerveControllerLogCommand extends Command {
   private final Supplier<Rotation2d> m_desiredRotation;
   private final FileLog m_log;
   private final DriveTrain m_driveTrain;
+  private Trajectory curTrajectory;
 
   /**
    * This command is copied from edu.wpi.first.wpilibj2.command.SwerveControllerCommand,
@@ -138,7 +139,7 @@ public class SwerveControllerLogCommand extends Command {
       FileLog log,
       DriveTrain driveTrain) {
     this(
-        trajectory.get(),
+        trajectory,
         pose,
         kinematics,
         new HolonomicDriveControllerBCR(
@@ -278,6 +279,49 @@ public class SwerveControllerLogCommand extends Command {
       Consumer<SwerveModuleState[]> outputModuleStates,
       FileLog log,
       DriveTrain driveTrain) {
+    this(
+        () -> trajectory,
+        pose,
+        kinematics,
+        controller,
+        desiredRotation,
+        outputModuleStates,
+        log,
+        driveTrain
+    );
+  }
+
+  /**
+   * This command is copied from edu.wpi.first.wpilibj2.command.SwerveControllerCommand,
+   * adding FileLog logging.
+   * 
+   * Constructs a new SwerveControllerCommand that when executed will follow the provided
+   * trajectory. This command will not return output voltages but rather raw module states from the
+   * position controllers which need to be put into a velocity PID.
+   *
+   * <p>Note: The controllers will *not* set the outputVolts to zero upon completion of the path-
+   * this is left to the user, since it is not appropriate for paths with nonstationary endstates.
+   *
+   * @param trajectory The trajectory to follow.
+   * @param pose A function that supplies the robot pose - use one of the odometry classes to
+   *     provide this.
+   * @param kinematics The kinematics for the robot drivetrain.
+   * @param controller The HolonomicDriveController for the drivetrain.
+   * @param desiredRotation The angle that the drivetrain should be facing. This is sampled at each
+   *     time step.
+   * @param outputModuleStates The raw output module states from the position controllers.
+   * @param log FileLog for logging
+   * @param requirements The subsystems to require.
+   */
+  public SwerveControllerLogCommand(
+      Supplier<Trajectory> trajectory,
+      Supplier<Pose2d> pose,
+      SwerveDriveKinematics kinematics,
+      HolonomicDriveControllerBCR controller,
+      Supplier<Rotation2d> desiredRotation,
+      Consumer<SwerveModuleState[]> outputModuleStates,
+      FileLog log,
+      DriveTrain driveTrain) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "SwerveControllerCommand");
     m_pose = requireNonNullParam(pose, "pose", "SwerveControllerCommand");
     m_kinematics = requireNonNullParam(kinematics, "kinematics", "SwerveControllerCommand");
@@ -301,13 +345,15 @@ public class SwerveControllerLogCommand extends Command {
     m_timer.start();
 
     m_controller.reset();
+
+    curTrajectory = m_trajectory.get();
   }
 
   @Override
   public void execute() {
     double curTime = m_timer.get();
     Pose2d robotPose = m_pose.get();
-    var desiredState = m_trajectory.sample(curTime);
+    var desiredState = curTrajectory.sample(curTime);
     Rotation2d desiredRotation = m_desiredRotation.get();
 
     var targetChassisSpeeds =
@@ -340,8 +386,8 @@ public class SwerveControllerLogCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds()) &&
+    return m_timer.hasElapsed(curTrajectory.getTotalTimeSeconds()) &&
         ( Math.abs(m_pose.get().getRotation().getDegrees() - m_desiredRotation.get().getDegrees()) <= TrajectoryConstants.maxThetaErrorDegrees ||
-          m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds() + 0.7));
+          m_timer.hasElapsed(curTrajectory.getTotalTimeSeconds() + 0.7));
   }
 }

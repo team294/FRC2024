@@ -7,7 +7,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TrajectoryCache.TrajectoryFacing;
-
+import frc.robot.utilities.TrajectoryCache.TrajectoryFacingPair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -116,7 +116,7 @@ public class DriveTrajectory extends SequentialCommandGroup {
      * @param driveTrain The driveTrain subsystem to be controlled.
      * @param log        File for logging
      */
-    public DriveTrajectory(CoordType trajectoryType, StopType stopAtEnd, TrajectoryFacing[] trajectoryFacings, DriveTrain driveTrain, AllianceSelection alliance, FileLog log) { 
+    public DriveTrajectory(CoordType trajectoryType, StopType stopAtEnd, TrajectoryFacingPair trajectoryFacings, DriveTrain driveTrain, AllianceSelection alliance, FileLog log) { 
         // Log that the command started
         addCommands(new FileLogWrite(false, false, "DriveTrajectory", "Start", log));
 
@@ -135,35 +135,35 @@ public class DriveTrajectory extends SequentialCommandGroup {
 
             swerveControllerLogCommand =
                 new SwerveControllerLogCommand(
-                    () -> trajectoryFacings[(alliance.getAlliance() == Alliance.Red) ? 0 : 1].trajectory,
+                    () -> ((alliance.getAlliance() == Alliance.Red) ? trajectoryFacings.red : trajectoryFacings.blue).trajectory,
                     // For relative trajectories, get the current pose relative to the initial robot Pose
                     () -> driveTrain.getPose().relativeTo(initialPose),  
                     Constants.DriveConstants.kDriveKinematics,
                     new PIDController(Constants.TrajectoryConstants.kPXController, 0, 0),
                     new PIDController(Constants.TrajectoryConstants.kPYController, 0, 0),
                     thetaController,
-                    () -> trajectoryFacings[(alliance.getAlliance() == Alliance.Red) ? 0 : 1].finalRotation,
+                    () -> ((alliance.getAlliance() == Alliance.Red) ? trajectoryFacings.red : trajectoryFacings.blue).finalRotation,
                     (a) -> driveTrain.setModuleStates(a, false),
                     log,
                     driveTrain);
         } else {
             if (trajectoryType == CoordType.kAbsoluteResetPose) {
                 // For AbsoluteResetPose trajectories, first command needs to be to reset the robot Pose
-                addCommands(new DriveResetPose(() -> trajectoryFacings[(alliance.getAlliance() == Alliance.Red) ? 0 : 1].getInitialPose(), false, driveTrain, log));
+                addCommands(new DriveResetPose(() -> ((alliance.getAlliance() == Alliance.Red) ? trajectoryFacings.red : trajectoryFacings.blue).getInitialPose(), false, driveTrain, log));
             } else if (trajectoryType == CoordType.kAbsoluteResetPoseTol) {
                 // For AbsoluteResetPoseTol trajectories, first command needs to be to reset the robot Pose
-                addCommands(new DriveResetPose(() -> trajectoryFacings[(alliance.getAlliance() == Alliance.Red) ? 0 : 1].getInitialPose(), true, driveTrain, log));
+                addCommands(new DriveResetPose(() -> ((alliance.getAlliance() == Alliance.Red) ? trajectoryFacings.red : trajectoryFacings.blue).getInitialPose(), true, driveTrain, log));
             }
 
             swerveControllerLogCommand =
                 new SwerveControllerLogCommand(
-                    () -> trajectoryFacings[(alliance.getAlliance() == Alliance.Red) ? 0 : 1].trajectory,
+                    () -> ((alliance.getAlliance() == Alliance.Red) ? trajectoryFacings.red : trajectoryFacings.blue).trajectory,
                     driveTrain::getPose,
                     Constants.DriveConstants.kDriveKinematics,
                     new PIDController(Constants.TrajectoryConstants.kPXController, 0, 0),
                     new PIDController(Constants.TrajectoryConstants.kPYController, 0, 0),
                     thetaController,
-                    () -> trajectoryFacings[(alliance.getAlliance() == Alliance.Red) ? 0 : 1].finalRotation,
+                    () -> ((alliance.getAlliance() == Alliance.Red) ? trajectoryFacings.red : trajectoryFacings.blue).finalRotation,
                     (a) -> driveTrain.setModuleStates(a, false),
                     log,
                     driveTrain);
