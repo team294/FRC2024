@@ -4,6 +4,8 @@
 
 package frc.robot.commands.Sequences;
 
+import static edu.wpi.first.wpilibj2.command.Commands.*;
+
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -20,8 +22,9 @@ import frc.robot.utilities.FileLog;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class WristLowerSafe extends SequentialCommandGroup {
+
   /**
-   * Safely lowers wrist
+   * Lowers wrist, picking up any piece that may be in the belly pan.
    * @param angle target angle to move wrist to WristAngle (see Constants)
    * @param feeder feeder
    * @param wrist wrist
@@ -29,27 +32,34 @@ public class WristLowerSafe extends SequentialCommandGroup {
    * @param log log
    */
   public WristLowerSafe(WristAngle angle, Feeder feeder, Wrist wrist, FileLog log) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+
     addCommands(
-      new ConditionalCommand(
-        new ParallelCommandGroup(
-          new SequentialCommandGroup(
+      either(
+        // Feeder currently does not have a piece
+        parallel(
+          sequence(
+
+            // Pick up any piece that may be sitting in the belly pan
             new FeederSetPercent(FeederConstants.feederPercent, feeder, log),
-            new WaitCommand(4).until(()->feeder.isPiecePresent()),
-            new ConditionalCommand(
-              new SequentialCommandGroup(   // Back off piece slightly from shooter wheels
+            waitUntil(()->feeder.isPiecePresent()).withTimeout(4),
+            either(
+              sequence(   // Back off piece slightly from shooter wheels
                 new FeederSetPercent(FeederConstants.feederBackPiecePercent, feeder, log),
-                new WaitCommand(FeederConstants.feederBackPieceTime),
+                waitSeconds(FeederConstants.feederBackPieceTime),
                 new FeederSetPercent(0.0, feeder, log)
               ),
               new FeederSetPercent(0, feeder, log),
               ()->feeder.isPiecePresent()
             )
-          ),
+          ).handleInterrupt( () -> { feeder.stopFeeder(); } ),  // If driver interrupts with another wrist/feeder command, then turn off the feeder motor.
+
+          // Move wrist to desired angle in parallel with picking up any piece that may be sitting in the belly pan
           new WristSetAngle(angle, wrist, log)
         ),
+
+        // Feeder already has a piece.  Just move wrist to desired angle
         new WristSetAngle(angle, wrist, log),
+
         () -> (!feeder.isPiecePresent() && angle.value <= WristAngle.clearBellyPanMinAngle.value)
       )
     );
