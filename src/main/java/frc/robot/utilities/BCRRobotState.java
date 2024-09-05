@@ -22,13 +22,14 @@ public class BCRRobotState {
     //True if in far shot mode, false to revert to speaker mode boolean
     // private boolean farShotMode = false;
     public static enum ShotMode {
-        STANDARD,
+        SPEAKER,
+        AMP,
         SHORT_PASS,
         FAR_PASS,
         VISION_PASS
     }
 
-    private ShotMode shotMode = ShotMode.STANDARD;
+    private ShotMode shotMode = ShotMode.SPEAKER;
 
     /** Creates a new BCRRobotState with the default State value of IDLE */
     public BCRRobotState() {
