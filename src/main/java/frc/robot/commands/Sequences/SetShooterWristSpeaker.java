@@ -7,7 +7,6 @@ package frc.robot.commands.Sequences;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.SpeakerModeSet;
 import frc.robot.commands.ShotModeSet;
 import frc.robot.commands.IntakeStop;
 import frc.robot.commands.RobotStateSetIdle;
@@ -44,8 +43,7 @@ public class SetShooterWristSpeaker extends SequentialCommandGroup {
           new IntakeStop(intake, log),
           new WristSetAngle(angle, wrist, log),
           new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log),
-          new SpeakerModeSet(true, robotState, log),
-          new ShotModeSet(ShotMode.STANDARD, robotState, log),
+          new ShotModeSet(ShotMode.SPEAKER, robotState, log),
           new RobotStateSetIdle(robotState, feeder, log)
         )
       );

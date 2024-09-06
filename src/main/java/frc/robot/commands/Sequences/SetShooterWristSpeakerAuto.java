@@ -57,8 +57,7 @@ public class SetShooterWristSpeakerAuto extends SequentialCommandGroup {
         new FeederSetPercent(0.0, feeder, log),     // Added for autos
         new WristSetAngle(angle, wrist, log),
         new ShooterSetVelocity(velocityTop, velocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(0.5),  // Added timeout for auto
-        new SpeakerModeSet(true, robotState, log),
-        new ShotModeSet(ShotMode.STANDARD, robotState, log),
+        new ShotModeSet(ShotMode.SPEAKER, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
       )
     );

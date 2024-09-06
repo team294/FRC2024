@@ -16,9 +16,6 @@ public class BCRRobotState {
     // The current State of the robot
     private State state;
 
-    //True if in mode to score in speaker, false if in mode to score in amp
-    private boolean speakerMode = true; 
-
     //True if in far shot mode, false to revert to speaker mode boolean
     // private boolean farShotMode = false;
     public static enum ShotMode {
@@ -50,27 +47,11 @@ public class BCRRobotState {
     }
 
     /**
-     * returns if shooter/wrist are in mode to score in speaker or in mode to score in amp
-     * @return true = speaker mode, false = amp mode
-     */
-    public boolean isSpeakerMode(){
-        return speakerMode;
-    }
-    
-    /**
      * returns if shooter is in mode for a Far shot (lobbing note towards alliance partner)
      * @return true = far shot, false = normal speaker shot
      */
     public ShotMode getShotMode(){
         return shotMode;
-    }
-
-    /**
-     * Set if in mode to score in speaker or in mode to score in amp
-     * @param speakerMode true = speaker mode, false = amp mode
-     */
-    public void setSpeakerMode(boolean speakerMode){
-        this.speakerMode = speakerMode;
     }
 
     /**
