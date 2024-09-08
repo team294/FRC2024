@@ -274,6 +274,13 @@ public class SwerveModule {
     isInCoastMode = setCoast;
   }
 
+  public boolean getMotorModeCoast() {
+    if(isInCoastMode) {
+      return true;
+    }
+      return false;
+  }
+
   // ********** Main swerve module control methods
 
   /**

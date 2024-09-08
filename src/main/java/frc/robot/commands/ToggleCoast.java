@@ -26,7 +26,13 @@ public ToggleCoast(DriveTrain driveTrain, FileLog log) {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.setDriveModeCoast(SmartDashboard.getBoolean("Toggle Coast Drive", false));
+   // driveTrain.setDriveModeCoast(SmartDashboard.getBoolean("Toggle Coast Drive", false));
+    if(driveTrain.getDriveModeCoast()){   //if drive mode is already in coast, switch to brake
+      driveTrain.setDriveModeCoast(false);
+    } else {
+      driveTrain.setDriveModeCoast(true); //Otherwise, switch to brake since drive mode already in coast
+    }
+
     log.writeLog(true, "Toggle Coast", "Drive Mode Toggled from Shuffleboard");
   }
 
