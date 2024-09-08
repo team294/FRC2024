@@ -14,6 +14,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.DriveTrajectory;
+import frc.robot.commands.Sequences.DriveBackAndSetWristAuto;
 import frc.robot.commands.Sequences.SetShooterWristSpeakerAuto;
 import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
@@ -46,15 +47,8 @@ public class SourceTwoPieceFifthNoteShoot extends SequentialCommandGroup {
       ),
       new ConditionalCommand( 
         new SequentialCommandGroup(
-          new ParallelCommandGroup(
-            new ConditionalCommand(
-              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromWaitSpotToShootingPosRed.value], driveTrain, log), 
-              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromWaitSpotToShootingPosBlue.value], driveTrain, log),  
-              () -> alliance.getAlliance() == Alliance.Red
-            ),
-            new SetShooterWristSpeakerAuto(WristAngle.sourceCloseNoteShot, 
-              ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
-          ),
+          new DriveBackAndSetWristAuto(TrajectoryType.driveFromWaitSpotToShootingPos, WristAngle.sourceCloseNoteShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+          
           new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
         ),
         new WaitCommand(0.01),

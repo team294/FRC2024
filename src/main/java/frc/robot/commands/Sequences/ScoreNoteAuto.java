@@ -19,7 +19,7 @@ import frc.robot.utilities.FileLog;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreNoteAuto extends SequentialCommandGroup {
   /** 
-   * Sets Shooter and Wrist to prime for and shoot a speaker shot.  Also stops the intake and sets the robot state.
+   * Sets Shooter and Wrist to prime for and then shoot a speaker shot.  Also stops the intake and sets the robot state.
    * @param wristAngle wrist target angle for shot, in degrees (+ = up, -  = down, 0 = horizontal)
    * @param feeder
    * @param shooter

@@ -4,6 +4,8 @@
 
 package frc.robot.commands.Autos;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -32,31 +34,16 @@ public class CenterTwoPieceShoot extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
-      new ParallelDeadlineGroup(
-        new ConditionalCommand(
-          new SequentialCommandGroup(
-            new DriveResetPose(1.3, 2.663, 0, false, driveTrain, log),
-            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteRed.value], driveTrain, log)
-          ),
-          new SequentialCommandGroup(
-            new DriveResetPose(1.3, 5.57, 0, false, driveTrain, log),
-            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToCenterCloseNoteBlue.value], driveTrain, log) 
-          ),
-          () -> alliance.getAlliance() == Alliance.Red
-        ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
-        new IntakePieceAuto(intake, feeder, robotState, log),
-        new WristSetAngle(WristAngle.lowerLimit, wrist, log)
-      ),
-      new ConditionalCommand(
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartRed.value], driveTrain, log), 
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromCenterNoteToCenterStartBlue.value], driveTrain, log), 
-        () -> alliance.getAlliance() == Alliance.Red
-      ),
-      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, 
-        ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
+      //Scores note
+      new ScoreNoteAuto(WristAngle.speakerShotFromSpeaker, feeder, shooter, wrist, intake, robotState, log),
+
+      //Resets pose, drive to and intakes center close note
+      new DriveToAndIntakeNoteAuto(new Pose2d(1.3, 2.663, Rotation2d.fromDegrees(0)), new Pose2d(1.3, 5.57, Rotation2d.fromDegrees(0)), TrajectoryType.driveToCenterCloseNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+      
+      //Drive back to score note
+      new DriveBackAndSetWristAuto(TrajectoryType.driveFromCenterNoteToCenterStart, WristAngle.speakerShotFromSpeaker, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+      
+      //Scores note
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
     );
   }

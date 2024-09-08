@@ -20,7 +20,9 @@ import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveToPose;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.WristSetAngle;
+import frc.robot.commands.Sequences.DriveToAndIntakeNoteAuto;
 import frc.robot.commands.Sequences.IntakePieceAuto;
+import frc.robot.commands.Sequences.ScoreNoteAuto;
 import frc.robot.commands.Sequences.SetShooterWristSpeakerAuto;
 import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
@@ -43,23 +45,13 @@ public class SourceOnePieceDriveToFifthNote extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
-      new ParallelDeadlineGroup(
-        new ConditionalCommand(
-          new SequentialCommandGroup(
-              new DriveResetPose(0.8, 3.7296, 60, false, driveTrain, log),
-              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToSideMobilityRed.value], driveTrain, log) 
-          ),
-          new SequentialCommandGroup(
-              new DriveResetPose(0.8, 4.5, -60, false, driveTrain, log),
-              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToSideMobilityBlue.value], driveTrain, log) 
-          ),
-          () -> alliance.getAlliance() == Alliance.Red
-        ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
-        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-        new IntakePieceAuto(intake, feeder, robotState, log)
-      ),
+      //Shoots note
+      new ScoreNoteAuto(WristAngle.speakerShotFromSpeaker, feeder, shooter, wrist, intake, robotState, log),
+      
+      //Resets pose, drives to and intakes note
+      new DriveToAndIntakeNoteAuto(new Pose2d(0.8, 3.7296, Rotation2d.fromDegrees(60)), new Pose2d(0.8, 4.5, Rotation2d.fromDegrees(-60)), TrajectoryType.driveFromSourceToSideMobility, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+      
+      //Drives to a position
       new ConditionalCommand(
           new SequentialCommandGroup(
             new DriveToPose(new Pose2d(8.0, 7.467, new Rotation2d(0)), driveTrain, log)
