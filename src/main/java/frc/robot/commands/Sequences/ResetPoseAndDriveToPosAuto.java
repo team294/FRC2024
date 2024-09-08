@@ -44,11 +44,11 @@ public class ResetPoseAndDriveToPosAuto extends ConditionalCommand {
     super(
       new SequentialCommandGroup(
         new DriveResetPose(redPos, false, drivetrain, log),
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value], drivetrain, log)
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value], drivetrain, alliance, log)
       ),
       new SequentialCommandGroup(
         new DriveResetPose(bluePos, false, drivetrain, log),
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value], drivetrain, log)
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[trajectory.value], drivetrain, alliance, log)
       ),
       () -> alliance.getAlliance() == Alliance.Red
     );
