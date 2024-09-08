@@ -25,8 +25,7 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AmpTwoPieceShoot extends SequentialCommandGroup {
   /** Creates a new AmpTwoPieceShoot.
-   *  Note: Command updated to fit new trajectory cache system, but I (Eric) am unsure as to how this 
-   *  auto was able to work previously, as I cannot find any calls to set the wrist angle
+   *  Note: This auto was made back for a fixed shooter and does not set the wrist position
    */
   public AmpTwoPieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, Wrist wrist, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
