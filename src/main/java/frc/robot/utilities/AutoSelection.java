@@ -122,7 +122,7 @@ public class AutoSelection {
 
 		else if(autoPlan == test){
 			log.writeLogEcho(true, "AutoSelect", "run Test");
-			autonomousCommandMain = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value][0], driveTrain, log);
+			autonomousCommandMain = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value].red, driveTrain, log);
 		}
 
 		else if(autoPlan == shootOne){
