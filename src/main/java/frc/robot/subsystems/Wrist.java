@@ -49,9 +49,9 @@ public class Wrist extends SubsystemBase implements Loggable{
 	private TalonFXConfiguration wristMotor1Config;
   private final TalonFXConfigurator wristMotor2Configurator = wristMotor2.getConfigurator();
 	private TalonFXConfiguration wristMotor2Config;
-	private VoltageOut wristVoltageControl = new VoltageOut(0.0);
-  private PositionVoltage wristPositionControl = new PositionVoltage(0.0);
-  private MotionMagicVoltage wristMMVoltageControl = new MotionMagicVoltage(0.0);
+	private VoltageOut wristVoltageControl = new VoltageOut(0.0).withEnableFOC(true);
+  private PositionVoltage wristPositionControl = new PositionVoltage(0.0).withEnableFOC(true);
+  private MotionMagicVoltage wristMMVoltageControl = new MotionMagicVoltage(0.0).withEnableFOC(true);
   
 
 	// Variables for motor signals and sensors
