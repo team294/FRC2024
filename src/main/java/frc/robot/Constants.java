@@ -83,7 +83,7 @@ public final class Constants {
 
       // Digital IO ports
       public static final int DIOFeederPieceSensor = 0;
-      public static final int DIOWristRevThroughBoreEncoder = 5;
+      public static final int DIOWristRevThroughBoreEncoder = 4;
       public static final int DIOWristLowerLimit1 = 2;
       public static final int DIOWristLowerLimit2 = 3;
       public static final int DIOIntakePieceSensor = 9;
@@ -363,7 +363,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // C3: Updated 156 deg (changed REV sensor)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 0;    // E1: Updated 157.5 deg (changed REV sensor)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
