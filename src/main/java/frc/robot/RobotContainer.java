@@ -44,7 +44,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("D6");
+  private final FileLog log = new FileLog("E1");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -247,8 +247,7 @@ public class RobotContainer {
     xbX.onTrue(
       new ParallelCommandGroup(
         new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, log),
-        new SpeakerModeSet(true, robotState, log),
-        new ShotModeSet(ShotMode.STANDARD, robotState, log)
+        new ShotModeSet(ShotMode.SPEAKER, robotState, log)
       ));
     
     // Prep for pit shot when back button is pressed
@@ -262,8 +261,7 @@ public class RobotContainer {
     xbPOVRight.onTrue( new ParallelCommandGroup(
         new IntakeStop(intake, log),
         new WristSetAngle(true, wrist, log),
-        new SpeakerModeSet(false, robotState, log),
-        new ShotModeSet(ShotMode.STANDARD, robotState, log),
+        new ShotModeSet(ShotMode.AMP, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
     ) );  
 
@@ -302,8 +300,7 @@ public class RobotContainer {
     // Right button 1:  Aim lock on speaker
     right[1].whileTrue(new ParallelCommandGroup(
       new SetAimLock(driveTrain, true, log),
-      new SpeakerModeSet(true, robotState, log),
-      new ShotModeSet(ShotMode.STANDARD, robotState, log),
+      new ShotModeSet(ShotMode.SPEAKER, robotState, log),
       new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
       new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
     ));
