@@ -98,19 +98,6 @@
               "Visuals/Show Outside Circles": false
             }
           },
-          "9,0": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/Drive Reset SwerveModules",
-              "_title": "Drive Reset SwerveModules",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "2,2": {
             "size": [
               3,
@@ -176,48 +163,6 @@
                   "Colors/Color when false": "#FF0000FF"
                 }
               ]
-            }
-          },
-          "9,1": {
-            "size": [
-              3,
-              3
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://photonvision_Port_1183_MJPEG_Server",
-              "_title": "photonvision_Port_1183_MJPEG_Server",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
-            }
-          },
-          "5,1": {
-            "size": [
-              4,
-              4
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://photonvision_Port_1182_MJPEG_Server",
-              "_title": "photonvision_Port_1182_MJPEG_Server",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
             }
           },
           "2,1": {
@@ -306,6 +251,48 @@
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "5,1": {
+            "size": [
+              4,
+              4
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision_Port_1182_Output_MJPEG_Server",
+              "_title": "photonvision_Port_1182_Output_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "9,1": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://photonvision_Port_1186_Output_MJPEG_Server",
+              "_title": "photonvision_Port_1186_Output_MJPEG_Server",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
             }
           }
         }
@@ -847,19 +834,6 @@
               ]
             }
           },
-          "3,5": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/LED moving Team Color",
-              "_title": "LED moving Team Color",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "7,3": {
             "size": [
               2,
@@ -1202,56 +1176,6 @@
               ]
             }
           },
-          "11,0": {
-            "size": [
-              2,
-              3
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "LED",
-              "_glyph": 149,
-              "_showGlyph": false,
-              "Layout/Label position": "LEFT",
-              "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LED OFF",
-                  "_title": "LED OFF",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LED Full Team Color",
-                  "_title": "LED Full Team Color",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LED Rainbow",
-                  "_title": "LED Rainbow",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LED moving Team Color",
-                  "_title": "LED moving Team Color",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LED Flash Team Color",
-                  "_title": "LED Flash Team Color",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                }
-              ]
-            }
-          },
           "5,0": {
             "size": [
               2,
@@ -1458,9 +1382,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -8.0,
-    "y": -8.0,
-    "width": 1936.0,
-    "height": 1048.0
+    "x": 5.0,
+    "y": 5.0,
+    "width": 1910.0,
+    "height": 1030.0
   }
 }
