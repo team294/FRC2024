@@ -61,8 +61,6 @@ public class TrajectoryCache {
         driveFirstCenterAmpToNextCenterNote(31),
         driveFromAmpNoteToSecondCenter(32),
         driveFromCenterSecondToScorePos(33),
-        // driveFromAmpNoteToSecondCenter(67), ???
-        // driveFromCenterSecondToScorePos(68), ???
         driveSourceNextNoteToCenterNoteRight(34),
         drivePodiumShotToCenterRightNote(35),
         driveCenterRightNoteToPodiumShot(36),
