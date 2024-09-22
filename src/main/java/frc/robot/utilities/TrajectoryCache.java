@@ -23,7 +23,6 @@ public class TrajectoryCache {
     private FileLog log;
    
     private static int trajectoryCount = 40;
-    // public TrajectoryFacing[][] cache = new TrajectoryFacing[trajectoryCount][2];        // array of trajectories
     public TrajectoryFacingPair[] cache = new TrajectoryFacingPair[trajectoryCount];    // array of trajectories
 
     public enum TrajectoryType {
