@@ -6,24 +6,14 @@ package frc.robot.commands.Autos;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.CoordType;
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.*;
 import frc.robot.commands.Sequences.*;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TrajectoryCache;
-import frc.robot.utilities.BCRRobotState.ShotMode;
 import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
