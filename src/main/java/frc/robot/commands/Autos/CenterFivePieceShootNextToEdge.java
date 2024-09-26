@@ -37,8 +37,6 @@ public class CenterFivePieceShootNextToEdge extends SequentialCommandGroup {
       //Scores note
       new ScoreNoteAuto(WristAngle.speakerShotFromSpeaker, feeder, shooter, wrist, intake, robotState, log),
 
-      // new DriveResetPose(new Pose2d(0.4, 2.65, Rotation2d.fromDegrees(0)), false, driveTrain, log),
-
       //Drives to and intakes near source-side note
       new DriveToAndIntakeNoteAuto(new Pose2d(0.4, 2.65, Rotation2d.fromDegrees(0)), new Pose2d(0.4, 5.55, Rotation2d.fromDegrees(0)), TrajectoryType.driveCenterStartToSourceNear, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
 

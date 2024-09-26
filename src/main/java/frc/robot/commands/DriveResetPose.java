@@ -26,10 +26,10 @@ public class DriveResetPose extends Command {
   private final FileLog log;
   private final boolean fromShuffleboard;
   private final boolean onlyAngle;      // true = resent angle but not X-Y position
+  private boolean usingLambda;
   private final boolean tolerance;      // true = Don't reset if within 0.5m or 15 degrees of location, false = always reset
   private double curX, curY, curAngle;    // in meters and degrees
   private Supplier<Pose2d> pose;
-  private boolean usingLambda = false;
   
   /**
 	 * Resets the pose, gyro, and encoders on the drive train
@@ -49,6 +49,7 @@ public class DriveResetPose extends Command {
     curAngle = curAngleinDegrees;
     fromShuffleboard = false;
     onlyAngle = false;
+    usingLambda = false;
     this.tolerance = tolerance;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -86,6 +87,7 @@ public class DriveResetPose extends Command {
     curAngle = curAngleinDegrees;
     fromShuffleboard = false;
     onlyAngle = true;
+    usingLambda = false;
     this.tolerance = tolerance;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -108,7 +110,7 @@ public class DriveResetPose extends Command {
     this.log = log;
     pose = curPose;
     fromShuffleboard = false;
-    onlyAngle = true;
+    onlyAngle = false;
     usingLambda = true;
     this.tolerance = tolerance;
 
@@ -127,6 +129,7 @@ public class DriveResetPose extends Command {
     this.log = log;
     fromShuffleboard = true;
     onlyAngle = false;
+    usingLambda = false;
     tolerance = false;
 
     addRequirements(driveTrain);
@@ -146,7 +149,9 @@ public class DriveResetPose extends Command {
   @Override
   public void initialize() {
     if(usingLambda){
-      curAngle = pose.get().getX();
+      curX = pose.get().getX();
+      curY = pose.get().getY();
+      curAngle = pose.get().getRotation().getDegrees();
     }
 
     if(fromShuffleboard){
