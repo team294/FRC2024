@@ -4,17 +4,14 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LEDConstants.LEDSegmentRange;
 import frc.robot.subsystems.LED;
-import frc.robot.utilities.FileLog;
 
 public class CANdleRainbowAnimation extends Command {
   private LED led;
-  private boolean fromShuffleboard;
   private LEDSegmentRange segment;
 
 /** Creates a new CANdle Rainbow Animation.  Note that this command
@@ -25,7 +22,6 @@ public class CANdleRainbowAnimation extends Command {
   public CANdleRainbowAnimation(LED led, LEDSegmentRange segment) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.led = led;
-    fromShuffleboard = true;
     this.segment = segment;
 
     addRequirements(led);

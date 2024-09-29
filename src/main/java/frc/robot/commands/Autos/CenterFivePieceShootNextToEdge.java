@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.Sequences.DriveBackAndSetWristAuto;
 import frc.robot.commands.Sequences.DriveToAndIntakeNoteAuto;
