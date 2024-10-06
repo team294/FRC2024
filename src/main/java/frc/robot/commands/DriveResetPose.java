@@ -26,7 +26,7 @@ public class DriveResetPose extends Command {
   private final FileLog log;
   private final boolean fromShuffleboard;
   private final boolean onlyAngle;      // true = resent angle but not X-Y position
-  private boolean usingLambda;
+  private final boolean usingLambda;
   private final boolean tolerance;      // true = Don't reset if within 0.5m or 15 degrees of location, false = always reset
   private double curX, curY, curAngle;    // in meters and degrees
   private Supplier<Pose2d> poseSuppplier;
