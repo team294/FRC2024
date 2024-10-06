@@ -4,19 +4,14 @@
 
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.CoordType;
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.DriveResetPose;
-import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.WristSetAngle;
-import frc.robot.commands.Sequences.SetShooterWristSpeakerAuto;
-import frc.robot.commands.Sequences.ShootPiece;
+import frc.robot.commands.Sequences.ResetPoseAndDriveToPosAuto;
+import frc.robot.commands.Sequences.ScoreNoteAuto;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -37,20 +32,14 @@ public class SourceWallMobilityAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
+      //Sets wrist and scores note
+      new ScoreNoteAuto(WristAngle.speakerShotFromSpeaker, feeder, shooter, wrist, intake, robotState, log),
+
       new ParallelCommandGroup(
-        new ConditionalCommand(
-          new SequentialCommandGroup(
-              new DriveResetPose(0.8, 3.7296, 60, false, driveTrain, log),
-              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToWallMobilityRed.value], driveTrain, log) 
-          ),
-          new SequentialCommandGroup(
-              new DriveResetPose(0.8, 4.5, -60, false, driveTrain, log),
-              new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFromSourceToWallMobilityBlue.value], driveTrain, log) 
-          ),
-          () -> alliance.getAlliance() == Alliance.Red
-        ),
+        //Resets pose and drive to score mobility points
+        new ResetPoseAndDriveToPosAuto(new Pose2d(0.8, 3.7296, Rotation2d.fromDegrees(60)), new Pose2d(0.8, 4.5, Rotation2d.fromDegrees(-60)), TrajectoryType.driveFromSourceToWallMobility, driveTrain, cache, alliance, log),
+        
+        //Prepares wrist to intake in teleop
         new WristSetAngle(WristAngle.lowerLimit, wrist, log)
       )
     );

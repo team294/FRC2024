@@ -6,10 +6,7 @@ package frc.robot.commands.Sequences;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.FeederSetPercent;

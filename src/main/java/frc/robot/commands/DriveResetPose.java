@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,8 +26,10 @@ public class DriveResetPose extends Command {
   private final FileLog log;
   private final boolean fromShuffleboard;
   private final boolean onlyAngle;      // true = resent angle but not X-Y position
+  private final boolean usingLambda;
   private final boolean tolerance;      // true = Don't reset if within 0.5m or 15 degrees of location, false = always reset
   private double curX, curY, curAngle;    // in meters and degrees
+  private Supplier<Pose2d> poseSuppplier;
   
   /**
 	 * Resets the pose, gyro, and encoders on the drive train
@@ -45,6 +49,7 @@ public class DriveResetPose extends Command {
     curAngle = curAngleinDegrees;
     fromShuffleboard = false;
     onlyAngle = false;
+    usingLambda = false;
     this.tolerance = tolerance;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -82,6 +87,31 @@ public class DriveResetPose extends Command {
     curAngle = curAngleinDegrees;
     fromShuffleboard = false;
     onlyAngle = true;
+    usingLambda = false;
+    this.tolerance = tolerance;
+
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(driveTrain);
+  }
+
+  /**
+	 * Resets the pose, gyro, and encoders on the drive train
+   * <p> Note:  This command can run while the robot is disabled.
+   * @param curPose Robot current pose on the field.  Pose components include
+   *    <p> Robot X location in the field, in meters (0 = field edge in front of driver station, +=away from our drivestation)
+   *    <p> Robot Y location in the field, in meters (0 = right edge of field when standing in driver station, +=left when looking from our drivestation)
+   *    <p> Robot angle on the field (0 = facing away from our drivestation, + to the left, - to the right)
+   * @param tolerance true = Don't reset if within 0.5m or 15 degrees of location, false = always reset
+   * @param driveTrain DriveTrain subsytem
+   * @param log FileLog
+	 */
+  public DriveResetPose(Supplier<Pose2d> curPose, boolean tolerance, DriveTrain driveTrain, FileLog log) {
+    this.driveTrain = driveTrain;
+    this.log = log;
+    poseSuppplier = curPose;
+    fromShuffleboard = false;
+    onlyAngle = false;
+    usingLambda = true;
     this.tolerance = tolerance;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -99,6 +129,7 @@ public class DriveResetPose extends Command {
     this.log = log;
     fromShuffleboard = true;
     onlyAngle = false;
+    usingLambda = false;
     tolerance = false;
 
     addRequirements(driveTrain);
@@ -117,6 +148,13 @@ public class DriveResetPose extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if(usingLambda){
+      Pose2d curPose = poseSuppplier.get();
+      curX = curPose.getX();
+      curY = curPose.getY();
+      curAngle = curPose.getRotation().getDegrees();
+    }
+
     if(fromShuffleboard){
       curX = SmartDashboard.getNumber("DriveResetPose X", 0);
       curY = SmartDashboard.getNumber("DriveResetPose Y", 0);

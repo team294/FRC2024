@@ -4,16 +4,12 @@
 
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.CoordType;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.*;
 import frc.robot.commands.Sequences.*;
@@ -36,109 +32,48 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
 
     addCommands(
         // shoots
-        new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-        new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
+        new ScoreNoteAuto(WristAngle.speakerShotFromSide, feeder, shooter, wrist, intake, robotState, log),
 
         // leaves speaker from amp side to outside of notes and pick up first note
-        new ParallelDeadlineGroup(
-            new ConditionalCommand(
-                new SequentialCommandGroup(
-                    new DriveResetPose(0.8, 1.6296, -60, false, driveTrain, log),
-                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpToFarCenterRed.value], driveTrain, log) 
-                ),
-                new SequentialCommandGroup(
-                    new DriveResetPose(0.8, 6.6, 60, false, driveTrain, log),
-                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpToFarCenterBlue.value], driveTrain, log) 
-                ),
-                () -> alliance.getAlliance() == Alliance.Red
-            ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
-            new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-            new IntakePieceAuto(intake, feeder, robotState, log)
-        ),
+        new DriveToAndIntakeNoteAuto(new Pose2d(0.8, 1.6296, Rotation2d.fromDegrees(-60)), new Pose2d(0.8, 6.6, Rotation2d.fromDegrees(60)), TrajectoryType.driveAmpToFarCenter, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
 
         new ConditionalCommand(
             new SequentialCommandGroup(
-                // drives back to shoot 
-                new ParallelCommandGroup(
-                    new ConditionalCommand(
-                            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFarCenterNoteToPodiumShotRed.value], driveTrain, log),
-                            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFarCenterNoteToPodiumShotBlue.value], driveTrain, log),
-                            () -> alliance.getAlliance() == Alliance.Red
-                    ),
-                    new SetShooterWristSpeakerAuto(WristAngle.ampFourPieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
-                ),
+                // drives back to shoot (Changed from a ParallelCommandGroup to a ParallelDeadlineGroup in command)
+                new DriveBackAndSetWristAuto(TrajectoryType.driveFarCenterNoteToPodiumShot, WristAngle.ampFourPieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+                
                 // shoots in speaker   
                 new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
+                
                 // goes to next center note
-                new ParallelDeadlineGroup(
-                new ConditionalCommand(
-                        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.drivePodiumShotToNextCenterNoteRed.value], driveTrain, log),
-                        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.drivePodiumShotToNextCenterNoteBlue.value], driveTrain, log),
-                        () -> alliance.getAlliance() == Alliance.Red
-                        ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
-                new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-                new IntakePieceAuto(intake, feeder, robotState, log)
-                )
+                new DriveToAndIntakeNoteAuto(TrajectoryType.drivePodiumShotToNextCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
             ),
             // We missed the first note, to go to 2nd note
-            new ParallelDeadlineGroup(
-                new ConditionalCommand(
-                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFirstCenterAmpToNextCenterNoteRed.value], driveTrain, log),
-                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveFirstCenterAmpToNextCenterNoteBlue.value], driveTrain, log),
-                    () -> alliance.getAlliance() == Alliance.Red
-                ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
-                new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-                new IntakePieceAuto(intake, feeder, robotState, log)
-            ),
+            new DriveToAndIntakeNoteAuto(TrajectoryType.driveFirstCenterAmpToNextCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
             () -> (feeder.isPiecePresent() == true || intake.getIntakeAmps() >= IntakeConstants.intakingPieceCurrentThreshold)
         ),
 
         new ConditionalCommand(
             new SequentialCommandGroup(
-                // drive back to shoot note
-                new ParallelCommandGroup(
-                    new ConditionalCommand(
-                            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveNextCenterNotetoPodiumShotRed.value], driveTrain, log),
-                            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveNextCenterNotetoPodiumShotBlue.value], driveTrain, log),
-                            () -> alliance.getAlliance() == Alliance.Red
-                    ),
-                new SetShooterWristSpeakerAuto(WristAngle.ampFourPieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
-                ),
+                // drive back to shoot note (Changed from a ParallelCommandGroup to a ParallelDeadlineGroup in command)
+                new DriveBackAndSetWristAuto(TrajectoryType.driveNextCenterNotetoPodiumShot, WristAngle.ampFourPieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+                
                 // shoots piece
                 new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
+                
                 // drives back to grab middle center note
-                new ParallelDeadlineGroup(
-                    new ConditionalCommand(
-                        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.drivePodiumShotToCenterNoteRed.value], driveTrain, log),
-                        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.drivePodiumShotToCenterNoteBlue.value], driveTrain, log),
-                        () -> alliance.getAlliance() == Alliance.Red
-                    ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
-                    new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-                    new IntakePieceAuto(intake, feeder, robotState, log)
-                ) 
+                new DriveToAndIntakeNoteAuto(TrajectoryType.drivePodiumShotToCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
             ),
-            new ParallelDeadlineGroup(
-                new ConditionalCommand(
-                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveNextCenterNoteToCenterNoteRed.value], driveTrain, log),
-                    new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveNextCenterNoteToCenterNoteBlue.value], driveTrain, log),
-                    () -> alliance.getAlliance() == Alliance.Red
-                ).andThen( new WaitUntilCommand( () -> feeder.getFeederSetPercent() == 0.0 ).withTimeout(0.5) ),
-                new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-                new IntakePieceAuto(intake, feeder, robotState, log)
-            ),
+            // We missed the note, go to the next note
+            new DriveToAndIntakeNoteAuto(TrajectoryType.driveNextCenterNoteToCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+            
             () -> (feeder.isPiecePresent() == true || intake.getIntakeAmps() >= IntakeConstants.intakingPieceCurrentThreshold)
         ),
         new ConditionalCommand(
             new SequentialCommandGroup(
                 // drive back under stage to shoot note
-                new ParallelCommandGroup(
-                    new ConditionalCommand(
-                            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotRed.value], driveTrain, log),
-                            new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveCenterNotetoPodiumShotBlue.value], driveTrain, log),
-                            () -> alliance.getAlliance() == Alliance.Red
-                    ),
-                    new SetShooterWristSpeakerAuto(WristAngle.endAmpFourcePieceShot, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log)
-                ),
+                new DriveBackAndSetWristAuto(TrajectoryType.driveCenterNotetoPodiumShot, WristAngle.endAmpFourcePieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+                
                 // shoots note
                 new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
             ),
