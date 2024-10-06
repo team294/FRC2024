@@ -29,7 +29,7 @@ public class DriveResetPose extends Command {
   private boolean usingLambda;
   private final boolean tolerance;      // true = Don't reset if within 0.5m or 15 degrees of location, false = always reset
   private double curX, curY, curAngle;    // in meters and degrees
-  private Supplier<Pose2d> pose;
+  private Supplier<Pose2d> poseSuppplier;
   
   /**
 	 * Resets the pose, gyro, and encoders on the drive train
@@ -108,7 +108,7 @@ public class DriveResetPose extends Command {
   public DriveResetPose(Supplier<Pose2d> curPose, boolean tolerance, DriveTrain driveTrain, FileLog log) {
     this.driveTrain = driveTrain;
     this.log = log;
-    pose = curPose;
+    poseSuppplier = curPose;
     fromShuffleboard = false;
     onlyAngle = false;
     usingLambda = true;
@@ -149,9 +149,10 @@ public class DriveResetPose extends Command {
   @Override
   public void initialize() {
     if(usingLambda){
-      curX = pose.get().getX();
-      curY = pose.get().getY();
-      curAngle = pose.get().getRotation().getDegrees();
+      Pose2d curPose = poseSuppplier.get();
+      curX = curPose.getX();
+      curY = curPose.getY();
+      curAngle = curPose.getRotation().getDegrees();
     }
 
     if(fromShuffleboard){
