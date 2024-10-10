@@ -10,11 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.FileLog;
 
-import static frc.robot.Constants.Ports.CANDriveBackLeftMotor;
-import static frc.robot.Constants.Ports.CANDriveBackRightMotor;
-
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
 
 public class DrivePercentSpeed extends Command {
   /** Creates a new DriveAtVoltage. */
