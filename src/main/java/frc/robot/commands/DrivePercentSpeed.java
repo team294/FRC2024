@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.FileLog;
@@ -20,6 +21,7 @@ public class DrivePercentSpeed extends Command {
   private DriveTrain driveTrain;
   private FileLog log;
   private double angleFacing, percentSpeed, time;
+  private boolean fromShuffleboard;
   private final Timer timer = new Timer();
   /**
    * @param time max time in seconds that the robot will drive for, from smartdashboard
@@ -34,7 +36,26 @@ public class DrivePercentSpeed extends Command {
     this.angleFacing = angleFacing;
     this.percentSpeed= percentSpeed;
     this.time = time;
+    fromShuffleboard = false;
     addRequirements(driveTrain);
+  }
+
+  public DrivePercentSpeed(DriveTrain driveTrain, FileLog log){
+    this.driveTrain = driveTrain;
+    this.log = log;
+    fromShuffleboard = true;
+
+    addRequirements(driveTrain);
+    
+    if(SmartDashboard.getNumber("DrivePercentSpeed time", -9999) == -9999) {
+      SmartDashboard.putNumber("DrivePercentSpeed time", 0);
+    }
+    if(SmartDashboard.getNumber("DrivePercentSpeed angle", -9999) == -9999) {
+      SmartDashboard.putNumber("DrivePercentSpeed angle", 0);
+    }
+    if(SmartDashboard.getNumber("DrivePercentSpeed percent", -9999) == -9999){
+      SmartDashboard.putNumber("DrivePercentSpeed percent", .2);
+    }
   }
 
   // Called when the command is initially scheduled.
@@ -43,6 +64,12 @@ public class DrivePercentSpeed extends Command {
     timer.reset();
     timer.start();
     driveTrain.setDriveModeCoast(false);
+    if(fromShuffleboard){
+      time = SmartDashboard.getNumber("DrivePercentSpeed time", 0);
+      angleFacing = SmartDashboard.getNumber("DrivePercentSpeed angle", 0);
+      percentSpeed = SmartDashboard.getNumber("DrivePercentSpeed percent", 0);
+    }
+
     log.writeLog(false, "DrivePercentSpeed", "Initialize", "Angle Facing Desired", angleFacing, "Percent Speed Deisred", percentSpeed);
   }
 
