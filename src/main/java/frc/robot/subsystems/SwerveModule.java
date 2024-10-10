@@ -16,6 +16,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -320,6 +321,15 @@ public class SwerveModule {
     turningMotor.setControl(turningVoltageControl.withOutput(percentOutput*SwerveConstants.voltageCompSaturation));
   }
   
+  /**
+   * 
+   * @param angle Desired wheel facing in degrees, -180 to +180 (+=left, -=right, 0=facing front of robot)
+   */
+  public void setWheelFacing(double angle){
+    angle = MathBCR.normalizeAngle(angle);
+    turningMotor.setControl(turningPositionControl.withPosition(calculateTurningEncoderTargetRaw(angle)));
+  }
+
   /**
    * Sets the desired state for the module, using closed loop controls on the Talons.
    * The Talons will hold this state until commanded to stop or another state.

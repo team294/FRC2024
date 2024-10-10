@@ -296,6 +296,18 @@ public class DriveTrain extends SubsystemBase implements Loggable {
 
 
   /**
+   * 
+   * @param angle Desired wheel facing in degrees, -180 to +180 (+=left, -=right, 0=facing front of robot)
+   */
+  public void setWheelFacings(double angle){
+    swerveFrontLeft.setWheelFacing(angle);
+    swerveFrontRight.setWheelFacing(angle);
+    swerveBackLeft.setWheelFacing(angle);
+    swerveBackRight.setWheelFacing(angle);
+  }
+
+
+  /**
    * Stops all of the drive and turning motors
    */
   public void stopMotors() {
