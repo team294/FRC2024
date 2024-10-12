@@ -459,7 +459,7 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-    driveTrain.setVisionForOdomoetryState(true);
+    //driveTrain.setVisionForOdomoetryState(true); Disabled until the camera is calibrated
 
     // Set robot state
     robotState.setState(State.IDLE);
