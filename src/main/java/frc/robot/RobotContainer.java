@@ -170,8 +170,8 @@ public class RobotContainer {
     SmartDashboard.putData("Nudge Angle Up 1 deg", new WristNudgeAngle(-1, wrist, log));
 
     // Vision
-    SmartDashboard.putData("Enable Using Vision for Odometry", new InstantCommand(() -> driveTrain.setVisionForOdomoetryState(true)));
-    SmartDashboard.putData("Disable Using Vision for Odometry", new InstantCommand(() -> driveTrain.setVisionForOdomoetryState(false)));
+    SmartDashboard.putData("Enable Using Vision for Odometry", new SetOdometryUsingVision(true, driveTrain));
+    SmartDashboard.putData("Disable Using Vision for Odometry", new SetOdometryUsingVision(false, driveTrain));
   }
 
   /**
