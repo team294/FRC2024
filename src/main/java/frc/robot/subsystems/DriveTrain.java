@@ -55,7 +55,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   private final SwerveModule swerveFrontRight;
   private final SwerveModule swerveBackLeft;
   private final SwerveModule swerveBackRight;
-  
+    
   // variables for gyro and gyro calibration
   private final Pigeon2 pigeon = new Pigeon2(CANPigeonGyro, Ports.CANivoreBus);
   // private final Pigeon2Configurator pigeonConfigurator = pigeon.getConfigurator();
@@ -90,6 +90,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   // Odometry class for tracking robot pose
   private final SwerveDrivePoseEstimator poseEstimator; 
   private final Field2d field = new Field2d();    // Field to dispaly on Shuffleboard
+  private double speedAvg;        // Average speed of the robot chassis
 
   //Slew rate limiter
   // private boolean elevatorUpPriorIteration = false;       // Tracking for elevator position from prior iteration
@@ -292,6 +293,19 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     swerveFrontRight.setTurnMotorPercentOutput(percentOutput);
     swerveBackLeft.setTurnMotorPercentOutput(percentOutput);
     swerveBackRight.setTurnMotorPercentOutput(percentOutput);
+  }
+
+
+  /**
+   * Sets the facing of the wheels (direction the wheels are pointing).  Note that this sets the absolute facing.  It
+   * does *not* turn the wheels to the "optimized" facing +/-180 degrees if that is closer.
+   * @param angle Desired wheel facing relative to front of chassis in degrees, -180 to +180 (+=left, -=right, 0=facing front of robot)
+   */
+  public void setWheelFacings(double angle){
+    swerveFrontLeft.setWheelFacing(angle);
+    swerveFrontRight.setWheelFacing(angle);
+    swerveBackLeft.setWheelFacing(angle);
+    swerveBackRight.setWheelFacing(angle);
   }
 
 
@@ -500,7 +514,9 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       // Update data on SmartDashboard
       field.setRobotPose(poseEstimator.getEstimatedPosition());
       ChassisSpeeds robotSpeeds = getRobotSpeeds();
+
       // SmartDashboard.putNumber("Drive Average Dist in Meters", Units.inchesToMeters(getAverageDistance()));
+      SmartDashboard.putNumber("Drive Speed", speedAvg);
       SmartDashboard.putNumber("Drive X Velocity", robotSpeeds.vxMetersPerSecond);
       SmartDashboard.putNumber("Drive Y Velocity", robotSpeeds.vyMetersPerSecond);
       SmartDashboard.putBoolean("Drive isGyroReading", isGyroReading());
@@ -545,6 +561,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       "Gyro Velocity", getAngularVelocity(), "Pitch", getGyroPitch(), 
       "Odometry X", pose.getTranslation().getX(), "Odometry Y", pose.getTranslation().getY(), 
       "Odometry Theta", pose.getRotation().getDegrees(),
+      "Drive Speed", speedAvg,
       "Drive X Velocity", robotSpeeds.vxMetersPerSecond, 
       "Drive Y Velocity", robotSpeeds.vyMetersPerSecond,
       "Bus voltage", swerveFrontLeft.getDriveBusVoltage(),
@@ -558,15 +575,19 @@ public class DriveTrain extends SubsystemBase implements Loggable {
   public void updateOdometry() {
     poseEstimator.update(Rotation2d.fromDegrees(getGyroRotation()), getModulePositions());
 
-    // Only run camera updates for pose estimator in teleop mode
-    if (camera.hasInit() && useVisionForOdometry) {
+    if (camera.hasInit() ) {
       Optional<EstimatedRobotPose> result = camera.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
 
       if (result.isPresent()) {
         EstimatedRobotPose camPose = result.get();
+        SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
+        SmartDashboard.putNumber("Vision Y", camPose.estimatedPose.toPose2d().getY());
+        SmartDashboard.putNumber("Vision rot", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
 
         PhotonPipelineResult camResult = camera.getLatestResult();
-        if (camResult.hasTargets()) {
+
+        // Only run camera updates for pose estimator if useVisionForOdometry is true
+        if (camResult.hasTargets() && useVisionForOdometry) {
           PhotonTrackedTarget bestTarget = camResult.getBestTarget();
           if (bestTarget.getBestCameraToTarget().getX() < 3) {
             poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
@@ -578,17 +599,15 @@ public class DriveTrain extends SubsystemBase implements Loggable {
               poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, farMatrix);
           }
         }
-        SmartDashboard.putNumber("Vision X", camPose.estimatedPose.toPose2d().getX());
-        SmartDashboard.putNumber("Vision Y", camPose.estimatedPose.toPose2d().getY());
-        SmartDashboard.putNumber("Vision rot", camPose.estimatedPose.toPose2d().getRotation().getDegrees());
-          
-        SmartDashboard.putNumber("Odo X", poseEstimator.getEstimatedPosition().getX());
-        SmartDashboard.putNumber("Odo Y", poseEstimator.getEstimatedPosition().getY());
-        SmartDashboard.putNumber("Odo rot", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
       }
 
     }
 
+    // Update robot average speed
+    ChassisSpeeds robotSpeeds = getRobotSpeeds();
+    speedAvg = Math.hypot(robotSpeeds.vyMetersPerSecond, robotSpeeds.vxMetersPerSecond);
+
+    // Place robot on field object
     if (camera.getAlliance() == Alliance.Red) {
       Pose2d currPose = poseEstimator.getEstimatedPosition();
       double x = FieldConstants.length - currPose.getX();
@@ -608,7 +627,7 @@ public class DriveTrain extends SubsystemBase implements Loggable {
    * 
    * @param enabled true = uses vision for odometry, false = does not use vision for odometry
    */
-  public void setVisionForOdomoetryState(boolean enabled) {
+  public void setVisionForOdometryState(boolean enabled) {
     useVisionForOdometry = enabled;
   }
 

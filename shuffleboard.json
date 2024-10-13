@@ -270,8 +270,8 @@
               "Controls/Rotation": "NONE",
               "compression": -1.0,
               "fps": -1,
-              "imageWidth": -1,
-              "imageHeight": -1
+              "imageWidth": 0,
+              "imageHeight": 0
             }
           },
           "9,1": {
@@ -291,8 +291,8 @@
               "Controls/Rotation": "NONE",
               "compression": -1.0,
               "fps": -1,
-              "imageWidth": -1,
-              "imageHeight": -1
+              "imageWidth": 0,
+              "imageHeight": 0
             }
           }
         }
@@ -663,6 +663,13 @@
                 },
                 {
                   "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Speed",
+                  "_title": "Drive Speed",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive X Velocity",
                   "_title": "Drive X Velocity",
                   "_glyph": 148,
@@ -919,6 +926,56 @@
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "11,2": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Drive Percent Speed",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Drive Percent Speed",
+                  "_title": "Drive Percent Speed",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/DrivePercentSpeed angle",
+                  "_title": "DrivePct angle",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/DrivePercentSpeed percent",
+                  "_title": "DrivePct percent",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/DrivePercentSpeed maxDistance",
+                  "_title": "DrivePct maxDistance",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/DrivePercentSpeed curDistance",
+                  "_title": "DrivePct curDistance",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              ]
             }
           }
         }
@@ -1420,9 +1477,9 @@
     }
   ],
   "windowGeometry": {
-    "x": 5.0,
-    "y": 5.0,
+    "x": 8.0,
+    "y": 8.0,
     "width": 1910.0,
-    "height": 1030.0
+    "height": 1032.0
   }
 }

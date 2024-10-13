@@ -136,7 +136,9 @@ public class RobotContainer {
 
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
-    
+    SmartDashboard.putData("Drive Percent Speed", new DrivePercentSpeed(driveTrain, log));
+
+
     // SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
     SmartDashboard.putData("Source Start to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToSourceCloseNote.value].red, driveTrain, log));
     SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveAmpNoteToFarNote.value].red, driveTrain, log));
@@ -402,7 +404,7 @@ public class RobotContainer {
 
     driveTrain.stopMotors();                // SAFETY:  Turn off any closed loop control that may be running, so the robot does not move when re-enabled.
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-    driveTrain.setVisionForOdomoetryState(true);
+    driveTrain.setVisionForOdometryState(true);
 
     matchTimer.stop();
   }
@@ -436,7 +438,7 @@ public class RobotContainer {
     lastEnabledModeAuto = true;
 
     driveTrain.setDriveModeCoast(false);
-    driveTrain.setVisionForOdomoetryState(false);
+    driveTrain.setVisionForOdometryState(false);
 
     // NOTE:  Do NOT reset the gyro or encoder here!!!!!
     // The first command in auto mode initializes before this code is run, and
@@ -458,7 +460,7 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-    driveTrain.setVisionForOdomoetryState(true);  // TODO Disable if the camera is not calibrated?
+    driveTrain.setVisionForOdometryState(true);
 
     // Set robot state
     robotState.setState(State.IDLE);
