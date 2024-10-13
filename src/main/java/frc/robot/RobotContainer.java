@@ -167,6 +167,10 @@ public class RobotContainer {
     SmartDashboard.putData("Climb End", new ClimbEnd(wrist, log, led));
     SmartDashboard.putData("Nudge Angle Down 1 deg", new WristNudgeAngle(1, wrist, log));
     SmartDashboard.putData("Nudge Angle Up 1 deg", new WristNudgeAngle(-1, wrist, log));
+
+    // Vision
+    SmartDashboard.putData("Enable Using Vision for Odometry", new VisionOdometryStateSet(true, driveTrain, log));
+    SmartDashboard.putData("Disable Using Vision for Odometry", new VisionOdometryStateSet(false, driveTrain, log));
   }
 
   /**
@@ -454,7 +458,7 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-    driveTrain.setVisionForOdomoetryState(true);
+    driveTrain.setVisionForOdomoetryState(true);  // TODO Disable if the camera is not calibrated?
 
     // Set robot state
     robotState.setState(State.IDLE);

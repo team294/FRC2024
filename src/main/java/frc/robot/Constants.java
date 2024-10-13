@@ -417,7 +417,7 @@ public final class Constants {
           climbStop(-45.0),
           ampShot(52.0),            // C4:  Increased from 50 to 52
           clearBellyPanMinAngle(-65),
-          climbStart(65.0),
+          climbStart(80.0),       // Increased from 65 to 80
           upperLimit(90.0);       // CALIBRATED
 
           @SuppressWarnings({"MemberName", "PMD.SingularField"})
