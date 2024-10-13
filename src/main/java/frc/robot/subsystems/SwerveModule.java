@@ -322,7 +322,8 @@ public class SwerveModule {
   }
   
   /**
-   * 
+   * Sets the facing of the wheel (direction the wheel is pointing).  Note that this sets the absolute facing.  It
+   * does *not* turn the wheel to the "optimized" facing +/-180 degrees if that is closer. 
    * @param angle Desired wheel facing in degrees, -180 to +180 (+=left, -=right, 0=facing front of robot)
    */
   public void setWheelFacing(double angle){
