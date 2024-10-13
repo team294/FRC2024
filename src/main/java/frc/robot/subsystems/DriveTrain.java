@@ -531,6 +531,9 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       SmartDashboard.putNumber("Drive Odometry Y", pose.getTranslation().getY());
       SmartDashboard.putNumber("Drive Odometry Theta", pose.getRotation().getDegrees());
 
+      // using vision to update odometry
+      SmartDashboard.putBoolean("Vision Updating Odometry", useVisionForOdometry);
+
       // Values from each swerve module
       swerveFrontLeft.updateShuffleboard();
       swerveFrontRight.updateShuffleboard();
