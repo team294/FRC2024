@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -170,8 +169,8 @@ public class RobotContainer {
     SmartDashboard.putData("Nudge Angle Up 1 deg", new WristNudgeAngle(-1, wrist, log));
 
     // Vision
-    SmartDashboard.putData("Enable Using Vision for Odometry", new SetOdometryUsingVision(true, driveTrain));
-    SmartDashboard.putData("Disable Using Vision for Odometry", new SetOdometryUsingVision(false, driveTrain));
+    SmartDashboard.putData("Enable Using Vision for Odometry", new VisionOdometryStateSet(true, driveTrain, log));
+    SmartDashboard.putData("Disable Using Vision for Odometry", new VisionOdometryStateSet(false, driveTrain, log));
   }
 
   /**
@@ -459,7 +458,7 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-    //driveTrain.setVisionForOdomoetryState(true); Disabled until the camera is calibrated
+    driveTrain.setVisionForOdomoetryState(true);  // TODO Disable if the camera is not calibrated?
 
     // Set robot state
     robotState.setState(State.IDLE);
