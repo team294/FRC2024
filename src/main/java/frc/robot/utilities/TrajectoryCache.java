@@ -780,6 +780,29 @@ public class TrajectoryCache {
             )
         );
 
+        //cache[TrajectoryType.fix.value] = new TrajectoryFacingPair( This is the one)
+            //Red Trajectory
+            //new TrajectoryFacing(
+                //new Rotation2d(0), 
+                //new Rotation2d(Math.toRadians(-10)), 
+                //calcTrajectory("Next Center note to Podium Shot Red", .9, .8, 
+                    //new Pose2d(9, 2.4296, new Rotation2d(Math.PI)),
+                    //List.of(new Translation2d(7, 2.1)), 
+                    //new Pose2d(4.6, 1.9296, new Rotation2d(Math.PI))
+                //)
+            //),
+            //Blue Trajectory
+            //new TrajectoryFacing(
+                //new Rotation2d(0), 
+                //new Rotation2d(Math.toRadians(10)), 
+                //calcTrajectory("Next Center note to Podium Shot Blue", .9, .8, 
+                    //new Pose2d(9, 5.8, new Rotation2d(Math.PI)),
+                    //List.of(new Translation2d(7, 6.1296)), 
+                    //new Pose2d(4.6, 6.3, new Rotation2d(Math.PI))
+                //)
+            //)
+        //);
+
       cache[TrajectoryType.drivePodiumShotToCenterNote.value] = new TrajectoryFacingPair(
             //Red Trajectory
             new TrajectoryFacing(
