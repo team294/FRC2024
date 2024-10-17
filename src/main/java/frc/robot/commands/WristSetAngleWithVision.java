@@ -50,7 +50,7 @@ public class WristSetAngleWithVision extends Command {
   }
 
   /**
-   * Calculates the desired arm angle for the speaker shot using a simplified polynomial, based on robot location passed in
+   * Calculates the desired arm angle for the speaker shot using a polynomial expression, based on robot location passed in
    * @param xRobot robot X location on field, in meters
    * @param yRobot robot X location on field, in meters
    * @return Recommended wrist angle, in degrees 
@@ -61,6 +61,7 @@ public class WristSetAngleWithVision extends Command {
     double y = yRobot - allianceSelection.getSpeakerYPos();
     double dist = Math.sqrt(x*x+y*y);
 
+    // angle using distance and calibrated polynomial expression
     double angle = ((-0.2118*dist + 3.8400)*dist - 24.132)*dist - 16.87;
     return angle;
   }
