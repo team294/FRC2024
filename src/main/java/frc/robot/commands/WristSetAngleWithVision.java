@@ -50,6 +50,22 @@ public class WristSetAngleWithVision extends Command {
   }
 
   /**
+   * Calculates the desired arm angle for the speaker shot using a simplified polynomial, based on robot location passed in
+   * @param xRobot robot X location on field, in meters
+   * @param yRobot robot X location on field, in meters
+   * @return Recommended wrist angle, in degrees 
+   */
+  private double getAngleFromDistanceSimplified(double xRobot, double yRobot) {
+    // distance from speaker
+    double x = xRobot;
+    double y = yRobot - allianceSelection.getSpeakerYPos();
+    double dist = Math.sqrt(x*x+y*y);
+
+    double angle = ((-0.2118*dist + 3.8400)*dist - 24.132)*dist - 16.87;
+    return angle;
+  }
+
+  /**
    * Calculates the desired arm angle for the speaker shot, based on robot location on the field
    * @param n the number of recursions the function runs before using base condition
    * @return Recommended wrist angle, in degrees 
@@ -101,7 +117,7 @@ public class WristSetAngleWithVision extends Command {
   @Override
   public void execute() {
     try {
-      angle = getAngleFromDistance(3);
+      angle = getAngleFromDistanceSimplified(driveTrain.getPose().getX(), driveTrain.getPose().getY());
       wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
       wrist.updateWristLog(false);
     } catch (ArithmeticException e) {
