@@ -49,4 +49,14 @@ public DriveToggleCoastMode(DriveTrain driveTrain, FileLog log) {
   public boolean isFinished() {
     return true;
   }
+
+  /**
+   * Whether the given command should run when the robot is disabled. Override to return true if the
+   * command should run when disabled.
+   * @return whether the command should run when the robot is disabled
+   */
+  @Override
+  public boolean runsWhenDisabled() {
+    return true;
+  } 
 }

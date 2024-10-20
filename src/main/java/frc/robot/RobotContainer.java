@@ -69,7 +69,7 @@ public class RobotContainer {
   private final Joystick coPanel = new Joystick(OIConstants.usbCoPanel);
 
   private final CommandXboxController xboxController = new CommandXboxController(OIConstants.usbXboxController);
-  private boolean lastEnabledModeAuto = true;    // True if the last mode was auto (if so, then don't go to coast mode on drivetrain)
+  private boolean lastEnabledModeAuto = true;    // True if the last mode was auto (if so, then don't go to coast mode on drivetrain).  Boot with true, so initial disabledInit does not go into Coast mode.
 
   // Set to this pattern when the robot is disabled
   
@@ -371,7 +371,6 @@ public class RobotContainer {
     if(!RobotPreferences.prefsExist()) {
       RobotPreferences.recordStickyFaults("RobotPreferences", log);
     }
-    lastEnabledModeAuto = false;
 
     // compressor.disable();
 

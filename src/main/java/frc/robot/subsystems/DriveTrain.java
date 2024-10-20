@@ -123,6 +123,9 @@ public class DriveTrain extends SubsystemBase implements Loggable {
       CANDriveBackRightMotor, CANDriveTurnBackRightMotor, CANTurnEncoderBackRight, false, true,
       false, offsetAngleBackRightMotor, SwerveConstants.kVmBR, log);
 
+    // Put drive mode on shuffleboard
+    setDriveModeCoast(false);
+
     // configure gyro
     // This Pigeon is mounted normally, so no need to change orientation
     // pigeonConfig.MountPose.MountPoseYaw = 0;
@@ -271,6 +274,8 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     swerveFrontRight.setMotorModeCoast(setCoast);
     swerveBackLeft.setMotorModeCoast(setCoast);
     swerveBackRight.setMotorModeCoast(setCoast);
+
+    SmartDashboard.putString("Drive Mode", setCoast ? "Coast" : "Brake");
   }
   /**
    * Gets the drive train mode (coast vs brake).
