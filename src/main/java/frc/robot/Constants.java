@@ -134,11 +134,11 @@ public final class Constants {
       // and ensures that the robot travels in the requested direction.  So, use min value of all 4 motors,
       // and further derate (initial test by 5%) to account for some battery droop under heavy loads.
       // Max speed measured values 3/18/2024:  All 4 motors are 4.17, 4.08, 4.2, 4.09 meters/sec.  So use 4.0 as a conservative value
-      public static final double kMaxSpeedMetersPerSecond = 4.5;          // A8:  Increased from 4.0 to 4.5.  CALIBRATED
+      public static final double kMaxSpeedMetersPerSecond = 4.5*2;          // A8:  Increased from 4.0 to 4.5.  CALIBRATED
       public static final double kFullSpeedMetersPerSecond = 0.95*kMaxSpeedMetersPerSecond;  // A8:  Increased back to 0.95
       public static final double kNominalSpeedMetersPerSecond = 0.5*kMaxSpeedMetersPerSecond;
       // Max acceleration measured 3/18/2024 (with full robot weight):  7.6 - 8.4 m/sec^2.  Keep value at 7.5.
-      public static final double kMaxAccelerationMetersPerSecondSquare = 7.5; // CALIBRATED
+      public static final double kMaxAccelerationMetersPerSecondSquare = 7.5*10; // CALIBRATED
       public static final double kFullAccelerationMetersPerSecondSquare = 0.9 * kMaxAccelerationMetersPerSecondSquare;
       public static final double kNominalAccelerationMetersPerSecondSquare = 3.5; // TODO value from last year
       public static final double kMaxTurningRadiansPerSecond = 11.0;  // TODO NOT CALIBRATED
