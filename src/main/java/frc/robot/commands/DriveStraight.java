@@ -147,6 +147,7 @@ public class DriveStraight extends Command {
     startLocation = driveTrain.getPose().getTranslation();
     
     driveTrain.setDriveModeCoast(false);
+    driveTrain.enableFastLogging(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -199,6 +200,7 @@ public class DriveStraight extends Command {
   public void end(boolean interrupted) {
     log.writeLog(false, "DriveStraight", "End");
     driveTrain.stopMotors();
+    driveTrain.enableFastLogging(false);
   }
 
   // Returns true when the command should end.
