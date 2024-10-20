@@ -167,6 +167,7 @@ public class Wrist extends SubsystemBase implements Loggable{
     // Set timer for calibration
     bootTimer.reset();
     bootTimer.start();
+    revEncoderZero = -revEncoderOffsetAngleWrist;     // Prime the revEncoderZero from RobotPreferences
   }
 
   /**
