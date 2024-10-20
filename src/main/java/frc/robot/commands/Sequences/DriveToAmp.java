@@ -4,7 +4,6 @@
 
 package frc.robot.commands.Sequences;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -27,7 +26,7 @@ import frc.robot.utilities.BCRRobotState.ShotMode;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveToAmp extends SequentialCommandGroup {
   /** Creates a new DriveToAmp. */
-  public DriveToAmp(AllianceSelection allianceSelection, Intake intake, Feeder feeder, Wrist wrist,DriveTrain driveTrain, BCRRobotState robotState, FileLog log) {
+  public DriveToAmp(AllianceSelection allianceSelection, Intake intake, Feeder feeder, Wrist wrist, DriveTrain driveTrain, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -39,8 +38,7 @@ public class DriveToAmp extends SequentialCommandGroup {
           () -> allianceSelection.getAlliance() == Alliance.Red
         ),
         new IntakeStop(intake, log),
-        new SpeakerModeSet(false, robotState, log),
-        new ShotModeSet(ShotMode.STANDARD, robotState, log),
+        new ShotModeSet(ShotMode.AMP, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
       ),
       //new DriveToPose(CoordType.kAbsolute, new Rotation2d(Math.toRadians(90)), driveTrain, log),

@@ -7,7 +7,6 @@ package frc.robot.commands.Autos;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.commands.*;
 import frc.robot.commands.Sequences.*;
@@ -30,8 +29,9 @@ public class AmpShootOnePiece extends SequentialCommandGroup {
         new DriveResetPose(0.2, 7.0, 60, true, driveTrain, log),
         () -> alliance.getAlliance() == Alliance.Red
       ),   
-      new SetShooterWristSpeakerAuto(WristAngle.speakerShotFromSpeaker, ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log),
-      new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
+
+      //Scores note
+      new ScoreNoteAuto(WristAngle.speakerShotFromSpeaker, feeder, shooter, wrist, intake, robotState, log)
     );
   }
 }

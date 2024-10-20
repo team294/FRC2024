@@ -14,9 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -44,7 +42,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("D6");
+  private final FileLog log = new FileLog("E2");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -128,6 +126,7 @@ public class RobotContainer {
     SmartDashboard.putData("Wrist Nudge Angle", new WristNudgeAngle(wrist, log));
   
     // Drive base commands
+    SmartDashboard.putData("Drive Toggle Coast", new DriveToggleCoastMode(driveTrain, log));
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
     SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
     SmartDashboard.putData("Drive 6m +X", new DriveToPose(
@@ -138,12 +137,9 @@ public class RobotContainer {
 
     SmartDashboard.putData("Drive Calibration", new DriveCalibration(0.5, 5.0, 0.1, driveTrain, log));
     SmartDashboard.putData("Drive Turn Calibration", new DriveTurnCalibration(0.2, 5.0, 0.2 / 5.0, driveTrain, log));
-    
-    SmartDashboard.putData("Toggle Coast Drive", new DriveToggleCoastMode(driveTrain, log));
-    // SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
-    SmartDashboard.putData("Source Start to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log));
-    SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveAmpNoteToFarNoteRed.value], driveTrain, log));
+    SmartDashboard.putData("Drive Percent Speed", new DrivePercentSpeed(driveTrain, log));
 
+    // SmartDashboard.putData("Test trajectory", new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log));
     SmartDashboard.putData("Drive Straight", new DriveStraight(false, false, false, driveTrain, log));
 
     // Sequences
@@ -161,15 +157,18 @@ public class RobotContainer {
 
     SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
     SmartDashboard.putData("Source Center Three Piece Shoot", new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log));
-
-
-    SmartDashboard.putData("Amp Source Three Piece Shoot", new AmpSourceThreePieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log));
+    SmartDashboard.putData("Source Start to near note",  new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveToSourceCloseNote.value].red, driveTrain, log));
+    SmartDashboard.putData("Drive to far note", new DriveTrajectory(CoordType.kAbsoluteResetPose, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.driveAmpNoteToFarNote.value].red, driveTrain, log));
 
     // Copanel buttons
     SmartDashboard.putData("Climb Start", new ClimbStart(wrist, log, led));
     SmartDashboard.putData("Climb End", new ClimbEnd(wrist, log, led));
     SmartDashboard.putData("Nudge Angle Down 1 deg", new WristNudgeAngle(1, wrist, log));
     SmartDashboard.putData("Nudge Angle Up 1 deg", new WristNudgeAngle(-1, wrist, log));
+
+    // Vision
+    SmartDashboard.putData("Enable Using Vision for Odometry", new VisionOdometryStateSet(true, driveTrain, log));
+    SmartDashboard.putData("Disable Using Vision for Odometry", new VisionOdometryStateSet(false, driveTrain, log));
   }
 
   /**
@@ -248,8 +247,7 @@ public class RobotContainer {
     xbX.onTrue(
       new ParallelCommandGroup(
         new WristLowerSafe(WristAngle.lowerLimit, feeder, wrist, log),
-        new SpeakerModeSet(true, robotState, log),
-        new ShotModeSet(ShotMode.STANDARD, robotState, log)
+        new ShotModeSet(ShotMode.SPEAKER, robotState, log)
       ));
     
     // Prep for pit shot when back button is pressed
@@ -263,8 +261,7 @@ public class RobotContainer {
     xbPOVRight.onTrue( new ParallelCommandGroup(
         new IntakeStop(intake, log),
         new WristSetAngle(true, wrist, log),
-        new SpeakerModeSet(false, robotState, log),
-        new ShotModeSet(ShotMode.STANDARD, robotState, log),
+        new ShotModeSet(ShotMode.AMP, robotState, log),
         new RobotStateSetIdle(robotState, feeder, log)
     ) );  
 
@@ -303,8 +300,7 @@ public class RobotContainer {
     // Right button 1:  Aim lock on speaker
     right[1].whileTrue(new ParallelCommandGroup(
       new SetAimLock(driveTrain, true, log),
-      new SpeakerModeSet(true, robotState, log),
-      new ShotModeSet(ShotMode.STANDARD, robotState, log),
+      new ShotModeSet(ShotMode.SPEAKER, robotState, log),
       new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
       new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
     ));
@@ -363,7 +359,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelection.getAutoCommand(intake, wrist, shooter, feeder, driveTrain, trajectoryCache, robotState, log);
+    return autoSelection.getAutoCommand(intake, wrist, shooter, feeder, driveTrain, robotState, log);
   }
 
 
@@ -404,7 +400,7 @@ public class RobotContainer {
 
     driveTrain.stopMotors();                // SAFETY:  Turn off any closed loop control that may be running, so the robot does not move when re-enabled.
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-    driveTrain.setVisionForOdomoetryState(true);
+    driveTrain.setVisionForOdometryState(true);
 
     matchTimer.stop();
   }
@@ -438,7 +434,7 @@ public class RobotContainer {
     lastEnabledModeAuto = true;
 
     driveTrain.setDriveModeCoast(false);
-    driveTrain.setVisionForOdomoetryState(false);
+    driveTrain.setVisionForOdometryState(false);
 
     // NOTE:  Do NOT reset the gyro or encoder here!!!!!
     // The first command in auto mode initializes before this code is run, and
@@ -460,7 +456,7 @@ public class RobotContainer {
 
     driveTrain.setDriveModeCoast(false);
     driveTrain.enableFastLogging(false);    // Turn off fast logging, in case it was left on from auto mode
-    driveTrain.setVisionForOdomoetryState(true);
+    driveTrain.setVisionForOdometryState(true);
 
     // Set robot state
     robotState.setState(State.IDLE);

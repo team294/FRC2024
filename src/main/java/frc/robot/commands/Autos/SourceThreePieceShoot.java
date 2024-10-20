@@ -4,15 +4,9 @@
 
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.StopType;
 import frc.robot.Constants.WristConstants.WristAngle;
-import frc.robot.commands.*;
 import frc.robot.commands.Sequences.*;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.AllianceSelection;
@@ -25,31 +19,32 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class SourceThreePieceShoot extends SequentialCommandGroup {
-  /** Creates a new CenterSourceThreePieceShoot. */
+  /** Creates a new CenterSourceThreePieceShoot. 
+   *  Note: Wrist angles for scoring have not been well 
+   *  tested, will likely need more calibration (Outdated)
+  */
   public SourceThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, Wrist wrist, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      //Scores note
+      new ScoreNoteAuto(WristAngle.speakerShotFromSpeaker, feeder, shooter, wrist, intake, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
-      new ParallelCommandGroup(
-        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-        new IntakePieceAuto(intake, feeder, robotState, log),
-        new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteBlue.value], driveTrain, log), 
-          () -> alliance.getAlliance() == Alliance.Red
-        )
-      ),
+
+      //Drives to and intakes the close source-side note
+      new DriveToAndIntakeNoteAuto(TrajectoryType.driveToSourceCloseNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+
+      //Scores note
+      new ScoreNoteAuto(WristAngle.sourceCloseNoteShot, feeder, shooter, wrist, intake, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
-      new ParallelCommandGroup(
-        new WristSetAngle(WristAngle.lowerLimit, wrist, log),
-        new IntakePieceAuto(intake, feeder, robotState, log),
-        new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNoteToFarNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveSourceNoteToFarNoteBlue.value], driveTrain, log), 
-          () -> alliance.getAlliance() == Alliance.Red
-        )
-      ),
+
+      //Drives to and intakes the far note
+      new DriveToAndIntakeNoteAuto(TrajectoryType.driveSourceNoteToFarNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+
+      //Auto needs more testing / new trajectory to drive back past this point
+
+      //Scores note
+      new ScoreNoteAuto(WristAngle.sourceCloseNoteShot, feeder, shooter, wrist, intake, robotState, log),
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
     );
   }

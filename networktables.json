@@ -42,7 +42,7 @@
   {
     "name": "/Preferences/problemSubsystem",
     "type": "string",
-    "value": "RobotPreferences",
+    "value": "Wrist-Not-calibrated-when-enabled",
     "properties": {
       "persistent": true
     }

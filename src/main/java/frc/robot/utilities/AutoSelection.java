@@ -45,10 +45,6 @@ public class AutoSelection {
 	public static final int SourceFifthNoteAndShoot = 18;
 	public static final int SourceWallMobilityAuto = 19;
 
-
-
-
-
 	private final AllianceSelection allianceSelection;
 	private final TrajectoryCache trajectoryCache;
 	private SendableChooser<Integer> autoChooser = new SendableChooser<>();
@@ -103,7 +99,7 @@ public class AutoSelection {
 	 * @return the command to run
 	 */
 
-	public Command getAutoCommand(Intake intake, Wrist wrist, Shooter shooter, Feeder feeder, DriveTrain driveTrain, TrajectoryCache trajectoryCache, BCRRobotState robotState, FileLog log) {
+	public Command getAutoCommand(Intake intake, Wrist wrist, Shooter shooter, Feeder feeder, DriveTrain driveTrain, BCRRobotState robotState, FileLog log) {
 		Command autonomousCommandMain = null;
 
 		// Get parameters from Shuffleboard
@@ -122,7 +118,7 @@ public class AutoSelection {
 
 		else if(autoPlan == test){
 			log.writeLogEcho(true, "AutoSelect", "run Test");
-			autonomousCommandMain = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value], driveTrain, log);
+			autonomousCommandMain = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value].red, driveTrain, log);
 		}
 
 		else if(autoPlan == shootOne){

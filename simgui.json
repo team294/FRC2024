@@ -14,6 +14,7 @@
       "/SmartDashboard/Climb Start": "Command",
       "/SmartDashboard/Drive 6m +X": "Command",
       "/SmartDashboard/Drive Calibration": "Command",
+      "/SmartDashboard/Drive Percent Speed": "Command",
       "/SmartDashboard/Drive Reset Pose": "Command",
       "/SmartDashboard/Drive Straight": "Command",
       "/SmartDashboard/Drive To Pose": "Command",

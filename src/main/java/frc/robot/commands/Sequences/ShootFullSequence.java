@@ -4,7 +4,9 @@
 
 package frc.robot.commands.Sequences;
 
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import java.util.Map;
+
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.*;
@@ -22,28 +24,16 @@ public class ShootFullSequence extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ConditionalCommand(
-          new ConditionalCommand(
-            // Shoot in speaeker
-            new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
-            // Shoot in amp
-            new ShootPieceAmp(feeder, robotState, log),
-            () -> robotState.isSpeakerMode()
-          ),
-          new ConditionalCommand(
-            // Short pass lobbing note towards alliance partner
-            new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log), 
-            // Far Pass lobbing note over stage to alliance partner
-            
-            new ConditionalCommand(
-              new ShootPieceFarPassWithVision(true, allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log),
-              new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log),
-              () -> robotState.getShotMode() == ShotMode.VISION_PASS
-            ),
-            () -> robotState.getShotMode() == ShotMode.SHORT_PASS
-          ),
-          () -> robotState.getShotMode() == ShotMode.STANDARD
-        )
-    );
+
+    //uses selector to get current shot mode
+      new SelectCommand<>(
+        Map.ofEntries(
+          Map.entry(ShotMode.SPEAKER, new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)),
+          Map.entry(ShotMode.AMP, new ShootPieceAmp(feeder, robotState, log)),
+          Map.entry(ShotMode.SHORT_PASS, new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log)),
+          Map.entry(ShotMode.FAR_PASS, new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log)),
+          Map.entry(ShotMode.VISION_PASS, new ShootPieceFarPassWithVision(true, allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log))
+        ),
+      robotState::getShotMode));
   }
 }

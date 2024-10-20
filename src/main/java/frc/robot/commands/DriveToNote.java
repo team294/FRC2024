@@ -12,16 +12,12 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants.PhotonVisionConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.NotePhotonCameraWrapper;
 import frc.robot.utilities.*;
 
 /**

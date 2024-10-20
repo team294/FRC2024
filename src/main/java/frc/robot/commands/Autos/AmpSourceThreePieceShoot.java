@@ -4,8 +4,6 @@
 
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.ShooterConstants;
@@ -23,30 +21,27 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AmpSourceThreePieceShoot extends AmpTwoPieceShoot {
-  /** Creates a new AmpSourceThreePieceShoot. */
+  /** Creates a new AmpSourceThreePieceShoot.
+   *  Note: This auto was made back for a fixed shooter and does not set the wrist position
+   */
   public AmpSourceThreePieceShoot(Intake intake, Shooter shooter, DriveTrain driveTrain, Feeder feeder, Wrist wrist, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     super(intake, shooter, driveTrain, feeder, wrist, robotState, cache, alliance, log);
+
     addCommands(
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
-        new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNoteBlue.value], driveTrain, log), 
-          () -> alliance.getAlliance() == Alliance.Red
-        )
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToAmpCloseNote.value], driveTrain, alliance, log)
       ),
+
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, false, shooter, feeder, wrist, robotState, log),
       new ParallelCommandGroup(
         new IntakePieceAuto(intake, feeder, robotState, log),
-        new ConditionalCommand(
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteRed.value], driveTrain, log), 
-          new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNoteBlue.value], driveTrain, log), 
-          () -> alliance.getAlliance() == Alliance.Red
-        )
+        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveToSourceCloseNote.value], driveTrain, alliance, log)
       ),
+
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log)
     );
   }

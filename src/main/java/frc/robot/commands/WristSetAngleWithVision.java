@@ -8,12 +8,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.RobotDimensions;
-import frc.robot.Constants.WristConstants.WristAngle;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Wrist;
 import frc.robot.utilities.AllianceSelection;
@@ -49,6 +47,23 @@ public class WristSetAngleWithVision extends Command {
     }
 
     addRequirements(wrist);
+  }
+
+  /**
+   * Calculates the desired arm angle for the speaker shot using a polynomial expression, based on robot location passed in
+   * @param xRobot robot X location on field, in meters
+   * @param yRobot robot X location on field, in meters
+   * @return Recommended wrist angle, in degrees 
+   */
+  private double getAngleFromDistanceSimplified(double xRobot, double yRobot) {
+    // distance from speaker
+    double x = xRobot;
+    double y = yRobot - allianceSelection.getSpeakerYPos();
+    double dist = Math.sqrt(x*x+y*y);
+
+    // angle using distance and calibrated polynomial expression
+    double angle = ((-0.2118*dist + 3.8400)*dist - 24.132)*dist - 16.87;
+    return angle;
   }
 
   /**
@@ -103,7 +118,7 @@ public class WristSetAngleWithVision extends Command {
   @Override
   public void execute() {
     try {
-      angle = getAngleFromDistance(3);
+      angle = getAngleFromDistanceSimplified(driveTrain.getPose().getX(), driveTrain.getPose().getY());
       wrist.setWristAngle(angle + SmartDashboard.getNumber("Wrist Vision Constant Offset", 0));
       wrist.updateWristLog(false);
     } catch (ArithmeticException e) {
