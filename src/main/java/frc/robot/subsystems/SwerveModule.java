@@ -274,6 +274,13 @@ public class SwerveModule {
     }
     isInCoastMode = setCoast;
   }
+   
+  /**
+   * @return Returns true when the drive mode is in coast, returns false if in break mode
+   */
+  public boolean isMotorModeCoast() {
+    return isInCoastMode;
+  }
 
   // ********** Main swerve module control methods
 
