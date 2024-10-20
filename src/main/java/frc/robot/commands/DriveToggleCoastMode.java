@@ -3,20 +3,21 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.FileLog;
 
-public class ToggleCoast extends Command {
+public class DriveToggleCoastMode extends Command {
     
     private final DriveTrain driveTrain;
     private final FileLog log;
 
 /**
-    Untested. Adds a button on Shuffleboard which allows driver to toggle between coast and break drive modes
-*/
-public ToggleCoast(DriveTrain driveTrain, FileLog log) {
+ * Toggle drivetraing between coast and break drive modes
+ * @param driveTrain
+ * @param log
+ */
+public DriveToggleCoastMode(DriveTrain driveTrain, FileLog log) {
     this.driveTrain = driveTrain;
     this.log = log;
 
@@ -26,14 +27,13 @@ public ToggleCoast(DriveTrain driveTrain, FileLog log) {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-   // driveTrain.setDriveModeCoast(SmartDashboard.getBoolean("Toggle Coast Drive", false));
-    if(driveTrain.getDriveModeCoast()){   //if drive mode is already in coast, switch to brake
+    if(driveTrain.isDriveModeCoast()){   //if drive mode is already in coast, switch to brake
       driveTrain.setDriveModeCoast(false);
     } else {
       driveTrain.setDriveModeCoast(true); //Otherwise, switch to brake since drive mode already in coast
     }
 
-    log.writeLog(true, "Toggle Coast", "Drive Mode Toggled from Shuffleboard");
+    log.writeLog(true, "DriveToggleCoastMode", "Drive Mode Toggled from Shuffleboard", "Coast Mode", driveTrain.isDriveModeCoast());
   }
 
   // Called every time the scheduler runs while the command is scheduled.

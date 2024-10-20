@@ -277,11 +277,8 @@ public class SwerveModule {
   /**
    * @return Returns true when the drive mode is in coast, returns false if in break mode
    */
-  public boolean getMotorModeCoast() {
-    if(isInCoastMode) {
-      return true;
-    }
-      return false;
+  public boolean isMotorModeCoast() {
+    return isInCoastMode;
   }
 
   // ********** Main swerve module control methods

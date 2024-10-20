@@ -272,12 +272,12 @@ public class DriveTrain extends SubsystemBase implements Loggable {
     swerveBackRight.setMotorModeCoast(setCoast);
   }
   /**
-   *  Gets the drive train mode.
+   * Gets the drive train mode (coast vs brake).
    * @return Returns true if in motors are in coast, or false if in brake.
    */
-  public boolean getDriveModeCoast(){
-    return swerveFrontLeft.getMotorModeCoast() && swerveFrontRight.getMotorModeCoast() &&
-      swerveBackLeft.getMotorModeCoast() && swerveBackLeft.getMotorModeCoast();
+  public boolean isDriveModeCoast(){
+    return swerveFrontLeft.isMotorModeCoast() && swerveFrontRight.isMotorModeCoast() &&
+      swerveBackLeft.isMotorModeCoast() && swerveBackLeft.isMotorModeCoast();
   }
 
   /**
