@@ -17,9 +17,8 @@ public class DriveCalibration extends Command {
   private double percentOutput, maxPercentOutput, rampTime, rampRate;
   private final Timer timer = new Timer();
 
-  /** Creates a new DriveCalibration. */
   /**
-   * 
+   * Drives the robot forward (direct the robot is facing) with a ramp velocity, starting at 0 speed.
    * @param maxPercentOutput % output (between 0 and 1)
    * @param rampTime  ramp up time in seconds
    * @param rampRate Ramp rate in pctOut/second 
@@ -51,6 +50,7 @@ public class DriveCalibration extends Command {
     double currTime = timer.get();
     percentOutput = MathUtil.clamp(currTime*rampRate, -maxPercentOutput, maxPercentOutput);
     driveTrain.setDriveMotorsOutput(percentOutput);
+    driveTrain.setWheelFacings(0.0);
   }
 
   // Called once the command ends or is interrupted.
