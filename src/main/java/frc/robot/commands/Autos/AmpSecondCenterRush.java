@@ -21,6 +21,7 @@ import frc.robot.commands.WristSetAngle;
 import frc.robot.commands.Sequences.DriveBackAndSetWristAuto;
 import frc.robot.commands.Sequences.DriveToAndIntakeNoteAuto;
 import frc.robot.commands.Sequences.IntakePieceAuto;
+import frc.robot.commands.Sequences.ResetPoseAndDriveToPosAuto;
 import frc.robot.commands.Sequences.ScoreNoteAuto;
 import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
@@ -53,9 +54,8 @@ public class AmpSecondCenterRush extends SequentialCommandGroup {
           new IntakePieceAuto(intake, feeder, robotState, log)
 
         ),
-
-        new DriveTrajectory(CoordType.kAbsolute, StopType.kBrake, cache.cache[TrajectoryType.driveAmpRushtoFarSecondRight.value], driveTrain, alliance, log)
-        //new DriveToAndIntakeNoteAuto(new Pose2d(0.77,1.1296, Rotation2d.fromDegrees(0)), new Pose2d(0.77, 7.1, Rotation2d.fromDegrees(0)), TrajectoryType.driveAmpRushtoFarRight, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
+        new ResetPoseAndDriveToPosAuto(new Pose2d(0.77,1.1296, Rotation2d.fromDegrees(0)), new Pose2d(0.77, 7.1, Rotation2d.fromDegrees(0)), TrajectoryType.driveAmpRushtoFarSecondRight, driveTrain, cache, alliance, log)
+        //new DriveToAndIntakeNoteAuto(new Pose2d(0.77,1.1296, Rotation2d.fromDegrees(0)), new Pose2d(0.77, 7.1, Rotation2d.fromDegrees(0)), TrajectoryType.driveAmpRushtoFarSecondRight, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
 
       ),
 
