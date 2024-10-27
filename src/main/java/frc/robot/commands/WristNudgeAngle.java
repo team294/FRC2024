@@ -20,7 +20,7 @@ public class WristNudgeAngle extends InstantCommand {
 
   /**
    * Adjust the current calibration degrees of the wrist by a small amount
-   * @param deltaDegrees the number of degrees to move up/down
+   * @param deltaDegrees the number of degrees to move up/down.  + = down, - = up
    * @param wrist
    * @param log
    */
@@ -35,7 +35,7 @@ public class WristNudgeAngle extends InstantCommand {
 
   /**
    * Adjust the current calibration degrees of the wrist by a small amount (from SmartDashboard)
-   * @param deltaDegrees the number of degrees to move up/down (Wrist Nudge Delta Degrees from SmartDashboard)
+   * @param deltaDegrees the number of degrees to move up/down (Wrist Nudge Delta Degrees from SmartDashboard).  + = down, - = up
    * @param wrist
    * @param log
    */

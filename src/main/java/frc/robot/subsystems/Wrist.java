@@ -217,7 +217,9 @@ public class Wrist extends SubsystemBase implements Loggable{
    */
   public boolean isWristMotorPositionControl() {
     return (wrist1ControlMode.refresh().getValue() == ControlModeValue.PositionVoltage) || 
-            (wrist1ControlMode.refresh().getValue() == ControlModeValue.MotionMagicVoltage);
+           (wrist1ControlMode.refresh().getValue() == ControlModeValue.MotionMagicVoltage) ||
+           (wrist1ControlMode.refresh().getValue() == ControlModeValue.PositionVoltageFOC) || 
+           (wrist1ControlMode.refresh().getValue() == ControlModeValue.MotionMagicVoltageFOC);
   }
 
   /**
@@ -334,10 +336,16 @@ public class Wrist extends SubsystemBase implements Loggable{
       // Do not attempt this if the wrist is not calibrated
       return;
     }
+
+    // Save the current write control method (position vs voltage/off)
+    boolean isPositionControl = isWristMotorPositionControl();
+
     // Adjust by recalibrating with a modified degrees, then set to the new angle
+    // Note that calibrating the wrist turns off position control.
     calibrateWristEnc(getWristEncoderDegrees() + deltaDegrees);
+
     // Only set the angle if in position control mode
-    if (isWristMotorPositionControl()) {
+    if (isPositionControl) {
       setWristAngle(safeAngle);
     }
   }

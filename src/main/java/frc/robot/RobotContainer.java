@@ -199,22 +199,26 @@ public class RobotContainer {
     Trigger xbB = xboxController.b();
     Trigger xbY = xboxController.y();
     Trigger xbX = xboxController.x();
-    Trigger xbLB = xboxController.leftBumper();
+    Trigger xbLB = xboxController.leftBumper();     //empty
     Trigger xbRB = xboxController.rightBumper();
     Trigger xbBack = xboxController.back();
     Trigger xbStart = xboxController.start();
     Trigger xbPOVUp = xboxController.povUp();
-    Trigger xbPOVRight = xboxController.povRight();
-    Trigger xbPOVLeft = xboxController.povLeft();
+    Trigger xbPOVRight = xboxController.povRight(); //empty
+    Trigger xbPOVLeft = xboxController.povLeft();   //empty
     Trigger xbPOVDown = xboxController.povDown();
     Trigger xbRJoystickTrigger = xboxController.rightStick();
 
-    // Prep for overhead speaker shot
-    xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
-      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
-    // Shoot the piece (smart shoot -- depending on what arm button or auto-aim was pressed last)
-    xbRB.onTrue(new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log));
+    
+    // Prep for amp
+    xbRB.onTrue( new ParallelCommandGroup(
+        new IntakeStop(intake, log),
+        new WristSetAngle(true, wrist, log),
+        new ShotModeSet(ShotMode.AMP, robotState, log),
+        new RobotStateSetIdle(robotState, feeder, log)
+    ) );
+
 
     // Move wrist down and then intake a piece
     xbRT.onTrue(new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
@@ -230,9 +234,9 @@ public class RobotContainer {
     xbB.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromPodium, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
     
-    // Prep for mid-stage speaker shot
-    xbY.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
-      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
+    // Prep for overhead speaker shot
+    xbY.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
+    ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Prep for short pass
     xbPOVDown.onTrue(new SetShooterFarShot(WristAngle.shortPassAngle, 
@@ -257,13 +261,7 @@ public class RobotContainer {
     xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, true,
       shooter, feeder, wrist, robotState, log) );
 
-    // Prep for amp shot
-    xbPOVRight.onTrue( new ParallelCommandGroup(
-        new IntakeStop(intake, log),
-        new WristSetAngle(true, wrist, log),
-        new ShotModeSet(ShotMode.AMP, robotState, log),
-        new RobotStateSetIdle(robotState, feeder, log)
-    ) );  
+ 
 
     // Stop all motors
     xbStart.onTrue(new ParallelCommandGroup(
@@ -343,8 +341,8 @@ public class RobotContainer {
     coP[1].onTrue(new ClimbStart(wrist, log, led));
     coP[3].onTrue(new ClimbEnd(wrist, log, led));
     // Nudge angle up or down
-    coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
-    coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
+    coP[5].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
+    coP[6].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
 
     coP[9].onTrue(new WristNudgeAmpAngle(1, wrist, log)); //Nudge down
     coP[10].onTrue(new WristNudgeAmpAngle(-1 ,wrist, log)); //Nudge up
