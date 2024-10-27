@@ -22,7 +22,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 40;
+    private static int trajectoryCount = 44;
     public TrajectoryFacingPair[] cache = new TrajectoryFacingPair[trajectoryCount];    // array of trajectories
 
     public enum TrajectoryType {
