@@ -65,7 +65,11 @@ public class TrajectoryCache {
         driveCenterRightNoteToPodiumShot(36),
         driveFromSourceToSideMobility(37),
         driveFromWaitSpotToShootingPos(38),
-        driveFromSourceToWallMobility(39);
+        driveFromSourceToWallMobility(39),
+        driveAmpRushtoFarRight(40),
+        driveAmpRushtoFarSecondRight(41),
+        drivePodiumShotToDroppedNote(42),
+        driveDroppedNoteToPodiumShot(43);
 
 
 
@@ -1112,7 +1116,101 @@ public class TrajectoryCache {
             )
         );
             
+        cache[TrajectoryType.driveAmpRushtoFarRight.value] = new TrajectoryFacingPair(
+            //Red Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(0)), 
+                new Rotation2d(0), 
+                calcTrajectory("Amp Rush to Far center note Red", .9, .8, 
+                    new Pose2d(0.77, 1.1296, new Rotation2d(Math.toRadians(0))), 
+                    List.of(
+                        new Translation2d(2.6, 0.42)            // changed from 0.47 to 0.42 to avoid hitting note
+                    ), 
+                    new Pose2d(9, 0.7696, new Rotation2d(0))
+                )
+            ),
+            //Blue Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(60)), 
+                new Rotation2d(0), 
+                calcTrajectory("Amp Rush to Far center note Blue", .9, .8, 
+                    new Pose2d(0.77, 7.1, new Rotation2d(Math.toRadians(0))), 
+                    List.of(new Translation2d(2.6, 7.8096)),   // changed from 7.7596 to 7.8096
+                    new Pose2d(9, 7.460, new Rotation2d(0)) 
+                )
+            )
+        );
 
+        cache[TrajectoryType.driveAmpRushtoFarSecondRight.value] = new TrajectoryFacingPair(
+            //Red Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(0)), 
+                new Rotation2d(0), 
+                calcTrajectory("Amp Rush to Far center second note Red", .9, .8, 
+                    new Pose2d(0.77, 1.1296, new Rotation2d(Math.toRadians(0))), 
+                    List.of(
+                        new Translation2d(2.6, 0.42)            // changed from 0.47 to 0.42 to avoid hitting note
+                    ), 
+                    new Pose2d(9, 2.4296, new Rotation2d(0))
+                )
+            ),
+            //Blue Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(60)), 
+                new Rotation2d(0), 
+                calcTrajectory("Amp Rush to Far center second note Blue", .9, .8, 
+                    new Pose2d(0.77, 7.1, new Rotation2d(Math.toRadians(0))), 
+                    List.of(new Translation2d(2.6, 7.8096)),   // changed from 7.7596 to 7.8096
+                    new Pose2d(9, 5.8, new Rotation2d(0)) 
+                )
+            )
+        );
+
+        cache[TrajectoryType.drivePodiumShotToDroppedNote.value] = new TrajectoryFacingPair(
+            //Red Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(-10)), 
+                new Rotation2d(Math.toRadians(180)), 
+                calcTrajectory("Podium Shot to dropped note Red", .9, .8, 
+                    new Pose2d(4.6, 1.9296, new Rotation2d(Math.toRadians(0))), 
+                    List.of(new Translation2d(5.0, 0.7696)), 
+                    new Pose2d(3.1, 0.7696, new Rotation2d(Math.toRadians(180))) 
+                )
+            ),
+            //Blue Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(10)), 
+                new Rotation2d(Math.toRadians(180)), 
+                calcTrajectory("Podium Shot to dropped note Blue", .9, .8, 
+                    new Pose2d(4.6, 6.3, new Rotation2d(Math.toRadians(0))), 
+                    List.of(new Translation2d(5.0, 7.460)), 
+                    new Pose2d(3.1, 7.460, new Rotation2d(Math.toRadians(180))) 
+                )
+            )
+        );
+
+        cache[TrajectoryType.driveDroppedNoteToPodiumShot.value] = new TrajectoryFacingPair(
+            //Red Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(180)), 
+                new Rotation2d(Math.toRadians(-10)), 
+                calcTrajectory("Dropped note to podium shot Red", .9, .8, 
+                    new Pose2d(3.1, 0.7696, new Rotation2d(Math.toRadians(0))), 
+                    List.of(new Translation2d(5.0, 0.7696)), 
+                    new Pose2d(4.6, 1.9296, new Rotation2d(Math.toRadians(30))) 
+                )
+            ),
+            //Blue Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(180)), 
+                new Rotation2d(Math.toRadians(10)), 
+                calcTrajectory("Dropped note to podium shot Blue", .9, .8, 
+                    new Pose2d(3.1, 7.460, new Rotation2d(Math.toRadians(0))), 
+                    List.of(new Translation2d(5.0, 7.460)), 
+                    new Pose2d(4.6, 6.3, new Rotation2d(Math.toRadians(-30))) 
+                )
+            )
+        );
         
     }
 
