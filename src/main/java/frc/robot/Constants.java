@@ -306,7 +306,7 @@ public final class Constants {
       
       // pass position
       public static final double yPosFarPassTargetRed = Units.inchesToMeters(32);   // F2:  Changed from 44 to 32
-      public static final double xPosFarPassTargetRed = Units.feetToMeters(3.66);   // D4:  Changed from 4 to 3.66
+      public static final double xPosFarPassTargetRed = Units.feetToMeters(4.66);   // F3:  Changed from 3.66 to 4.66
       
       public static final double yPosFarPassTargetBlue = width - yPosFarPassTargetRed;
       public static final double xPosFarPassTargetBlue = xPosFarPassTargetRed;
