@@ -51,7 +51,7 @@ public class SourceFourNoteCenter extends SequentialCommandGroup {
         // shoots note
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
-        // goes to get next note
+        // drives back through under stage to grab right of middle center note
         new DriveToAndIntakeNoteAuto(TrajectoryType.drivePodiumShotToCenterRightNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
         
         // drives back to shoot in speaker

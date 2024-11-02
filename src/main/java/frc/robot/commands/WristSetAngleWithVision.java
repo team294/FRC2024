@@ -62,7 +62,7 @@ public class WristSetAngleWithVision extends Command {
     double dist = Math.sqrt(x*x+y*y);
 
     // angle using distance and calibrated polynomial expression
-    double angle = ((-0.2118*dist + 3.8400)*dist - 24.132)*dist - 16.87;
+    double angle = ((-0.2118*dist + 3.8400)*dist - 24.132)*dist - 17.87; //F2 Reduced Angle by 1 degree
     return angle;
   }
 
