@@ -181,10 +181,10 @@ public final class Constants {
       // Update the offset angles in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, set the wheels to zero degrees with the bevel gear facing to the right
-      public static double offsetAngleFrontLeftMotor = 0; // 110.7
-      public static double offsetAngleFrontRightMotor = 0; // 44.6
-      public static double offsetAngleBackLeftMotor = 0; // -67.1
-      public static double offsetAngleBackRightMotor = 0; // 152.1
+      public static double offsetAngleFrontLeftMotor = 110.7; // 110.7
+      public static double offsetAngleFrontRightMotor = 44.6; // 44.6
+      public static double offsetAngleBackLeftMotor = -67.1; // -67.1
+      public static double offsetAngleBackRightMotor = 152.1; // 152.1
 
         // Driving constants to cap acceleration
       public static final double maxAccelerationRate = 10.0;         // m/s^2
@@ -363,7 +363,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // E3: Updated 150.5 deg (added arm spacer)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 150.5;    // E3: Updated 150.5 deg (added arm spacer)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
