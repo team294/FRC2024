@@ -118,9 +118,12 @@ public class DriveWithJoysticksAdvance extends Command {
           turnRateController.reset(goalAngle);      // sets the current setpoint for the controller
         }
         if (aimLock) {
-          if (robotState.getShotMode() == ShotMode.FAR_PASS  || robotState.getShotMode() == ShotMode.VISION_PASS) {
+          if (robotState.getShotMode() == ShotMode.FAR_PASS  || robotState.getShotMode() == ShotMode.VISION_FAR_PASS) {
             // Aim towards far pass target
             goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getFarPassYPos())/(driveTrain.getPose().getX() - allianceSelection.getFarPassXPos()));
+          } else if (robotState.getShotMode() == ShotMode.VISION_MID_PASS) {
+            // Aim towards mid pass target
+            goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getMidPassYPos())/(driveTrain.getPose().getX() - allianceSelection.getMidPassXPos()));
           } else {
             // Aim towards speaker
             goalAngle = Math.atan((driveTrain.getPose().getY() - allianceSelection.getSpeakerYPos())/driveTrain.getPose().getX());

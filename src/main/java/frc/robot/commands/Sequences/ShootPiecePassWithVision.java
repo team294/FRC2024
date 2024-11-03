@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Sequences;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -18,8 +19,9 @@ import frc.robot.subsystems.*;
 import frc.robot.utilities.AllianceSelection;
 import frc.robot.utilities.BCRRobotState;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.BCRRobotState.ShotMode;
 
-public class ShootPieceFarPassWithVision extends SequentialCommandGroup {
+public class ShootPiecePassWithVision extends SequentialCommandGroup {
 
   public interface VelocityGetter {
     /**
@@ -36,17 +38,18 @@ public class ShootPieceFarPassWithVision extends SequentialCommandGroup {
   }
 
   /**
-   * Shoots a piece using fixed shooter velocity.
-   * @param velocityTop top shooter wheel velocity, in rpm  (+ = shoot forward, - = backwards)
-   * @param velocityBottom bottom shooter wheel velocity, in rpm  (+ = shoot forward, - = backwards)
+   * Shoots a piece using variable shooter velocity.
+   * <p><b> NOTE: </b> This only works for ShotMode = VISION_FAR_PASS or VISION_MID_PASS!!!!!!!
    * @param waitForSpinDown true = wait for shooter motors to stop before returning.  False = return immediately after shooting, with shooter motors set to slow reverse speed.
+   * @param allianceSelection
+   * @param driveTrain
    * @param shooter
    * @param feeder
    * @param wrist (not a required subsystem -- only reads the arm angle)
    * @param robotState
    * @param log
    */
-  public ShootPieceFarPassWithVision(boolean waitForSpinDown, AllianceSelection allianceSelection, DriveTrain driveTrain, Shooter shooter, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
+  public ShootPiecePassWithVision(boolean waitForSpinDown, AllianceSelection allianceSelection, DriveTrain driveTrain, Shooter shooter, Feeder feeder, Wrist wrist, BCRRobotState robotState, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -54,8 +57,8 @@ public class ShootPieceFarPassWithVision extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new RobotStateSet(BCRRobotState.State.SHOOTING, robotState, log),
         new ShooterSetVelocity(() -> {
-          double x = driveTrain.getPose().getX() - allianceSelection.getFarPassXPos();
-          double y = (driveTrain.getPose().getY() - allianceSelection.getFarPassYPos());
+          double x = driveTrain.getPose().getX() - (robotState.getShotMode() == ShotMode.VISION_FAR_PASS ? allianceSelection.getFarPassXPos() : allianceSelection.getMidPassXPos());
+          double y = driveTrain.getPose().getY() - (robotState.getShotMode() == ShotMode.VISION_FAR_PASS ? allianceSelection.getFarPassYPos() : allianceSelection.getMidPassYPos());
           // distance from center of robot to shooter
           double dist = Math.sqrt(x*x+y*y);
 

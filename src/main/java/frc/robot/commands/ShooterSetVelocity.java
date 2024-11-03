@@ -7,7 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.Sequences.ShootPieceFarPassWithVision.VelocityGetter;
+import frc.robot.commands.Sequences.ShootPiecePassWithVision.VelocityGetter;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
 

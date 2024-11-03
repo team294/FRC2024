@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
@@ -33,6 +34,7 @@ import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.utilities.BCRRobotState.ShotMode;
 import frc.robot.utilities.BCRRobotState.State;
+import static edu.wpi.first.wpilibj2.command.Commands.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -42,7 +44,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("F4");
+  private final FileLog log = new FileLog("F6");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -219,7 +221,6 @@ public class RobotContainer {
         new RobotStateSetIdle(robotState, feeder, log)
     ) );
 
-
     // Move wrist down and then intake a piece
     xbRT.onTrue(new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
 
@@ -295,13 +296,27 @@ public class RobotContainer {
       new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log)
     );
 
-    // Right button 1:  Aim lock on speaker
-    right[1].whileTrue(new ParallelCommandGroup(
-      new SetAimLock(driveTrain, true, log),
-      new ShotModeSet(ShotMode.SPEAKER, robotState, log),
-      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
-      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
-    ));
+    // Right button 1:  Aim lock on speaker or midfield pass depending on location of robot on button press
+    right[1].whileTrue(
+      either(
+        // Aim lock on speaker
+        parallel(
+          new SetAimLock(driveTrain, true, log),
+          new ShotModeSet(ShotMode.SPEAKER, robotState, log),
+          new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+          new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
+        ),
+        // Aim lock on midfield pass
+        parallel(
+          new SetAimLock(driveTrain, true, log),
+          new SetShooterFarShot(WristAngle.longPassAngle, 
+        ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, 
+        shooter, wrist, intake, feeder, ShotMode.VISION_MID_PASS, robotState, log)
+        ),
+        () -> driveTrain.getPose().getX() < FieldConstants.xThresholdMidPass
+      )
+      
+    );
     right[1].onFalse(
       new SetAimLock(driveTrain, false, log)
     );
@@ -311,7 +326,7 @@ public class RobotContainer {
       new SetAimLock(driveTrain, true, log),
       new SetShooterFarShot(WristAngle.longPassAngle, 
         ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, 
-        shooter, wrist, intake, feeder, ShotMode.VISION_PASS, robotState, log)
+        shooter, wrist, intake, feeder, ShotMode.VISION_FAR_PASS, robotState, log)
     ));
     right[2].onFalse(
       new SetAimLock(driveTrain, false, log)
