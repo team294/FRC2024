@@ -44,7 +44,7 @@ import static edu.wpi.first.wpilibj2.command.Commands.*;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("F6");
+  private final FileLog log = new FileLog("F7");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 

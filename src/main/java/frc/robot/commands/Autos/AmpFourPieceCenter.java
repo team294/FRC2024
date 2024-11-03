@@ -39,6 +39,9 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
 
         new ConditionalCommand(
             new SequentialCommandGroup(
+                // Turn on vision for odometry, to improve following shots and piece pickups
+                new VisionOdometryStateSet(true, driveTrain, log),          // F7:  Added vistion during auto
+
                 // drives back to shoot (Changed from a ParallelCommandGroup to a ParallelDeadlineGroup in command)
                 new DriveBackAndSetWristAuto(TrajectoryType.driveFarCenterNoteToPodiumShot, WristAngle.ampFourPieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
                 
@@ -48,8 +51,13 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
                 // goes to next center note
                 new DriveToAndIntakeNoteAuto(TrajectoryType.drivePodiumShotToNextCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
             ),
-            // We missed the first note, to go to 2nd note
-            new DriveToAndIntakeNoteAuto(TrajectoryType.driveFirstCenterAmpToNextCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+            new SequentialCommandGroup(
+                // We missed the first note, to go to 2nd note
+                new DriveToAndIntakeNoteAuto(TrajectoryType.driveFirstCenterAmpToNextCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+                
+                // Turn on vision for odometry, to improve following shots and piece pickups
+                new VisionOdometryStateSet(true, driveTrain, log)          // F7:  Added vistion during auto
+            ),
             () -> (feeder.isPiecePresent() == true || intake.getIntakeAmps() >= IntakeConstants.intakingPieceCurrentThreshold)
         ),
 
