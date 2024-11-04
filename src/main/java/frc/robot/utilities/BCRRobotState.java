@@ -23,7 +23,8 @@ public class BCRRobotState {
         AMP,
         SHORT_PASS,
         FAR_PASS,
-        VISION_PASS
+        VISION_FAR_PASS,
+        VISION_MID_PASS
     }
 
     private ShotMode shotMode = ShotMode.SPEAKER;

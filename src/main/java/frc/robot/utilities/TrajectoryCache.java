@@ -22,7 +22,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 40;
+    private static int trajectoryCount = 41;
     public TrajectoryFacingPair[] cache = new TrajectoryFacingPair[trajectoryCount];    // array of trajectories
 
     public enum TrajectoryType {
@@ -65,7 +65,8 @@ public class TrajectoryCache {
         driveCenterRightNoteToPodiumShot(36),
         driveFromSourceToSideMobility(37),
         driveFromWaitSpotToShootingPos(38),
-        driveFromSourceToWallMobility(39);
+        driveFromSourceToWallMobility(39),
+        driveAmpToFar2ndNote(40);
 
 
 
@@ -710,6 +711,35 @@ public class TrajectoryCache {
                 )
             )
         );
+
+        cache[TrajectoryType.driveAmpToFar2ndNote.value] = new TrajectoryFacingPair(
+            //Red Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(-60)), 
+                new Rotation2d(0), 
+                calcTrajectory("Amp to Far second note Red", .9, .8, 
+                    new Pose2d(0.8, 1.6296, new Rotation2d(Math.toRadians(-60))), 
+                    List.of(
+                        new Translation2d(2.6, 0.42),        
+                        new Translation2d(6, 1.6)            // F10 changed from 4.5 to 6 to avoid hitting wall
+                    ), 
+                    new Pose2d(9, 2.4296 + 0.3556, new Rotation2d(0))
+                )
+            ),
+            //Blue Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(60)), 
+                new Rotation2d(0), 
+                calcTrajectory("Amp to Far second note Blue", .9, .8, 
+                    new Pose2d(0.8, 6.6, new Rotation2d(Math.toRadians(60))),
+                    List.of(
+                        new Translation2d(2.6, 7.8096),
+                        new Translation2d(6, 7.8096 - 1.18)      // F10 changed from 4.5 to 6 to avoid hitting wall
+                    ),   
+                    new Pose2d(9, 5.8 - 0.3556, new Rotation2d(0))
+                )
+            )
+        );
             
         cache[TrajectoryType.driveFarCenterNoteToPodiumShot.value] = new TrajectoryFacingPair(
             //Red Trajectory
@@ -742,7 +772,7 @@ public class TrajectoryCache {
                 calcTrajectory("Podium Shot to Next Center note Red", .9, .8, 
                     new Pose2d(4.6, 1.9296, new Rotation2d(0)), 
                     List.of(new Translation2d(7, 2.1)), 
-                    new Pose2d(9, 2.4296, new Rotation2d(0)) 
+                    new Pose2d(9, 2.4296 + 0.3556, new Rotation2d(0)) //F8: Added 0.3556
                 )
             ),
             //Blue Trajectory
@@ -752,7 +782,7 @@ public class TrajectoryCache {
                 calcTrajectory("Podium Shot to Next Center note Blue", .9, .8, 
                     new Pose2d(4.6, 6.3, new Rotation2d(0)), 
                     List.of(new Translation2d(7, 6.1296)), 
-                    new Pose2d(9, 5.8, new Rotation2d(0)) 
+                    new Pose2d(9, 5.8-0.3556, new Rotation2d(0))  //F8: Subtracted 0.3556
                 )
             )
        );
@@ -761,9 +791,9 @@ public class TrajectoryCache {
             //Red Trajectory
             new TrajectoryFacing(
                 new Rotation2d(0), 
-                new Rotation2d(Math.toRadians(-10)), 
+                new Rotation2d(Math.toRadians(-13)), // F5 Changed from -10 to -13
                 calcTrajectory("Next Center note to Podium Shot Red", .9, .8, 
-                    new Pose2d(9, 2.4296, new Rotation2d(Math.PI)),
+                    new Pose2d(9, 2.4296 +0.3556, new Rotation2d(Math.PI)), //F8: Added 0.3556
                     List.of(new Translation2d(7, 2.1)), 
                     new Pose2d(4.6, 1.9296, new Rotation2d(Math.PI))
                 )
@@ -771,9 +801,9 @@ public class TrajectoryCache {
             //Blue Trajectory
             new TrajectoryFacing(
                 new Rotation2d(0), 
-                new Rotation2d(Math.toRadians(10)), 
+                new Rotation2d(Math.toRadians(13)), // F5 Changed from 10 to 13
                 calcTrajectory("Next Center note to Podium Shot Blue", .9, .8, 
-                    new Pose2d(9, 5.8, new Rotation2d(Math.PI)),
+                    new Pose2d(9, 5.8 -0.3556, new Rotation2d(Math.PI)), //F8: Subtracted 0.3556
                     List.of(new Translation2d(7, 6.1296)), 
                     new Pose2d(4.6, 6.3, new Rotation2d(Math.PI))
                 )
@@ -783,22 +813,22 @@ public class TrajectoryCache {
       cache[TrajectoryType.drivePodiumShotToCenterNote.value] = new TrajectoryFacingPair(
             //Red Trajectory
             new TrajectoryFacing(
-                new Rotation2d(Math.toRadians(-10)), 
+                new Rotation2d(Math.toRadians(-13)), // F5 Changed from -10 to -13
                 new Rotation2d(Math.toRadians(20)), 
                 calcTrajectory("Podium Shot to Center note Red", .9, .8, 
                     new Pose2d(4.6, 1.929, new Rotation2d(0)), 
                     List.of(new Translation2d(6.647, 2.4946)), 
-                    new Pose2d(8.8, 4.0996, new Rotation2d(0)) 
+                    new Pose2d(8.8, 4.0996 +.3556, new Rotation2d(0)) //F8: Added 0.3556
                 )
             ),
             //Blue Trajectory
             new TrajectoryFacing(
-                new Rotation2d(Math.toRadians(10)), 
+                new Rotation2d(Math.toRadians(13)), // F5 Changed from 10 to 13
                 new Rotation2d(Math.toRadians(-20)), 
                 calcTrajectory("Podium Shot to Center note Blue", .9, .8, 
                     new Pose2d(4.6, 6.3, new Rotation2d(0)), 
                     List.of(new Translation2d(6.647, 5.735)), 
-                    new Pose2d(8.8, 4.13, new Rotation2d(0)) 
+                    new Pose2d(8.8, 4.13 -.3556, new Rotation2d(0)) //F8: Subtracted 0.3556
                 )
             )
         );
@@ -809,7 +839,7 @@ public class TrajectoryCache {
                 new Rotation2d(Math.toRadians(20)), 
                 new Rotation2d(0), 
                 calcTrajectory("Center note to Podium Shot Red", .9, 8, 
-                    new Pose2d(8.8, 4.0996, new Rotation2d(Math.PI)), 
+                    new Pose2d(8.8, 4.0996 +0.3556, new Rotation2d(Math.PI)), //F8: Added 0.3556
                     List.of(new Translation2d(4.9, 4.0296)), 
                     new Pose2d(3.7582, 2.7516, new Rotation2d(Math.PI)) 
                 )
@@ -819,7 +849,7 @@ public class TrajectoryCache {
                 new Rotation2d(Math.toRadians(-20)), 
                 new Rotation2d(0), 
                 calcTrajectory("Center note to Podium Shot Blue", .9, .8, 
-                    new Pose2d(8.8, 4.13, new Rotation2d(Math.PI)), 
+                    new Pose2d(8.8, 4.13 -0.3556, new Rotation2d(Math.PI)), //F8: Subtracted 0.3556
                     List.of(new Translation2d(4.9, 4.2)), 
                     new Pose2d(3.7582, 5.478, new Rotation2d(Math.PI)) 
                 )
@@ -857,9 +887,9 @@ public class TrajectoryCache {
                 new Rotation2d(0), 
                 new Rotation2d(Math.toRadians(20)), 
                 calcTrajectory("Next center note to middle note red", .9, .25, 
-                    new Pose2d(9, 2.4296, new Rotation2d(Math.PI)),
+                    new Pose2d(9, 2.4296 +.3556, new Rotation2d(Math.PI)), //F8: Added 0.3556
                     List.of(new Translation2d(7.2, 3.25)), 
-                    new Pose2d(8.8, 3.95, new Rotation2d(Math.toRadians(20))) 
+                    new Pose2d(8.8, 3.95 +.3556, new Rotation2d(Math.toRadians(20))) //F8: Added 0.3556
                 )
             ),
             //Blue Trajectory
@@ -867,9 +897,9 @@ public class TrajectoryCache {
                 new Rotation2d(0), 
                 new Rotation2d(Math.toRadians(-20)), 
                 calcTrajectory("Next center note to middle note blue", .9, .25, 
-                    new Pose2d(9, 5.8, new Rotation2d(Math.PI)), 
+                    new Pose2d(9, 5.8 -.3556, new Rotation2d(Math.PI)), //F8: Subtracted 0.3556
                     List.of(new Translation2d(7.2, 4.9796)), 
-                    new Pose2d(8.8, 4.2796, new Rotation2d(Math.toRadians(-20))) 
+                    new Pose2d(8.8, 4.2796 -.3556, new Rotation2d(Math.toRadians(-20))) //F8: Subtracted 0.3556
                 )
             )
         );
@@ -882,7 +912,7 @@ public class TrajectoryCache {
                 calcTrajectory("First center note to next middle note red", .9, .25, 
                     new Pose2d(9, 0.7696, new Rotation2d(Math.PI)),
                     List.of(new Translation2d(7.2, 2)), 
-                    new Pose2d(9, 2.4296, new Rotation2d(0)) 
+                    new Pose2d(9, 2.4296 +.3556, new Rotation2d(0)) //F8: Added 0.3556
                 )
             ),
             //Blue Trajectory
@@ -892,7 +922,7 @@ public class TrajectoryCache {
                 calcTrajectory("First center note to next middle note blue", .9, .25, 
                     new Pose2d(9, 7.460, new Rotation2d(Math.PI)), 
                     List.of(new Translation2d(7.2, 6.2296)), 
-                    new Pose2d(9, 5.8, new Rotation2d(0)) 
+                    new Pose2d(9, 5.8 -0.3556, new Rotation2d(0)) //F8: Subtracted 0.3556
                 )
             )
         );

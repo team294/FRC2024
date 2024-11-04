@@ -31,8 +31,8 @@ public class SourceFourNoteCenter extends SequentialCommandGroup {
         new ScoreNoteAuto(WristAngle.speakerShotFromSide, feeder, shooter, wrist, intake, robotState, log),
     
         // leaves speaker from source side to outside of notes
-        new ResetPoseAndDriveToPosAuto(new Pose2d(0.8, 3.73, Rotation2d.fromDegrees(54)), new Pose2d(0.8, 4.5, Rotation2d.fromDegrees(-54)), null, driveTrain, cache, alliance, log),
-        
+        new ResetPoseAndDriveToPosAuto(new Pose2d(0.8, 3.73, Rotation2d.fromDegrees(54)), new Pose2d(0.8, 4.5, Rotation2d.fromDegrees(-54)), TrajectoryType.driveSourceOutsideNotes, driveTrain, cache, alliance, log),
+
         // goes around stage intake up note left of middle center note
         new DriveToAndIntakeNoteAuto(TrajectoryType.driveOutsideStageLeftCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
 
@@ -51,7 +51,7 @@ public class SourceFourNoteCenter extends SequentialCommandGroup {
         // shoots note
         new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
         
-        // goes to get next note
+        // drives back through under stage to grab right of middle center note
         new DriveToAndIntakeNoteAuto(TrajectoryType.drivePodiumShotToCenterRightNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
         
         // drives back to shoot in speaker

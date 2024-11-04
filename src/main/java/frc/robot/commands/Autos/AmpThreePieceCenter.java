@@ -23,9 +23,9 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AmpFourPieceCenter extends SequentialCommandGroup {
+public class AmpThreePieceCenter extends SequentialCommandGroup {
   /** Creates a new SourceTwoPieceShoot. */
-  public AmpFourPieceCenter(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public AmpThreePieceCenter(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
@@ -35,31 +35,7 @@ public class AmpFourPieceCenter extends SequentialCommandGroup {
         new ScoreNoteAuto(WristAngle.speakerShotFromSide, feeder, shooter, wrist, intake, robotState, log),
 
         // leaves speaker from amp side to outside of notes and pick up first note
-        new DriveToAndIntakeNoteAuto(new Pose2d(0.8, 1.6296, Rotation2d.fromDegrees(-60)), new Pose2d(0.8, 6.6, Rotation2d.fromDegrees(60)), TrajectoryType.driveAmpToFarCenter, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
-
-        new ConditionalCommand(
-            new SequentialCommandGroup(
-                // Turn on vision for odometry, to improve following shots and piece pickups
-               // new VisionOdometryStateSet(true, driveTrain, log),          // F7:  Added vistion during auto
-
-                // drives back to shoot (Changed from a ParallelCommandGroup to a ParallelDeadlineGroup in command)
-                new DriveBackAndSetWristAuto(TrajectoryType.driveFarCenterNoteToPodiumShot, WristAngle.ampFourPieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
-                
-                // shoots in speaker   
-                new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),
-                
-                // goes to next center note
-                new DriveToAndIntakeNoteAuto(TrajectoryType.drivePodiumShotToNextCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
-            ),
-            new SequentialCommandGroup(
-                // We missed the first note, to go to 2nd note
-                new DriveToAndIntakeNoteAuto(TrajectoryType.driveFirstCenterAmpToNextCenterNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
-                
-                // Turn on vision for odometry, to improve following shots and piece pickups
-              //  new VisionOdometryStateSet(true, driveTrain, log)          // F7:  Added vistion during auto
-            ),
-            () -> (feeder.isPiecePresent() == true || intake.getIntakeAmps() >= IntakeConstants.intakingPieceCurrentThreshold)
-        ),
+        new DriveToAndIntakeNoteAuto(new Pose2d(0.8, 1.6296, Rotation2d.fromDegrees(-60)), new Pose2d(0.8, 6.6, Rotation2d.fromDegrees(60)), TrajectoryType.driveAmpToFar2ndNote, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
 
         new ConditionalCommand(
             new SequentialCommandGroup(

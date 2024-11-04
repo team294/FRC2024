@@ -28,18 +28,13 @@ import frc.robot.utilities.TrajectoryCache.TrajectoryType;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class SourceTwoPieceFifthNoteShoot extends SequentialCommandGroup {
   /** Creates a new SourceTwoPieceFifthNoteShoot. */
-
-  /**
-   * waitTime:  Does **not** wait for waitTime!!!!  Used for information purposes only. 
-   */
-  public SourceTwoPieceFifthNoteShoot(double waitTime, Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
+  public SourceTwoPieceFifthNoteShoot(Intake intake, Wrist wrist, Shooter shooter, DriveTrain driveTrain, Feeder feeder, BCRRobotState robotState, TrajectoryCache cache, AllianceSelection alliance, FileLog log) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ParallelCommandGroup(
-        new SourceOnePieceDriveToFifthNote(intake, wrist, shooter, driveTrain, feeder, robotState, cache, alliance, log),
-        new WaitCommand(Math.abs(9-waitTime))
-      ),
+
+      new SourceOnePieceDriveToFifthNote(intake, wrist, shooter, driveTrain, feeder, robotState, cache, alliance, log),
+
       new ConditionalCommand( 
         new SequentialCommandGroup(
           new DriveBackAndSetWristAuto(TrajectoryType.driveFromWaitSpotToShootingPos, WristAngle.sourceCloseNoteShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),

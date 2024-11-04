@@ -181,10 +181,10 @@ public final class Constants {
       // Update the offset angles in RobotPreferences (in Shuffleboard), not in this code!
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, set the wheels to zero degrees with the bevel gear facing to the right
-      public static double offsetAngleFrontLeftMotor = 0; // 110.7
-      public static double offsetAngleFrontRightMotor = 0; // 44.6
-      public static double offsetAngleBackLeftMotor = 0; // -67.1
-      public static double offsetAngleBackRightMotor = 0; // 152.1
+      public static double offsetAngleFrontLeftMotor = 110.7; // 110.7
+      public static double offsetAngleFrontRightMotor = 44.6; // 44.6
+      public static double offsetAngleBackLeftMotor = -67.1; // -67.1
+      public static double offsetAngleBackRightMotor = 152.1; // 152.1
 
         // Driving constants to cap acceleration
       public static final double maxAccelerationRate = 10.0;         // m/s^2
@@ -304,9 +304,9 @@ public final class Constants {
       public static final double yPosSpeakerBlue = width - yPosSpeakerRed;
       public static final double heightOfSpeaker = 2.03;
       
-      // pass position
-      public static final double yPosFarPassTargetRed = Units.inchesToMeters(44);   // D4:  Changed from 39 to 44
-      public static final double xPosFarPassTargetRed = Units.feetToMeters(3.66);   // D4:  Changed from 4 to 3.66
+      // far pass positions
+      public static final double yPosFarPassTargetRed = Units.inchesToMeters(32);   // F2:  Changed from 44 to 32
+      public static final double xPosFarPassTargetRed = Units.feetToMeters(4.66);   // F3:  Changed from 3.66 to 4.66
       
       public static final double yPosFarPassTargetBlue = width - yPosFarPassTargetRed;
       public static final double xPosFarPassTargetBlue = xPosFarPassTargetRed;
@@ -314,6 +314,15 @@ public final class Constants {
       public static final Pose2d posAmpBlue = new Pose2d(1.849, width + 0.2, new Rotation2d(Units.degreesToRadians(-90)));
       public static final Pose2d posAmpRedInitial = new Pose2d(1.849, .2, new Rotation2d(Units.degreesToRadians(90)));
       public static final Pose2d posAmpBlueInitial = new Pose2d(1.849, width - .2, new Rotation2d(Units.degreesToRadians(-90)));
+
+      // midfield pass positions
+      public static final double xThresholdMidPass = Units.inchesToMeters(76.1 + 345.91); // F5 76.1 + 345.91
+
+      public static final double yPosMidPassTargetRed = 1.3;   // F5: 1.3m
+      public static final double xPosMidPassTargetRed = 7.25;   // F5: 7.25m
+      
+      public static final double yPosMidPassTargetBlue = width - yPosMidPassTargetRed;
+      public static final double xPosMidPassTargetBlue = xPosMidPassTargetRed;
     }
 
     public static class VisionConstants {
@@ -363,7 +372,7 @@ public final class Constants {
       // After updating in RobotPreferences, you will need to re-start the robot code for the changes to take effect.
       // When calibrating offset, 0 deg should be with the CG of the wrist horizontal facing away from the robot,
       // and -90 deg is with the CG of the wrist resting downward.
-      public static double revEncoderOffsetAngleWrist = 0;    // E3: Updated 150.5 deg (added arm spacer)  CALIBRATED
+      public static double revEncoderOffsetAngleWrist = 150.5;    // E3: Updated 150.5 deg (added arm spacer)  CALIBRATED
 
       public static final double kP = 0.5;   // 0.5 CALIBRATED.  kP = (desired-output-volts) / (error-in-encoder-rotations)
       public static final double kI = 0.0; 
@@ -412,7 +421,7 @@ public final class Constants {
           endFiveNoteShot(-69),
           sourceThreePieceShot(-69),
           endAmpFourcePieceShot(-66), // last note shot for amp 4 note 
-          ampFourPieceShot(-73),     // C6:  Decreased by 3 degrees.  normal shot for amp 4 note
+          ampFourPieceShot(-72),     // F5: Increased by 1 degree (-73 to -72)
           overheadShotAngle(57),      // D1:  Increased from 56 to 57 deg Worlds Fri before matches.
           climbStop(-45.0),
           ampShot(52.0),            // C4:  Increased from 50 to 52
