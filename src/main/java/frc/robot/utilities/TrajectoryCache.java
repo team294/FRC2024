@@ -720,7 +720,8 @@ public class TrajectoryCache {
                 calcTrajectory("Amp to Far second note Red", .9, .8, 
                     new Pose2d(0.8, 1.6296, new Rotation2d(Math.toRadians(-60))), 
                     List.of(
-                        new Translation2d(4.5, 0.42)            // F8 changed from 2.6 to 4.5 to avoid hitting stage
+                        new Translation2d(2.6, 0.42),        
+                        new Translation2d(6, 1.6)            // F10 changed from 4.5 to 6 to avoid hitting wall
                     ), 
                     new Pose2d(9, 2.4296 + 0.3556, new Rotation2d(0))
                 )
@@ -730,8 +731,11 @@ public class TrajectoryCache {
                 new Rotation2d(Math.toRadians(60)), 
                 new Rotation2d(0), 
                 calcTrajectory("Amp to Far second note Blue", .9, .8, 
-                    new Pose2d(0.8, 6.6, new Rotation2d(Math.toRadians(60))), 
-                    List.of(new Translation2d(4.5, 7.8096)),   // F8 changed from 2.6 to 4.5 to avoid hitting stage
+                    new Pose2d(0.8, 6.6, new Rotation2d(Math.toRadians(60))),
+                    List.of(
+                        new Translation2d(2.6, 7.8096),
+                        new Translation2d(6, 7.8096 - 1.18)      // F10 changed from 4.5 to 6 to avoid hitting wall
+                    ),   
                     new Pose2d(9, 5.8 - 0.3556, new Rotation2d(0))
                 )
             )
