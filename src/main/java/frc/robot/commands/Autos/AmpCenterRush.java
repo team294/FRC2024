@@ -46,22 +46,20 @@ public class AmpCenterRush extends SequentialCommandGroup {
     addCommands(
       new ParallelCommandGroup(
 
-        new SequentialCommandGroup(
+        new ResetPoseAndDriveToPosAuto(new Pose2d(0.4572, 0.90805, Rotation2d.fromDegrees(0)), new Pose2d(0.77, 7.1, Rotation2d.fromDegrees(0)), TrajectoryType.driveAmpRushtoFarRight, driveTrain, cache, alliance, log),
+        //new DriveToAndIntakeNoteAuto(new Pose2d(0.77,1.1296, Rotation2d.fromDegrees(0)), new Pose2d(0.77, 7.1, Rotation2d.fromDegrees(0)), TrajectoryType.driveAmpRushtoFarRight, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
 
-          new WaitCommand(1),
+        new SequentialCommandGroup(
+          new WaitCommand(1.5), //Drops note too late, so changed from 1.85 1.5
           new ShootPiece(ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, false, shooter, feeder, wrist, robotState, log),
           //new WristSetAngle(WristAngle.lowerLimit, wrist, log),
           new IntakePieceAuto(intake, feeder, robotState, log)
-
-        ),
-
-        new ResetPoseAndDriveToPosAuto(new Pose2d(0.77,1.1296, Rotation2d.fromDegrees(0)), new Pose2d(0.77, 7.1, Rotation2d.fromDegrees(0)), TrajectoryType.driveAmpRushtoFarRight, driveTrain, cache, alliance, log)
-        //new DriveToAndIntakeNoteAuto(new Pose2d(0.77,1.1296, Rotation2d.fromDegrees(0)), new Pose2d(0.77, 7.1, Rotation2d.fromDegrees(0)), TrajectoryType.driveAmpRushtoFarRight, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log)
+        )
 
       ),
 
       // drives back to shoot (Changed from a ParallelCommandGroup to a ParallelDeadlineGroup in command)
-      new DriveBackAndSetWristAuto(TrajectoryType.driveFarCenterNoteToPodiumShot, WristAngle.ampFourPieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
+      new DriveBackAndSetWristAuto(TrajectoryType.driveCenterAmpRushToPodiumShot, WristAngle.ampFourPieceShot, driveTrain, feeder, shooter, wrist, intake, robotState, cache, alliance, log),
       
       // shoots in speaker   
       new ShootPiece(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, true, shooter, feeder, wrist, robotState, log),

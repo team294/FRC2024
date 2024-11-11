@@ -22,7 +22,7 @@ import frc.robot.Constants.SwerveConstants;
 public class TrajectoryCache {
     private FileLog log;
    
-    private static int trajectoryCount = 44;
+    private static int trajectoryCount = 45;
     public TrajectoryFacingPair[] cache = new TrajectoryFacingPair[trajectoryCount];    // array of trajectories
 
     public enum TrajectoryType {
@@ -69,7 +69,8 @@ public class TrajectoryCache {
         driveAmpRushtoFarRight(40),
         driveAmpRushtoFarSecondRight(41),
         drivePodiumShotToDroppedNote(42),
-        driveDroppedNoteToPodiumShot(43);
+        driveDroppedNoteToPodiumShot(43),
+        driveCenterAmpRushToPodiumShot(44);
 
 
 
@@ -1122,14 +1123,14 @@ public class TrajectoryCache {
                 new Rotation2d(Math.toRadians(0)), 
                 new Rotation2d(0), 
                 calcTrajectory("Amp Rush to Far center note Red", .9, .8, 
-                    new Pose2d(0.77, 1.1296, new Rotation2d(Math.toRadians(0))), 
+                    new Pose2d(0.4572, 0.90805, new Rotation2d(Math.toRadians(0))), 
                     List.of(
-                        new Translation2d(2.6, 0.42)            // changed from 0.47 to 0.42 to avoid hitting note
+                        new Translation2d(2.8956, 0.528828)            // changed from 0.47 to 0.42 to avoid hitting note
                     ), 
-                    new Pose2d(9, 0.7696, new Rotation2d(0))
+                    new Pose2d(8.5, 0.752856, new Rotation2d(0))
                 )
             ),
-            //Blue Trajectory
+            //Blue Trajectory (Not up to date until red trajectory is finalized)
             new TrajectoryFacing(
                 new Rotation2d(Math.toRadians(60)), 
                 new Rotation2d(0), 
@@ -1172,12 +1173,15 @@ public class TrajectoryCache {
                 new Rotation2d(Math.toRadians(-10)), 
                 new Rotation2d(Math.toRadians(180)), 
                 calcTrajectory("Podium Shot to dropped note Red", .9, .8, 
-                    new Pose2d(4.6, 1.9296, new Rotation2d(Math.toRadians(0))), 
-                    List.of(new Translation2d(5.0, 0.7696)), 
-                    new Pose2d(3.1, 0.7696, new Rotation2d(Math.toRadians(180))) 
+                    new Pose2d(4.1, 1.912856, new Rotation2d(Math.toRadians(0))), 
+                    List.of(
+                        new Translation2d(4.1, 0.55),
+                        new Translation2d(5.5, 0.64)
+                    ),  // Temporary values, needs testing to find where the note is dropped
+                    new Pose2d(7, 0.72, new Rotation2d(Math.toRadians(180)))  // Temporary value, needs testing to find where the note is dropped
                 )
             ),
-            //Blue Trajectory
+            //Blue Trajectory (Not up to date until red trajectory is finalized)
             new TrajectoryFacing(
                 new Rotation2d(Math.toRadians(10)), 
                 new Rotation2d(Math.toRadians(180)), 
@@ -1195,18 +1199,41 @@ public class TrajectoryCache {
                 new Rotation2d(Math.toRadians(180)), 
                 new Rotation2d(Math.toRadians(-10)), 
                 calcTrajectory("Dropped note to podium shot Red", .9, .8, 
-                    new Pose2d(3.1, 0.7696, new Rotation2d(Math.toRadians(0))), 
-                    List.of(new Translation2d(5.0, 0.7696)), 
-                    new Pose2d(4.6, 1.9296, new Rotation2d(Math.toRadians(30))) 
+                    new Pose2d(7, 0.72, new Rotation2d(Math.toRadians(0))), 
+                    List.of(), 
+                    new Pose2d(4.1, 1.912856, new Rotation2d(Math.toRadians(180))) 
                 )
             ),
-            //Blue Trajectory
+            //Blue Trajectory (Not up to date until red trajectory is finalized)
             new TrajectoryFacing(
                 new Rotation2d(Math.toRadians(180)), 
                 new Rotation2d(Math.toRadians(10)), 
                 calcTrajectory("Dropped note to podium shot Blue", .9, .8, 
                     new Pose2d(3.1, 7.460, new Rotation2d(Math.toRadians(0))), 
                     List.of(new Translation2d(5.0, 7.460)), 
+                    new Pose2d(4.6, 6.3, new Rotation2d(Math.toRadians(-30))) 
+                )
+            )
+        );
+
+        cache[TrajectoryType.driveCenterAmpRushToPodiumShot.value] = new TrajectoryFacingPair(
+            //Red Trajectory
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(0)), 
+                new Rotation2d(Math.toRadians(-10)), 
+                calcTrajectory("Right Far note rush to podium shot Red", .9, .8, 
+                    new Pose2d(8.5, 0.752856, new Rotation2d(Math.PI)), 
+                    List.of(), 
+                    new Pose2d(4.1, 1.912856, new Rotation2d(Math.PI)) 
+                )
+            ),
+            //Blue Trajectory (Not up to date until red trajectory is finalized)
+            new TrajectoryFacing(
+                new Rotation2d(Math.toRadians(180)), 
+                new Rotation2d(Math.toRadians(10)), 
+                calcTrajectory("Dropped note to podium shot Blue", .9, .8, 
+                    new Pose2d(3.1, 7.460, new Rotation2d(Math.toRadians(0))), 
+                    List.of(), 
                     new Pose2d(4.6, 6.3, new Rotation2d(Math.toRadians(-30))) 
                 )
             )

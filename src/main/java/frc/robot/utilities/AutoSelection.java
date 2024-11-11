@@ -214,7 +214,7 @@ public class AutoSelection {
 		}
 		else if (autoPlan == AmpCenterRush){
 			log.writeLogEcho(true, "AutoSelect", "run Amp Center Rush");
-			autonomousCommandMain = new SourceWallMobilityAuto(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+			autonomousCommandMain = new AmpCenterRush(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
 		else if (autonomousCommandMain == null) {
