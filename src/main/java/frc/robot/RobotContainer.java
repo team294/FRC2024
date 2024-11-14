@@ -262,7 +262,12 @@ public class RobotContainer {
     xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, true,
       shooter, feeder, wrist, robotState, log) );
 
- 
+    //Prep for outreach shot (Medium Speed) when button is pressed
+    xbPOVLeft.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromPodium, ShooterConstants.shooterVelocityOutreach, 
+      ShooterConstants.shooterVelocityOutreach, shooter, wrist, intake, feeder, robotState, log) );
+    //Shoot outreach shot (Medium Speed) when released
+    xbPOVLeft.onFalse(new ShootPiece( ShooterConstants.shooterVelocityOutreach, ShooterConstants.shooterVelocityOutreach, true, 
+      shooter, feeder, wrist, robotState, log) );
 
     // Stop all motors
     xbStart.onTrue(new ParallelCommandGroup(
