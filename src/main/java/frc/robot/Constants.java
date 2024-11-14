@@ -146,6 +146,9 @@ public final class Constants {
       public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 35.0;            // TODO NOT CALIBRATED - not used in code currently
       public static final double kNominalAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
+      public static final double kOutreachMaxSpeedMetersPerSecond = 2.0; // TODO Determine safe max speed for outreach events
+      public static final double kOutreachMaxTurningRadiansPerSecond = 8.0;// TODO Determine safe max turning speed for outreach events
+
       public static final double kVDriveAvg = 0.1740; // 0.1740  CALIBRATED.  0.2034 from 2023 robot.  In % output per meters per second.
       private static final double kVmFLrel = 1.0182;      // init cal 1.0182.  CALIBRATED.  kV modifier for FL drive motor
       private static final double kVmFRrel = 0.9826;      // init cal 0.9826.  CALIBRATED.  kV modifier for FR drive motor

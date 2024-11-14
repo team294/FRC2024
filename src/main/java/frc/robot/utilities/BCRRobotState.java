@@ -4,6 +4,8 @@
 
 package frc.robot.utilities;
 
+import edu.wpi.first.util.concurrent.Event;
+
 /** A wrapper class for State objects (see state machine file) */
 public class BCRRobotState {
     /** The enum that keeps track of all possible states for the robot */
@@ -29,6 +31,14 @@ public class BCRRobotState {
 
     private ShotMode shotMode = ShotMode.SPEAKER;
 
+    public static enum EventType {
+        COMPETITION,
+        OPEN_HOUSE,
+        OUTREACH
+    }
+
+    private EventType eventType = EventType.COMPETITION;
+
     /** Creates a new BCRRobotState with the default State value of IDLE */
     public BCRRobotState() {
         setState(State.IDLE);
@@ -48,6 +58,14 @@ public class BCRRobotState {
     }
 
     /**
+     * Sets the current State of the robot
+     * @param state new State
+     */
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    /**
      * returns if shooter is in mode for a Far shot (lobbing note towards alliance partner)
      * @return true = far shot, false = normal speaker shot
      */
@@ -64,10 +82,18 @@ public class BCRRobotState {
     }
 
     /**
-     * Sets the current State of the robot
-     * @param state new State
+     * Get the current event type of the robot
+     * @return event type
      */
-    public void setState(State state) {
-        this.state = state;
+    public EventType getEventType(){
+        return eventType;
+    }
+
+    /**
+     * Set the event type the robot is in
+     * @param eventType new event type
+     */
+    public void setEventType(EventType eventType){
+        this.eventType = eventType;
     }
 }

@@ -171,6 +171,11 @@ public class RobotContainer {
     // Vision
     SmartDashboard.putData("Enable Using Vision for Odometry", new VisionOdometryStateSet(true, driveTrain, log));
     SmartDashboard.putData("Disable Using Vision for Odometry", new VisionOdometryStateSet(false, driveTrain, log));
+
+    // Set Event
+    SmartDashboard.putData("Set Event Type to Competition", new EventTypeSet(BCRRobotState.EventType.COMPETITION, robotState, log));
+    SmartDashboard.putData("Set Event Type to Open House", new EventTypeSet(BCRRobotState.EventType.OPEN_HOUSE, robotState, log));
+    SmartDashboard.putData("Set Event Type to Outreach", new EventTypeSet(BCRRobotState.EventType.OUTREACH, robotState, log));
   }
 
   /**
@@ -207,7 +212,7 @@ public class RobotContainer {
     Trigger xbStart = xboxController.start();
     Trigger xbPOVUp = xboxController.povUp();
     Trigger xbPOVRight = xboxController.povRight(); //empty
-    Trigger xbPOVLeft = xboxController.povLeft();   //empty
+    Trigger xbPOVLeft = xboxController.povLeft();
     Trigger xbPOVDown = xboxController.povDown();
     Trigger xbRJoystickTrigger = xboxController.rightStick();
 
