@@ -150,7 +150,7 @@ public class SwerveModule {
     // Supply current limit is typically used to prevent breakers from tripping.
     driveMotorConfig.CurrentLimits.SupplyCurrentLimit = 35.0;       // (amps) If current is above threshold value longer than threshold time, then limit current to this value
     driveMotorConfig.CurrentLimits.SupplyCurrentThreshold = 60.0;   // (amps) Threshold current
-    driveMotorConfig.CurrentLimits.SupplyTimeThreshold = 0.1;       // (sec) Threshold time
+    driveMotorConfig.CurrentLimits.SupplyTimeThreshold = 2.0;       // (sec) Threshold time     WAS 0.1s, changed to 2.0 sec
     driveMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     // configure drive encoder
@@ -282,6 +282,16 @@ public class SwerveModule {
     return isInCoastMode;
   }
 
+  /**
+   * Sets the drive motor to FOC or trapezoidal commuatation mode
+   * <p> <b>Note</b> This takes effect for the <b>next</b> request sent to the motor.
+   * @param setFOC true = FOC mode, false = trapezoidal mode
+   */
+  public void setDriveMotorFOC(boolean setFOC) {
+    driveVelocityControl = driveVelocityControl.withEnableFOC(setFOC);
+    driveVoltageControl = driveVoltageControl.withEnableFOC(setFOC);
+  }
+   
   // ********** Main swerve module control methods
 
   /**

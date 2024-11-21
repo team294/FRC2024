@@ -36,6 +36,8 @@ import frc.robot.utilities.BCRRobotState.ShotMode;
 import frc.robot.utilities.BCRRobotState.State;
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 
+import com.ctre.phoenix6.SignalLogger;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -128,6 +130,8 @@ public class RobotContainer {
     SmartDashboard.putData("Wrist Nudge Angle", new WristNudgeAngle(wrist, log));
   
     // Drive base commands
+    SmartDashboard.putData("Drive FOC On", new DriveSetFOC(true, driveTrain, log));
+    SmartDashboard.putData("Drive FOC Off", new DriveSetFOC(false, driveTrain, log));
     SmartDashboard.putData("Drive Toggle Coast", new DriveToggleCoastMode(driveTrain, log));
     SmartDashboard.putData("Drive Reset Pose", new DriveResetPose(driveTrain, log));
     SmartDashboard.putData("Drive To Pose", new DriveToPose(driveTrain, log));
@@ -417,6 +421,7 @@ public class RobotContainer {
     driveTrain.setVisionForOdometryState(true);
 
     matchTimer.stop();
+    SignalLogger.stop();
   }
 
   /**
@@ -477,6 +482,7 @@ public class RobotContainer {
 
     matchTimer.reset();
     matchTimer.start();
+    SignalLogger.start();
   }
 
   /**
