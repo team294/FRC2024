@@ -524,8 +524,6 @@ public class DriveTrain extends SubsystemBase implements Loggable {
         RobotPreferences.recordStickyFaults("Gyro", log);
       }
 
-      // Update data on SmartDashboard
-      field.setRobotPose(poseEstimator.getEstimatedPosition());
       ChassisSpeeds robotSpeeds = getRobotSpeeds();
 
       // SmartDashboard.putNumber("Drive Average Dist in Meters", Units.inchesToMeters(getAverageDistance()));

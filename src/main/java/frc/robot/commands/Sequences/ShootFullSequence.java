@@ -6,6 +6,7 @@ package frc.robot.commands.Sequences;
 
 import java.util.Map;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
@@ -32,7 +33,8 @@ public class ShootFullSequence extends SequentialCommandGroup {
           Map.entry(ShotMode.AMP, new ShootPieceAmp(feeder, robotState, log)),
           Map.entry(ShotMode.SHORT_PASS, new ShootPiece(ShooterConstants.shooterVelocityShortPassTop, ShooterConstants.shooterVelocityShortPassBottom, true, shooter, feeder, wrist, robotState, log)),
           Map.entry(ShotMode.FAR_PASS, new ShootPiece(ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, true, shooter, feeder, wrist, robotState, log)),
-          Map.entry(ShotMode.VISION_PASS, new ShootPieceFarPassWithVision(true, allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log))
+          Map.entry(ShotMode.VISION_FAR_PASS, new ShootPiecePassWithVision(true, allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log)),
+          Map.entry(ShotMode.VISION_MID_PASS, new ShootPiecePassWithVision(true, allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log))
         ),
       robotState::getShotMode));
   }

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StopType;
@@ -33,6 +34,7 @@ import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.utilities.BCRRobotState.ShotMode;
 import frc.robot.utilities.BCRRobotState.State;
+import static edu.wpi.first.wpilibj2.command.Commands.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -42,7 +44,7 @@ import frc.robot.utilities.BCRRobotState.State;
  */
 public class RobotContainer {
   // Define robot key utilities (DO THIS FIRST)
-  private final FileLog log = new FileLog("E2");
+  private final FileLog log = new FileLog("F10");
   private final AllianceSelection allianceSelection = new AllianceSelection(log);
   private final Timer matchTimer = new Timer();
 
@@ -199,22 +201,25 @@ public class RobotContainer {
     Trigger xbB = xboxController.b();
     Trigger xbY = xboxController.y();
     Trigger xbX = xboxController.x();
-    Trigger xbLB = xboxController.leftBumper();
+    Trigger xbLB = xboxController.leftBumper();     //empty
     Trigger xbRB = xboxController.rightBumper();
     Trigger xbBack = xboxController.back();
     Trigger xbStart = xboxController.start();
     Trigger xbPOVUp = xboxController.povUp();
-    Trigger xbPOVRight = xboxController.povRight();
-    Trigger xbPOVLeft = xboxController.povLeft();
+    Trigger xbPOVRight = xboxController.povRight(); //empty
+    Trigger xbPOVLeft = xboxController.povLeft();   //empty
     Trigger xbPOVDown = xboxController.povDown();
     Trigger xbRJoystickTrigger = xboxController.rightStick();
 
-    // Prep for overhead speaker shot
-    xbLB.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
-      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
-    // Shoot the piece (smart shoot -- depending on what arm button or auto-aim was pressed last)
-    xbRB.onTrue(new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log));
+    
+    // Prep for amp
+    xbRB.onTrue( new ParallelCommandGroup(
+        new IntakeStop(intake, log),
+        new WristSetAngle(true, wrist, log),
+        new ShotModeSet(ShotMode.AMP, robotState, log),
+        new RobotStateSetIdle(robotState, feeder, log)
+    ) );
 
     // Move wrist down and then intake a piece
     xbRT.onTrue(new IntakePiece(intake, feeder, wrist, shooter, robotState, log));
@@ -230,9 +235,9 @@ public class RobotContainer {
     xbB.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromPodium, 
       ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
     
-    // Prep for mid-stage speaker shot
-    xbY.onTrue(new SetShooterWristSpeaker(WristAngle.speakerShotFromMidStage, 
-      ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
+    // Prep for overhead speaker shot
+    xbY.onTrue(new SetShooterWristSpeaker(WristAngle.overheadShotAngle, 
+    ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, shooter, wrist, intake, feeder, robotState, log));
 
     // Prep for short pass
     xbPOVDown.onTrue(new SetShooterFarShot(WristAngle.shortPassAngle, 
@@ -257,13 +262,7 @@ public class RobotContainer {
     xbBack.onFalse( new ShootPiece( ShooterConstants.shooterVelocityPit, ShooterConstants.shooterVelocityPit, true,
       shooter, feeder, wrist, robotState, log) );
 
-    // Prep for amp shot
-    xbPOVRight.onTrue( new ParallelCommandGroup(
-        new IntakeStop(intake, log),
-        new WristSetAngle(true, wrist, log),
-        new ShotModeSet(ShotMode.AMP, robotState, log),
-        new RobotStateSetIdle(robotState, feeder, log)
-    ) );  
+ 
 
     // Stop all motors
     xbStart.onTrue(new ParallelCommandGroup(
@@ -297,13 +296,27 @@ public class RobotContainer {
       new ShootFullSequence(allianceSelection, driveTrain, shooter, feeder, wrist, robotState, log)
     );
 
-    // Right button 1:  Aim lock on speaker
-    right[1].whileTrue(new ParallelCommandGroup(
-      new SetAimLock(driveTrain, true, log),
-      new ShotModeSet(ShotMode.SPEAKER, robotState, log),
-      new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
-      new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
-    ));
+    // Right button 1:  Aim lock on speaker or midfield pass depending on location of robot on button press
+    right[1].whileTrue(
+      either(
+        // Aim lock on speaker
+        parallel(
+          new SetAimLock(driveTrain, true, log),
+          new ShotModeSet(ShotMode.SPEAKER, robotState, log),
+          new WristSetAngleWithVision(wrist, allianceSelection, driveTrain, log),
+          new ShooterSetVelocity(ShooterConstants.shooterVelocityTop, ShooterConstants.shooterVelocityBottom, VelocityType.waitForVelocity, shooter, log).withTimeout(1.5)
+        ),
+        // Aim lock on midfield pass
+        parallel(
+          new SetAimLock(driveTrain, true, log),
+          new SetShooterFarShot(WristAngle.longPassAngle, 
+        ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, 
+        shooter, wrist, intake, feeder, ShotMode.VISION_MID_PASS, robotState, log)
+        ),
+        () -> driveTrain.getPose().getX() < FieldConstants.xThresholdMidPass
+      )
+      
+    );
     right[1].onFalse(
       new SetAimLock(driveTrain, false, log)
     );
@@ -313,7 +326,7 @@ public class RobotContainer {
       new SetAimLock(driveTrain, true, log),
       new SetShooterFarShot(WristAngle.longPassAngle, 
         ShooterConstants.shooterVelocityFarPassTop, ShooterConstants.shooterVelocityFarPassBottom, 
-        shooter, wrist, intake, feeder, ShotMode.VISION_PASS, robotState, log)
+        shooter, wrist, intake, feeder, ShotMode.VISION_FAR_PASS, robotState, log)
     ));
     right[2].onFalse(
       new SetAimLock(driveTrain, false, log)
@@ -343,8 +356,8 @@ public class RobotContainer {
     coP[1].onTrue(new ClimbStart(wrist, log, led));
     coP[3].onTrue(new ClimbEnd(wrist, log, led));
     // Nudge angle up or down
-    coP[5].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
-    coP[6].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
+    coP[5].onTrue(new WristNudgeAngle(-1, wrist, log)); // Nudge up
+    coP[6].onTrue(new WristNudgeAngle(1, wrist, log)); // Nudge down
 
     coP[9].onTrue(new WristNudgeAmpAngle(1, wrist, log)); //Nudge down
     coP[10].onTrue(new WristNudgeAmpAngle(-1 ,wrist, log)); //Nudge up
@@ -393,6 +406,8 @@ public class RobotContainer {
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Robot disabled");   // Don't log the word "Init" here -- it affects the Excel macro
 
+    // Code added Shuffleboard control to put robot in coast/brake mode.
+    // Just leave robot in brake mode when disabling so that it stops quickly if it is still moving.
     // if (!lastEnabledModeAuto) {
     //   driveTrain.setDriveModeCoast(true);     // When pushing a disabled robot by hand, it is a lot easier to push in Coast mode!!!!
     // }

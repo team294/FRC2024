@@ -87,6 +87,15 @@ public class AllianceSelection {
     public double getFarPassXPos() {
         return (alliance == Alliance.Red) ? FieldConstants.xPosFarPassTargetRed : FieldConstants.xPosFarPassTargetBlue;
     }
+
+    public double getMidPassYPos() {
+        return (alliance == Alliance.Red) ? FieldConstants.yPosMidPassTargetRed : FieldConstants.yPosMidPassTargetBlue;
+    }
+
+    public double getMidPassXPos() {
+        return (alliance == Alliance.Red) ? FieldConstants.xPosMidPassTargetRed : FieldConstants.xPosMidPassTargetBlue;
+    }
+
     public Pose2d getAmpPos() {
         return (alliance == Alliance.Red) ? FieldConstants.posAmpRed : FieldConstants.posAmpBlue;
     }
