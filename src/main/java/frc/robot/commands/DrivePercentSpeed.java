@@ -21,12 +21,13 @@ public class DrivePercentSpeed extends Command {
   private boolean fromShuffleboard;
 
   // Internal command variables
-  // private final Timer timer = new Timer();
+  private final Timer timer = new Timer();
   private Pose2d poseStart;
   private double curDistance;
 
   /**
    * Drives the robot straight at a fixed speed and stops after it travels a specified distance (or is cancelled).
+   * Waits 1 second to align wheel facings prior to starting robot movement.
    * @param angleFacing Desired wheel facing relative to front of chassis in degrees, -180 to +180 (+=left, -=right, 0=facing front of robot)
    * @param percentSpeed Robot percent voltage, -1 to +1 (+ = in direction of angleFacing, - = opposite direction)
    * @param maxDistance Maximum distance for the robot to travel before ending this command, in meters
@@ -46,6 +47,7 @@ public class DrivePercentSpeed extends Command {
 
   /**
    * Drives the robot straight at a fixed speed and stops after it travels a specified distance (or is cancelled).
+   * Waits 1 second to align wheel facings prior to starting robot movement.
    * Parameters angleFacing, percentSpeed, and maxDistance are chosen from Shuffleboard.
    * @param driveTrain
    * @param log
@@ -71,8 +73,8 @@ public class DrivePercentSpeed extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // timer.reset();
-    // timer.start();
+    timer.reset();
+    timer.start();
     poseStart = driveTrain.getPose();
     curDistance = 0.0;
 
@@ -98,8 +100,12 @@ public class DrivePercentSpeed extends Command {
     SmartDashboard.putNumber("DrivePercentSpeed curDistance", curDistance);
     
     driveTrain.setWheelFacings(angleFacing);
-    driveTrain.setDriveMotorsOutput(percentSpeed);
+    if (timer.hasElapsed(1.0)) {
+      driveTrain.setDriveMotorsOutput(percentSpeed);
+    } else {
+      driveTrain.setDriveMotorsOutput(0.0);
     }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -107,6 +113,7 @@ public class DrivePercentSpeed extends Command {
     driveTrain.stopMotors();
     driveTrain.setVisionForOdometryState(true);
     driveTrain.enableFastLogging(false);
+    timer.stop();
 
     log.writeLog(false, "DrivePercentSpeed", "End", "curDistance", curDistance);
   }
@@ -114,7 +121,6 @@ public class DrivePercentSpeed extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return timer.hasElapsed(maxDistance);
     return curDistance >= maxDistance;
   }
 }
