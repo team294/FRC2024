@@ -11,7 +11,6 @@ import frc.robot.Constants.StopType;
 import frc.robot.commands.DriveResetPose;
 import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.Autos.*;
-import frc.robot.commands.Sequences.ShootPiece;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -26,11 +25,11 @@ public class AutoSelection {
 	public enum AutoSelectionOption {
 		NONE("None", 0),
 		test("Test", 1),
-		shootOne("OnePieceShoot", 2),
+		// shootOne("OnePieceShoot", 2),
 		CenterTwoPieceShoot("CenterTwoPieceShoot", 3),
 		SourceTwoPieceShoot("SourceTwoPieceShoot", 4),
-		AmpTwoPieceShoot("AmpTwoPieceShoot", 5),
-		AmpThreePieceShoot("AmpThreePieceShoot", 6),
+		// AmpTwoPieceShoot("AmpTwoPieceShoot", 5),
+		// AmpThreePieceShoot("AmpThreePieceShoot", 6),
 		CenterSourceThreePieceShoot("CenterThreePieceShootAmp", 7),
 		CenterFourPieceShoot("CenterFourPieceNearNoteAuto", 8),
 		SourceShootOnePiece("SourceShootOnePiece", 9),
@@ -112,10 +111,10 @@ public class AutoSelection {
 			autonomousCommandMain = new DriveTrajectory(CoordType.kRelative, StopType.kCoast, trajectoryCache.cache[TrajectoryCache.TrajectoryType.test.value].red, driveTrain, log);
 		}
 
-		else if(autoPlan == AutoSelectionOption.shootOne.value){
-			log.writeLogEcho(true, "AutoSelect", "run One Piece Shoot");
-			autonomousCommandMain = new ShootPiece(true, shooter, feeder, wrist, robotState, log);
-		}
+		// else if(autoPlan == AutoSelectionOption.shootOne.value){
+		// 	log.writeLogEcho(true, "AutoSelect", "run One Piece Shoot");
+		// 	autonomousCommandMain = new ShootPiece(true, shooter, feeder, wrist, robotState, log);
+		// }
 
 		else if(autoPlan == AutoSelectionOption.CenterTwoPieceShoot.value){
 			log.writeLogEcho(true, "AutoSelect", "run Center Two Piece Shoot");
@@ -127,20 +126,20 @@ public class AutoSelection {
 			autonomousCommandMain = new SourceTwoPieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
-		else if(autoPlan == AutoSelectionOption.AmpTwoPieceShoot.value){
-			log.writeLogEcho(true, "AutoSelect", "run Amp Two Piece Shoot");
-			autonomousCommandMain = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log);
-		}
+		// else if(autoPlan == AutoSelectionOption.AmpTwoPieceShoot.value){
+		// 	log.writeLogEcho(true, "AutoSelect", "run Amp Two Piece Shoot");
+		// 	autonomousCommandMain = new AmpTwoPieceShoot(intake, shooter, driveTrain, feeder, wrist, robotState, trajectoryCache, allianceSelection, log);
+		// }
 
 		else if(autoPlan == AutoSelectionOption.CenterSourceThreePieceShoot.value){
 			log.writeLogEcho(true, "AutoSelect", "run Source Center Three Piece Shoot");
 			autonomousCommandMain = new CenterThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
 		}
 
-		else if(autoPlan == AutoSelectionOption.AmpThreePieceShoot.value){
-			log.writeLogEcho(true, "AutoSelect", "run Amp Three Piece Shoot");
-			autonomousCommandMain = new AmpThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
-		}
+		// else if(autoPlan == AutoSelectionOption.AmpThreePieceShoot.value){
+		// 	log.writeLogEcho(true, "AutoSelect", "run Amp Three Piece Shoot");
+		// 	autonomousCommandMain = new AmpThreePieceShoot(intake, wrist, shooter, driveTrain, feeder, robotState, trajectoryCache, allianceSelection, log);
+		// }
 		
 		else if(autoPlan == AutoSelectionOption.CenterFourPieceShoot.value){
 			log.writeLogEcho(true, "AutoSelect", "run Center Four Piece Shoot");
